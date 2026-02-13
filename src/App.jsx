@@ -7,7 +7,7 @@ import {
   Play, Pause, RotateCcw, Coffee, Brain,
   Maximize2, Minus, CheckCircle, Target, PenTool, History,
   PartyPopper, Trophy, RefreshCw, Flame, BarChart3, Map,
-  MoreVertical
+  MoreVertical, Timer
 } from 'lucide-react';
 
 function App() {
@@ -39,16 +39,16 @@ function App() {
       if (saved) {
         data = JSON.parse(saved);
       } else {
-        // Fallback or migration logic could go here, but simplifying for merge
         data = defaultSyllabus.map(sub => ({
           ...sub,
           manualTime: 0,
-          topics: sub.topics.map(t => typeof t === 'string' ? { name: t, time: 0, timeSpent: 0 } : { ...t, timeSpent: t.timeSpent || 0 }),
           startDate: "", endDate: ""
         }));
       }
 
-      // Ensure data structure integrity
+      // Ensure data structure integrity & defaults (12h = 720m)
+      const DEFAULT_TOPIC_TIME = 720;
+
       let processed = data.map((sub, sIdx) => ({
         ...sub,
         id: sub.id || `sub-${sIdx}`,
@@ -56,10 +56,10 @@ function App() {
         endDate: sub.endDate || "",
         manualTime: sub.manualTime || 0,
         topics: sub.topics.map((t, tIdx) => {
-          if (typeof t === 'string') return { name: t, time: 0, timeSpent: 0 };
+          if (typeof t === 'string') return { name: t, time: DEFAULT_TOPIC_TIME, timeSpent: 0 };
           return {
             name: t.name || `Topic ${tIdx + 1}`,
-            time: t.time || 0,
+            time: t.time || DEFAULT_TOPIC_TIME,
             timeSpent: t.timeSpent || 0
           };
         })
@@ -76,7 +76,7 @@ function App() {
     } catch (e) { return defaultSyllabus; }
   });
 
-  const [completed, setCompleted] = useState(() => {
+  const [completed, setCompleted] = useState(() => { // Still used for "Done" checkmark visuals and fast lookup
     const saved = localStorage.getItem('gateProgress');
     return saved ? JSON.parse(saved) : {};
   });
@@ -84,6 +84,10 @@ function App() {
   const [targetDate, setTargetDate] = useState(() => localStorage.getItem('gateTargetDate') || "");
   const [expanded, setExpanded] = useState({ [syllabus[0]?.id]: true });
   const [editingScheduleId, setEditingScheduleId] = useState(null);
+
+  // --- NEW UI STATES ---
+  const [subjectDetailsId, setSubjectDetailsId] = useState(null); // ID of subject open in "Jira" view
+  const [loggingTopic, setLoggingTopic] = useState(null); // { subId, topicName, currentSpent, goal } for small popup
 
   // --- CELEBRATION STATES ---
   const [celebration, setCelebration] = useState(null);
@@ -102,7 +106,7 @@ function App() {
     } catch { return 0; }
   });
 
-  // --- ROADMAP DATA (Example) ---
+  // --- ROADMAP DATA ---
   const roadmapSteps = [
     { month: "JAN", subject: "Network Theory", color: "bg-pink-500" },
     { month: "FEB", subject: "Mathematics", color: "bg-purple-500" },
@@ -131,70 +135,55 @@ function App() {
     }
   }, [timerTime, timerActive, focusTask]);
 
-  // --- AUTO-COMPLETE (Timer -> Checkbox) ---
-  useEffect(() => {
-    let updates = {};
-    let hasUpdates = false;
-    syllabus.forEach(sub => {
-      sub.topics.forEach(t => {
-        const key = `${sub.id}-${t.name}`;
-        // If time spent >= goal (and goal > 0), mark complete automatically
-        if (t.time > 0 && t.timeSpent >= t.time && !completed[key]) {
-          updates[key] = new Date().toISOString();
-          hasUpdates = true;
-        }
-      });
-    });
-    if (hasUpdates) {
-      setCompleted(prev => ({ ...prev, ...updates }));
-      triggerCelebration('topic');
-    }
-  }, [syllabus]);
+  // --- CALCULATIONS (Global) ---
+  const totalEstimatedMins = syllabus.reduce((acc, sub) => sub.id === 'break-mode' ? acc : acc + sub.topics.reduce((tAcc, t) => tAcc + (t.time || 0), 0), 0);
+  const totalStudyTime = syllabus.reduce((acc, sub) => acc + sub.topics.reduce((tAcc, t) => tAcc + (t.timeSpent || 0), 0) + (sub.manualTime || 0), 0);
 
-  // --- TIMER LOGIC ---
-  useEffect(() => {
-    let interval = null;
-    if (timerActive && timerTime > 0) {
-      interval = setInterval(() => {
-        setTimerTime((prev) => {
-          if (prev === 1 && "Notification" in window && Notification.permission === "granted") {
-            new Notification("Session Complete!", { body: `Great job on ${focusTask?.topicName}!` });
-          }
-          if (prev % 60 === 0) {
-            if (focusTask?.subId !== 'break-mode') setDailyFocusMinutes(d => d + 1);
-            if (focusTask) {
-              setSyllabus(currentSyllabus => currentSyllabus.map(sub => {
-                if (sub.id === focusTask.subId) {
-                  return { ...sub, topics: sub.topics.map(t => t.name === focusTask.topicName ? { ...t, timeSpent: (t.timeSpent || 0) + 1 } : t) };
-                }
-                return sub;
-              }));
-            }
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    } else if (timerTime === 0) {
-      setTimerActive(false);
-    }
-    return () => clearInterval(interval);
-  }, [timerActive, timerTime, focusTask]);
+  // Progress based on TIME now, not just count
+  const progressPercentage = totalEstimatedMins === 0 ? 0 : Math.min(100, Math.round((totalStudyTime / totalEstimatedMins) * 100));
 
   // --- HELPERS FOR STREAK ---
   const calculateStreak = () => {
-    // This is a simple mock streak calculation based on activity dates
-    // In a real app, you'd parse all completion dates. 
-    // For now, we'll just check if there was activity yesterday and today.
-    // Simplifying for this merged version.
-
-    // Check if any topic was completed today
     const today = new Date().toISOString().split('T')[0];
-    const hasActivityToday = Object.values(completed).some(dateStr => dateStr.startsWith(today));
+    const hasActivityToday = dailyFocusMinutes > 0;
+    return hasActivityToday ? 1 : 0; // Simplified for now
+  };
+  const streakDays = calculateStreak();
 
-    return hasActivityToday ? 1 : 0; // Simple placeholder logic
+
+  // --- ACTIONS ---
+  const triggerCelebration = (type) => {
+    setCelebration(type);
+    if (type === 'topic') setTimeout(() => setCelebration(null), 3000);
   };
 
-  // --- CORRECTION HANDLERS ---
+  const handleLogTopicTime = (subId, topicName, minutesToAdd) => {
+    if (!minutesToAdd || isNaN(minutesToAdd)) return;
+
+    setSyllabus(prev => prev.map(sub => {
+      if (sub.id === subId) {
+        return {
+          ...sub,
+          topics: sub.topics.map(t => {
+            if (t.name === topicName) {
+              const newTimeSpent = (t.timeSpent || 0) + minutesToAdd;
+              // Check if newly completed (reached goal)
+              if (newTimeSpent >= t.time && (t.timeSpent || 0) < t.time) {
+                triggerCelebration('topic');
+                setCompleted(c => ({ ...c, [`${subId}-${topicName}`]: new Date().toISOString() }));
+              }
+              return { ...t, timeSpent: newTimeSpent };
+            }
+            return t;
+          })
+        };
+      }
+      return sub;
+    }));
+    setDailyFocusMinutes(d => d + minutesToAdd);
+    setLoggingTopic(null); // Close popup
+  };
+
   const handleManualLog = () => {
     const subName = prompt("Enter Subject Name:");
     if (!subName) return;
@@ -210,68 +199,6 @@ function App() {
     }
   };
 
-  const handleCorrectManualTime = (subject) => {
-    const current = subject.manualTime || 0;
-    const currentSubTopicsTime = subject.topics.reduce((acc, t) => acc + (t.timeSpent || 0), 0);
-    const totalTime = current + currentSubTopicsTime;
-    const newVal = prompt(`Correct Manual Time for ${subject.subject}\n(Current Manual: ${current}m | Timer Logs: ${currentSubTopicsTime}m | Total: ${totalTime}m):`, current);
-    if (newVal !== null && !isNaN(parseInt(newVal))) {
-      const min = parseInt(newVal);
-      let updated = syllabus.map(s => s.id === subject.id ? { ...s, manualTime: min } : s);
-      // Optional: Reset logic could go here if needed, keeping it simple for now
-      setSyllabus(updated);
-    }
-  };
-  const handleCorrectTopicTime = (subjectId, topic) => {
-    const current = topic.timeSpent || 0;
-    const newVal = prompt(`Correct Time Spent on "${topic.name}" (current: ${current}m):`, current);
-    if (newVal !== null && !isNaN(parseInt(newVal))) {
-      const min = parseInt(newVal);
-      setSyllabus(syllabus.map(s => s.id === subjectId ? { ...s, topics: s.topics.map(t => t.name === topic.name ? { ...t, timeSpent: min } : t) } : s));
-    }
-  };
-
-  // --- ACTIONS ---
-  const triggerCelebration = (type) => {
-    setCelebration(type);
-    if (type === 'topic') setTimeout(() => setCelebration(null), 3000);
-  };
-
-  const toggleTopic = (subjectId, topicName) => {
-    const key = `${subjectId}-${topicName}`;
-    const isNowDone = !completed[key]; // We are marking it AS DONE
-
-    setCompleted(prev => {
-      const newState = { ...prev };
-      if (newState[key]) delete newState[key]; // Unchecking
-      else {
-        newState[key] = new Date().toISOString(); // Checking
-        triggerCelebration('topic');
-      }
-      return newState;
-    });
-
-    // AUTO-FILL HOURS if marking as done manually
-    if (isNowDone) {
-      setSyllabus(prev => prev.map(sub => {
-        if (sub.id === subjectId) {
-          return {
-            ...sub,
-            topics: sub.topics.map(t => {
-              // If goal exists (>0) and we haven't reached it yet, auto-fill it
-              if (t.name === topicName && t.time > 0 && t.timeSpent < t.time) {
-                const addedTime = t.time - t.timeSpent;
-                setDailyFocusMinutes(d => d + addedTime); // Add difference to today's stats
-                return { ...t, timeSpent: t.time }; // Set spent = goal
-              }
-              return t;
-            })
-          };
-        }
-        return sub;
-      }));
-    }
-  };
 
   const startFocusSession = () => {
     if (!focusTask) { alert("Please select a subtopic or break first!"); return; }
@@ -280,10 +207,11 @@ function App() {
     setFocusMode('minimized');
   };
 
-  // --- EDIT ACTIONS ---
+
+  // --- EDIT ACTIONS (Passed to DETAILS MODAL) ---
   const handleEditTime = (subjectId, topicName, currentVal) => {
-    const newTime = prompt(`Set Goal Duration (mins) for "${topicName}":`, currentVal || 0);
-    if (newTime !== null) setSyllabus(syllabus.map(sub => sub.id === subjectId ? { ...sub, topics: sub.topics.map(t => t.name === topicName ? { ...t, time: parseInt(newTime) } : t) } : sub));
+    const newTime = prompt(`Set Estimate (hours) for "${topicName}":`, (currentVal / 60) || 12);
+    if (newTime !== null) setSyllabus(syllabus.map(sub => sub.id === subjectId ? { ...sub, topics: sub.topics.map(t => t.name === topicName ? { ...t, time: parseFloat(newTime) * 60 } : t) } : sub));
   };
   const handleDeleteTopic = (subjectId, topicName) => {
     if (confirm(`Delete "${topicName}"?`)) {
@@ -300,7 +228,7 @@ function App() {
   };
   const handleAddTopic = (subjectId) => {
     const name = prompt("New topic name:");
-    if (name) setSyllabus(syllabus.map(sub => sub.id === subjectId ? { ...sub, topics: [...sub.topics, { name, time: 0, timeSpent: 0 }] } : sub));
+    if (name) setSyllabus(syllabus.map(sub => sub.id === subjectId ? { ...sub, topics: [...sub.topics, { name, time: 720, timeSpent: 0 }] } : sub));
   };
   const handleSaveSchedule = (subjectId, start, end) => {
     setSyllabus(syllabus.map(sub => sub.id === subjectId ? { ...sub, startDate: start, endDate: end } : sub));
@@ -308,14 +236,7 @@ function App() {
   };
   const toggleExpand = (id) => setExpanded(prev => ({ ...prev, [id]: !prev[id] }));
 
-  // --- CALCULATIONS ---
-  const totalTopics = syllabus.reduce((acc, sub) => sub.id === 'break-mode' ? acc : acc + sub.topics.length, 0);
-  const completedKeys = Object.keys(completed).filter(k => completed[k]);
-  const realCompletedCount = completedKeys.filter(k => !k.startsWith('break-mode')).length;
-  const progressPercentage = totalTopics === 0 ? 0 : Math.round((realCompletedCount / totalTopics) * 100);
-  const totalStudyTime = syllabus.reduce((acc, sub) => acc + sub.topics.reduce((tAcc, t) => tAcc + (t.timeSpent || 0), 0) + (sub.manualTime || 0), 0);
-  const streakDays = calculateStreak();
-
+  // --- RENDER HELPERS ---
   const renderCalendar = () => {
     const curr = new Date();
     const target = targetDate ? new Date(targetDate) : null;
@@ -355,18 +276,144 @@ function App() {
         </div>
       )}
 
-      {celebration === 'victory' && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm animate-in fade-in duration-500">
-          <div className="bg-slate-900 border-2 border-yellow-500 p-10 rounded-3xl shadow-2xl text-center max-w-lg mx-4 relative overflow-hidden">
-            <div className="absolute inset-0 bg-yellow-500/10 animate-pulse" />
-            <Trophy size={80} className="text-yellow-400 mx-auto mb-6 animate-bounce" />
-            <h1 className="text-4xl font-extrabold text-white mb-2">VICTORY!</h1>
-            <p className="text-xl text-slate-300 mb-6">You have completed the entire GATE EE Syllabus.</p>
-            <p className="text-sm text-slate-500 italic mb-8">"The harder the battle, the sweeter the victory."</p>
-            <button onClick={() => setCelebration(null)} className="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-3 px-8 rounded-full transition-transform hover:scale-105">Continue Reviewing</button>
+      {/* --- LOG TIME POPUP (Small) --- */}
+      {loggingTopic && (
+        <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200" onClick={() => setLoggingTopic(null)}>
+          <div className="bg-slate-900 border border-slate-700 p-6 rounded-2xl shadow-2xl w-full max-w-sm" onClick={e => e.stopPropagation()}>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="font-bold text-white text-lg">Log Time</h3>
+              <button onClick={() => setLoggingTopic(null)} className="text-slate-500 hover:text-white"><X size={18} /></button>
+            </div>
+            <div className="mb-4">
+              <p className="text-xs text-slate-500 uppercase font-black tracking-widest mb-1">{loggingTopic.subSubject}</p>
+              <p className="text-indigo-400 font-bold text-xl">{loggingTopic.topicName}</p>
+            </div>
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              <div className="bg-slate-800 p-3 rounded-xl text-center">
+                <span className="text-slate-500 text-[10px] uppercase block">Current</span>
+                <span className="text-white font-mono">{formatTime(loggingTopic.currentSpent)}</span>
+              </div>
+              <div className="bg-slate-800 p-3 rounded-xl text-center">
+                <span className="text-slate-500 text-[10px] uppercase block">Estimate</span>
+                <span className="text-white font-mono">{formatTime(loggingTopic.goal)}</span>
+              </div>
+            </div>
+            <p className="text-xs text-slate-400 mb-2">How long did you study today?</p>
+            <div className="flex gap-2">
+              <input type="number" id="log-time-input" className="bg-slate-800 border-none rounded-xl p-3 flex-1 text-white placeholder-slate-600 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Minutes (e.g. 60)" autoFocus />
+              <button onClick={() => handleLogTopicTime(loggingTopic.subId, loggingTopic.topicName, parseInt(document.getElementById('log-time-input').value))} className="bg-indigo-600 hover:bg-indigo-500 text-white px-4 rounded-xl font-bold">Log</button>
+            </div>
           </div>
         </div>
       )}
+
+      {/* --- SUBJECT DETAILS MODAL (Jira Style) --- */}
+      {subjectDetailsId && (
+        <div className="fixed inset-0 z-[120] bg-black/80 backdrop-blur-md flex justify-end animate-in fade-in duration-200" onClick={() => setSubjectDetailsId(null)}>
+          <div className="w-full max-w-2xl bg-[#0b1121] h-full shadow-2xl overflow-y-auto animate-in slide-in-from-right duration-300 border-l border-slate-800" onClick={e => e.stopPropagation()}>
+            {(() => {
+              const sub = syllabus.find(s => s.id === subjectDetailsId);
+              if (!sub) return null;
+              const subTotalTime = sub.topics.reduce((acc, t) => acc + (t.time || 0), 0);
+              const subSpentTime = sub.topics.reduce((acc, t) => acc + (t.timeSpent || 0), 0);
+              const subProgress = subTotalTime === 0 ? 0 : Math.round((subSpentTime / subTotalTime) * 100);
+
+              return (
+                <div className="p-8">
+                  {/* Modal Header */}
+                  <div className="flex justify-between items-start mb-8">
+                    <div>
+                      <div className="flex items-center gap-2 text-xs font-black text-slate-500 uppercase tracking-widest mb-1">
+                        <span className="bg-slate-800 px-2 py-0.5 rounded text-indigo-400">EE-GATE-27</span>
+                        <span>/</span>
+                        <span>Tracker</span>
+                      </div>
+                      <h2 className="text-3xl font-black text-white">{sub.subject}</h2>
+                    </div>
+                    <div className="flex gap-2">
+                      <button onClick={() => setSubjectDetailsId(null)} className="p-2 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors"><X size={20} /></button>
+                    </div>
+                  </div>
+
+                  {/* Ticket-like Stats */}
+                  <div className="grid grid-cols-3 gap-4 mb-8">
+                    <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-800">
+                      <p className="text-[10px] text-slate-500 uppercase font-black mb-1">Status</p>
+                      <div className={`inline-flex items-center gap-1.5 px-2 py-1 rounded text-xs font-bold ${subProgress >= 100 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-indigo-500/20 text-indigo-400'}`}>
+                        <span className={`w-1.5 h-1.5 rounded-full ${subProgress >= 100 ? 'bg-emerald-500' : 'bg-indigo-500'}`} />
+                        {subProgress >= 100 ? 'COMPLETED' : 'IN PROGRESS'}
+                      </div>
+                    </div>
+                    <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-800">
+                      <p className="text-[10px] text-slate-500 uppercase font-black mb-1">Estimate</p>
+                      <p className="text-white font-mono text-lg">{formatTime(subTotalTime)}</p>
+                    </div>
+                    <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-800">
+                      <p className="text-[10px] text-slate-500 uppercase font-black mb-1">Logged</p>
+                      <p className="text-white font-mono text-lg">{formatTime(subSpentTime)}</p>
+                    </div>
+                  </div>
+
+                  {/* Main Progress Bar */}
+                  <div className="mb-8">
+                    <div className="flex justify-between text-xs mb-2">
+                      <span className="font-bold text-slate-400">Progress</span>
+                      <span className="font-black text-indigo-400">{subProgress}%</span>
+                    </div>
+                    <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                      <div className="h-full bg-indigo-600" style={{ width: `${subProgress}%` }} />
+                    </div>
+                  </div>
+
+                  {/* Subtasks List */}
+                  <div>
+                    <div className="flex justify-between items-center mb-4 border-b border-slate-800 pb-2">
+                      <h3 className="text-lg font-bold text-white flex items-center gap-2"><CheckCircle size={18} className="text-slate-500" /> Topics</h3>
+                      <button onClick={() => handleAddTopic(sub.id)} className="text-xs bg-slate-800 hover:bg-slate-700 text-indigo-400 px-3 py-1.5 rounded-lg flex items-center gap-1 transition-colors font-bold">+ Create Topic</button>
+                    </div>
+                    <div className="space-y-3">
+                      {sub.topics.map((t, idx) => {
+                        const tProgress = t.time > 0 ? Math.min(100, (t.timeSpent / t.time) * 100) : 0;
+                        return (
+                          <div key={idx} className="group flex items-center gap-4 p-3 hover:bg-slate-800/40 rounded-xl transition-colors border border-transparent hover:border-slate-800/50">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="text-slate-500 font-mono text-[10px]">EE-{idx + 1}</span>
+                                <span className={`text-sm font-medium ${tProgress >= 100 ? 'line-through text-slate-500' : 'text-slate-200'}`}>{t.name}</span>
+                              </div>
+                              <div className="h-1.5 w-full max-w-xs bg-slate-800 rounded-full overflow-hidden">
+                                <div className={`h-full ${tProgress >= 100 ? 'bg-emerald-500' : 'bg-indigo-500'}`} style={{ width: `${tProgress}%` }} />
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-6">
+                              <div className="text-right">
+                                <div className="text-[10px] text-slate-500 uppercase font-black">Logged</div>
+                                <div className="text-xs font-mono text-slate-300">{formatTime(t.timeSpent)}</div>
+                              </div>
+                              <div className="text-right">
+                                <div className="text-[10px] text-slate-500 uppercase font-black">Est</div>
+                                <div className="text-xs font-mono text-slate-300 hover:text-white cursor-pointer" onClick={() => handleEditTime(sub.id, t.name, t.time)}>{formatTime(t.time)}</div>
+                              </div>
+
+                              <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button onClick={() => { setSubjectDetailsId(null); setLoggingTopic({ subId: sub.id, subSubject: sub.subject, topicName: t.name, currentSpent: t.timeSpent, goal: t.time }) }} className="p-1.5 bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500 hover:text-white rounded" title="Log Time"><Plus size={14} /></button>
+                                <button onClick={() => handleRenameTopic(sub.id, t.name)} className="p-1.5 hover:bg-slate-700 rounded text-slate-500 hover:text-white"><Edit3 size={14} /></button>
+                                <button onClick={() => handleDeleteTopic(sub.id, t.name)} className="p-1.5 hover:bg-rose-900/30 rounded text-slate-500 hover:text-rose-400"><Trash2 size={14} /></button>
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+
+                </div>
+              );
+            })()}
+          </div>
+        </div>
+      )}
+
 
       <div className="max-w-7xl mx-auto space-y-8">
 
@@ -421,14 +468,13 @@ function App() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {syllabus.map((sub, sIdx) => {
             if (sub.id === 'break-mode') return null;
-            const subTotal = sub.topics.length;
-            const subCompleted = sub.topics.filter(t => completed[`${sub.id}-${t.name}`]).length;
-            const subPercent = subTotal === 0 ? 0 : Math.round((subCompleted / subTotal) * 100);
-            const isDone = subPercent === 100 && subTotal > 0;
+            const subTotalTime = sub.topics.reduce((acc, t) => acc + (t.time || 0), 0);
+            const subSpentTime = sub.topics.reduce((acc, t) => acc + (t.timeSpent || 0), 0);
+            const subProgress = subTotalTime === 0 ? 0 : Math.round((subSpentTime / subTotalTime) * 100);
+            const isDone = subProgress === 100 && subTotalTime > 0;
             const isOpen = expanded[sub.id];
 
-            const totalLectureMinutes = sub.topics.reduce((acc, t) => acc + (t.time || 0), 0);
-            const actualStudyMinutes = sub.topics.reduce((acc, t) => acc + (t.timeSpent || 0), 0) + (sub.manualTime || 0);
+            const actualStudyMinutes = subSpentTime + (sub.manualTime || 0);
 
             let statusBadge = null;
             let borderColor = isDone ? 'border-emerald-500/30' : 'border-slate-800';
@@ -447,22 +493,21 @@ function App() {
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex items-center gap-2 cursor-pointer" onClick={() => toggleExpand(sub.id)}>
                     <h3 className={`font-bold uppercase text-sm truncate pr-2 ${isDone ? 'text-emerald-400' : 'text-white'}`}>{sub.subject}</h3>
-                    <ChevronDown size={14} className={`text-slate-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
                   </div>
-                  <span className={`text-xs font-black ${isDone ? 'text-emerald-400' : 'text-indigo-400'}`}>{subPercent}%</span>
+                  <button onClick={() => setSubjectDetailsId(sub.id)} className="text-slate-500 hover:text-white p-1 rounded hover:bg-slate-800 transition-colors" title="Open Full Details"><Edit3 size={14} /></button>
                 </div>
 
                 {/* Progress Bar */}
-                <div className="h-1 w-full bg-slate-800 rounded-full overflow-hidden mb-4" onClick={() => toggleExpand(sub.id)}>
-                  <div className={`h-full ${isDone ? 'bg-emerald-500' : 'bg-indigo-500'} transition-all duration-1000`} style={{ width: `${subPercent}%` }} />
+                <div className="flex justify-between items-end mb-1 text-[10px] text-slate-500 font-bold uppercase">
+                  <span>{formatTime(subSpentTime)} / {formatTime(subTotalTime)}</span>
+                  <span className={isDone ? 'text-emerald-400' : 'text-indigo-400'}>{subProgress}%</span>
+                </div>
+                <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden mb-4" onClick={() => toggleExpand(sub.id)}>
+                  <div className={`h-full ${isDone ? 'bg-emerald-500' : 'bg-indigo-500'} transition-all duration-1000`} style={{ width: `${subProgress}%` }} />
                 </div>
 
                 {/* Meta Controls (Schedule) */}
                 <div className="flex justify-between items-center text-[10px] text-slate-500 font-bold uppercase mb-4">
-                  <div className="flex items-center gap-2">
-                    <span className="flex items-center gap-1"><Clock size={10} /> {formatTime(actualStudyMinutes)} / {formatTime(totalLectureMinutes)}</span>
-                    <button onClick={(e) => { e.stopPropagation(); handleCorrectManualTime(sub); }} className="text-slate-600 hover:text-white" title="Correct Manual Time"><Edit3 size={8} /></button>
-                  </div>
                   {editingScheduleId === sub.id ? (
                     <div className="flex flex-col gap-2 bg-slate-800 p-2 rounded absolute top-12 right-4 z-20 shadow-xl border border-slate-600 animate-in zoom-in-95">
                       <input type="date" className="bg-slate-700 rounded p-1 text-white text-xs" defaultValue={sub.startDate} id={`start-${sub.id}`} />
@@ -480,24 +525,18 @@ function App() {
                 {isOpen ? (
                   <div className="space-y-2 animate-in slide-in-from-top-2 border-t border-slate-800 pt-4 mt-2">
                     {sub.topics.map((topic, tIdx) => {
-                      const isChecked = !!completed[`${sub.id}-${topic.name}`];
+                      const tProgress = topic.time > 0 ? Math.min(100, (topic.timeSpent / topic.time) * 100) : 0;
                       return (
-                        <div key={tIdx} className="group/topic flex items-center justify-between hover:bg-slate-800/50 rounded p-1 -mx-1">
-                          <label className={`flex items-center gap-2 cursor-pointer flex-1 ${isChecked ? 'opacity-50' : ''}`}>
-                            <div className={`w-3 h-3 rounded-sm border flex items-center justify-center ${isChecked ? 'bg-emerald-500 border-emerald-500' : 'border-slate-600'}`}>
-                              {isChecked && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
-                              <input type="checkbox" className="hidden" checked={isChecked} onChange={() => toggleTopic(sub.id, topic.name)} />
+                        <div key={tIdx} className="group/topic flex flex-col gap-1 hover:bg-slate-800/50 rounded p-1 -mx-1" onClick={() => setLoggingTopic({ subId: sub.id, subSubject: sub.subject, topicName: topic.name, currentSpent: topic.timeSpent, goal: topic.time })}>
+                          <div className="flex justify-between items-center cursor-pointer">
+                            <span className={`text-[11px] truncate font-medium ${tProgress >= 100 ? 'text-emerald-500' : 'text-slate-300'}`}>{topic.name}</span>
+                            <div className="flex items-center gap-2">
+                              <span className="text-[9px] font-mono text-slate-500">{formatTime(topic.timeSpent)}</span>
+                              <Plus size={10} className="text-slate-600 group-hover/topic:text-indigo-400" />
                             </div>
-                            <span className={`text-[11px] truncate ${isChecked ? 'line-through text-slate-600' : 'text-slate-400'}`}>{topic.name}</span>
-                          </label>
-
-                          <div className="flex items-center gap-1 opacity-0 group-hover/topic:opacity-100 transition-opacity">
-                            <button onClick={() => handleCorrectTopicTime(sub.id, topic)} className="text-slate-600 hover:text-indigo-400" title="Fix Log"><History size={10} /></button>
-                            <button onClick={() => handleAddTopic(sub.id)} className="text-slate-600 hover:text-indigo-400 block md:hidden"><Plus size={10} /></button>
-                            {/* Actions for specific topic */}
-                            <button onClick={() => handleEditTime(sub.id, topic.name, topic.time)} className="text-[9px] font-mono text-slate-600 hover:text-emerald-400 bg-slate-800 px-1 rounded">{topic.time > 0 ? formatTime(topic.time) : 'Goal'}</button>
-                            <button onClick={() => handleRenameTopic(sub.id, topic.name)} className="text-slate-600 hover:text-white"><Edit3 size={10} /></button>
-                            <button onClick={() => handleDeleteTopic(sub.id, topic.name)} className="text-slate-600 hover:text-rose-400"><X size={10} /></button>
+                          </div>
+                          <div className="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
+                            <div className={`h-full ${tProgress >= 100 ? 'bg-emerald-500' : 'bg-indigo-500'}`} style={{ width: `${tProgress}%` }} />
                           </div>
                         </div>
                       )
@@ -509,7 +548,7 @@ function App() {
                   <div className="space-y-1 mt-auto" onClick={() => toggleExpand(sub.id)}>
                     {sub.topics.slice(0, 3).map((t, i) => (
                       <div key={i} className="flex items-center gap-2 text-[10px] text-slate-600">
-                        <div className={`w-1 h-1 rounded-full ${completed[`${sub.id}-${t.name}`] ? 'bg-emerald-500' : 'bg-slate-700'}`} />
+                        <span className={`w-1 h-1 rounded-full ${t.timeSpent >= t.time ? 'bg-emerald-500' : 'bg-slate-700'}`} />
                         <span className="truncate">{t.name}</span>
                       </div>
                     ))}
@@ -583,7 +622,7 @@ function App() {
             <button onClick={() => setTimerActive(!timerActive)} className="p-4 bg-indigo-600 hover:bg-indigo-500 rounded-2xl transition-colors text-white shadow-lg shadow-indigo-500/20">{timerActive ? <Pause fill="currentColor" /> : <Play fill="currentColor" />}</button>
             <button onClick={() => setTimerTime(focusDuration * 60)} className="p-4 bg-slate-800 hover:bg-slate-700 rounded-2xl text-slate-400 hover:text-white transition-colors"><RotateCcw /></button>
             <button onClick={() => setFocusMode('expanded')} className="p-4 bg-slate-800 hover:bg-slate-700 rounded-2xl text-slate-400 hover:text-white transition-colors"><Maximize2 size={20} /></button>
-            {focusTask && (<button onClick={() => { const topicObj = syllabus.find(s => s.id === focusTask.subId)?.topics.find(t => t.name === focusTask.topicName); if (topicObj) toggleTopic(focusTask.subId, focusTask.topicName); setFocusTask(null); }} className="p-4 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-500 rounded-2xl transition-colors"><CheckCircle size={20} /></button>)}
+            {focusTask && (<button onClick={() => { handleLogTopicTime(focusTask.subId, focusTask.topicName, focusDuration); setFocusTask(null); }} className="p-4 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-500 rounded-2xl transition-colors"><CheckCircle size={20} /></button>)}
           </div>
         </div>
       )}
