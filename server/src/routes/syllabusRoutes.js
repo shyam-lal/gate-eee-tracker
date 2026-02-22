@@ -8,6 +8,7 @@ router.use(authenticateToken);
 
 router.get('/', syllabusController.getSyllabus);
 router.post('/subject', syllabusController.createSubject);
+router.patch('/subject/:id', syllabusController.updateSubject);
 router.delete('/subject/:id', syllabusController.deleteSubject);
 router.post('/topic', syllabusController.createTopic);
 router.patch('/topic/:id', syllabusController.updateTopic);

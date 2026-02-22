@@ -33,7 +33,7 @@ export default function Auth({ onLogin }) {
         <div className="min-h-screen bg-[#020617] flex items-center justify-center p-4">
             <div className="bg-slate-900 border border-slate-800 p-8 rounded-3xl w-full max-w-md shadow-2xl">
                 <div className="text-center mb-8">
-                    <h1 className="text-3xl font-black text-white tracking-tighter uppercase mb-2">GATE <span className="text-indigo-500">TRACKER</span></h1>
+                    <h1 className="text-3xl font-black text-white tracking-tighter uppercase mb-2">GATE <span className="text-indigo-500">VAULT</span></h1>
                     <p className="text-slate-500 text-sm">Sign in to sync your progress across devices.</p>
                 </div>
 

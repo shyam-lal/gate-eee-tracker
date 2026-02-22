@@ -43,6 +43,14 @@ export const syllabus = {
         });
         return res.json();
     },
+    updateSubject: async (subjectId, name) => {
+        const res = await fetch(`${API_URL}/syllabus/subject/${subjectId}`, {
+            method: 'PATCH',
+            headers: getHeaders(),
+            body: JSON.stringify({ name })
+        });
+        return res.json();
+    },
     deleteSubject: async (subjectId) => {
         const res = await fetch(`${API_URL}/syllabus/subject/${subjectId}`, {
             method: 'DELETE',

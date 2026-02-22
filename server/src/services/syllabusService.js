@@ -36,6 +36,14 @@ const createSubject = async (userId, name) => {
     return res.rows[0];
 };
 
+const updateSubject = async (subjectId, name) => {
+    const res = await pool.query(
+        'UPDATE subjects SET name = $1 WHERE id = $2 RETURNING *',
+        [name, subjectId]
+    );
+    return res.rows[0];
+};
+
 // --- TOPICS ---
 const createTopic = async (subjectId, name, estimatedMinutes = 720) => {
     const res = await pool.query(
@@ -118,6 +126,7 @@ const deleteSubject = async (subjectId) => {
 module.exports = {
     getSyllabus,
     createSubject,
+    updateSubject,
     createTopic,
     updateTopic,
     logTime,

@@ -21,6 +21,18 @@ const createSubject = async (req, res) => {
     }
 };
 
+const updateSubject = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name } = req.body;
+        const sub = await syllabusService.updateSubject(id, name);
+        res.json(sub);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Server error' });
+    }
+};
+
 const createTopic = async (req, res) => {
     try {
         const { subjectId, name, estimatedMinutes } = req.body;
@@ -88,6 +100,7 @@ const deleteSubject = async (req, res) => {
 module.exports = {
     getSyllabus,
     createSubject,
+    updateSubject,
     createTopic,
     updateTopic,
     logTime,
