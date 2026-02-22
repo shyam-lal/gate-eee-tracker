@@ -7,7 +7,7 @@ import {
   CalendarRange, AlertTriangle,
   Play, Pause, RotateCcw, Brain,
   Maximize2, Minus, CheckCircle, Flame, BarChart3, Map,
-  MoreVertical, Timer, PartyPopper, PenTool, Save, LogIn
+  MoreVertical, Timer, PartyPopper, PenTool, Save, LogIn, TrendingUp, Target, Hourglass, Zap
 } from 'lucide-react';
 
 function App() {
@@ -25,23 +25,13 @@ function App() {
   // --- UI STATES ---
   const [loggingTopic, setLoggingTopic] = useState(null);
   const [celebration, setCelebration] = useState(null);
+  const [showAnalytics, setShowAnalytics] = useState(false);
 
   // --- EDITOR MODAL STATE ---
-  // If editingId is 'new', we are creating. If it's a number, we are editing that subject.
   const [editingId, setEditingId] = useState(null);
   const [editorData, setEditorData] = useState({
     name: "",
     topics: [{ name: "", estimate: "12h", timeSpent: 0, id: null }]
-  });
-
-  // --- FOCUS MODE STATE ---
-  const [focusMode, setFocusMode] = useState('hidden');
-  const [dailyFocusMinutes, setDailyFocusMinutes] = useState(() => {
-    try {
-      const today = new Date().toDateString();
-      const saved = JSON.parse(localStorage.getItem('gateDailyFocus') || '{}');
-      return saved.date === today ? saved.minutes : 0;
-    } catch { return 0; }
   });
 
   // --- HELPERS ---
@@ -60,16 +50,13 @@ function App() {
     if (typeof input === 'number') return input;
     const clean = input.toString().toLowerCase().trim();
     if (/^\d+$/.test(clean)) return parseInt(clean, 10);
-
     let totalMinutes = 0;
     const hoursMatch = clean.match(/(\d+)\s*h/i);
     const minsMatch = clean.match(/(\d+)\s*m/i);
     const secsMatch = clean.match(/(\d+)\s*s/i);
-
     if (hoursMatch) totalMinutes += parseInt(hoursMatch[1], 10) * 60;
     if (minsMatch) totalMinutes += parseInt(minsMatch[1], 10);
     if (secsMatch && parseInt(secsMatch[1], 10) > 30) totalMinutes += 1;
-
     return totalMinutes || parseInt(clean, 10) || 0;
   };
 
@@ -117,10 +104,7 @@ function App() {
     try {
       await syllabusApi.logTime({ topicId, minutes: minutesToAdd });
       await loadData();
-      setDailyFocusMinutes(d => d + minutesToAdd);
       triggerCelebration('topic');
-
-      // Update local editor state if modal is open
       if (editingId) {
         setEditorData(prev => ({
           ...prev,
@@ -164,10 +148,7 @@ function App() {
           }
         }
       } else {
-        // Update subject name
         await syllabusApi.updateSubject(editingId, editorData.name);
-        // Handle topics: existing topics are updated via handleManualTopicUpdate or deleted.
-        // New topics (id === null) are created here.
         for (const t of editorData.topics) {
           if (t.name.trim() && !t.id) {
             await syllabusApi.createTopic(editingId, t.name, parseFormalTime(t.estimate));
@@ -187,30 +168,24 @@ function App() {
       if (field === 'name') updates.name = value;
       if (field === 'estimate') updates.estimated_minutes = parseFormalTime(value);
       await syllabusApi.updateTopic(topicId, updates);
-      // Don't reload full data for smooth typing, or reload after blur
     } catch (e) { console.error(e); }
   };
 
   const handleDeleteSubject = async (subjectId, subjectName) => {
-    if (!confirm(`Are you sure you want to delete "${subjectName}"? This syllabus data will be lost.`)) return;
+    if (!confirm(`Are you sure you want to delete "${subjectName}"?`)) return;
     setLoading(true);
     try {
       await syllabusApi.deleteSubject(subjectId);
       await loadData();
       if (editingId === subjectId) setEditingId(null);
-    } catch (e) {
-      alert("Delete failed: " + e.message);
-    } finally {
-      setLoading(false);
-    }
+    } catch (e) { alert("Delete failed"); }
+    finally { setLoading(false); }
   };
 
   const handleDeleteTopic = async (topicId, topicName) => {
     if (!confirm(`Delete subtask "${topicName}"?`)) return;
     try {
       await syllabusApi.deleteTopic(topicId);
-
-      // Update local state if in editor
       if (editingId) {
         setEditorData(prev => ({
           ...prev,
@@ -224,6 +199,28 @@ function App() {
   const toggleExpand = (id) => {
     setExpanded(prev => ({ ...prev, [id]: !prev[id] }));
   };
+
+  const updateTargetDate = (date) => {
+    setTargetDate(date);
+    localStorage.setItem('gateTargetDate', date);
+  };
+
+  // --- CALCULATIONS ---
+  const totalEstimatedMins = syllabus.reduce((acc, sub) => acc + sub.topics.reduce((tAcc, t) => tAcc + (t.time || 0), 0), 0);
+  const totalStudyMins = syllabus.reduce((acc, sub) => acc + sub.topics.reduce((tAcc, t) => tAcc + (t.timeSpent || 0), 0) + (sub.manualTime || 0), 0);
+  const progressPercentage = totalEstimatedMins === 0 ? 0 : Math.min(100, Math.round((totalStudyMins / totalEstimatedMins) * 100));
+  const remainingMins = Math.max(0, totalEstimatedMins - totalStudyMins);
+
+  const getDailyGoal = () => {
+    if (!targetDate || remainingMins <= 0) return 0;
+    const today = new Date();
+    const target = new Date(targetDate);
+    const diffTime = target - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    if (diffDays <= 0) return remainingMins;
+    return Math.round(remainingMins / diffDays);
+  };
+  const dailyGoalMins = getDailyGoal();
 
   // --- RENDER HELPERS ---
   const renderCalendar = () => {
@@ -245,11 +242,6 @@ function App() {
     );
   };
 
-  // --- CALCULATIONS ---
-  const totalEstimatedMins = syllabus.reduce((acc, sub) => acc + sub.topics.reduce((tAcc, t) => tAcc + (t.time || 0), 0), 0);
-  const totalStudyTime = syllabus.reduce((acc, sub) => acc + sub.topics.reduce((tAcc, t) => tAcc + (t.timeSpent || 0), 0) + (sub.manualTime || 0), 0);
-  const progressPercentage = totalEstimatedMins === 0 ? 0 : Math.min(100, Math.round((totalStudyTime / totalEstimatedMins) * 100));
-
   if (!user) return <Auth onLogin={setUser} />;
 
   return (
@@ -260,6 +252,92 @@ function App() {
           <div className="bg-slate-900/90 backdrop-blur border border-indigo-500/50 p-8 rounded-3xl shadow-2xl flex flex-col items-center gap-4">
             <PartyPopper size={64} className="text-yellow-400 animate-bounce" />
             <h2 className="text-2xl font-black text-white bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent uppercase tracking-tighter">Time Synced!</h2>
+          </div>
+        </div>
+      )}
+
+      {/* SYLLABUS ANALYTICS MODAL */}
+      {showAnalytics && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-in fade-in duration-300" onClick={() => setShowAnalytics(false)}>
+          <div className="bg-[#0b1121] border border-slate-700 w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300" onClick={e => e.stopPropagation()}>
+            <div className="bg-slate-900 px-6 py-4 border-b border-slate-800 flex justify-between items-center">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-indigo-500/10 rounded-lg text-indigo-400"><TrendingUp size={20} /></div>
+                <h3 className="text-white font-black uppercase tracking-tighter text-lg sm:text-xl">Vault Analytics</h3>
+              </div>
+              <button onClick={() => setShowAnalytics(false)} className="p-2 hover:bg-slate-800 rounded-full text-slate-500 hover:text-white transition-colors"><X size={20} /></button>
+            </div>
+
+            <div className="p-6 md:p-8 space-y-8 overflow-y-auto max-h-[80vh] no-scrollbar">
+              {/* Target Date Section */}
+              <div className="bg-slate-900/50 p-6 rounded-3xl border border-slate-800/50 flex flex-col sm:flex-row items-center gap-6">
+                <div className="p-4 bg-indigo-500/10 rounded-2xl text-indigo-400 shrink-0"><Target size={32} /></div>
+                <div className="flex-1 space-y-2 text-center sm:text-left">
+                  <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block">Vault Completion Deadline</label>
+                  <input
+                    type="date"
+                    className="bg-slate-950 border border-slate-800 rounded-xl p-3 text-white font-black focus:border-indigo-500 outline-none w-full sm:w-auto"
+                    value={targetDate}
+                    onChange={(e) => updateTargetDate(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              {/* Main Progress Gauge */}
+              <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12 py-4">
+                <div className="relative w-48 h-48 shrink-0">
+                  <svg className="w-full h-full transform -rotate-90">
+                    <circle cx="96" cy="96" r="88" stroke="currentColor" strokeWidth="12" fill="transparent" className="text-slate-800" />
+                    <circle cx="96" cy="96" r="88" stroke="currentColor" strokeWidth="12" fill="transparent" strokeDasharray={552.9} strokeDashoffset={552.9 - (552.9 * progressPercentage) / 100} className="text-indigo-500 transition-all duration-1000 ease-out" strokeLinecap="round" />
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                    <span className="text-4xl font-black text-white leading-none">{progressPercentage}%</span>
+                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-1">Cleared</span>
+                  </div>
+                </div>
+                <div className="flex-1 grid grid-cols-2 gap-4 w-full">
+                  <div className="bg-slate-900/30 p-4 rounded-2xl border border-slate-800/30">
+                    <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Study Done</p>
+                    <p className="text-xl font-black text-emerald-400 tracking-tighter">{formatTime(totalStudyMins)}</p>
+                  </div>
+                  <div className="bg-slate-900/30 p-4 rounded-2xl border border-slate-800/30">
+                    <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Vault Left</p>
+                    <p className="text-xl font-black text-indigo-400 tracking-tighter">{formatTime(remainingMins)}</p>
+                  </div>
+                  <div className="bg-slate-900/30 p-4 rounded-2xl border border-slate-800/30 col-span-2 flex items-center justify-between">
+                    <div>
+                      <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Required Daily</p>
+                      <p className="text-2xl font-black text-white tracking-tighter">{formatTime(dailyGoalMins)} <span className="text-xs text-slate-500 font-bold">/ day</span></p>
+                    </div>
+                    <Zap size={24} className="text-yellow-400 opacity-50" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Graphical representation (Syllabus Weight) */}
+              <div className="space-y-4">
+                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block pl-1">Syllabus Weight Distribution</label>
+                <div className="space-y-3">
+                  {syllabus.map(sub => {
+                    const subTotal = sub.topics.reduce((acc, t) => acc + (t.time || 0), 0);
+                    const subDone = sub.topics.reduce((acc, t) => acc + (t.timeSpent || 0), 0);
+                    const weight = totalEstimatedMins === 0 ? 0 : Math.round((subTotal / totalEstimatedMins) * 100);
+                    const subProgress = subTotal === 0 ? 0 : Math.round((subDone / subTotal) * 100);
+                    return (
+                      <div key={sub.id} className="space-y-1.5">
+                        <div className="flex justify-between text-[11px] font-bold">
+                          <span className="text-slate-300">{sub.name} <span className="text-slate-600 font-black ml-2">{weight}% Weight</span></span>
+                          <span className="text-indigo-400">{subProgress}%</span>
+                        </div>
+                        <div className="h-2 bg-slate-900 rounded-full overflow-hidden flex">
+                          <div className="h-full bg-indigo-500 transition-all duration-1000" style={{ width: `${subProgress}%` }} />
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -281,7 +359,6 @@ function App() {
             </div>
 
             <form onSubmit={saveSubject} className="p-6 md:p-8 space-y-8 max-h-[85vh] overflow-y-auto no-scrollbar">
-              {/* Subject Title */}
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
                   <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block pl-1">Subject Name</label>
@@ -300,7 +377,6 @@ function App() {
                 />
               </div>
 
-              {/* Subtasks / Topics Breakdown */}
               <div className="space-y-4">
                 <div className="flex justify-between items-center pl-1">
                   <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block">Syllabus Breakdown</label>
@@ -315,7 +391,6 @@ function App() {
                   {editorData.topics.map((topic, idx) => (
                     <div key={idx} className="flex flex-col gap-3 p-4 bg-slate-900/40 rounded-2xl border border-slate-800/30 animate-in slide-in-from-left-2 transition-all">
                       <div className="flex flex-col sm:flex-row gap-3">
-                        {/* Name Input */}
                         <input
                           type="text"
                           placeholder="Topic name"
@@ -329,7 +404,6 @@ function App() {
                           onBlur={e => handleManualTopicUpdate(topic.id, 'name', e.target.value)}
                         />
                         <div className="flex gap-2">
-                          {/* Estimate Input */}
                           <div className="w-24">
                             <input
                               type="text"
@@ -344,7 +418,6 @@ function App() {
                               onBlur={e => handleManualTopicUpdate(topic.id, 'estimate', e.target.value)}
                             />
                           </div>
-                          {/* Delete Topic */}
                           <button
                             type="button"
                             disabled={editorData.topics.length === 1}
@@ -359,8 +432,6 @@ function App() {
                           ><Trash2 size={18} /></button>
                         </div>
                       </div>
-
-                      {/* Log Time Row (Only for existing topics) */}
                       {topic.id && (
                         <div className="flex items-center gap-3 bg-slate-950/50 p-2.5 rounded-xl border border-slate-800/50">
                           <div className="flex-1">
@@ -396,7 +467,6 @@ function App() {
                 </div>
               </div>
 
-              {/* Confirm / Final Save */}
               <div className="pt-4 sticky bottom-0 bg-[#0b1121] pb-2">
                 <button disabled={loading} className="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-4 md:py-5 rounded-2xl font-black text-base md:text-lg uppercase tracking-widest flex items-center justify-center gap-3 transition-all shadow-xl shadow-indigo-600/20">
                   {loading ? (
@@ -431,15 +501,18 @@ function App() {
             <div className="p-4 bg-orange-500/10 rounded-2xl text-orange-500"><Flame size={32} fill="currentColor" /></div>
             <div><p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Efficiency</p><h2 className="text-3xl sm:text-4xl font-black text-white leading-none tracking-tighter">PREMIUM</h2></div>
           </div>
-          <div className="bg-slate-900/50 border border-slate-800/50 p-6 rounded-3xl flex items-center gap-6 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none transition-opacity"><BarChart3 size={120} /></div>
-            <div className="p-4 bg-indigo-500/10 rounded-2xl text-indigo-400"><BarChart3 size={32} /></div>
+          <div onClick={() => setShowAnalytics(true)} className="bg-slate-900/50 border border-slate-800 border-indigo-500/20 p-6 rounded-3xl flex items-center gap-6 relative overflow-hidden group cursor-pointer hover:border-indigo-500/50 transition-all active:scale-[0.98]">
+            <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none transition-opacity group-hover:opacity-10"><BarChart3 size={120} /></div>
+            <div className="p-4 bg-indigo-500/10 rounded-2xl text-indigo-400 group-hover:scale-110 transition-transform"><BarChart3 size={32} /></div>
             <div className="flex-1">
-              <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Study Hours</p>
-              <h2 className="text-3xl sm:text-4xl font-black text-white leading-none tracking-tighter">{formatTime(totalStudyTime)}</h2>
-              <div className="flex items-center gap-2 mt-3">
-                <div className="h-1.5 flex-1 bg-slate-800 rounded-full overflow-hidden"><div className="h-full bg-indigo-500" style={{ width: `${progressPercentage}%` }} /></div>
-                <span className="text-[10px] text-slate-600 font-black min-w-max">{progressPercentage}%</span>
+              <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1 flex justify-between">Study Hours <span className="text-indigo-400">{progressPercentage}%</span></p>
+              <h2 className="text-3xl sm:text-4xl font-black text-white leading-none tracking-tighter">{formatTime(totalStudyMins)} <span className="text-[10px] text-slate-600 align-middle"> DONE</span></h2>
+              <div className="mt-3 space-y-1">
+                <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden shrink-0"><div className="h-full bg-indigo-500 transition-all duration-1000" style={{ width: `${progressPercentage}%` }} /></div>
+                <div className="flex justify-between items-center text-[9px] font-black text-slate-500 uppercase tracking-widest">
+                  <span>Goal: {formatTime(dailyGoalMins)}</span>
+                  <span className="text-slate-600">{formatTime(remainingMins)} LEFT</span>
+                </div>
               </div>
             </div>
           </div>
@@ -511,7 +584,7 @@ function App() {
         </div>
       </div>
 
-      {/* QUICK LOG MODAL (Legacy/Short version) */}
+      {/* QUICK LOG MODAL */}
       {loggingTopic && (
         <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200" onClick={() => setLoggingTopic(null)}>
           <div className="bg-[#0b1121] border border-slate-700 p-6 md:p-8 rounded-3xl shadow-2xl w-full max-w-sm animate-in zoom-in-95" onClick={e => e.stopPropagation()}>

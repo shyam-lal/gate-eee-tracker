@@ -1,4 +1,7 @@
-const API_URL = 'http://localhost:5000/api';
+// We use a relative path here so that Vite's proxy (in development) 
+// or the production server can handle the routing correctly.
+const API_URL = '/api';
+
 
 const getHeaders = () => {
     const token = localStorage.getItem('token');
