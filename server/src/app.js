@@ -19,10 +19,11 @@ app.use('/api/social', require('./routes/socialRoutes'));
 const distPath = path.join(__dirname, '../../dist');
 app.use(express.static(distPath));
 
-// Handle React Routing (SPA) - Fixed for Express 5
-// Express 5 removed support for the '*' wildcard. Use '(.*)' instead.
-app.get('(.*)', (req, res, next) => {
-    // If it's an API request that reached here, it's a 404
+
+// Handle React Routing (SPA)
+// CRITICAL: Express 5 does NOT support '*' as a wildcard. 
+// We use a general middleware to catch all non-API routes.
+app.use((req, res, next) => {
     if (req.path.startsWith('/api')) return next();
     res.sendFile(path.join(distPath, 'index.html'));
 });

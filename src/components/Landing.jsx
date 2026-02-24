@@ -91,7 +91,7 @@ const Landing = ({ onStart }) => {
                     <span className="text-[10px] font-black uppercase tracking-[0.3em]">SECURE ACCESS • CLOUD SYNC</span>
                 </div>
                 <p className="text-slate-600 text-xs font-bold uppercase tracking-widest">© 2026 GATE VAULT ENGINEERING SYSTEMS</p>
-                <p className="text-slate-600 text-xs font-bold uppercase tracking-widest">© - Arunima & Shyam</p>
+                <p className="text-slate-600 text-xs font-bold uppercase tracking-widest">- Arunima & Shyam</p>
             </footer>
         </div>
     );
