@@ -13,6 +13,9 @@ router.delete('/subject/:id', syllabusController.deleteSubject);
 router.post('/topic', syllabusController.createTopic);
 router.patch('/topic/:id', syllabusController.updateTopic);
 router.delete('/topic/:id', syllabusController.deleteTopic);
-router.post('/log', syllabusController.logTime);
+router.post('/log', syllabusController.logActivity);
+router.patch('/log/:id', syllabusController.editLog);
+router.get('/logs', syllabusController.getLogs);
+router.delete('/reset', syllabusController.resetProgress);
 
 module.exports = router;

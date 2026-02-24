@@ -1,4 +1,6 @@
 const syllabusService = require('../services/syllabusService');
+const userService = require('../services/userService');
+const achievementService = require('../services/achievementService');
 
 const getSyllabus = async (req, res) => {
     try {
@@ -35,8 +37,8 @@ const updateSubject = async (req, res) => {
 
 const createTopic = async (req, res) => {
     try {
-        const { subjectId, name, estimatedMinutes } = req.body;
-        const topic = await syllabusService.createTopic(subjectId, name, estimatedMinutes);
+        const { subjectId, name, estimatedMinutes, totalModules } = req.body;
+        const topic = await syllabusService.createTopic(subjectId, name, estimatedMinutes, totalModules);
         res.status(201).json(topic);
     } catch (err) {
         console.error(err);
@@ -55,20 +57,56 @@ const updateTopic = async (req, res) => {
     }
 };
 
-const logTime = async (req, res) => {
+const logActivity = async (req, res) => {
     try {
-        const { topicId, minutes, subjectId } = req.body;
+        const { topicId, minutes, modules, subjectId } = req.body;
 
-        // Check if it's a specific topic log or manual subject log
         if (topicId) {
-            await syllabusService.logTime(req.user.id, topicId, minutes);
-            res.json({ message: 'Time logged successfully' });
+            await syllabusService.logActivity(req.user.id, topicId, minutes, modules);
+
+            // Gamification logic
+            await userService.updateStreak(req.user.id);
+            const newAchievements = await achievementService.checkAndAwardAchievements(req.user.id);
+
+            res.json({
+                message: 'Activity logged successfully',
+                newAchievements: newAchievements
+            });
         } else if (subjectId) {
             await syllabusService.logManualTime(req.user.id, subjectId, minutes);
-            res.json({ message: 'Manual time logged successfully' });
+            await userService.updateStreak(req.user.id);
+            const newAchievements = await achievementService.checkAndAwardAchievements(req.user.id);
+
+            res.json({
+                message: 'Manual time logged successfully',
+                newAchievements: newAchievements
+            });
         } else {
             res.status(400).json({ error: 'Missing topicId or subjectId' });
         }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Server error' });
+    }
+};
+
+const editLog = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { minutes, modules } = req.body;
+        const updated = await syllabusService.editActivityLog(id, minutes, modules);
+        res.json(updated);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Server error' });
+    }
+};
+
+const getLogs = async (req, res) => {
+    try {
+        const { topicId } = req.query;
+        const logs = await syllabusService.getActivityLogs(req.user.id, topicId);
+        res.json(logs);
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Server error' });
@@ -97,13 +135,26 @@ const deleteSubject = async (req, res) => {
     }
 };
 
+const resetProgress = async (req, res) => {
+    try {
+        await syllabusService.resetUserProgress(req.user.id);
+        res.json({ message: 'All progress reset successfully' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Server error' });
+    }
+};
+
 module.exports = {
     getSyllabus,
     createSubject,
     updateSubject,
     createTopic,
     updateTopic,
-    logTime,
+    logActivity,
+    editLog,
+    getLogs,
     deleteTopic,
-    deleteSubject
+    deleteSubject,
+    resetProgress
 };

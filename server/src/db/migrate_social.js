@@ -9,11 +9,11 @@ const pool = new Pool({
 
 const migrate = async () => {
     try {
-        const sql = fs.readFileSync(path.join(__dirname, 'migration_v2.sql'), 'utf8');
+        const sql = fs.readFileSync(path.join(__dirname, 'migration_social.sql'), 'utf8');
         await pool.query(sql);
-        console.log('Migration successful!');
+        console.log('Social migration successful!');
     } catch (err) {
-        console.error('Migration failed:', err);
+        console.error('Social migration failed:', err);
     } finally {
         await pool.end();
     }

@@ -32,6 +32,21 @@ export const auth = {
     }
 };
 
+export const user = {
+    me: async () => {
+        const res = await fetch(`${API_URL}/user/me`, { headers: getHeaders() });
+        return res.json();
+    },
+    updatePreferences: async (selected_exam, tracking_mode) => {
+        const res = await fetch(`${API_URL}/user/preferences`, {
+            method: 'PATCH',
+            headers: getHeaders(),
+            body: JSON.stringify({ selected_exam, tracking_mode })
+        });
+        return res.json();
+    }
+};
+
 export const syllabus = {
     get: async () => {
         const res = await fetch(`${API_URL}/syllabus`, { headers: getHeaders() });
@@ -61,11 +76,11 @@ export const syllabus = {
         });
         return res.json();
     },
-    createTopic: async (subjectId, name, estimatedMinutes) => {
+    createTopic: async (subjectId, name, estimatedMinutes = 0, totalModules = 0) => {
         const res = await fetch(`${API_URL}/syllabus/topic`, {
             method: 'POST',
             headers: getHeaders(),
-            body: JSON.stringify({ subjectId, name, estimatedMinutes })
+            body: JSON.stringify({ subjectId, name, estimatedMinutes, totalModules })
         });
         return res.json();
     },
@@ -84,13 +99,66 @@ export const syllabus = {
         });
         return res.json();
     },
-    logTime: async (data) => {
-        // data: { topicId, minutes } OR { subjectId, minutes }
+    logActivity: async (data) => {
+        // data: { topicId, minutes, modules, subjectId }
         const res = await fetch(`${API_URL}/syllabus/log`, {
             method: 'POST',
             headers: getHeaders(),
             body: JSON.stringify(data)
         });
+        return res.json();
+    },
+    editLog: async (logId, minutes, modules) => {
+        const res = await fetch(`${API_URL}/syllabus/log/${logId}`, {
+            method: 'PATCH',
+            headers: getHeaders(),
+            body: JSON.stringify({ minutes, modules })
+        });
+        return res.json();
+    },
+    getLogs: async (topicId) => {
+        const res = await fetch(`${API_URL}/syllabus/logs?topicId=${topicId || ''}`, { headers: getHeaders() });
+        return res.json();
+    },
+    resetProgress: async () => {
+        const res = await fetch(`${API_URL}/syllabus/reset`, {
+            method: 'DELETE',
+            headers: getHeaders()
+        });
+        return res.json();
+    }
+};
+
+export const social = {
+    getFollowing: async () => {
+        const res = await fetch(`${API_URL}/social/info`, { headers: getHeaders() });
+        return res.json();
+    },
+    follow: async (followingId) => {
+        const res = await fetch(`${API_URL}/social/follow`, {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify({ followingId })
+        });
+        return res.json();
+    },
+    unfollow: async (followingId) => {
+        const res = await fetch(`${API_URL}/social/unfollow/${followingId}`, {
+            method: 'DELETE',
+            headers: getHeaders()
+        });
+        return res.json();
+    },
+    search: async (q) => {
+        const res = await fetch(`${API_URL}/social/search?q=${q}`, { headers: getHeaders() });
+        return res.json();
+    },
+    getProfile: async (userId) => {
+        const res = await fetch(`${API_URL}/social/profile/${userId}`, { headers: getHeaders() });
+        return res.json();
+    },
+    getAchievements: async () => {
+        const res = await fetch(`${API_URL}/social/achievements`, { headers: getHeaders() });
         return res.json();
     }
 };

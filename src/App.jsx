@@ -1,13 +1,18 @@
 import { useState, useEffect } from 'react';
-import { syllabus as syllabusApi, auth as authApi } from './services/api';
+import { syllabus as syllabusApi, auth as authApi, user as userApi } from './services/api';
 import Auth from './components/Auth';
+import Landing from './components/Landing';
+import Wizard from './components/Wizard';
+import Profile from './components/Profile';
+import Dashboard from './components/Dashboard';
+import Social from './components/Social';
 import {
   Calendar as CalendarIcon, Trash2, Plus, X,
   ChevronDown, ChevronRight, Clock, Edit3,
   CalendarRange, AlertTriangle,
   Play, Pause, RotateCcw, Brain,
   Maximize2, Minus, CheckCircle, Flame, BarChart3, Map,
-  MoreVertical, Timer, PartyPopper, PenTool, Save, LogIn, TrendingUp, Target, Hourglass, Zap
+  MoreVertical, Timer, PartyPopper, PenTool, Save, LogIn, TrendingUp, Target, Hourglass, Zap, User as UserIcon, ArrowLeft
 } from 'lucide-react';
 
 function App() {
@@ -17,13 +22,16 @@ function App() {
   });
 
   // --- APP STATE ---
+  const [view, setView] = useState('landing'); // 'landing', 'auth', 'wizard', 'app'
   const [syllabus, setSyllabus] = useState([]);
   const [loading, setLoading] = useState(false);
   const [targetDate, setTargetDate] = useState(() => localStorage.getItem('gateTargetDate') || "");
   const [expanded, setExpanded] = useState({});
+  const [trackingMode, setTrackingMode] = useState('time'); // 'time' or 'module'
 
   // --- UI STATES ---
   const [loggingTopic, setLoggingTopic] = useState(null);
+  const [editingLog, setEditingLog] = useState(null); // { id, minutes, modules, topicName }
   const [celebration, setCelebration] = useState(null);
   const [showAnalytics, setShowAnalytics] = useState(false);
 
@@ -31,7 +39,7 @@ function App() {
   const [editingId, setEditingId] = useState(null);
   const [editorData, setEditorData] = useState({
     name: "",
-    topics: [{ name: "", estimate: "12h", timeSpent: 0, id: null }]
+    topics: [{ name: "", estimate: "12h", modules: 1, timeSpent: 0, completedModules: 0, id: null }]
   });
 
   // --- HELPERS ---
@@ -85,12 +93,25 @@ function App() {
     }
   };
 
-  useEffect(() => { if (user) loadData(); }, [user]);
+  useEffect(() => {
+    if (user) {
+      loadData();
+      if (user.tracking_mode) {
+        setTrackingMode(user.tracking_mode);
+        setView('dashboard');
+      } else {
+        setView('wizard');
+      }
+    } else {
+      setView('landing');
+    }
+  }, [user]);
 
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);
+    setView('landing');
   };
 
   const triggerCelebration = (type) => {
@@ -99,20 +120,40 @@ function App() {
   };
 
   // --- ACTIONS ---
-  const handleLogTopicTime = async (topicId, minutesToAdd) => {
-    if (!minutesToAdd) return;
+  const handleLogTopicActivity = async (topicId, val) => {
+    if (!val) return;
     try {
-      await syllabusApi.logTime({ topicId, minutes: minutesToAdd });
+      const data = { topicId };
+      if (trackingMode === 'module') data.modules = parseInt(val, 10);
+      else data.minutes = parseFormalTime(val);
+
+      await syllabusApi.logActivity(data);
       await loadData();
       triggerCelebration('topic');
       if (editingId) {
         setEditorData(prev => ({
           ...prev,
-          topics: prev.topics.map(t => t.id === topicId ? { ...t, timeSpent: (t.timeSpent || 0) + minutesToAdd } : t)
+          topics: prev.topics.map(t => {
+            if (t.id !== topicId) return t;
+            return trackingMode === 'module'
+              ? { ...t, completedModules: (t.completedModules || 0) + data.modules }
+              : { ...t, timeSpent: (t.timeSpent || 0) + data.minutes }
+          })
         }));
       }
-    } catch (err) { alert("Failed to log time: " + err.message); }
+    } catch (err) { alert("Failed to log activity: " + err.message); }
   };
+
+  const onWizardComplete = async (wizardData) => {
+    try {
+      const updatedUser = await userApi.updatePreferences(wizardData.exam, wizardData.mode);
+      setUser(updatedUser);
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      setTrackingMode(wizardData.mode);
+      setView('dashboard');
+    } catch (err) { alert("Setup failed"); }
+  };
+
 
   const openEditor = (subject = null) => {
     if (subject) {
@@ -123,14 +164,16 @@ function App() {
           id: t.id,
           name: t.name,
           estimate: formatTime(t.time),
-          timeSpent: t.timeSpent || 0
+          modules: t.totalModules || 1,
+          timeSpent: t.timeSpent || 0,
+          completedModules: t.completedModules || 0
         }))
       });
     } else {
       setEditingId('new');
       setEditorData({
         name: "",
-        topics: [{ name: "", estimate: "12h", timeSpent: 0, id: null }]
+        topics: [{ name: "", estimate: "12h", modules: 1, timeSpent: 0, completedModules: 0, id: null }]
       });
     }
   };
@@ -144,14 +187,14 @@ function App() {
         const sub = await syllabusApi.createSubject(editorData.name);
         for (const t of editorData.topics) {
           if (t.name.trim()) {
-            await syllabusApi.createTopic(sub.id, t.name, parseFormalTime(t.estimate));
+            await syllabusApi.createTopic(sub.id, t.name, parseFormalTime(t.estimate), t.modules);
           }
         }
       } else {
         await syllabusApi.updateSubject(editingId, editorData.name);
         for (const t of editorData.topics) {
           if (t.name.trim() && !t.id) {
-            await syllabusApi.createTopic(editingId, t.name, parseFormalTime(t.estimate));
+            await syllabusApi.createTopic(editingId, t.name, parseFormalTime(t.estimate), t.modules);
           }
         }
       }
@@ -167,9 +210,30 @@ function App() {
       const updates = {};
       if (field === 'name') updates.name = value;
       if (field === 'estimate') updates.estimated_minutes = parseFormalTime(value);
+      if (field === 'modules') updates.total_modules = parseInt(value, 10);
       await syllabusApi.updateTopic(topicId, updates);
     } catch (e) { console.error(e); }
   };
+
+  const handleEditLogSave = async (logId, val) => {
+    try {
+      const minutes = trackingMode === 'module' ? 0 : parseFormalTime(val);
+      const modules = trackingMode === 'module' ? parseInt(val, 10) : 0;
+      await syllabusApi.editLog(logId, minutes, modules);
+      await loadData();
+      setEditingLog(null);
+    } catch (e) { alert("Failed to edit log"); }
+  };
+
+  const handleResetProgress = async () => {
+    try {
+      await syllabusApi.resetProgress();
+      await loadData();
+      alert("Progress cleared successfully.");
+    } catch (err) { alert("Failed to clear progress."); }
+  };
+
+
 
   const handleDeleteSubject = async (subjectId, subjectName) => {
     if (!confirm(`Are you sure you want to delete "${subjectName}"?`)) return;
@@ -242,10 +306,55 @@ function App() {
     );
   };
 
-  if (!user) return <Auth onLogin={setUser} />;
+  if (view === 'landing') return <Landing onStart={() => setView(user ? 'dashboard' : 'auth')} />;
+  if (view === 'auth' && !user) return <Auth onLogin={(u) => { setUser(u); loadData(); }} />;
+  if (view === 'wizard') return <Wizard onComplete={onWizardComplete} />;
+  if (view === 'profile') return <Profile user={user} onBack={() => setView('dashboard')} onResetProgress={handleResetProgress} onLogout={logout} />;
+  if (view === 'dashboard') return (
+    <Dashboard
+      user={user}
+      syllabus={syllabus}
+      onOpenVault={() => setView('app')}
+      onOpenProfile={() => setView('profile')}
+      onOpenSocial={() => setView('social_terminal')}
+      progress={progressPercentage}
+    />
+  );
+  if (view === 'social_terminal') return <Social currentUser={user} onBack={() => setView('dashboard')} />;
+
+
+
 
   return (
     <div className="min-h-screen bg-[#020617] text-slate-200 font-sans p-4 md:p-8 pb-32 selection:bg-indigo-500/30">
+
+      {(editingLog) && (
+        <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200" onClick={() => setEditingLog(null)}>
+          <div className="bg-[#0b1121] border border-slate-700 p-6 md:p-8 rounded-3xl shadow-2xl w-full max-w-sm" onClick={e => e.stopPropagation()}>
+            <h3 className="font-black text-white text-xl mb-6 uppercase tracking-tight flex items-center gap-2"><Edit3 size={20} className="text-indigo-400" /> Edit Activity</h3>
+            <div className="mb-6">
+              <p className="text-indigo-400 font-black text-lg leading-tight uppercase tracking-tighter">{editingLog.topicName}</p>
+              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Adjust the current entry</p>
+            </div>
+            <div className="space-y-4">
+              <input
+                type="text"
+                id="edit-log-input"
+                className="w-full bg-slate-900 border border-slate-800 rounded-2xl p-4 text-white text-lg font-mono focus:border-indigo-500 outline-none"
+                defaultValue={trackingMode === 'module' ? editingLog.modules : formatTime(editingLog.minutes)}
+                autoFocus
+              />
+              <div className="flex gap-2">
+                <button onClick={() => setEditingLog(null)} className="flex-1 bg-slate-800 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs">Cancel</button>
+                <button
+                  onClick={() => handleEditLogSave(editingLog.id, document.getElementById('edit-log-input').value)}
+                  className="flex-[2] bg-indigo-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs"
+                >Update Log</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {celebration === 'topic' && (
         <div className="fixed inset-0 pointer-events-none z-[250] flex items-center justify-center animate-in zoom-in-50 duration-300">
@@ -306,11 +415,21 @@ function App() {
                   </div>
                   <div className="bg-slate-900/30 p-4 rounded-2xl border border-slate-800/30 col-span-2 flex items-center justify-between">
                     <div>
-                      <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Required Daily</p>
-                      <p className="text-2xl font-black text-white tracking-tighter">{formatTime(dailyGoalMins)} <span className="text-xs text-slate-500 font-bold">/ day</span></p>
+                      {trackingMode === 'module' ? (
+                        <>
+                          <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Total Modules</p>
+                          <p className="text-2xl font-black text-white tracking-tighter">{syllabus.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + (t.totalModules || 0), 0), 0)} <span className="text-xs text-slate-500 font-bold">UNITS</span></p>
+                        </>
+                      ) : (
+                        <>
+                          <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Required Daily</p>
+                          <p className="text-2xl font-black text-white tracking-tighter">{formatTime(dailyGoalMins)} <span className="text-xs text-slate-500 font-bold">/ day</span></p>
+                        </>
+                      )}
                     </div>
                     <Zap size={24} className="text-yellow-400 opacity-50" />
                   </div>
+
                 </div>
               </div>
 
@@ -382,9 +501,10 @@ function App() {
                   <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block">Syllabus Breakdown</label>
                   <button
                     type="button"
-                    onClick={() => setEditorData({ ...editorData, topics: [...editorData.topics, { name: "", estimate: "12h", timeSpent: 0, id: null }] })}
+                    onClick={() => setEditorData({ ...editorData, topics: [...editorData.topics, { name: "", estimate: "12h", modules: 1, timeSpent: 0, completedModules: 0, id: null }] })}
                     className="text-[10px] bg-indigo-500/10 text-indigo-400 font-black uppercase tracking-widest px-4 py-2 rounded-xl hover:bg-indigo-500 hover:text-white transition-all flex items-center gap-2"
                   ><Plus size={14} /> Add Topic</button>
+
                 </div>
 
                 <div className="space-y-3">
@@ -407,17 +527,19 @@ function App() {
                           <div className="w-24">
                             <input
                               type="text"
-                              placeholder="12h"
+                              placeholder={trackingMode === 'module' ? "Modules" : "12h"}
                               className="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-sm text-center text-indigo-400 font-mono font-bold focus:border-indigo-500 outline-none"
-                              value={topic.estimate}
+                              value={trackingMode === 'module' ? topic.modules : topic.estimate}
                               onChange={e => {
                                 const updated = [...editorData.topics];
-                                updated[idx].estimate = e.target.value;
+                                if (trackingMode === 'module') updated[idx].modules = e.target.value;
+                                else updated[idx].estimate = e.target.value;
                                 setEditorData({ ...editorData, topics: updated });
                               }}
-                              onBlur={e => handleManualTopicUpdate(topic.id, 'estimate', e.target.value)}
+                              onBlur={e => handleManualTopicUpdate(topic.id, trackingMode === 'module' ? 'modules' : 'estimate', e.target.value)}
                             />
                           </div>
+
                           <button
                             type="button"
                             disabled={editorData.topics.length === 1}
@@ -437,28 +559,34 @@ function App() {
                           <div className="flex-1">
                             <div className="flex justify-between items-center mb-1">
                               <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Progress</span>
-                              <span className="text-[10px] font-mono text-indigo-400 font-bold">{formatTime(topic.timeSpent)} Logged</span>
+                              <span className="text-[10px] font-mono text-indigo-400 font-bold">
+                                {trackingMode === 'module'
+                                  ? `${topic.completedModules} / ${topic.modules} Modules`
+                                  : `${formatTime(topic.timeSpent)} Logged`}
+                              </span>
                             </div>
                             <div className="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
-                              <div className="h-full bg-indigo-500" style={{ width: `${Math.min(100, (topic.timeSpent / parseFormalTime(topic.estimate)) * 100)}%` }} />
+                              <div className="h-full bg-indigo-500" style={{ width: `${Math.min(100, (trackingMode === 'module' ? (topic.completedModules / (topic.modules || 1)) : (topic.timeSpent / parseFormalTime(topic.estimate))) * 100)}%` }} />
                             </div>
+
                           </div>
                           <div className="flex items-center gap-2">
                             <input
                               type="text"
                               id={`log-hub-${topic.id}`}
-                              placeholder="+ Time"
+                              placeholder={trackingMode === 'module' ? "+ Mod" : "+ Time"}
                               className="w-20 bg-slate-900 border border-slate-800 rounded-lg p-2 text-xs text-center text-white focus:border-indigo-500 outline-none"
                             />
                             <button
                               type="button"
                               onClick={() => {
                                 const val = document.getElementById(`log-hub-${topic.id}`).value;
-                                handleLogTopicTime(topic.id, parseFormalTime(val));
+                                handleLogTopicActivity(topic.id, val);
                                 document.getElementById(`log-hub-${topic.id}`).value = '';
                               }}
                               className="p-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-all"
                             ><LogIn size={14} /></button>
+
                           </div>
                         </div>
                       )}
@@ -488,10 +616,17 @@ function App() {
             <p className="text-slate-500 font-bold tracking-widest text-[9px] sm:text-[10px] uppercase italic">Engineer: {user.username} • SYNCED</p>
           </div>
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-            <button onClick={logout} className="text-slate-600 hover:text-white text-[10px] font-black uppercase transition-colors tracking-widest border border-slate-800 px-4 py-3 sm:py-2 rounded-xl">Logout</button>
+            <button
+              onClick={() => setView('dashboard')}
+              className="flex items-center justify-center gap-2 text-slate-400 hover:text-white transition-colors font-black uppercase tracking-widest text-[10px] border border-slate-800 px-6 py-4 sm:py-2 rounded-xl"
+            >
+              <ArrowLeft size={16} /> HUB
+            </button>
             <button onClick={() => openEditor()} className="bg-white text-black px-8 py-4 rounded-xl sm:rounded-2xl flex items-center justify-center sm:justify-start gap-3 font-black transition-all hover:bg-indigo-500 hover:text-white shadow-xl shadow-white/5 uppercase tracking-tighter"><Plus size={20} /> NEW SUBJECT</button>
           </div>
+
         </header>
+
 
         {/* SUMMARY TILES */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
@@ -523,10 +658,15 @@ function App() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {syllabus.map((sub) => {
-            const subTotalTime = sub.topics.reduce((acc, t) => acc + (t.time || 0), 0);
-            const subSpentTime = sub.topics.reduce((acc, t) => acc + (t.timeSpent || 0), 0);
-            const subProgress = subTotalTime === 0 ? 0 : Math.round((subSpentTime / subTotalTime) * 100);
+            const subTotal = trackingMode === 'module'
+              ? sub.topics.reduce((acc, t) => acc + (t.totalModules || 0), 0)
+              : sub.topics.reduce((acc, t) => acc + (t.time || 0), 0);
+            const subDone = trackingMode === 'module'
+              ? sub.topics.reduce((acc, t) => acc + (t.completedModules || 0), 0)
+              : sub.topics.reduce((acc, t) => acc + (t.timeSpent || 0), 0);
+            const subProgress = subTotal === 0 ? 0 : Math.round((subDone / subTotal) * 100);
             const isOpen = expanded[sub.id];
+
 
             return (
               <div key={sub.id} className={`bg-slate-900 border ${subProgress >= 100 ? 'border-emerald-500/30' : 'border-slate-800/50'} rounded-2xl sm:rounded-[2rem] p-6 sm:p-8 transition-all hover:bg-[#0c1225] hover:border-indigo-500/40 relative group shadow-sm flex flex-col`}>
@@ -540,9 +680,12 @@ function App() {
                 </div>
 
                 <div className="flex justify-between items-end mb-2 text-[10px] font-black uppercase tracking-widest text-slate-500">
-                  <span>{formatTime(subSpentTime)} / {formatTime(subTotalTime)}</span>
+                  <span>
+                    {trackingMode === 'module' ? `${subDone} / ${subTotal} Modules` : `${formatTime(subDone)} / ${formatTime(subTotal)}`}
+                  </span>
                   <span className={subProgress >= 100 ? 'text-emerald-400' : 'text-indigo-400'}>{subProgress}%</span>
                 </div>
+
                 <div className="h-2 w-full bg-slate-800/50 rounded-full overflow-hidden mb-6 cursor-pointer" onClick={() => toggleExpand(sub.id)}>
                   <div className={`h-full ${subProgress >= 100 ? 'bg-emerald-500' : 'bg-gradient-to-r from-indigo-600 to-indigo-400'} transition-all duration-1000`} style={{ width: `${subProgress}%` }} />
                 </div>
@@ -551,16 +694,29 @@ function App() {
                   <div className="expand-content">
                     <div className="space-y-2 pt-2">
                       {sub.topics.map((t, tIdx) => {
-                        const tp = t.time > 0 ? (t.timeSpent / t.time) * 100 : 0;
+                        const weight = trackingMode === 'module' ? t.totalModules : t.time;
+                        const done = trackingMode === 'module' ? t.completedModules : t.timeSpent;
+                        const tp = weight > 0 ? (done / weight) * 100 : 0;
                         return (
-                          <div key={tIdx} className="group/topic bg-slate-950/40 border border-slate-800/30 rounded-xl p-3 sm:p-4 cursor-pointer hover:border-indigo-500/20 active:scale-[0.98] transition-all" onClick={() => setLoggingTopic({ subId: sub.id, topicName: t.name, currentSpent: t.timeSpent, topicId: t.id })}>
+                          <div key={tIdx} className="group/topic bg-slate-950/40 border border-slate-800/30 rounded-xl p-3 sm:p-4 transition-all hover:border-indigo-500/20 active:scale-[0.98]">
                             <div className="flex justify-between items-center mb-1 gap-2">
-                              <span className={`text-[11px] sm:text-xs font-bold leading-tight flex-1 ${tp >= 100 ? 'text-emerald-400 opacity-60' : 'text-slate-300'}`}>{t.name}</span>
-                              <div className="flex items-center gap-1.5 min-w-max">
-                                <span className="text-[9px] sm:text-[10px] font-mono text-slate-600 font-black">{formatTime(t.timeSpent)}</span>
-                                <Plus size={10} className="text-slate-700 group-hover/topic:text-indigo-500" />
+                              <span onClick={() => setLoggingTopic({ subId: sub.id, topicName: t.name, currentSpent: done, topicId: t.id })} className={`text-[11px] sm:text-xs font-bold leading-tight flex-1 cursor-pointer ${tp >= 100 ? 'text-emerald-400 opacity-60' : 'text-slate-300'}`}>{t.name}</span>
+                              <div className="flex items-center gap-2 min-w-max">
+                                {trackingMode === 'module'
+                                  ? <span className="text-[9px] font-mono text-slate-600 font-black">{done}/{weight}</span>
+                                  : <span className="text-[9px] font-mono text-slate-600 font-black">{formatTime(done)}</span>
+                                }
+                                <div className="flex gap-1">
+                                  <button onClick={async () => {
+                                    const logs = await syllabusApi.getLogs(t.id);
+                                    if (logs) setEditingLog({ id: logs.id, minutes: logs.minutes_logged, modules: logs.modules_logged, topicName: t.name });
+                                    else alert("No recent log found for this topic.");
+                                  }} className="p-1 hover:text-indigo-400 transition-colors"><PenTool size={10} /></button>
+                                  <button onClick={() => setLoggingTopic({ subId: sub.id, topicName: t.name, currentSpent: done, topicId: t.id })} className="p-1 hover:text-indigo-400 transition-colors"><Plus size={10} /></button>
+                                </div>
                               </div>
                             </div>
+
                             <div className="h-1 w-full bg-slate-900 rounded-full overflow-hidden">
                               <div className={`h-full ${tp >= 100 ? 'bg-emerald-500' : 'bg-indigo-600'} transition-all duration-500`} style={{ width: `${Math.min(100, tp)}%` }} />
                             </div>
@@ -588,28 +744,30 @@ function App() {
       {loggingTopic && (
         <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200" onClick={() => setLoggingTopic(null)}>
           <div className="bg-[#0b1121] border border-slate-700 p-6 md:p-8 rounded-3xl shadow-2xl w-full max-w-sm animate-in zoom-in-95" onClick={e => e.stopPropagation()}>
-            <h3 className="font-black text-white text-xl mb-6 uppercase tracking-tight flex items-center gap-2"><Clock size={20} className="text-indigo-400" /> Log Time</h3>
+            <h3 className="font-black text-white text-xl mb-6 uppercase tracking-tight flex items-center gap-2"><Clock size={20} className="text-indigo-400" /> {trackingMode === 'module' ? 'Check Unit' : 'Log Time'}</h3>
             <div className="mb-6 space-y-1 text-center sm:text-left">
               <p className="text-indigo-400 font-black text-lg leading-tight uppercase tracking-tighter">{loggingTopic.topicName}</p>
-              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Currently: {formatTime(loggingTopic.currentSpent)}</p>
+              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Currently: {trackingMode === 'module' ? `${loggingTopic.currentSpent} Done` : formatTime(loggingTopic.currentSpent)}</p>
             </div>
+
             <div className="space-y-4">
               <div className="flex flex-col gap-2">
                 <input
                   type="text"
                   id="quick-log-input"
                   className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex-1 text-white text-lg font-mono focus:border-indigo-500 outline-none transition-all shadow-inner"
-                  placeholder="e.g. 1h 30m"
+                  placeholder={trackingMode === 'module' ? "Units done (e.g. 1)" : "e.g. 1h 30m"}
                   autoFocus
                 />
                 <button
                   onClick={() => {
                     const val = document.getElementById('quick-log-input').value;
-                    handleLogTopicTime(loggingTopic.topicId, parseFormalTime(val));
+                    handleLogTopicActivity(loggingTopic.topicId, val);
                     setLoggingTopic(null);
                   }}
                   className="bg-indigo-600 text-white px-6 py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-indigo-500 transition-all active:scale-95 shadow-lg shadow-indigo-600/10"
-                >Log Work</button>
+                >{trackingMode === 'module' ? 'Finish Units' : 'Log Work'}</button>
+
               </div>
               <p className="text-[9px] text-slate-600 font-medium italic text-center text-balance">Format: '1h 20m' or '90' minutes.</p>
             </div>

@@ -45,23 +45,23 @@ const updateSubject = async (subjectId, name) => {
 };
 
 // --- TOPICS ---
-const createTopic = async (subjectId, name, estimatedMinutes = 720) => {
+const createTopic = async (subjectId, name, estimatedMinutes = 720, totalModules = 0) => {
     const res = await pool.query(
-        'INSERT INTO topics (subject_id, name, estimated_minutes) VALUES ($1, $2, $3) RETURNING *',
-        [subjectId, name, estimatedMinutes]
+        'INSERT INTO topics (subject_id, name, estimated_minutes, total_modules) VALUES ($1, $2, $3, $4) RETURNING *',
+        [subjectId, name, estimatedMinutes, totalModules]
     );
     return res.rows[0];
 };
 
 const updateTopic = async (topicId, updates) => {
-    // updates: { name, estimated_minutes, is_completed }
-    // Construct dynamic query
+    // updates: { name, estimated_minutes, total_modules, is_completed }
     const fields = [];
     const values = [];
     let idx = 1;
 
     if (updates.name !== undefined) { fields.push(`name = $${idx++}`); values.push(updates.name); }
     if (updates.estimated_minutes !== undefined) { fields.push(`estimated_minutes = $${idx++}`); values.push(updates.estimated_minutes); }
+    if (updates.total_modules !== undefined) { fields.push(`total_modules = $${idx++}`); values.push(updates.total_modules); }
     if (updates.is_completed !== undefined) { fields.push(`is_completed = $${idx++}`); values.push(updates.is_completed); }
 
     if (fields.length === 0) return null;
@@ -75,21 +75,54 @@ const updateTopic = async (topicId, updates) => {
 };
 
 // --- LOGGING ---
-const logTime = async (userId, topicId, minutes) => {
+const logActivity = async (userId, topicId, minutes = 0, modules = 0) => {
     // 1. Create Log Entry
-    await pool.query(
-        'INSERT INTO activity_logs (user_id, topic_id, minutes_logged) VALUES ($1, $2, $3)',
-        [userId, topicId, minutes]
+    const logRes = await pool.query(
+        'INSERT INTO activity_logs (user_id, topic_id, minutes_logged, modules_logged) VALUES ($1, $2, $3, $4) RETURNING *',
+        [userId, topicId, minutes, modules]
     );
 
-    // 2. Update Topic Total
-    // We increment the logged_minutes for the topic
+    // 2. Update Topic Totals
     const updateRes = await pool.query(
-        'UPDATE topics SET logged_minutes = logged_minutes + $1 WHERE id = $2 RETURNING *',
-        [minutes, topicId]
+        'UPDATE topics SET logged_minutes = logged_minutes + $1, completed_modules = completed_modules + $2 WHERE id = $3 RETURNING *',
+        [minutes, modules, topicId]
     );
 
-    return updateRes.rows[0];
+    return { log: logRes.rows[0], topic: updateRes.rows[0] };
+};
+
+const editActivityLog = async (logId, minutes, modules) => {
+    // 1. Get old log to adjust topic totals
+    const oldLog = await pool.query('SELECT * FROM activity_logs WHERE id = $1', [logId]);
+    if (oldLog.rows.length === 0) throw new Error('Log not found');
+    const log = oldLog.rows[0];
+
+    // 2. Update Log
+    const logRes = await pool.query(
+        'UPDATE activity_logs SET minutes_logged = $1, modules_logged = $2 WHERE id = $3 RETURNING *',
+        [minutes, modules, logId]
+    );
+
+    // 3. Update Topic totals (subtract old, add new)
+    if (log.topic_id) {
+        await pool.query(
+            'UPDATE topics SET logged_minutes = logged_minutes - $1 + $2, completed_modules = completed_modules - $3 + $4 WHERE id = $5',
+            [log.minutes_logged || 0, minutes || 0, log.modules_logged || 0, modules || 0, log.topic_id]
+        );
+    }
+    return logRes.rows[0];
+};
+
+const getActivityLogs = async (userId, topicId = null) => {
+    let query = 'SELECT * FROM activity_logs WHERE user_id = $1';
+    const params = [userId];
+    if (topicId) {
+        query += ' AND topic_id = $2';
+        params.push(topicId);
+    }
+    query += ' ORDER BY created_at DESC';
+    const res = await pool.query(query, params);
+    return res.rows[0];
 };
 
 const logManualTime = async (userId, subjectId, minutes) => {
@@ -123,14 +156,26 @@ const deleteSubject = async (subjectId) => {
     return res.rows[0];
 };
 
+const resetUserProgress = async (userId) => {
+    // Delete all subjects (cascades to topics and logs)
+    const res = await pool.query(
+        'DELETE FROM subjects WHERE user_id = $1 RETURNING *',
+        [userId]
+    );
+    return res.rows;
+};
+
 module.exports = {
     getSyllabus,
     createSubject,
     updateSubject,
     createTopic,
     updateTopic,
-    logTime,
+    logActivity,
+    editActivityLog,
+    getActivityLogs,
     logManualTime,
     deleteTopic,
-    deleteSubject
+    deleteSubject,
+    resetUserProgress
 };
