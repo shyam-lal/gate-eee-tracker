@@ -21,7 +21,8 @@ app.use(express.static(distPath));
 
 
 // Handle React Routing (SPA)
-app.get('*', (req, res, next) => {
+// Express 5 does NOT support '*' wildcard in app.get(). Use app.use() instead.
+app.use((req, res, next) => {
     if (req.path.startsWith('/api')) return next();
     res.sendFile(path.join(distPath, 'index.html'));
 });
