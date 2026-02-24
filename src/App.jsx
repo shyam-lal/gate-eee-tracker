@@ -98,10 +98,8 @@ function App() {
       loadData();
       if (user.tracking_mode) {
         setTrackingMode(user.tracking_mode);
-        setView('dashboard');
-      } else {
-        setView('wizard');
       }
+      setView('dashboard');
     } else {
       setView('landing');
     }
@@ -317,6 +315,7 @@ function App() {
       onOpenVault={() => setView('app')}
       onOpenProfile={() => setView('profile')}
       onOpenSocial={() => setView('social_terminal')}
+      onSetupTool={() => setView('wizard')}
       progress={progressPercentage}
     />
   );

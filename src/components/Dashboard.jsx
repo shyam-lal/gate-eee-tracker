@@ -6,8 +6,8 @@ import {
     BookOpen, Trophy, Sparkles, Users
 } from 'lucide-react';
 
-const Dashboard = ({ user, syllabus, onOpenVault, onOpenProfile, onOpenSocial, progress }) => {
-    const nextUp = syllabus?.[0]?.topics?.[0] || { name: 'Initialize Syllabus', subject: 'Architecture' };
+const Dashboard = ({ user, syllabus, onOpenVault, onOpenProfile, onOpenSocial, onSetupTool, progress }) => {
+    const nextUp = syllabus?.[0]?.topics?.[0] || null;
 
     return (
         <div className="min-h-screen bg-[#020617] text-slate-200 overflow-hidden relative">
@@ -63,19 +63,35 @@ const Dashboard = ({ user, syllabus, onOpenVault, onOpenProfile, onOpenSocial, p
 
                         <div className="space-y-4">
                             <h3 className="text-[10px] font-black text-slate-600 uppercase tracking-[0.3em] pl-1">Primary Objective</h3>
-                            <div className="bg-slate-900/40 backdrop-blur-xl border border-white/5 p-6 rounded-[2.5rem] group hover:border-indigo-500/30 transition-all cursor-pointer shadow-2xl shadow-indigo-500/5">
-                                <div className="flex justify-between items-start mb-6">
-                                    <div className="w-12 h-12 bg-indigo-500/10 rounded-2xl flex items-center justify-center text-indigo-400 border border-indigo-500/20">
-                                        <BookOpen size={24} />
+                            {nextUp && user.tracking_mode ? (
+                                <div className="bg-slate-900/40 backdrop-blur-xl border border-white/5 p-6 rounded-[2.5rem] group hover:border-indigo-500/30 transition-all cursor-pointer shadow-2xl shadow-indigo-500/5">
+                                    <div className="flex justify-between items-start mb-6">
+                                        <div className="w-12 h-12 bg-indigo-500/10 rounded-2xl flex items-center justify-center text-indigo-400 border border-indigo-500/20">
+                                            <BookOpen size={24} />
+                                        </div>
+                                        <span className="text-[10px] bg-indigo-500/20 text-indigo-300 px-3 py-1 rounded-full font-black uppercase tracking-widest">Ongoing</span>
                                     </div>
-                                    <span className="text-[10px] bg-indigo-500/20 text-indigo-300 px-3 py-1 rounded-full font-black uppercase tracking-widest">Ongoing</span>
+                                    <h4 className="text-white font-black uppercase tracking-tighter text-xl mb-2 group-hover:text-indigo-400 transition-colors">{nextUp.name}</h4>
+                                    <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-6">{nextUp.subject || 'Engineering'}</p>
+                                    <button onClick={onOpenVault} className="w-full bg-white text-black py-4 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-2 group-hover:bg-indigo-500 group-hover:text-white transition-all">
+                                        Launch Terminal <ChevronRight size={14} />
+                                    </button>
                                 </div>
-                                <h4 className="text-white font-black uppercase tracking-tighter text-xl mb-2 group-hover:text-indigo-400 transition-colors">{nextUp.name}</h4>
-                                <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-6">{nextUp.subject || 'Engineering'}</p>
-                                <button onClick={onOpenVault} className="w-full bg-white text-black py-4 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-2 group-hover:bg-indigo-500 group-hover:text-white transition-all">
-                                    Launch Terminal <ChevronRight size={14} />
-                                </button>
-                            </div>
+                            ) : (
+                                <div className="bg-slate-900/40 backdrop-blur-xl border border-amber-500/20 p-6 rounded-[2.5rem] group hover:border-amber-500/40 transition-all cursor-pointer shadow-2xl shadow-amber-500/5">
+                                    <div className="flex justify-between items-start mb-6">
+                                        <div className="w-12 h-12 bg-amber-500/10 rounded-2xl flex items-center justify-center text-amber-400 border border-amber-500/20">
+                                            <Settings size={24} />
+                                        </div>
+                                        <span className="text-[10px] bg-amber-500/20 text-amber-300 px-3 py-1 rounded-full font-black uppercase tracking-widest animate-pulse">Setup Required</span>
+                                    </div>
+                                    <h4 className="text-white font-black uppercase tracking-tighter text-xl mb-2">Initialize Your Vault</h4>
+                                    <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-6">Configure your study tracker to begin</p>
+                                    <button onClick={onSetupTool} className="w-full bg-amber-500 text-black py-4 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-2 hover:bg-amber-400 transition-all">
+                                        Run Setup Wizard <ChevronRight size={14} />
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     </div>
 
