@@ -8,8 +8,11 @@ CREATE TABLE IF NOT EXISTS tools (
     name VARCHAR(100) NOT NULL,
     tool_type VARCHAR(20) NOT NULL DEFAULT 'time', -- 'time' or 'module'
     selected_exam VARCHAR(50) DEFAULT 'GATE',
+    target_date DATE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+
+ALTER TABLE tools ADD COLUMN IF NOT EXISTS target_date DATE;
 
 -- Link subjects to a tool (nullable for backward compatibility with existing data)
 ALTER TABLE subjects ADD COLUMN IF NOT EXISTS tool_id INTEGER REFERENCES tools(id) ON DELETE CASCADE;

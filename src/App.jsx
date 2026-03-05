@@ -209,7 +209,20 @@ function App() {
     } catch (err) { alert("Tool creation failed: " + err.message); }
   };
 
-  const handleOpenTool = (tool) => {
+  const handleOpenTool = async (tool) => {
+    let finalTargetDate = tool.target_date || "";
+
+    // Auto-migrate legacy target date from localStorage to this tool if it's currently unset
+    const localGateDate = localStorage.getItem('gateTargetDate');
+    if (!finalTargetDate && localGateDate) {
+      try {
+        await toolsApi.update(tool.id, { target_date: localGateDate });
+        finalTargetDate = localGateDate;
+        tool.target_date = localGateDate;
+      } catch (e) { console.error("Failed to migrate legacy target date", e); }
+    }
+
+    setTargetDate(finalTargetDate);
     setActiveTool(tool);
     setSyllabus([]);
     setToolStreakData(null);
@@ -352,9 +365,17 @@ function App() {
     setExpanded(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const updateTargetDate = (date) => {
+  const updateTargetDate = async (date) => {
     setTargetDate(date);
-    localStorage.setItem('gateTargetDate', date);
+    localStorage.setItem('gateTargetDate', date); // keep for backward compatibility during transition
+    if (activeTool) {
+      try {
+        await toolsApi.update(activeTool.id, { target_date: date });
+        activeTool.target_date = date; // Optimistic update
+        // Also update it in the userTools list so the dashboard knows
+        setUserTools(prev => prev.map(t => t.id === activeTool.id ? { ...t, target_date: date } : t));
+      } catch (e) { console.error("Failed to save target date to db", e); }
+    }
   };
 
   // --- CALCULATIONS ---
