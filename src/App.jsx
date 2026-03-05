@@ -1,18 +1,21 @@
-import { useState, useEffect } from 'react';
-import { syllabus as syllabusApi, auth as authApi, user as userApi } from './services/api';
+import { useState, useEffect, useRef } from 'react';
+import { syllabus as syllabusApi, auth as authApi, user as userApi, tools as toolsApi, streak as streakApi } from './services/api';
 import Auth from './components/Auth';
 import Landing from './components/Landing';
 import Wizard from './components/Wizard';
 import Profile from './components/Profile';
 import Dashboard from './components/Dashboard';
 import Social from './components/Social';
+import DatePicker from './components/ui/DatePicker';
+import TimeInput from './components/ui/TimeInput';
+import StreakCalendar from './components/ui/StreakCalendar';
 import {
   Calendar as CalendarIcon, Trash2, Plus, X,
   ChevronDown, ChevronRight, Clock, Edit3,
   CalendarRange, AlertTriangle,
   Play, Pause, RotateCcw, Brain,
   Maximize2, Minus, CheckCircle, Flame, BarChart3, Map,
-  MoreVertical, Timer, PartyPopper, PenTool, Save, LogIn, TrendingUp, Target, Hourglass, Zap, User as UserIcon, ArrowLeft
+  MoreVertical, Timer, PartyPopper, Save, LogIn, TrendingUp, Target, Hourglass, Zap, User as UserIcon, ArrowLeft
 } from 'lucide-react';
 
 function App() {
@@ -22,18 +25,33 @@ function App() {
   });
 
   // --- APP STATE ---
-  const [view, setView] = useState('landing'); // 'landing', 'auth', 'wizard', 'app'
+  const [view, setView] = useState('landing'); // 'landing', 'auth', 'wizard', 'app', 'dashboard', 'profile', 'social_terminal'
   const [syllabus, setSyllabus] = useState([]);
   const [loading, setLoading] = useState(false);
   const [targetDate, setTargetDate] = useState(() => localStorage.getItem('gateTargetDate') || "");
   const [expanded, setExpanded] = useState({});
-  const [trackingMode, setTrackingMode] = useState('time'); // 'time' or 'module'
+
+  // --- MULTI-TOOL STATE ---
+  const [userTools, setUserTools] = useState([]);
+  const [activeTool, setActiveTool] = useState(null); // The tool currently being used in 'app' view
+
+  // Derived tracking mode from the active tool
+  const trackingMode = activeTool?.tool_type || 'time';
+
+  // --- STREAK STATE ---
+  const [userStreakData, setUserStreakData] = useState(null);
+  const [toolStreakData, setToolStreakData] = useState(null);
 
   // --- UI STATES ---
   const [loggingTopic, setLoggingTopic] = useState(null);
-  const [editingLog, setEditingLog] = useState(null); // { id, minutes, modules, topicName }
+  const [editingLog, setEditingLog] = useState(null); // { topicId, minutes, modules, topicName }
   const [celebration, setCelebration] = useState(null);
   const [showAnalytics, setShowAnalytics] = useState(false);
+
+  // --- TIME INPUT STATE ---
+  const [editTotalMinutes, setEditTotalMinutes] = useState(0);
+  const [quickLogMinutes, setQuickLogMinutes] = useState(0);
+  const hubTimeRefs = useRef({});
 
   // --- EDITOR MODAL STATE ---
   const [editingId, setEditingId] = useState(null);
@@ -44,9 +62,10 @@ function App() {
 
   // --- HELPERS ---
   const formatTime = (minutes) => {
-    if (!minutes || isNaN(minutes)) return "0m";
-    const h = Math.floor(minutes / 60);
-    const m = minutes % 60;
+    const mins = Number(minutes) || 0;
+    if (mins <= 0) return "0m";
+    const h = Math.floor(mins / 60);
+    const m = Math.round(mins % 60);
     let res = "";
     if (h > 0) res += `${h}h `;
     if (m > 0 || h === 0) res += `${m}m`;
@@ -69,10 +88,43 @@ function App() {
   };
 
   // --- DATA FETCHING ---
-  const loadData = async () => {
+  const loadTools = async () => {
+    try {
+      const data = await toolsApi.list();
+      setUserTools(data);
+    } catch (err) {
+      console.error("Failed to load tools", err);
+    }
+  };
+
+  const loadUserStreak = async () => {
+    try {
+      const data = await streakApi.getUserStreak();
+      setUserStreakData(data);
+    } catch (err) {
+      console.error("Failed to load user streak", err);
+    }
+  };
+
+  const loadToolStreak = async (toolId, year, month) => {
+    if (!toolId) return;
+    try {
+      const now = new Date();
+      const y = year || now.getFullYear();
+      const m = month || (now.getMonth() + 1);
+      const data = await streakApi.getToolStreak(toolId, y, m);
+      setToolStreakData(data);
+    } catch (err) {
+      console.error("Failed to load tool streak", err);
+    }
+  };
+
+  const loadData = async (toolId = null) => {
+    const tid = toolId || activeTool?.id;
+    if (!tid) return;
     setLoading(true);
     try {
-      const data = await syllabusApi.get();
+      const data = await syllabusApi.get(tid);
       const formatted = data.map(sub => ({
         ...sub,
         manualTime: sub.manual_time_minutes || 0,
@@ -81,7 +133,9 @@ function App() {
           name: t.name,
           time: t.estimated_minutes,
           timeSpent: t.logged_minutes,
-          isCompleted: t.is_completed
+          isCompleted: t.is_completed,
+          totalModules: t.total_modules,
+          completedModules: t.completed_modules
         }))
       }));
       setSyllabus(formatted);
@@ -95,12 +149,12 @@ function App() {
 
   useEffect(() => {
     if (user) {
-      loadData();
-      if (user.tracking_mode) {
-        setTrackingMode(user.tracking_mode);
-      }
+      console.log('User detected, setting view to dashboard');
+      loadTools();
+      loadUserStreak();
       setView('dashboard');
     } else {
+      console.log('No user, setting view to landing');
       setView('landing');
     }
   }, [user]);
@@ -109,6 +163,8 @@ function App() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);
+    setActiveTool(null);
+    setUserTools([]);
     setView('landing');
   };
 
@@ -127,6 +183,8 @@ function App() {
 
       await syllabusApi.logActivity(data);
       await loadData();
+      if (activeTool?.id) loadToolStreak(activeTool.id);
+      loadUserStreak();
       triggerCelebration('topic');
       if (editingId) {
         setEditorData(prev => ({
@@ -144,14 +202,42 @@ function App() {
 
   const onWizardComplete = async (wizardData) => {
     try {
-      const updatedUser = await userApi.updatePreferences(wizardData.exam, wizardData.mode);
-      setUser(updatedUser);
-      localStorage.setItem('user', JSON.stringify(updatedUser));
-      setTrackingMode(wizardData.mode);
+      // Create a new tool via the tools API
+      const newTool = await toolsApi.create(wizardData.name, wizardData.mode, wizardData.exam);
+      await loadTools();
       setView('dashboard');
-    } catch (err) { alert("Setup failed"); }
+    } catch (err) { alert("Tool creation failed: " + err.message); }
   };
 
+  const handleOpenTool = (tool) => {
+    setActiveTool(tool);
+    setSyllabus([]);
+    setToolStreakData(null);
+    loadData(tool.id);
+    loadToolStreak(tool.id);
+    setView('app');
+  };
+
+  const handleDeleteTool = async (toolId) => {
+    try {
+      await toolsApi.delete(toolId);
+      await loadTools();
+      if (activeTool?.id === toolId) {
+        setActiveTool(null);
+        setSyllabus([]);
+      }
+    } catch (err) { alert("Failed to delete tool: " + err.message); }
+  };
+
+  const handleRenameTool = async (toolId, newName) => {
+    try {
+      await toolsApi.update(toolId, { name: newName });
+      await loadTools();
+      if (activeTool?.id === toolId) {
+        setActiveTool(prev => ({ ...prev, name: newName }));
+      }
+    } catch (err) { alert("Failed to rename tool: " + err.message); }
+  };
 
   const openEditor = (subject = null) => {
     if (subject) {
@@ -182,7 +268,7 @@ function App() {
     setLoading(true);
     try {
       if (editingId === 'new') {
-        const sub = await syllabusApi.createSubject(editorData.name);
+        const sub = await syllabusApi.createSubject(editorData.name, activeTool?.id);
         for (const t of editorData.topics) {
           if (t.name.trim()) {
             await syllabusApi.createTopic(sub.id, t.name, parseFormalTime(t.estimate), t.modules);
@@ -213,14 +299,18 @@ function App() {
     } catch (e) { console.error(e); }
   };
 
-  const handleEditLogSave = async (logId, val) => {
+  const handleEditLogSave = async (topicId, val) => {
     try {
-      const minutes = trackingMode === 'module' ? 0 : parseFormalTime(val);
-      const modules = trackingMode === 'module' ? parseInt(val, 10) : 0;
-      await syllabusApi.editLog(logId, minutes, modules);
+      const updates = {};
+      if (trackingMode === 'module') {
+        updates.completed_modules = parseInt(val, 10) || 0;
+      } else {
+        updates.logged_minutes = parseFormalTime(val);
+      }
+      await syllabusApi.updateTopic(topicId, updates);
       await loadData();
       setEditingLog(null);
-    } catch (e) { alert("Failed to edit log"); }
+    } catch (e) { alert("Failed to update total"); }
   };
 
   const handleResetProgress = async () => {
@@ -285,38 +375,23 @@ function App() {
   const dailyGoalMins = getDailyGoal();
 
   // --- RENDER HELPERS ---
-  const renderCalendar = () => {
-    const curr = new Date();
-    return (
-      <div className="bg-slate-900/80 backdrop-blur border border-slate-800 p-5 rounded-3xl flex flex-col gap-3 h-full shadow-inner">
-        <div className="flex justify-between items-center px-1">
-          <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2"><CalendarIcon size={14} /> {curr.toLocaleString('default', { month: 'long' })} {curr.getFullYear()}</h3>
-        </div>
-        <div className="grid grid-cols-7 gap-1 text-[10px] font-bold text-center text-slate-600/60">
-          {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(d => <div key={d} className="h-6 flex items-center justify-center">{d}</div>)}
-          {Array.from({ length: new Date(curr.getFullYear(), curr.getMonth(), 1).getDay() }).map((_, i) => <div key={i} className="h-6 sm:h-7" />)}
-          {Array.from({ length: new Date(curr.getFullYear(), curr.getMonth() + 1, 0).getDate() }).map((_, i) => {
-            const d = i + 1; const isToday = d === curr.getDate();
-            return <div key={d} className={`h-6 w-full sm:h-7 flex items-center justify-center rounded-lg ${isToday ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20 font-black' : 'text-slate-400 font-medium'}`}>{d}</div>
-          })}
-        </div>
-      </div>
-    );
-  };
+  // (old renderCalendar removed — now using StreakCalendar component)
 
   if (view === 'landing') return <Landing onStart={() => setView(user ? 'dashboard' : 'auth')} />;
-  if (view === 'auth' && !user) return <Auth onLogin={(u) => { setUser(u); loadData(); }} />;
-  if (view === 'wizard') return <Wizard onComplete={onWizardComplete} />;
+  if (view === 'auth' && !user) return <Auth onLogin={(u) => { setUser(u); }} />;
+  if (view === 'wizard') return <Wizard onComplete={onWizardComplete} onBack={() => setView('dashboard')} />;
   if (view === 'profile') return <Profile user={user} onBack={() => setView('dashboard')} onResetProgress={handleResetProgress} onLogout={logout} />;
   if (view === 'dashboard') return (
     <Dashboard
       user={user}
-      syllabus={syllabus}
-      onOpenVault={() => setView('app')}
+      tools={userTools}
+      streakData={userStreakData}
+      onOpenTool={handleOpenTool}
       onOpenProfile={() => setView('profile')}
       onOpenSocial={() => setView('social_terminal')}
       onSetupTool={() => setView('wizard')}
-      progress={progressPercentage}
+      onDeleteTool={handleDeleteTool}
+      onRenameTool={handleRenameTool}
     />
   );
   if (view === 'social_terminal') return <Social currentUser={user} onBack={() => setView('dashboard')} />;
@@ -330,25 +405,40 @@ function App() {
       {(editingLog) && (
         <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200" onClick={() => setEditingLog(null)}>
           <div className="bg-[#0b1121] border border-slate-700 p-6 md:p-8 rounded-3xl shadow-2xl w-full max-w-sm" onClick={e => e.stopPropagation()}>
-            <h3 className="font-black text-white text-xl mb-6 uppercase tracking-tight flex items-center gap-2"><Edit3 size={20} className="text-indigo-400" /> Edit Activity</h3>
+            <h3 className="font-black text-white text-xl mb-6 uppercase tracking-tight flex items-center gap-2"><Edit3 size={20} className="text-indigo-400" /> Edit Total</h3>
             <div className="mb-6">
               <p className="text-indigo-400 font-black text-lg leading-tight uppercase tracking-tighter">{editingLog.topicName}</p>
-              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Adjust the current entry</p>
+              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Adjust total {trackingMode === 'module' ? 'modules completed' : 'time logged'}</p>
             </div>
             <div className="space-y-4">
-              <input
-                type="text"
-                id="edit-log-input"
-                className="w-full bg-slate-900 border border-slate-800 rounded-2xl p-4 text-white text-lg font-mono focus:border-indigo-500 outline-none"
-                defaultValue={trackingMode === 'module' ? editingLog.modules : formatTime(editingLog.minutes)}
-                autoFocus
-              />
+              {trackingMode === 'module' ? (
+                <input
+                  type="number"
+                  min="0"
+                  id="edit-log-input"
+                  className="w-full bg-slate-900 border border-slate-800 rounded-2xl p-4 text-white text-lg font-mono text-center focus:border-indigo-500 outline-none"
+                  defaultValue={editingLog.modules || 0}
+                  autoFocus
+                />
+              ) : (
+                <TimeInput
+                  value={editingLog.minutes}
+                  onChange={setEditTotalMinutes}
+                  autoFocus
+                />
+              )}
               <div className="flex gap-2">
                 <button onClick={() => setEditingLog(null)} className="flex-1 bg-slate-800 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs">Cancel</button>
                 <button
-                  onClick={() => handleEditLogSave(editingLog.id, document.getElementById('edit-log-input').value)}
+                  onClick={() => {
+                    if (trackingMode === 'module') {
+                      handleEditLogSave(editingLog.topicId, document.getElementById('edit-log-input').value);
+                    } else {
+                      handleEditLogSave(editingLog.topicId, String(editTotalMinutes));
+                    }
+                  }}
                   className="flex-[2] bg-indigo-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs"
-                >Update Log</button>
+                >Update Total</button>
               </div>
             </div>
           </div>
@@ -378,17 +468,13 @@ function App() {
 
             <div className="p-6 md:p-8 space-y-8 overflow-y-auto max-h-[80vh] no-scrollbar">
               {/* Target Date Section */}
-              <div className="bg-slate-900/50 p-6 rounded-3xl border border-slate-800/50 flex flex-col sm:flex-row items-center gap-6">
-                <div className="p-4 bg-indigo-500/10 rounded-2xl text-indigo-400 shrink-0"><Target size={32} /></div>
-                <div className="flex-1 space-y-2 text-center sm:text-left">
-                  <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block">Vault Completion Deadline</label>
-                  <input
-                    type="date"
-                    className="bg-slate-950 border border-slate-800 rounded-xl p-3 text-white font-black focus:border-indigo-500 outline-none w-full sm:w-auto"
-                    value={targetDate}
-                    onChange={(e) => updateTargetDate(e.target.value)}
-                  />
-                </div>
+              <div className="bg-slate-900/50 p-6 rounded-3xl border border-slate-800/50">
+                <DatePicker
+                  value={targetDate}
+                  onChange={updateTargetDate}
+                  label="Target Completion Date"
+                  placeholder="Set your deadline"
+                />
               </div>
 
               {/* Main Progress Gauge */}
@@ -404,31 +490,43 @@ function App() {
                   </div>
                 </div>
                 <div className="flex-1 grid grid-cols-2 gap-4 w-full">
-                  <div className="bg-slate-900/30 p-4 rounded-2xl border border-slate-800/30">
-                    <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Study Done</p>
-                    <p className="text-xl font-black text-emerald-400 tracking-tighter">{formatTime(totalStudyMins)}</p>
-                  </div>
-                  <div className="bg-slate-900/30 p-4 rounded-2xl border border-slate-800/30">
-                    <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Vault Left</p>
-                    <p className="text-xl font-black text-indigo-400 tracking-tighter">{formatTime(remainingMins)}</p>
-                  </div>
-                  <div className="bg-slate-900/30 p-4 rounded-2xl border border-slate-800/30 col-span-2 flex items-center justify-between">
-                    <div>
-                      {trackingMode === 'module' ? (
-                        <>
+                  {trackingMode === 'module' ? (
+                    <>
+                      <div className="bg-slate-900/30 p-4 rounded-2xl border border-slate-800/30">
+                        <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Modules Done</p>
+                        <p className="text-xl font-black text-emerald-400 tracking-tighter">{syllabus.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + (t.completedModules || 0), 0), 0)} <span className="text-xs text-slate-500 font-bold">DONE</span></p>
+                      </div>
+                      <div className="bg-slate-900/30 p-4 rounded-2xl border border-slate-800/30">
+                        <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Modules Left</p>
+                        <p className="text-xl font-black text-indigo-400 tracking-tighter">{syllabus.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + Math.max(0, (t.totalModules || 0) - (t.completedModules || 0)), 0), 0)} <span className="text-xs text-slate-500 font-bold">LEFT</span></p>
+                      </div>
+                      <div className="bg-slate-900/30 p-4 rounded-2xl border border-slate-800/30 col-span-2 flex items-center justify-between">
+                        <div>
                           <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Total Modules</p>
                           <p className="text-2xl font-black text-white tracking-tighter">{syllabus.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + (t.totalModules || 0), 0), 0)} <span className="text-xs text-slate-500 font-bold">UNITS</span></p>
-                        </>
-                      ) : (
-                        <>
+                        </div>
+                        <Zap size={24} className="text-yellow-400 opacity-50" />
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="bg-slate-900/30 p-4 rounded-2xl border border-slate-800/30">
+                        <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Study Done</p>
+                        <p className="text-xl font-black text-emerald-400 tracking-tighter">{formatTime(totalStudyMins)}</p>
+                      </div>
+                      <div className="bg-slate-900/30 p-4 rounded-2xl border border-slate-800/30">
+                        <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Time Left</p>
+                        <p className="text-xl font-black text-indigo-400 tracking-tighter">{formatTime(remainingMins)}</p>
+                      </div>
+                      <div className="bg-slate-900/30 p-4 rounded-2xl border border-slate-800/30 col-span-2 flex items-center justify-between">
+                        <div>
                           <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Required Daily</p>
                           <p className="text-2xl font-black text-white tracking-tighter">{formatTime(dailyGoalMins)} <span className="text-xs text-slate-500 font-bold">/ day</span></p>
-                        </>
-                      )}
-                    </div>
-                    <Zap size={24} className="text-yellow-400 opacity-50" />
-                  </div>
-
+                        </div>
+                        <Zap size={24} className="text-yellow-400 opacity-50" />
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
 
@@ -470,7 +568,7 @@ function App() {
                   {editingId === 'new' ? <Plus size={20} /> : <Edit3 size={20} />}
                 </div>
                 <h3 className="text-white font-black uppercase tracking-tighter text-lg sm:text-xl">
-                  {editingId === 'new' ? "New Subject Subject Pack" : "Syllabus Hub Editor"}
+                  {editingId === 'new' ? "New Subject Pack" : "Syllabus Hub Editor"}
                 </h3>
               </div>
               <button onClick={() => setEditingId(null)} className="p-2 hover:bg-slate-800 rounded-full text-slate-500 hover:text-white transition-colors"><X size={20} /></button>
@@ -554,38 +652,75 @@ function App() {
                         </div>
                       </div>
                       {topic.id && (
-                        <div className="flex items-center gap-3 bg-slate-950/50 p-2.5 rounded-xl border border-slate-800/50">
-                          <div className="flex-1">
+                        <div className="bg-slate-950/50 p-3 rounded-xl border border-slate-800/50 space-y-2.5">
+                          {/* Progress Section */}
+                          <div>
                             <div className="flex justify-between items-center mb-1">
                               <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Progress</span>
-                              <span className="text-[10px] font-mono text-indigo-400 font-bold">
-                                {trackingMode === 'module'
-                                  ? `${topic.completedModules} / ${topic.modules} Modules`
-                                  : `${formatTime(topic.timeSpent)} Logged`}
-                              </span>
+                              <div className="flex items-center gap-2">
+                                <span className="text-[10px] font-mono text-indigo-400 font-bold">
+                                  {trackingMode === 'module'
+                                    ? `${topic.completedModules} / ${topic.modules} Modules`
+                                    : `${formatTime(topic.timeSpent)} Logged`}
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setEditingLog({
+                                      topicId: topic.id,
+                                      minutes: topic.timeSpent || 0,
+                                      modules: topic.completedModules || 0,
+                                      topicName: topic.name
+                                    });
+                                  }}
+                                  className="p-1 text-slate-600 hover:text-indigo-400 transition-colors rounded hover:bg-slate-800" title="Edit total"
+                                ><Edit3 size={11} /></button>
+                              </div>
                             </div>
                             <div className="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
                               <div className="h-full bg-indigo-500" style={{ width: `${Math.min(100, (trackingMode === 'module' ? (topic.completedModules / (topic.modules || 1)) : (topic.timeSpent / parseFormalTime(topic.estimate))) * 100)}%` }} />
                             </div>
-
                           </div>
-                          <div className="flex items-center gap-2">
-                            <input
-                              type="text"
-                              id={`log-hub-${topic.id}`}
-                              placeholder={trackingMode === 'module' ? "+ Mod" : "+ Time"}
-                              className="w-20 bg-slate-900 border border-slate-800 rounded-lg p-2 text-xs text-center text-white focus:border-indigo-500 outline-none"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => {
-                                const val = document.getElementById(`log-hub-${topic.id}`).value;
-                                handleLogTopicActivity(topic.id, val);
-                                document.getElementById(`log-hub-${topic.id}`).value = '';
-                              }}
-                              className="p-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-all"
-                            ><LogIn size={14} /></button>
 
+                          {/* Log Activity Section */}
+                          <div className="bg-slate-900/60 border border-dashed border-slate-700/60 rounded-lg p-2.5">
+                            <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest block mb-2">Log Activity</span>
+                            <div className="flex items-center gap-2">
+                              {trackingMode === 'module' ? (
+                                <input
+                                  type="number"
+                                  min="0"
+                                  id={`log-hub-${topic.id}`}
+                                  placeholder="+ Mod"
+                                  className="w-20 bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-center text-white focus:border-indigo-500 outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                />
+                              ) : (
+                                <TimeInput
+                                  compact
+                                  ref={el => { hubTimeRefs.current[topic.id] = el; }}
+                                />
+                              )}
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  if (trackingMode === 'module') {
+                                    const val = document.getElementById(`log-hub-${topic.id}`).value;
+                                    handleLogTopicActivity(topic.id, val);
+                                    document.getElementById(`log-hub-${topic.id}`).value = '';
+                                  } else {
+                                    const ref = hubTimeRefs.current[topic.id];
+                                    if (ref) {
+                                      const mins = ref.getTotalMinutes();
+                                      if (mins > 0) {
+                                        handleLogTopicActivity(topic.id, String(mins));
+                                        ref.reset();
+                                      }
+                                    }
+                                  }
+                                }}
+                                className="px-3 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-all text-[10px] font-black uppercase tracking-wider whitespace-nowrap"
+                              >Log</button>
+                            </div>
                           </div>
                         </div>
                       )}
@@ -611,12 +746,14 @@ function App() {
       <div className="max-w-7xl mx-auto space-y-8 md:space-y-12">
         <header className="flex flex-col md:flex-row justify-between items-center md:items-end gap-6 border-b border-slate-900 pb-8">
           <div className="space-y-1 text-center md:text-left">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tighter uppercase leading-none">GATE <span className="text-indigo-500">2027</span> VAULT</h1>
-            <p className="text-slate-500 font-bold tracking-widest text-[9px] sm:text-[10px] uppercase italic">Engineer: {user.username} • SYNCED</p>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tighter uppercase leading-none">{activeTool?.name || 'VAULT'}</h1>
+            <p className="text-slate-500 font-bold tracking-widest text-[9px] sm:text-[10px] uppercase italic">
+              Engineer: {user.username} • {activeTool?.tool_type === 'module' ? 'MODULE' : 'TIME'} MODE • {activeTool?.selected_exam || 'GATE'}
+            </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
             <button
-              onClick={() => setView('dashboard')}
+              onClick={() => { setActiveTool(null); setSyllabus([]); setView('dashboard'); }}
               className="flex items-center justify-center gap-2 text-slate-400 hover:text-white transition-colors font-black uppercase tracking-widest text-[10px] border border-slate-800 px-6 py-4 sm:py-2 rounded-xl"
             >
               <ArrowLeft size={16} /> HUB
@@ -629,7 +766,16 @@ function App() {
 
         {/* SUMMARY TILES */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-          <div className="w-full">{renderCalendar()}</div>
+          <div className="w-full">
+            <StreakCalendar
+              toolId={activeTool?.id}
+              currentStreak={toolStreakData?.currentStreak || 0}
+              activeDays={toolStreakData?.activeDays || []}
+              dayDetails={toolStreakData?.dayDetails || {}}
+              onMonthChange={(y, m) => loadToolStreak(activeTool?.id, y, m)}
+              formatTime={formatTime}
+            />
+          </div>
           <div className="bg-slate-900/50 border border-slate-800/50 p-6 rounded-3xl flex items-center gap-6 relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none transition-opacity"><Flame size={120} /></div>
             <div className="p-4 bg-orange-500/10 rounded-2xl text-orange-500"><Flame size={32} fill="currentColor" /></div>
@@ -639,15 +785,34 @@ function App() {
             <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none transition-opacity group-hover:opacity-10"><BarChart3 size={120} /></div>
             <div className="p-4 bg-indigo-500/10 rounded-2xl text-indigo-400 group-hover:scale-110 transition-transform"><BarChart3 size={32} /></div>
             <div className="flex-1">
-              <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1 flex justify-between">Study Hours <span className="text-indigo-400">{progressPercentage}%</span></p>
-              <h2 className="text-3xl sm:text-4xl font-black text-white leading-none tracking-tighter">{formatTime(totalStudyMins)} <span className="text-[10px] text-slate-600 align-middle"> DONE</span></h2>
-              <div className="mt-3 space-y-1">
-                <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden shrink-0"><div className="h-full bg-indigo-500 transition-all duration-1000" style={{ width: `${progressPercentage}%` }} /></div>
-                <div className="flex justify-between items-center text-[9px] font-black text-slate-500 uppercase tracking-widest">
-                  <span>Goal: {formatTime(dailyGoalMins)}</span>
-                  <span className="text-slate-600">{formatTime(remainingMins)} LEFT</span>
-                </div>
-              </div>
+              {trackingMode === 'module' ? (
+                <>
+                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1 flex justify-between">Modules <span className="text-indigo-400">{progressPercentage}%</span></p>
+                  <h2 className="text-3xl sm:text-4xl font-black text-white leading-none tracking-tighter">
+                    {syllabus.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + (t.completedModules || 0), 0), 0)}
+                    <span className="text-[10px] text-slate-600 align-middle"> / {syllabus.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + (t.totalModules || 0), 0), 0)} DONE</span>
+                  </h2>
+                  <div className="mt-3 space-y-1">
+                    <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden shrink-0"><div className="h-full bg-indigo-500 transition-all duration-1000" style={{ width: `${progressPercentage}%` }} /></div>
+                    <div className="flex justify-between items-center text-[9px] font-black text-slate-500 uppercase tracking-widest">
+                      <span>{syllabus.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + Math.max(0, (t.totalModules || 0) - (t.completedModules || 0)), 0), 0)} modules left</span>
+                      <span className="text-indigo-400">{progressPercentage}% cleared</span>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1 flex justify-between">Study Hours <span className="text-indigo-400">{progressPercentage}%</span></p>
+                  <h2 className="text-3xl sm:text-4xl font-black text-white leading-none tracking-tighter">{formatTime(totalStudyMins)} <span className="text-[10px] text-slate-600 align-middle"> DONE</span></h2>
+                  <div className="mt-3 space-y-1">
+                    <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden shrink-0"><div className="h-full bg-indigo-500 transition-all duration-1000" style={{ width: `${progressPercentage}%` }} /></div>
+                    <div className="flex justify-between items-center text-[9px] font-black text-slate-500 uppercase tracking-widest">
+                      <span>Goal: {formatTime(dailyGoalMins)}</span>
+                      <span className="text-slate-600">{formatTime(remainingMins)} LEFT</span>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -706,11 +871,14 @@ function App() {
                                   : <span className="text-[9px] font-mono text-slate-600 font-black">{formatTime(done)}</span>
                                 }
                                 <div className="flex gap-1">
-                                  <button onClick={async () => {
-                                    const logs = await syllabusApi.getLogs(t.id);
-                                    if (logs) setEditingLog({ id: logs.id, minutes: logs.minutes_logged, modules: logs.modules_logged, topicName: t.name });
-                                    else alert("No recent log found for this topic.");
-                                  }} className="p-1 hover:text-indigo-400 transition-colors"><PenTool size={10} /></button>
+                                  <button onClick={() => {
+                                    setEditingLog({
+                                      topicId: t.id,
+                                      minutes: done,
+                                      modules: done,
+                                      topicName: t.name
+                                    });
+                                  }} className="p-1 hover:text-indigo-400 transition-colors" title="Edit total"><Edit3 size={10} /></button>
                                   <button onClick={() => setLoggingTopic({ subId: sub.id, topicName: t.name, currentSpent: done, topicId: t.id })} className="p-1 hover:text-indigo-400 transition-colors"><Plus size={10} /></button>
                                 </div>
                               </div>
@@ -750,25 +918,41 @@ function App() {
             </div>
 
             <div className="space-y-4">
-              <div className="flex flex-col gap-2">
-                <input
-                  type="text"
-                  id="quick-log-input"
-                  className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex-1 text-white text-lg font-mono focus:border-indigo-500 outline-none transition-all shadow-inner"
-                  placeholder={trackingMode === 'module' ? "Units done (e.g. 1)" : "e.g. 1h 30m"}
-                  autoFocus
-                />
+              <div className="flex flex-col gap-3">
+                {trackingMode === 'module' ? (
+                  <>
+                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest pl-1">Modules Completed</label>
+                    <input
+                      type="number"
+                      min="0"
+                      id="quick-log-input"
+                      className="bg-slate-900 border border-slate-800 rounded-2xl p-4 text-white text-lg font-mono text-center focus:border-indigo-500 outline-none transition-all shadow-inner [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      placeholder="0"
+                      autoFocus
+                    />
+                  </>
+                ) : (
+                  <TimeInput
+                    onChange={setQuickLogMinutes}
+                    autoFocus
+                  />
+                )}
                 <button
                   onClick={() => {
-                    const val = document.getElementById('quick-log-input').value;
-                    handleLogTopicActivity(loggingTopic.topicId, val);
+                    if (trackingMode === 'module') {
+                      const val = document.getElementById('quick-log-input').value;
+                      handleLogTopicActivity(loggingTopic.topicId, val);
+                    } else {
+                      if (quickLogMinutes > 0) {
+                        handleLogTopicActivity(loggingTopic.topicId, String(quickLogMinutes));
+                      }
+                    }
                     setLoggingTopic(null);
+                    setQuickLogMinutes(0);
                   }}
                   className="bg-indigo-600 text-white px-6 py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-indigo-500 transition-all active:scale-95 shadow-lg shadow-indigo-600/10"
                 >{trackingMode === 'module' ? 'Finish Units' : 'Log Work'}</button>
-
               </div>
-              <p className="text-[9px] text-slate-600 font-medium italic text-center text-balance">Format: '1h 20m' or '90' minutes.</p>
             </div>
           </div>
         </div>

@@ -21,7 +21,14 @@ const register = async (req, res) => {
 
         res.status(201).json({
             message: 'User registered successfully',
-            user: { id: user.id, username: user.username, email: user.email },
+            user: {
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                selected_exam: user.selected_exam,
+                tracking_mode: user.tracking_mode,
+                current_streak: user.current_streak
+            },
             token
         });
     } catch (err) {
@@ -50,7 +57,14 @@ const login = async (req, res) => {
         const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '7d' });
         res.json({
             message: 'Login successful',
-            user: { id: user.id, username: user.username, email: user.email },
+            user: {
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                selected_exam: user.selected_exam,
+                tracking_mode: user.tracking_mode,
+                current_streak: user.current_streak
+            },
             token
         });
     } catch (err) {

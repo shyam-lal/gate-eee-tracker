@@ -1,24 +1,30 @@
 const pool = require('../config/db');
 
 // --- SUBJECTS ---
-const getSyllabus = async (userId) => {
-    // Fetch all subjects
-    const subjectsRes = await pool.query(
-        'SELECT * FROM subjects WHERE user_id = $1 ORDER BY id ASC',
-        [userId]
-    );
+const getSyllabus = async (userId, toolId = null) => {
+    // Fetch subjects, optionally scoped to a tool
+    let subjectsQuery = 'SELECT * FROM subjects WHERE user_id = $1';
+    const subjectsParams = [userId];
+    if (toolId) {
+        subjectsQuery += ' AND tool_id = $2';
+        subjectsParams.push(toolId);
+    }
+    subjectsQuery += ' ORDER BY id ASC';
+    const subjectsRes = await pool.query(subjectsQuery, subjectsParams);
     const subjects = subjectsRes.rows;
 
     // Fetch all topics for these subjects
-    // (In a larger app, might want to join or lazy load, but this is fine for now)
-    const topicsRes = await pool.query(
-        `SELECT t.* 
+    let topicsQuery = `SELECT t.* 
      FROM topics t 
      JOIN subjects s ON t.subject_id = s.id 
-     WHERE s.user_id = $1 
-     ORDER BY t.id ASC`,
-        [userId]
-    );
+     WHERE s.user_id = $1`;
+    const topicsParams = [userId];
+    if (toolId) {
+        topicsQuery += ' AND s.tool_id = $2';
+        topicsParams.push(toolId);
+    }
+    topicsQuery += ' ORDER BY t.id ASC';
+    const topicsRes = await pool.query(topicsQuery, topicsParams);
 
     // Nest topics under subjects
     const topics = topicsRes.rows;
@@ -28,10 +34,10 @@ const getSyllabus = async (userId) => {
     }));
 };
 
-const createSubject = async (userId, name) => {
+const createSubject = async (userId, name, toolId = null) => {
     const res = await pool.query(
-        'INSERT INTO subjects (user_id, name) VALUES ($1, $2) RETURNING *',
-        [userId, name]
+        'INSERT INTO subjects (user_id, name, tool_id) VALUES ($1, $2, $3) RETURNING *',
+        [userId, name, toolId]
     );
     return res.rows[0];
 };
@@ -63,6 +69,8 @@ const updateTopic = async (topicId, updates) => {
     if (updates.estimated_minutes !== undefined) { fields.push(`estimated_minutes = $${idx++}`); values.push(updates.estimated_minutes); }
     if (updates.total_modules !== undefined) { fields.push(`total_modules = $${idx++}`); values.push(updates.total_modules); }
     if (updates.is_completed !== undefined) { fields.push(`is_completed = $${idx++}`); values.push(updates.is_completed); }
+    if (updates.logged_minutes !== undefined) { fields.push(`logged_minutes = $${idx++}`); values.push(updates.logged_minutes); }
+    if (updates.completed_modules !== undefined) { fields.push(`completed_modules = $${idx++}`); values.push(updates.completed_modules); }
 
     if (fields.length === 0) return null;
 

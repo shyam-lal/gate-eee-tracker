@@ -47,17 +47,54 @@ export const user = {
     }
 };
 
+export const tools = {
+    list: async () => {
+        const res = await fetch(`${API_URL}/tools`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to fetch tools');
+        return res.json();
+    },
+    create: async (name, toolType = 'time', selectedExam = 'GATE') => {
+        const res = await fetch(`${API_URL}/tools`, {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify({ name, toolType, selectedExam })
+        });
+        if (!res.ok) throw new Error('Failed to create tool');
+        return res.json();
+    },
+    get: async (toolId) => {
+        const res = await fetch(`${API_URL}/tools/${toolId}`, { headers: getHeaders() });
+        return res.json();
+    },
+    update: async (toolId, updates) => {
+        const res = await fetch(`${API_URL}/tools/${toolId}`, {
+            method: 'PATCH',
+            headers: getHeaders(),
+            body: JSON.stringify(updates)
+        });
+        return res.json();
+    },
+    delete: async (toolId) => {
+        const res = await fetch(`${API_URL}/tools/${toolId}`, {
+            method: 'DELETE',
+            headers: getHeaders()
+        });
+        return res.json();
+    }
+};
+
 export const syllabus = {
-    get: async () => {
-        const res = await fetch(`${API_URL}/syllabus`, { headers: getHeaders() });
+    get: async (toolId = null) => {
+        const url = toolId ? `${API_URL}/syllabus?toolId=${toolId}` : `${API_URL}/syllabus`;
+        const res = await fetch(url, { headers: getHeaders() });
         if (!res.ok) throw new Error('Failed to fetch syllabus');
         return res.json();
     },
-    createSubject: async (name) => {
+    createSubject: async (name, toolId = null) => {
         const res = await fetch(`${API_URL}/syllabus/subject`, {
             method: 'POST',
             headers: getHeaders(),
-            body: JSON.stringify({ name })
+            body: JSON.stringify({ name, toolId })
         });
         return res.json();
     },
@@ -159,6 +196,19 @@ export const social = {
     },
     getAchievements: async () => {
         const res = await fetch(`${API_URL}/social/achievements`, { headers: getHeaders() });
+        return res.json();
+    }
+};
+
+export const streak = {
+    getToolStreak: async (toolId, year, month) => {
+        const res = await fetch(`${API_URL}/streak/tool/${toolId}?year=${year}&month=${month}`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to fetch tool streak');
+        return res.json();
+    },
+    getUserStreak: async () => {
+        const res = await fetch(`${API_URL}/streak/user`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to fetch user streak');
         return res.json();
     }
 };

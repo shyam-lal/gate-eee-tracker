@@ -1,18 +1,49 @@
 import React, { useState } from 'react';
-import { ChevronRight, Target, Clock, Boxes, GraduationCap, CheckCircle2 } from 'lucide-react';
+import { ChevronRight, Target, Clock, Boxes, GraduationCap, CheckCircle2, PenTool, ArrowLeft } from 'lucide-react';
 
-const Wizard = ({ onComplete }) => {
+const Wizard = ({ onComplete, onBack }) => {
     const [step, setStep] = useState(1);
     const [data, setData] = useState({
+        name: '',
         exam: 'GATE',
         mode: 'time' // 'time' or 'module'
     });
 
     const nextStep = () => setStep(s => s + 1);
+    const prevStep = () => {
+        if (step > 1) setStep(s => s - 1);
+        else if (onBack) onBack();
+    };
 
     const steps = [
         {
             id: 1,
+            title: "Name Your Tool",
+            label: "TOOL IDENTITY",
+            content: (
+                <div className="space-y-6">
+                    <div className="bg-slate-900/50 border border-slate-800 rounded-[2.5rem] p-8 space-y-4">
+                        <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 mb-6">
+                            <PenTool size={28} />
+                        </div>
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] block">Tool Name</label>
+                        <input
+                            type="text"
+                            autoFocus
+                            placeholder="e.g. GATE EE Module Tracker"
+                            className="w-full bg-slate-950 border border-slate-800 rounded-2xl p-5 text-xl font-bold text-white placeholder-slate-700 focus:border-indigo-500 outline-none transition-all shadow-inner"
+                            value={data.name}
+                            onChange={e => setData({ ...data, name: e.target.value })}
+                        />
+                        <p className="text-xs text-slate-600 font-medium leading-relaxed">
+                            Give your tool a unique name so you can easily identify it later. You can create multiple tools with different names.
+                        </p>
+                    </div>
+                </div>
+            )
+        },
+        {
+            id: 2,
             title: "Choose Your Mission",
             label: "EXAM SELECT",
             content: (
@@ -44,7 +75,7 @@ const Wizard = ({ onComplete }) => {
             )
         },
         {
-            id: 2,
+            id: 3,
             title: "Tracking Protocol",
             label: "LOGGING MODE",
             content: (
@@ -82,6 +113,7 @@ const Wizard = ({ onComplete }) => {
     ];
 
     const currentStep = steps.find(s => s.id === step);
+    const canProceed = step === 1 ? data.name.trim().length > 0 : true;
 
     return (
         <div className="fixed inset-0 z-[200] bg-[#020617] flex items-center justify-center p-4">
@@ -89,7 +121,7 @@ const Wizard = ({ onComplete }) => {
                 {/* Progress Dots */}
                 <div className="flex justify-center gap-2 mb-12">
                     {steps.map(s => (
-                        <div key={s.id} className={`h-1.5 rounded-full transition-all duration-500 ${s.id === step ? 'w-12 bg-indigo-500' : 'w-4 bg-slate-800'}`} />
+                        <div key={s.id} className={`h-1.5 rounded-full transition-all duration-500 ${s.id === step ? 'w-12 bg-indigo-500' : s.id < step ? 'w-6 bg-indigo-500/40' : 'w-4 bg-slate-800'}`} />
                     ))}
                 </div>
 
@@ -102,12 +134,21 @@ const Wizard = ({ onComplete }) => {
                     {currentStep.content}
                 </div>
 
-                <button
-                    onClick={step === steps.length ? () => onComplete(data) : nextStep}
-                    className="w-full bg-white text-black py-5 rounded-2xl font-black text-lg uppercase tracking-widest hover:bg-indigo-500 hover:text-white transition-all shadow-2xl shadow-indigo-600/10 flex items-center justify-center gap-3"
-                >
-                    {step === steps.length ? "Initialize Vault" : "Next Phase"} <ChevronRight size={20} />
-                </button>
+                <div className="flex gap-3">
+                    <button
+                        onClick={prevStep}
+                        className="flex items-center justify-center gap-2 px-6 py-5 border border-slate-800 text-slate-400 rounded-2xl font-black uppercase tracking-widest text-xs hover:border-slate-600 hover:text-white transition-all"
+                    >
+                        <ArrowLeft size={16} /> Back
+                    </button>
+                    <button
+                        onClick={step === steps.length ? () => onComplete(data) : nextStep}
+                        disabled={!canProceed}
+                        className="flex-1 bg-white text-black py-5 rounded-2xl font-black text-lg uppercase tracking-widest hover:bg-indigo-500 hover:text-white transition-all shadow-2xl shadow-indigo-600/10 flex items-center justify-center gap-3 disabled:opacity-30 disabled:cursor-not-allowed"
+                    >
+                        {step === steps.length ? "Create Tool" : "Next Phase"} <ChevronRight size={20} />
+                    </button>
+                </div>
             </div>
         </div>
     );

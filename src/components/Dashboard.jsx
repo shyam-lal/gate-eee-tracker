@@ -1,13 +1,41 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     Rocket, Search, Bell, Settings,
     ChevronRight, Play, Clock, Target,
     Zap, Calendar, BarChart3, LayoutGrid,
-    BookOpen, Trophy, Sparkles, Users
+    BookOpen, Trophy, Sparkles, Users, Plus, Layers,
+    MoreVertical, Edit3, Trash2, X
 } from 'lucide-react';
+import UserStreakWidget from './ui/UserStreakWidget';
 
-const Dashboard = ({ user, syllabus, onOpenVault, onOpenProfile, onOpenSocial, onSetupTool, progress }) => {
-    const nextUp = syllabus?.[0]?.topics?.[0] || null;
+const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenSocial, onSetupTool, onDeleteTool, onRenameTool }) => {
+
+    const [menuOpen, setMenuOpen] = useState(null); // toolId of open menu
+    const [renamingTool, setRenamingTool] = useState(null);
+    const [renameValue, setRenameValue] = useState('');
+
+    const hasTools = tools && tools.length > 0;
+
+    const handleRename = (tool) => {
+        setRenamingTool(tool.id);
+        setRenameValue(tool.name);
+        setMenuOpen(null);
+    };
+
+    const submitRename = () => {
+        if (renameValue.trim() && renamingTool) {
+            onRenameTool(renamingTool, renameValue.trim());
+        }
+        setRenamingTool(null);
+        setRenameValue('');
+    };
+
+    const handleDelete = (tool) => {
+        setMenuOpen(null);
+        if (confirm(`Delete "${tool.name}"? All data (subjects, topics, logs) will be permanently lost.`)) {
+            onDeleteTool(tool.id);
+        }
+    };
 
     return (
         <div className="min-h-screen bg-[#020617] text-slate-200 overflow-hidden relative">
@@ -16,7 +44,7 @@ const Dashboard = ({ user, syllabus, onOpenVault, onOpenProfile, onOpenSocial, o
             <div className="absolute bottom-[-10%] right-[-5%] w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[120px] pointer-events-none"></div>
 
             {/* Top Bar */}
-            <header className="relative z-20 flex justify-between items-center px-8 py-6 max-w-[1400px] mx-auto w-full">
+            <header className="relative z-20 flex justify-between items-center px-6 sm:px-8 py-6 max-w-[1400px] mx-auto w-full">
                 <div className="flex items-center gap-4">
                     <div className="w-10 h-10 bg-indigo-500 rounded-xl flex items-center justify-center font-black italic text-white shadow-lg shadow-indigo-600/20">V</div>
                     <div className="hidden sm:block">
@@ -25,7 +53,7 @@ const Dashboard = ({ user, syllabus, onOpenVault, onOpenProfile, onOpenSocial, o
                     </div>
                 </div>
 
-                <div className="flex items-center gap-6">
+                <div className="flex items-center gap-4 sm:gap-6">
                     <div className="hidden md:flex bg-slate-900/50 border border-slate-800 rounded-full px-4 py-2 items-center gap-3">
                         <Search size={14} className="text-slate-500" />
                         <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest">Global Search</span>
@@ -42,146 +70,179 @@ const Dashboard = ({ user, syllabus, onOpenVault, onOpenProfile, onOpenSocial, o
                 </div>
             </header>
 
-            {/* Main Command Hub */}
-            <main className="relative z-10 max-w-[1400px] mx-auto px-8 py-8 h-[calc(100vh-100px)] flex flex-col">
+            {/* Main Content */}
+            <main className="relative z-10 max-w-[1400px] mx-auto px-6 sm:px-8 py-8">
 
-                <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-
-                    {/* Left: Mission Logic */}
-                    <div className="lg:col-span-4 space-y-12">
-                        <div className="space-y-4">
-                            <span className="inline-flex items-center gap-2 text-indigo-400 text-[10px] font-black uppercase tracking-[0.3em]">
-                                <Rocket size={12} /> Systems Active
-                            </span>
-                            <h2 className="text-5xl md:text-6xl font-black text-white uppercase tracking-tighter leading-[0.9]">
-                                Leveling <br /> <span className="text-slate-500">Up,</span> <br /> {user.username}.
-                            </h2>
-                            <p className="text-slate-400 text-sm font-medium max-w-xs leading-relaxed">
-                                Your destination is {progress}% clear. Synchronize your study logs to update terminal targets.
-                            </p>
-                        </div>
-
-                        <div className="space-y-4">
-                            <h3 className="text-[10px] font-black text-slate-600 uppercase tracking-[0.3em] pl-1">Primary Objective</h3>
-                            {nextUp && user.tracking_mode ? (
-                                <div className="bg-slate-900/40 backdrop-blur-xl border border-white/5 p-6 rounded-[2.5rem] group hover:border-indigo-500/30 transition-all cursor-pointer shadow-2xl shadow-indigo-500/5">
-                                    <div className="flex justify-between items-start mb-6">
-                                        <div className="w-12 h-12 bg-indigo-500/10 rounded-2xl flex items-center justify-center text-indigo-400 border border-indigo-500/20">
-                                            <BookOpen size={24} />
-                                        </div>
-                                        <span className="text-[10px] bg-indigo-500/20 text-indigo-300 px-3 py-1 rounded-full font-black uppercase tracking-widest">Ongoing</span>
-                                    </div>
-                                    <h4 className="text-white font-black uppercase tracking-tighter text-xl mb-2 group-hover:text-indigo-400 transition-colors">{nextUp.name}</h4>
-                                    <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-6">{nextUp.subject || 'Engineering'}</p>
-                                    <button onClick={onOpenVault} className="w-full bg-white text-black py-4 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-2 group-hover:bg-indigo-500 group-hover:text-white transition-all">
-                                        Launch Terminal <ChevronRight size={14} />
-                                    </button>
-                                </div>
-                            ) : (
-                                <div className="bg-slate-900/40 backdrop-blur-xl border border-amber-500/20 p-6 rounded-[2.5rem] group hover:border-amber-500/40 transition-all cursor-pointer shadow-2xl shadow-amber-500/5">
-                                    <div className="flex justify-between items-start mb-6">
-                                        <div className="w-12 h-12 bg-amber-500/10 rounded-2xl flex items-center justify-center text-amber-400 border border-amber-500/20">
-                                            <Settings size={24} />
-                                        </div>
-                                        <span className="text-[10px] bg-amber-500/20 text-amber-300 px-3 py-1 rounded-full font-black uppercase tracking-widest animate-pulse">Setup Required</span>
-                                    </div>
-                                    <h4 className="text-white font-black uppercase tracking-tighter text-xl mb-2">Initialize Your Vault</h4>
-                                    <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-6">Configure your study tracker to begin</p>
-                                    <button onClick={onSetupTool} className="w-full bg-amber-500 text-black py-4 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-2 hover:bg-amber-400 transition-all">
-                                        Run Setup Wizard <ChevronRight size={14} />
-                                    </button>
-                                </div>
-                            )}
-                        </div>
+                {/* Welcome + Streak */}
+                <div className="mb-12 flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
+                    {/* Welcome text */}
+                    <div className="space-y-4 flex-1">
+                        <span className="inline-flex items-center gap-2 text-indigo-400 text-[10px] font-black uppercase tracking-[0.3em]">
+                            <Rocket size={12} /> Systems Active
+                        </span>
+                        <h2 className="text-4xl sm:text-5xl md:text-6xl font-black text-white uppercase tracking-tighter leading-[0.9]">
+                            Welcome back, <br /> <span className="text-slate-500">{user.username}.</span>
+                        </h2>
+                        <p className="text-slate-400 text-sm font-medium max-w-lg leading-relaxed">
+                            {hasTools
+                                ? `You have ${tools.length} tool${tools.length > 1 ? 's' : ''} configured. Launch one to continue your preparation or create a new one.`
+                                : 'Your Vault is empty. Create your first tracking tool to begin your GATE preparation journey.'
+                            }
+                        </p>
                     </div>
 
-                    {/* Center: The Core */}
-                    <div className="lg:col-span-4 flex items-center justify-center perspective-[1000px]">
-                        <div className="relative w-72 h-72 md:w-96 md:h-96">
-                            {/* Visual Rings */}
-                            <div className="absolute inset-0 border-[20px] border-slate-900/50 rounded-full"></div>
-                            <svg className="absolute inset-0 w-full h-full transform -rotate-90">
-                                <circle
-                                    cx="50%" cy="50%" r="44%"
-                                    stroke="currentColor" strokeWidth="20" fill="transparent"
-                                    strokeDasharray="276%"
-                                    strokeDashoffset={`${276 * (1 - progress / 100)}%`}
-                                    className="text-indigo-500 drop-shadow-[0_0_15px_rgba(99,102,241,0.5)] transition-all duration-1000 ease-out"
-                                    strokeLinecap="round"
-                                />
-                            </svg>
+                    {/* User Streak Widget */}
+                    {streakData && (
+                        <div className="w-full lg:w-80 shrink-0">
+                            <UserStreakWidget
+                                currentStreak={streakData.currentStreak}
+                                activeDays={streakData.activeDays}
+                                toolsByDay={streakData.toolsByDay}
+                                tools={tools}
+                            />
+                        </div>
+                    )}
+                </div>
 
-                            {/* Inner Glow Circle */}
-                            <div className="absolute inset-10 bg-[#020617] rounded-full border border-white/5 flex flex-col items-center justify-center group">
-                                <div className="absolute inset-4 bg-indigo-500/5 rounded-full animate-pulse"></div>
-                                <div className="relative text-center">
-                                    <span className="block text-6xl md:text-8xl font-black text-white tracking-tighter tabular-nums drop-shadow-2xl">{progress}%</span>
-                                    <span className="inline-flex items-center gap-1 text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em] mt-1 drop-shadow-md">
-                                        Vault Cleared <Sparkles size={10} />
-                                    </span>
+                {/* Tools Grid */}
+                <div className="mb-8">
+                    <div className="flex justify-between items-center mb-6">
+                        <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">My Tools</h3>
+                        <span className="text-[10px] font-black text-slate-700 uppercase tracking-widest">{tools?.length || 0} Active</span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {/* Existing Tool Cards */}
+                        {tools?.map(tool => (
+                            <div key={tool.id} className="bg-slate-900/40 backdrop-blur-xl border border-white/5 p-6 sm:p-8 rounded-[2.5rem] group hover:border-indigo-500/30 transition-all relative shadow-2xl shadow-indigo-500/5">
+
+                                {/* Context Menu Button */}
+                                <div className="absolute top-5 right-5 z-10">
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); setMenuOpen(menuOpen === tool.id ? null : tool.id); }}
+                                        className="p-2 text-slate-600 hover:text-white transition-colors rounded-full hover:bg-slate-800"
+                                    >
+                                        <MoreVertical size={16} />
+                                    </button>
+
+                                    {menuOpen === tool.id && (
+                                        <div className="absolute top-10 right-0 bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl overflow-hidden w-44 animate-in fade-in zoom-in-95 duration-200 z-50">
+                                            <button onClick={() => handleRename(tool)} className="w-full text-left px-4 py-3 text-xs font-bold text-slate-300 hover:bg-indigo-500/10 hover:text-indigo-400 flex items-center gap-3 uppercase tracking-widest transition-colors">
+                                                <Edit3 size={14} /> Rename
+                                            </button>
+                                            <button onClick={() => handleDelete(tool)} className="w-full text-left px-4 py-3 text-xs font-bold text-rose-400/60 hover:bg-rose-500/10 hover:text-rose-400 flex items-center gap-3 uppercase tracking-widest transition-colors">
+                                                <Trash2 size={14} /> Delete
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
 
-                                {/* Orbiting particles (CSS only simple version) */}
-                                <div className="absolute inset-[-10px] border-2 border-dashed border-indigo-500/20 rounded-full animate-[spin_20s_linear_infinite] pointer-events-none"></div>
+                                {/* Tool Content */}
+                                <div className="mb-6">
+                                    <div className="w-14 h-14 bg-indigo-500/10 rounded-2xl flex items-center justify-center text-indigo-400 border border-indigo-500/20 group-hover:scale-110 transition-transform mb-5">
+                                        {tool.tool_type === 'module' ? <Layers size={28} /> : <Clock size={28} />}
+                                    </div>
+
+                                    {/* Tool Name - editable when renaming */}
+                                    {renamingTool === tool.id ? (
+                                        <div className="flex gap-2 mb-2">
+                                            <input
+                                                autoFocus
+                                                type="text"
+                                                value={renameValue}
+                                                onChange={e => setRenameValue(e.target.value)}
+                                                onKeyDown={e => { if (e.key === 'Enter') submitRename(); if (e.key === 'Escape') setRenamingTool(null); }}
+                                                className="flex-1 bg-slate-950 border border-indigo-500 rounded-xl px-3 py-2 text-white text-sm font-bold outline-none"
+                                            />
+                                            <button onClick={submitRename} className="px-3 py-2 bg-indigo-600 text-white text-[10px] font-black uppercase rounded-xl">Save</button>
+                                        </div>
+                                    ) : (
+                                        <h4 className="text-white font-black uppercase tracking-tighter text-xl mb-1 group-hover:text-indigo-400 transition-colors pr-8">
+                                            {tool.name}
+                                        </h4>
+                                    )}
+
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-[10px] bg-slate-800 text-slate-400 px-3 py-1 rounded-full font-black uppercase tracking-widest">
+                                            {tool.tool_type === 'module' ? 'Module' : 'Time'} Based
+                                        </span>
+                                        <span className="text-[10px] text-slate-600 font-bold uppercase tracking-widest">
+                                            {tool.selected_exam || 'GATE'}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <button
+                                    onClick={() => onOpenTool(tool)}
+                                    className="w-full bg-white text-black py-4 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-2 group-hover:bg-indigo-500 group-hover:text-white transition-all shadow-lg"
+                                >
+                                    Launch Terminal <ChevronRight size={14} />
+                                </button>
+                            </div>
+                        ))}
+
+                        {/* Create New Tool Card */}
+                        <div
+                            onClick={onSetupTool}
+                            className="bg-slate-900/20 backdrop-blur-xl border-2 border-dashed border-slate-700 p-6 sm:p-8 rounded-[2.5rem] group hover:border-indigo-500/50 transition-all cursor-pointer flex flex-col items-center justify-center gap-6 min-h-[280px]"
+                        >
+                            <div className="w-16 h-16 bg-slate-800/80 rounded-2xl flex items-center justify-center text-slate-500 border border-slate-700 group-hover:text-indigo-400 group-hover:border-indigo-500/30 group-hover:bg-indigo-500/10 transition-all group-hover:scale-110">
+                                <Plus size={32} />
+                            </div>
+                            <div className="text-center">
+                                <h4 className="text-slate-400 font-black uppercase tracking-tighter text-lg group-hover:text-white transition-colors mb-1">
+                                    Create New Tool
+                                </h4>
+                                <p className="text-[10px] text-slate-600 font-bold uppercase tracking-widest leading-relaxed">
+                                    Time tracker • Module tracker
+                                </p>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    {/* Right: Telemetry */}
-                    <div className="lg:col-span-4 space-y-6">
-                        <div className="grid grid-cols-2 gap-4">
-                            <div onClick={onOpenSocial} className="bg-slate-900/40 backdrop-blur-xl border border-white/5 p-6 rounded-3xl hover:bg-slate-800/50 transition-colors cursor-pointer group">
-                                <div className="p-2 bg-orange-500/10 rounded-lg text-orange-500 w-fit mb-4 group-hover:scale-110 transition-transform"><Zap size={20} fill="currentColor" /></div>
-                                <h5 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Weekly Streak</h5>
+                {/* Stats Row */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+                    <div onClick={onOpenSocial} className="bg-slate-900/40 backdrop-blur-xl border border-white/5 p-6 rounded-3xl hover:bg-slate-800/50 transition-colors cursor-pointer group">
+                        <div className="flex items-center gap-4">
+                            <div className="p-2 bg-orange-500/10 rounded-lg text-orange-500 group-hover:scale-110 transition-transform"><Zap size={20} fill="currentColor" /></div>
+                            <div>
+                                <h5 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-0.5">Streak</h5>
                                 <p className="text-2xl font-black text-white tracking-tighter italic">{user.current_streak || 0} <span className="text-xs text-slate-600 uppercase not-italic">Days</span></p>
                             </div>
-                            <div onClick={onOpenVault} className="bg-slate-900/40 backdrop-blur-xl border border-white/5 p-6 rounded-3xl hover:bg-slate-800/50 transition-colors cursor-pointer">
-                                <div className="p-2 bg-emerald-500/10 rounded-lg text-emerald-500 w-fit mb-4"><Calendar size={20} /></div>
-                                <h5 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Next Deadline</h5>
-                                <p className="text-xl font-black text-white tracking-tighter italic uppercase">FEB 2027</p>
-                            </div>
-                        </div>
-
-                        <div className="bg-slate-900/40 backdrop-blur-xl border border-white/5 p-8 rounded-[2.5rem] space-y-8">
-                            <div className="flex justify-between items-center">
-                                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Fleet Status</h4>
-                                <BarChart3 size={14} className="text-slate-600" />
-                            </div>
-
-                            <div className="space-y-6">
-                                {syllabus.slice(0, 3).map((sub, i) => (
-                                    <div key={i} className="space-y-2">
-                                        <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
-                                            <span className="text-slate-500 truncate max-w-[150px]">{sub.name}</span>
-                                            <span className="text-indigo-400">82%</span>
-                                        </div>
-                                        <div className="h-1 bg-white/5 rounded-full overflow-hidden">
-                                            <div className="h-full bg-gradient-to-r from-indigo-500 to-indigo-400 w-[82%]"></div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-
-                            <button onClick={onOpenVault} className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em] flex items-center gap-2 hover:gap-4 transition-all">
-                                View Full Terminal <ChevronRight size={14} />
-                            </button>
                         </div>
                     </div>
-
+                    <div className="bg-slate-900/40 backdrop-blur-xl border border-white/5 p-6 rounded-3xl">
+                        <div className="flex items-center gap-4">
+                            <div className="p-2 bg-emerald-500/10 rounded-lg text-emerald-500"><Calendar size={20} /></div>
+                            <div>
+                                <h5 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-0.5">Tools Active</h5>
+                                <p className="text-2xl font-black text-white tracking-tighter italic">{tools?.length || 0} <span className="text-xs text-slate-600 uppercase not-italic">Configured</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="bg-slate-900/40 backdrop-blur-xl border border-white/5 p-6 rounded-3xl">
+                        <div className="flex items-center gap-4">
+                            <div className="p-2 bg-indigo-500/10 rounded-lg text-indigo-400"><BarChart3 size={20} /></div>
+                            <div>
+                                <h5 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-0.5">Exam Target</h5>
+                                <p className="text-xl font-black text-white tracking-tighter italic uppercase">GATE 2027</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Quick Access Bar */}
-                <div className="relative z-20 pb-8 flex justify-center pt-8">
+                <div className="flex justify-center pb-8 pt-4">
                     <div className="bg-slate-900/80 backdrop-blur-2xl border border-white/10 p-2 rounded-2xl flex items-center gap-2 shadow-2xl">
-                        <button onClick={() => onOpenVault()} className="flex items-center gap-2 px-6 py-3 bg-white text-black rounded-xl font-black text-xs uppercase tracking-widest hover:bg-indigo-500 hover:text-white transition-all">
-                            <LayoutGrid size={16} /> Syllabus Terminal
+                        <button onClick={onSetupTool} className="flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-xl font-black text-xs uppercase tracking-widest hover:bg-indigo-500 transition-all">
+                            <Plus size={16} /> New Tool
                         </button>
                         <button onClick={onOpenSocial} className="p-3 text-slate-400 hover:text-white transition-colors relative">
                             <Users size={20} />
                         </button>
                         <div className="w-px h-6 bg-white/10 mx-2"></div>
                         <button className="p-3 text-slate-400 hover:text-white transition-colors"><Settings size={20} /></button>
-
                         <button className="p-3 text-slate-400 hover:text-white transition-colors relative">
                             <Bell size={20} />
                             <div className="absolute top-2 right-2 w-2 h-2 bg-indigo-500 rounded-full border border-slate-900"></div>
@@ -189,6 +250,11 @@ const Dashboard = ({ user, syllabus, onOpenVault, onOpenProfile, onOpenSocial, o
                     </div>
                 </div>
             </main>
+
+            {/* Click-away listener for context menus */}
+            {menuOpen && (
+                <div className="fixed inset-0 z-0" onClick={() => setMenuOpen(null)}></div>
+            )}
         </div>
     );
 };

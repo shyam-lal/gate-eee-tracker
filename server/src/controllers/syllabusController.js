@@ -4,7 +4,8 @@ const achievementService = require('../services/achievementService');
 
 const getSyllabus = async (req, res) => {
     try {
-        const data = await syllabusService.getSyllabus(req.user.id);
+        const { toolId } = req.query;
+        const data = await syllabusService.getSyllabus(req.user.id, toolId || null);
         res.json(data);
     } catch (err) {
         console.error(err);
@@ -14,8 +15,8 @@ const getSyllabus = async (req, res) => {
 
 const createSubject = async (req, res) => {
     try {
-        const { name } = req.body;
-        const sub = await syllabusService.createSubject(req.user.id, name);
+        const { name, toolId } = req.body;
+        const sub = await syllabusService.createSubject(req.user.id, name, toolId || null);
         res.status(201).json(sub);
     } catch (err) {
         console.error(err);

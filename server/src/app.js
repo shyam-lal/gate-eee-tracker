@@ -22,8 +22,10 @@ app.use(express.json());
 // API Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/user', require('./routes/userRoutes'));
+app.use('/api/tools', require('./routes/toolRoutes'));
 app.use('/api/syllabus', require('./routes/syllabusRoutes'));
 app.use('/api/social', require('./routes/socialRoutes'));
+app.use('/api/streak', require('./routes/streakRoutes'));
 
 // Serve Static Files (production only)
 const distPath = path.join(__dirname, '../../dist');
