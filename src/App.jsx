@@ -28,7 +28,7 @@ function App() {
   const [view, setView] = useState('landing'); // 'landing', 'auth', 'wizard', 'app', 'dashboard', 'profile', 'social_terminal'
   const [syllabus, setSyllabus] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [targetDate, setTargetDate] = useState(() => localStorage.getItem('gateTargetDate') || "");
+  const [targetDate, setTargetDate] = useState("");
   const [expanded, setExpanded] = useState({});
 
   // --- MULTI-TOOL STATE ---
@@ -219,6 +219,7 @@ function App() {
         await toolsApi.update(tool.id, { target_date: localGateDate });
         finalTargetDate = localGateDate;
         tool.target_date = localGateDate;
+        localStorage.removeItem('gateTargetDate'); // wipe it so it doesn't get copied to other new tools
       } catch (e) { console.error("Failed to migrate legacy target date", e); }
     }
 
@@ -367,7 +368,6 @@ function App() {
 
   const updateTargetDate = async (date) => {
     setTargetDate(date);
-    localStorage.setItem('gateTargetDate', date); // keep for backward compatibility during transition
     if (activeTool) {
       try {
         await toolsApi.update(activeTool.id, { target_date: date });
