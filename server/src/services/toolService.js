@@ -12,8 +12,14 @@ const createTool = async (userId, name, toolType = 'time', selectedExam = 'GATE'
 
 const getUserTools = async (userId) => {
     const res = await pool.query(
-        `SELECT id, user_id, name, tool_type, selected_exam, TO_CHAR(target_date, 'YYYY-MM-DD') as target_date, created_at 
-         FROM tools WHERE user_id = $1 ORDER BY created_at DESC`,
+        `SELECT t.id, t.user_id, t.name, t.tool_type, t.selected_exam, TO_CHAR(t.target_date, 'YYYY-MM-DD') as target_date, t.created_at,
+         (
+             SELECT COUNT(c.id)
+             FROM cards c
+             JOIN decks d ON c.deck_id = d.id
+             WHERE d.tool_id = t.id AND c.next_review_date <= CURRENT_DATE
+         )::int as due_cards_count
+         FROM tools t WHERE t.user_id = $1 ORDER BY t.created_at DESC`,
         [userId]
     );
     return res.rows;

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { syllabus as syllabusApi, auth as authApi, user as userApi, tools as toolsApi, streak as streakApi } from './services/api';
+import { syllabus as syllabusApi, auth as authApi, user as userApi, tools as toolsApi, streak as streakApi, flashcards as flashcardsApi } from './services/api';
 import Auth from './components/Auth';
 import Landing from './components/Landing';
 import Wizard from './components/Wizard';
@@ -9,11 +9,12 @@ import Social from './components/Social';
 import DatePicker from './components/ui/DatePicker';
 import TimeInput from './components/ui/TimeInput';
 import StreakCalendar from './components/ui/StreakCalendar';
+import FlashcardDashboard from './components/flashcards/FlashcardDashboard';
 import {
   Calendar as CalendarIcon, Trash2, Plus, X,
   ChevronDown, ChevronRight, Clock, Edit3,
   CalendarRange, AlertTriangle,
-  Play, Pause, RotateCcw, Brain,
+  Play, Pause, RotateCcw, Brain, Sparkles,
   Maximize2, Minus, CheckCircle, Flame, BarChart3, Map,
   MoreVertical, Timer, PartyPopper, Save, LogIn, TrendingUp, Target, Hourglass, Zap, User as UserIcon, ArrowLeft
 } from 'lucide-react';
@@ -47,6 +48,7 @@ function App() {
   const [editingLog, setEditingLog] = useState(null); // { topicId, minutes, modules, topicName }
   const [celebration, setCelebration] = useState(null);
   const [showAnalytics, setShowAnalytics] = useState(false);
+  const [flashcardAnalytics, setFlashcardAnalytics] = useState(null);
 
   // --- TIME INPUT STATE ---
   const [editTotalMinutes, setEditTotalMinutes] = useState(0);
@@ -124,6 +126,17 @@ function App() {
     if (!tid) return;
     setLoading(true);
     try {
+      // Find the tool object
+      const tool = userTools.find(t => t.id === tid) || activeTool;
+      if (tool?.tool_type === 'flashcard') {
+        try {
+          const stats = await flashcardsApi.getAnalytics(tid);
+          setFlashcardAnalytics(stats);
+        } catch (e) {
+          console.error("Failed to load flashcard analytics", e);
+        }
+      }
+
       const data = await syllabusApi.get(tid);
       const formatted = data.map(sub => ({
         ...sub,
@@ -475,105 +488,128 @@ function App() {
         </div>
       )}
 
-      {/* SYLLABUS ANALYTICS MODAL */}
+      {/* ANALYTICS MODAL */}
       {showAnalytics && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-in fade-in duration-300" onClick={() => setShowAnalytics(false)}>
           <div className="bg-[#0b1121] border border-slate-700 w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300" onClick={e => e.stopPropagation()}>
             <div className="bg-slate-900 px-6 py-4 border-b border-slate-800 flex justify-between items-center">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-indigo-500/10 rounded-lg text-indigo-400"><TrendingUp size={20} /></div>
-                <h3 className="text-white font-black uppercase tracking-tighter text-lg sm:text-xl">Vault Analytics</h3>
+                <h3 className="text-white font-black uppercase tracking-tighter text-lg sm:text-xl">{activeTool?.tool_type === 'flashcard' ? 'Flashcard Analytics' : 'Vault Analytics'}</h3>
               </div>
               <button onClick={() => setShowAnalytics(false)} className="p-2 hover:bg-slate-800 rounded-full text-slate-500 hover:text-white transition-colors"><X size={20} /></button>
             </div>
 
             <div className="p-6 md:p-8 space-y-8 overflow-y-auto max-h-[80vh] no-scrollbar">
-              {/* Target Date Section */}
-              <div className="bg-slate-900/50 p-6 rounded-3xl border border-slate-800/50">
-                <DatePicker
-                  value={targetDate}
-                  onChange={updateTargetDate}
-                  label="Target Completion Date"
-                  placeholder="Set your deadline"
-                />
-              </div>
-
-              {/* Main Progress Gauge */}
-              <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12 py-4">
-                <div className="relative w-48 h-48 shrink-0">
-                  <svg className="w-full h-full transform -rotate-90">
-                    <circle cx="96" cy="96" r="88" stroke="currentColor" strokeWidth="12" fill="transparent" className="text-slate-800" />
-                    <circle cx="96" cy="96" r="88" stroke="currentColor" strokeWidth="12" fill="transparent" strokeDasharray={552.9} strokeDashoffset={552.9 - (552.9 * progressPercentage) / 100} className="text-indigo-500 transition-all duration-1000 ease-out" strokeLinecap="round" />
-                  </svg>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                    <span className="text-4xl font-black text-white leading-none">{progressPercentage}%</span>
-                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-1">Cleared</span>
+              {activeTool?.tool_type === 'flashcard' ? (
+                <div className="space-y-8">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-slate-900/50 p-6 rounded-3xl border border-slate-800/50 text-center">
+                      <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Cards Learned</h4>
+                      <p className="text-5xl font-black text-indigo-400">{flashcardAnalytics?.learned_cards || 0}</p>
+                      <p className="text-xs font-bold text-slate-500 mt-2">Started spaced repetition</p>
+                    </div>
+                    <div className="bg-slate-900/50 p-6 rounded-3xl border border-slate-800/50 text-center">
+                      <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Avg. Ease Factor</h4>
+                      <p className="text-5xl font-black text-emerald-400">{flashcardAnalytics?.avg_ease_factor || '2.50'}</p>
+                      <p className="text-xs font-bold text-slate-500 mt-2">Higher = Easier recall</p>
+                    </div>
+                  </div>
+                  <div className="bg-indigo-900/20 p-6 rounded-3xl border border-indigo-500/30">
+                    <h4 className="text-sm font-black text-white uppercase tracking-widest mb-2 flex items-center gap-2"><Sparkles size={16} className="text-indigo-400" /> AI Content Integration</h4>
+                    <p className="text-sm text-indigo-200">Our upcoming AI engine will automatically scan your Vault documents and suggest high-yield flashcards to add to your decks. The more you use your Vault, the smarter your study sessions will become.</p>
                   </div>
                 </div>
-                <div className="flex-1 grid grid-cols-2 gap-4 w-full">
-                  {trackingMode === 'module' ? (
-                    <>
-                      <div className="bg-slate-900/30 p-4 rounded-2xl border border-slate-800/30">
-                        <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Modules Done</p>
-                        <p className="text-xl font-black text-emerald-400 tracking-tighter">{syllabus.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + (t.completedModules || 0), 0), 0)} <span className="text-xs text-slate-500 font-bold">DONE</span></p>
-                      </div>
-                      <div className="bg-slate-900/30 p-4 rounded-2xl border border-slate-800/30">
-                        <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Modules Left</p>
-                        <p className="text-xl font-black text-indigo-400 tracking-tighter">{syllabus.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + Math.max(0, (t.totalModules || 0) - (t.completedModules || 0)), 0), 0)} <span className="text-xs text-slate-500 font-bold">LEFT</span></p>
-                      </div>
-                      <div className="bg-slate-900/30 p-4 rounded-2xl border border-slate-800/30 col-span-2 flex items-center justify-between">
-                        <div>
-                          <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Total Modules</p>
-                          <p className="text-2xl font-black text-white tracking-tighter">{syllabus.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + (t.totalModules || 0), 0), 0)} <span className="text-xs text-slate-500 font-bold">UNITS</span></p>
-                        </div>
-                        <Zap size={24} className="text-yellow-400 opacity-50" />
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div className="bg-slate-900/30 p-4 rounded-2xl border border-slate-800/30">
-                        <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Study Done</p>
-                        <p className="text-xl font-black text-emerald-400 tracking-tighter">{formatTime(totalStudyMins)}</p>
-                      </div>
-                      <div className="bg-slate-900/30 p-4 rounded-2xl border border-slate-800/30">
-                        <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Time Left</p>
-                        <p className="text-xl font-black text-indigo-400 tracking-tighter">{formatTime(remainingMins)}</p>
-                      </div>
-                      <div className="bg-slate-900/30 p-4 rounded-2xl border border-slate-800/30 col-span-2 flex items-center justify-between">
-                        <div>
-                          <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Required Daily</p>
-                          <p className="text-2xl font-black text-white tracking-tighter">{formatTime(dailyGoalMins)} <span className="text-xs text-slate-500 font-bold">/ day</span></p>
-                        </div>
-                        <Zap size={24} className="text-yellow-400 opacity-50" />
-                      </div>
-                    </>
-                  )}
-                </div>
-              </div>
+              ) : (
+                <>
+                  {/* Target Date Section */}
+                  <div className="bg-slate-900/50 p-6 rounded-3xl border border-slate-800/50">
+                    <DatePicker
+                      value={targetDate}
+                      onChange={updateTargetDate}
+                      label="Target Completion Date"
+                      placeholder="Set your deadline"
+                    />
+                  </div>
 
-              {/* Graphical representation (Syllabus Weight) */}
-              <div className="space-y-4">
-                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block pl-1">Syllabus Weight Distribution</label>
-                <div className="space-y-3">
-                  {syllabus.map(sub => {
-                    const subTotal = sub.topics.reduce((acc, t) => acc + (t.time || 0), 0);
-                    const subDone = sub.topics.reduce((acc, t) => acc + (t.timeSpent || 0), 0);
-                    const weight = totalEstimatedMins === 0 ? 0 : Math.round((subTotal / totalEstimatedMins) * 100);
-                    const subProgress = subTotal === 0 ? 0 : Math.round((subDone / subTotal) * 100);
-                    return (
-                      <div key={sub.id} className="space-y-1.5">
-                        <div className="flex justify-between text-[11px] font-bold">
-                          <span className="text-slate-300">{sub.name} <span className="text-slate-600 font-black ml-2">{weight}% Weight</span></span>
-                          <span className="text-indigo-400">{subProgress}%</span>
-                        </div>
-                        <div className="h-2 bg-slate-900 rounded-full overflow-hidden flex">
-                          <div className="h-full bg-indigo-500 transition-all duration-1000" style={{ width: `${subProgress}%` }} />
-                        </div>
+                  {/* Main Progress Gauge */}
+                  <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12 py-4">
+                    <div className="relative w-48 h-48 shrink-0">
+                      <svg className="w-full h-full transform -rotate-90">
+                        <circle cx="96" cy="96" r="88" stroke="currentColor" strokeWidth="12" fill="transparent" className="text-slate-800" />
+                        <circle cx="96" cy="96" r="88" stroke="currentColor" strokeWidth="12" fill="transparent" strokeDasharray={552.9} strokeDashoffset={552.9 - (552.9 * progressPercentage) / 100} className="text-indigo-500 transition-all duration-1000 ease-out" strokeLinecap="round" />
+                      </svg>
+                      <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                        <span className="text-4xl font-black text-white leading-none">{progressPercentage}%</span>
+                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-1">Cleared</span>
                       </div>
-                    )
-                  })}
-                </div>
-              </div>
+                    </div>
+                    <div className="flex-1 grid grid-cols-2 gap-4 w-full">
+                      {trackingMode === 'module' ? (
+                        <>
+                          <div className="bg-slate-900/30 p-4 rounded-2xl border border-slate-800/30">
+                            <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Modules Done</p>
+                            <p className="text-xl font-black text-emerald-400 tracking-tighter">{syllabus.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + (t.completedModules || 0), 0), 0)} <span className="text-xs text-slate-500 font-bold">DONE</span></p>
+                          </div>
+                          <div className="bg-slate-900/30 p-4 rounded-2xl border border-slate-800/30">
+                            <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Modules Left</p>
+                            <p className="text-xl font-black text-indigo-400 tracking-tighter">{syllabus.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + Math.max(0, (t.totalModules || 0) - (t.completedModules || 0)), 0), 0)} <span className="text-xs text-slate-500 font-bold">LEFT</span></p>
+                          </div>
+                          <div className="bg-slate-900/30 p-4 rounded-2xl border border-slate-800/30 col-span-2 flex items-center justify-between">
+                            <div>
+                              <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Total Modules</p>
+                              <p className="text-2xl font-black text-white tracking-tighter">{syllabus.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + (t.totalModules || 0), 0), 0)} <span className="text-xs text-slate-500 font-bold">UNITS</span></p>
+                            </div>
+                            <Zap size={24} className="text-yellow-400 opacity-50" />
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="bg-slate-900/30 p-4 rounded-2xl border border-slate-800/30">
+                            <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Study Done</p>
+                            <p className="text-xl font-black text-emerald-400 tracking-tighter">{formatTime(totalStudyMins)}</p>
+                          </div>
+                          <div className="bg-slate-900/30 p-4 rounded-2xl border border-slate-800/30">
+                            <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Time Left</p>
+                            <p className="text-xl font-black text-indigo-400 tracking-tighter">{formatTime(remainingMins)}</p>
+                          </div>
+                          <div className="bg-slate-900/30 p-4 rounded-2xl border border-slate-800/30 col-span-2 flex items-center justify-between">
+                            <div>
+                              <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Required Daily</p>
+                              <p className="text-2xl font-black text-white tracking-tighter">{formatTime(dailyGoalMins)} <span className="text-xs text-slate-500 font-bold">/ day</span></p>
+                            </div>
+                            <Zap size={24} className="text-yellow-400 opacity-50" />
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Graphical representation (Syllabus Weight) */}
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block pl-1">Syllabus Weight Distribution</label>
+                    <div className="space-y-3">
+                      {syllabus.map(sub => {
+                        const subTotal = sub.topics.reduce((acc, t) => acc + (t.time || 0), 0);
+                        const subDone = sub.topics.reduce((acc, t) => acc + (t.timeSpent || 0), 0);
+                        const weight = totalEstimatedMins === 0 ? 0 : Math.round((subTotal / totalEstimatedMins) * 100);
+                        const subProgress = subTotal === 0 ? 0 : Math.round((subDone / subTotal) * 100);
+                        return (
+                          <div key={sub.id} className="space-y-1.5">
+                            <div className="flex justify-between text-[11px] font-bold">
+                              <span className="text-slate-300">{sub.name} <span className="text-slate-600 font-black ml-2">{weight}% Weight</span></span>
+                              <span className="text-indigo-400">{subProgress}%</span>
+                            </div>
+                            <div className="h-2 bg-slate-900 rounded-full overflow-hidden flex">
+                              <div className="h-full bg-indigo-500 transition-all duration-1000" style={{ width: `${subProgress}%` }} />
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -774,7 +810,7 @@ function App() {
           </div>
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
             <button
-              onClick={() => { setActiveTool(null); setSyllabus([]); setView('dashboard'); }}
+              onClick={() => { setActiveTool(null); setSyllabus([]); loadTools(); loadUserStreak(); setView('dashboard'); }}
               className="flex items-center justify-center gap-2 text-slate-400 hover:text-white transition-colors font-black uppercase tracking-widest text-[10px] border border-slate-800 px-6 py-4 sm:py-2 rounded-xl"
             >
               <ArrowLeft size={16} /> HUB
@@ -838,94 +874,101 @@ function App() {
           </div>
         </div>
 
-        {/* SYLLABUS GRID */}
-        {loading && !syllabus.length && <div className="text-center py-20 text-slate-600 font-black uppercase tracking-widest animate-pulse text-xs">Synchronizing Syllabus...</div>}
+        {/* MAIN TOOL VIEW */}
+        {activeTool?.tool_type === 'flashcard' ? (
+          <FlashcardDashboard tool={activeTool} />
+        ) : (
+          <>
+            {/* SYLLABUS GRID */}
+            {loading && !syllabus.length && <div className="text-center py-20 text-slate-600 font-black uppercase tracking-widest animate-pulse text-xs">Synchronizing Syllabus...</div>}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          {syllabus.map((sub) => {
-            const subTotal = trackingMode === 'module'
-              ? sub.topics.reduce((acc, t) => acc + (t.totalModules || 0), 0)
-              : sub.topics.reduce((acc, t) => acc + (t.time || 0), 0);
-            const subDone = trackingMode === 'module'
-              ? sub.topics.reduce((acc, t) => acc + (t.completedModules || 0), 0)
-              : sub.topics.reduce((acc, t) => acc + (t.timeSpent || 0), 0);
-            const subProgress = subTotal === 0 ? 0 : Math.round((subDone / subTotal) * 100);
-            const isOpen = expanded[sub.id];
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+              {syllabus.map((sub) => {
+                const subTotal = trackingMode === 'module'
+                  ? sub.topics.reduce((acc, t) => acc + (t.totalModules || 0), 0)
+                  : sub.topics.reduce((acc, t) => acc + (t.time || 0), 0);
+                const subDone = trackingMode === 'module'
+                  ? sub.topics.reduce((acc, t) => acc + (t.completedModules || 0), 0)
+                  : sub.topics.reduce((acc, t) => acc + (t.timeSpent || 0), 0);
+                const subProgress = subTotal === 0 ? 0 : Math.round((subDone / subTotal) * 100);
+                const isOpen = expanded[sub.id];
 
 
-            return (
-              <div key={sub.id} className={`bg-slate-900 border ${subProgress >= 100 ? 'border-emerald-500/30' : 'border-slate-800/50'} rounded-2xl sm:rounded-[2rem] p-6 sm:p-8 transition-all hover:bg-[#0c1225] hover:border-indigo-500/40 relative group shadow-sm flex flex-col`}>
-                <div className="flex justify-between items-start mb-6">
-                  <div className="cursor-pointer select-none flex-1 pr-2" onClick={() => toggleExpand(sub.id)}>
-                    <h3 className="font-black uppercase text-sm sm:text-base leading-tight tracking-tighter group-hover:text-indigo-400 transition-colors">{sub.name}</h3>
-                  </div>
-                  <div className="flex gap-2">
-                    <button onClick={() => openEditor(sub)} className="p-1.5 text-slate-700 hover:text-white transition-colors"><Edit3 size={16} /></button>
-                  </div>
-                </div>
+                return (
+                  <div key={sub.id} className={`bg-slate-900 border ${subProgress >= 100 ? 'border-emerald-500/30' : 'border-slate-800/50'} rounded-2xl sm:rounded-[2rem] p-6 sm:p-8 transition-all hover:bg-[#0c1225] hover:border-indigo-500/40 relative group shadow-sm flex flex-col`}>
+                    <div className="flex justify-between items-start mb-6">
+                      <div className="cursor-pointer select-none flex-1 pr-2" onClick={() => toggleExpand(sub.id)}>
+                        <h3 className="font-black uppercase text-sm sm:text-base leading-tight tracking-tighter group-hover:text-indigo-400 transition-colors">{sub.name}</h3>
+                      </div>
+                      <div className="flex gap-2">
+                        <button onClick={() => openEditor(sub)} className="p-1.5 text-slate-700 hover:text-white transition-colors"><Edit3 size={16} /></button>
+                      </div>
+                    </div>
 
-                <div className="flex justify-between items-end mb-2 text-[10px] font-black uppercase tracking-widest text-slate-500">
-                  <span>
-                    {trackingMode === 'module' ? `${subDone} / ${subTotal} Modules` : `${formatTime(subDone)} / ${formatTime(subTotal)}`}
-                  </span>
-                  <span className={subProgress >= 100 ? 'text-emerald-400' : 'text-indigo-400'}>{subProgress}%</span>
-                </div>
+                    <div className="flex justify-between items-end mb-2 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                      <span>
+                        {trackingMode === 'module' ? `${subDone} / ${subTotal} Modules` : `${formatTime(subDone)} / ${formatTime(subTotal)}`}
+                      </span>
+                      <span className={subProgress >= 100 ? 'text-emerald-400' : 'text-indigo-400'}>{subProgress}%</span>
+                    </div>
 
-                <div className="h-2 w-full bg-slate-800/50 rounded-full overflow-hidden mb-6 cursor-pointer" onClick={() => toggleExpand(sub.id)}>
-                  <div className={`h-full ${subProgress >= 100 ? 'bg-emerald-500' : 'bg-gradient-to-r from-indigo-600 to-indigo-400'} transition-all duration-1000`} style={{ width: `${subProgress}%` }} />
-                </div>
+                    <div className="h-2 w-full bg-slate-800/50 rounded-full overflow-hidden mb-6 cursor-pointer" onClick={() => toggleExpand(sub.id)}>
+                      <div className={`h-full ${subProgress >= 100 ? 'bg-emerald-500' : 'bg-gradient-to-r from-indigo-600 to-indigo-400'} transition-all duration-1000`} style={{ width: `${subProgress}%` }} />
+                    </div>
 
-                <div className={`expand-container ${isOpen ? 'open' : ''}`}>
-                  <div className="expand-content">
-                    <div className="space-y-2 pt-2">
-                      {sub.topics.map((t, tIdx) => {
-                        const weight = trackingMode === 'module' ? t.totalModules : t.time;
-                        const done = trackingMode === 'module' ? t.completedModules : t.timeSpent;
-                        const tp = weight > 0 ? (done / weight) * 100 : 0;
-                        return (
-                          <div key={tIdx} className="group/topic bg-slate-950/40 border border-slate-800/30 rounded-xl p-3 sm:p-4 transition-all hover:border-indigo-500/20 active:scale-[0.98]">
-                            <div className="flex justify-between items-center mb-1 gap-2">
-                              <span onClick={() => setLoggingTopic({ subId: sub.id, topicName: t.name, currentSpent: done, topicId: t.id })} className={`text-[11px] sm:text-xs font-bold leading-tight flex-1 cursor-pointer ${tp >= 100 ? 'text-emerald-400 opacity-60' : 'text-slate-300'}`}>{t.name}</span>
-                              <div className="flex items-center gap-2 min-w-max">
-                                {trackingMode === 'module'
-                                  ? <span className="text-[9px] font-mono text-slate-600 font-black">{done}/{weight}</span>
-                                  : <span className="text-[9px] font-mono text-slate-600 font-black">{formatTime(done)}</span>
-                                }
-                                <div className="flex gap-1">
-                                  <button onClick={() => {
-                                    setEditingLog({
-                                      topicId: t.id,
-                                      minutes: done,
-                                      modules: done,
-                                      topicName: t.name
-                                    });
-                                  }} className="p-1 hover:text-indigo-400 transition-colors" title="Edit total"><Edit3 size={10} /></button>
-                                  <button onClick={() => setLoggingTopic({ subId: sub.id, topicName: t.name, currentSpent: done, topicId: t.id })} className="p-1 hover:text-indigo-400 transition-colors"><Plus size={10} /></button>
+                    <div className={`expand-container ${isOpen ? 'open' : ''}`}>
+                      <div className="expand-content">
+                        <div className="space-y-2 pt-2">
+                          {sub.topics.map((t, tIdx) => {
+                            const weight = trackingMode === 'module' ? t.totalModules : t.time;
+                            const done = trackingMode === 'module' ? t.completedModules : t.timeSpent;
+                            const tp = weight > 0 ? (done / weight) * 100 : 0;
+                            return (
+                              <div key={tIdx} className="group/topic bg-slate-950/40 border border-slate-800/30 rounded-xl p-3 sm:p-4 transition-all hover:border-indigo-500/20 active:scale-[0.98]">
+                                <div className="flex justify-between items-center mb-1 gap-2">
+                                  <span onClick={() => setLoggingTopic({ subId: sub.id, topicName: t.name, currentSpent: done, topicId: t.id })} className={`text-[11px] sm:text-xs font-bold leading-tight flex-1 cursor-pointer ${tp >= 100 ? 'text-emerald-400 opacity-60' : 'text-slate-300'}`}>{t.name}</span>
+                                  <div className="flex items-center gap-2 min-w-max">
+                                    {trackingMode === 'module'
+                                      ? <span className="text-[9px] font-mono text-slate-600 font-black">{done}/{weight}</span>
+                                      : <span className="text-[9px] font-mono text-slate-600 font-black">{formatTime(done)}</span>
+                                    }
+                                    <div className="flex gap-1">
+                                      <button onClick={() => {
+                                        setEditingLog({
+                                          topicId: t.id,
+                                          minutes: done,
+                                          modules: done,
+                                          topicName: t.name
+                                        });
+                                      }} className="p-1 hover:text-indigo-400 transition-colors" title="Edit total"><Edit3 size={10} /></button>
+                                      <button onClick={() => setLoggingTopic({ subId: sub.id, topicName: t.name, currentSpent: done, topicId: t.id })} className="p-1 hover:text-indigo-400 transition-colors"><Plus size={10} /></button>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div className="h-1 w-full bg-slate-900 rounded-full overflow-hidden">
+                                  <div className={`h-full ${tp >= 100 ? 'bg-emerald-500' : 'bg-indigo-600'} transition-all duration-500`} style={{ width: `${Math.min(100, tp)}%` }} />
                                 </div>
                               </div>
-                            </div>
-
-                            <div className="h-1 w-full bg-slate-900 rounded-full overflow-hidden">
-                              <div className={`h-full ${tp >= 100 ? 'bg-emerald-500' : 'bg-indigo-600'} transition-all duration-500`} style={{ width: `${Math.min(100, tp)}%` }} />
-                            </div>
-                          </div>
-                        )
-                      })}
-                      <button onClick={() => openEditor(sub)} className="w-full py-3 sm:py-4 border-2 border-dashed border-slate-800/50 rounded-2xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-slate-600 hover:text-indigo-400 hover:border-indigo-500/30 transition-all flex items-center justify-center gap-2 mt-2 font-black">+ Update Syllabus</button>
+                            )
+                          })}
+                          <button onClick={() => openEditor(sub)} className="w-full py-3 sm:py-4 border-2 border-dashed border-slate-800/50 rounded-2xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-slate-600 hover:text-indigo-400 hover:border-indigo-500/30 transition-all flex items-center justify-center gap-2 mt-2 font-black">+ Update Syllabus</button>
+                        </div>
+                      </div>
                     </div>
+
+                    {!isOpen && sub.topics.length > 0 && <div className="text-center py-2 opacity-50 group-hover:opacity-100 transition-opacity cursor-pointer text-slate-700 hover:text-indigo-500" onClick={() => toggleExpand(sub.id)}><ChevronDown size={14} className="mx-auto" /></div>}
                   </div>
-                </div>
+                );
+              })}
 
-                {!isOpen && sub.topics.length > 0 && <div className="text-center py-2 opacity-50 group-hover:opacity-100 transition-opacity cursor-pointer text-slate-700 hover:text-indigo-500" onClick={() => toggleExpand(sub.id)}><ChevronDown size={14} className="mx-auto" /></div>}
-              </div>
-            );
-          })}
-
-          <button onClick={() => openEditor()} className="border-2 border-dashed border-slate-800/50 rounded-2xl sm:rounded-[2rem] p-8 flex flex-col items-center justify-center gap-4 text-slate-700 hover:text-indigo-500 hover:border-indigo-500/30 transition-all group h-full min-h-[220px]">
-            <div className="p-4 bg-slate-900 rounded-2xl group-hover:scale-110 transition-transform"><Plus size={32} /></div>
-            <span className="font-black uppercase tracking-widest text-[9px] sm:text-[10px]">Add New Subject</span>
-          </button>
-        </div>
+              <button onClick={() => openEditor()} className="border-2 border-dashed border-slate-800/50 rounded-2xl sm:rounded-[2rem] p-8 flex flex-col items-center justify-center gap-4 text-slate-700 hover:text-indigo-500 hover:border-indigo-500/30 transition-all group h-full min-h-[220px]">
+                <div className="p-4 bg-slate-900 rounded-2xl group-hover:scale-110 transition-transform"><Plus size={32} /></div>
+                <span className="font-black uppercase tracking-widest text-[9px] sm:text-[10px]">Add New Subject</span>
+              </button>
+            </div>
+          </>
+        )}
       </div>
 
       {/* QUICK LOG MODAL */}

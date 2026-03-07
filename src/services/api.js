@@ -212,3 +212,83 @@ export const streak = {
         return res.json();
     }
 };
+
+export const flashcards = {
+    // DECKS
+    createDeck: async (toolId, name) => {
+        const res = await fetch(`${API_URL}/flashcards/decks`, {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify({ toolId, name })
+        });
+        if (!res.ok) throw new Error('Failed to create deck');
+        return res.json();
+    },
+    getDecks: async (toolId) => {
+        const res = await fetch(`${API_URL}/flashcards/tools/${toolId}/decks`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to fetch decks');
+        return res.json();
+    },
+    getAnalytics: async (toolId) => {
+        const res = await fetch(`${API_URL}/flashcards/tools/${toolId}/analytics`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to fetch analytics');
+        return res.json();
+    },
+    deleteDeck: async (deckId) => {
+        const res = await fetch(`${API_URL}/flashcards/decks/${deckId}`, {
+            method: 'DELETE',
+            headers: getHeaders()
+        });
+        if (!res.ok) throw new Error('Failed to delete deck');
+        return res.json();
+    },
+
+    // CARDS
+    createCard: async (deckId, frontContent, backContent, sourceTopicId = null) => {
+        const res = await fetch(`${API_URL}/flashcards/decks/${deckId}/cards`, {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify({ frontContent, backContent, sourceTopicId })
+        });
+        if (!res.ok) throw new Error('Failed to create card');
+        return res.json();
+    },
+    getCards: async (deckId) => {
+        const res = await fetch(`${API_URL}/flashcards/decks/${deckId}/cards`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to fetch cards');
+        return res.json();
+    },
+    updateCard: async (cardId, frontContent, backContent) => {
+        const res = await fetch(`${API_URL}/flashcards/cards/${cardId}`, {
+            method: 'PUT',
+            headers: getHeaders(),
+            body: JSON.stringify({ frontContent, backContent })
+        });
+        if (!res.ok) throw new Error('Failed to update card');
+        return res.json();
+    },
+    getDueCards: async (deckId) => {
+        const res = await fetch(`${API_URL}/flashcards/decks/${deckId}/due`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to fetch due cards');
+        return res.json();
+    },
+    deleteCard: async (cardId) => {
+        const res = await fetch(`${API_URL}/flashcards/cards/${cardId}`, {
+            method: 'DELETE',
+            headers: getHeaders()
+        });
+        if (!res.ok) throw new Error('Failed to delete card');
+        return res.json();
+    },
+
+    // REVIEW
+    submitReview: async (cardId, score) => {
+        const res = await fetch(`${API_URL}/flashcards/cards/${cardId}/review`, {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify({ score })
+        });
+        if (!res.ok) throw new Error('Failed to submit review');
+        return res.json();
+    }
+};

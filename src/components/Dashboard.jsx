@@ -4,7 +4,7 @@ import {
     ChevronRight, Play, Clock, Target,
     Zap, Calendar, BarChart3, LayoutGrid,
     BookOpen, Trophy, Sparkles, Users, Plus, Layers,
-    MoreVertical, Edit3, Trash2, X
+    MoreVertical, Edit3, Trash2, X, BrainCircuit, AlertCircle
 } from 'lucide-react';
 import UserStreakWidget from './ui/UserStreakWidget';
 
@@ -73,6 +73,23 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
             {/* Main Content */}
             <main className="relative z-10 max-w-[1400px] mx-auto px-6 sm:px-8 py-8">
 
+                {/* Due Cards Global Alert */}
+                {tools?.some(t => t.due_cards_count > 0) && (
+                    <div className="mb-8 bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 flex items-center justify-between gap-4 shadow-lg shadow-amber-500/5 animate-in fade-in slide-in-from-top-4">
+                        <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 bg-amber-500/20 rounded-xl flex items-center justify-center text-amber-500">
+                                <AlertCircle size={20} />
+                            </div>
+                            <div>
+                                <h3 className="text-amber-500 font-black uppercase tracking-tighter text-sm">Flashcards Due for Review</h3>
+                                <p className="text-amber-500/70 text-xs font-bold mt-0.5">
+                                    You have {tools.reduce((sum, t) => sum + (t.due_cards_count || 0), 0)} flashcards across your decks waiting to be reviewed today.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
                 {/* Welcome + Streak */}
                 <div className="mb-12 flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
                     {/* Welcome text */}
@@ -140,7 +157,7 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
                                 {/* Tool Content */}
                                 <div className="mb-6">
                                     <div className="w-14 h-14 bg-indigo-500/10 rounded-2xl flex items-center justify-center text-indigo-400 border border-indigo-500/20 group-hover:scale-110 transition-transform mb-5">
-                                        {tool.tool_type === 'module' ? <Layers size={28} /> : <Clock size={28} />}
+                                        {tool.tool_type === 'module' ? <Layers size={28} /> : tool.tool_type === 'flashcard' ? <BrainCircuit size={28} /> : <Clock size={28} />}
                                     </div>
 
                                     {/* Tool Name - editable when renaming */}
@@ -162,13 +179,18 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
                                         </h4>
                                     )}
 
-                                    <div className="flex items-center gap-3">
-                                        <span className="text-[10px] bg-slate-800 text-slate-400 px-3 py-1 rounded-full font-black uppercase tracking-widest">
-                                            {tool.tool_type === 'module' ? 'Module' : 'Time'} Based
+                                    <div className="flex items-center flex-wrap gap-2">
+                                        <span className="text-[10px] bg-slate-800 text-slate-400 px-3 py-1 rounded-full font-black uppercase tracking-widest shrink-0">
+                                            {tool.tool_type === 'module' ? 'Module' : tool.tool_type === 'flashcard' ? 'SRS' : 'Time'} Based
                                         </span>
-                                        <span className="text-[10px] text-slate-600 font-bold uppercase tracking-widest">
+                                        <span className="text-[10px] text-slate-600 font-bold uppercase tracking-widest shrink-0">
                                             {tool.selected_exam || 'GATE'}
                                         </span>
+                                        {tool.due_cards_count > 0 && (
+                                            <span className="text-[10px] bg-amber-500/20 text-amber-500 px-3 py-1 rounded-full font-black uppercase tracking-widest flex items-center gap-1 shrink-0 animate-pulse">
+                                                <AlertCircle size={10} /> {tool.due_cards_count} Due
+                                            </span>
+                                        )}
                                     </div>
                                 </div>
 

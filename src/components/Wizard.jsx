@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronRight, Target, Clock, Boxes, GraduationCap, CheckCircle2, PenTool, ArrowLeft } from 'lucide-react';
+import { ChevronRight, Target, Clock, Boxes, GraduationCap, CheckCircle2, PenTool, ArrowLeft, Brain } from 'lucide-react';
 
 const Wizard = ({ onComplete, onBack }) => {
     const [step, setStep] = useState(1);
@@ -106,6 +106,24 @@ const Wizard = ({ onComplete, onBack }) => {
                             <p className="text-xs text-slate-500 font-medium leading-relaxed">Progress by blocks. Count finished modules instead of watching the clock. Best for topic mastery.</p>
                         </div>
                         {data.mode === 'module' && <div className="absolute top-6 right-6"><CheckCircle2 className="text-indigo-400" /></div>}
+                    </div>
+
+                    <div
+                        onClick={() => setData({ ...data, mode: 'flashcard' })}
+                        className={`p-6 rounded-[2.5rem] border-2 transition-all cursor-pointer flex flex-col gap-6 relative group sm:col-span-2 ${data.mode === 'flashcard' ? 'border-indigo-500 bg-indigo-500/10' : 'border-slate-800 bg-slate-900/50 hover:border-slate-700'}`}
+                    >
+                        <div className="flex items-start gap-5">
+                            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 ${data.mode === 'flashcard' ? 'bg-indigo-500 text-white' : 'bg-slate-800 text-slate-500 group-hover:text-white'}`}>
+                                <Brain size={32} />
+                            </div>
+                            <div>
+                                <h4 className="font-black uppercase tracking-tight text-xl mb-2">Flashcards (SRS)</h4>
+                                <p className="text-xs text-slate-500 font-medium leading-relaxed max-w-sm">
+                                    Spaced Repetition System. Create decks, add flashcards, and use the Anki SM-2 algorithm to permanently memorize formulas and concepts.
+                                </p>
+                            </div>
+                        </div>
+                        {data.mode === 'flashcard' && <div className="absolute top-6 right-6"><CheckCircle2 className="text-indigo-400" /></div>}
                     </div>
                 </div>
             )
