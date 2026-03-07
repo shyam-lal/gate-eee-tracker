@@ -1,21 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Trash2, BrainCircuit, Edit3, Save, X, Image as ImageIcon } from 'lucide-react';
-import { flashcards as flashcardsApi } from '../../services/api';
+import { Plus, Trash2, BrainCircuit, Edit3, Save, X, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { flashcards as flashcardsApi, upload as uploadApi } from '../../services/api';
 
 const CardEditor = ({ deckId }) => {
     const [cards, setCards] = useState([]);
     const [loading, setLoading] = useState(true);
     const [front, setFront] = useState('');
     const [frontImage, setFrontImage] = useState(null);
+    const [uploadingFront, setUploadingFront] = useState(false);
     const [back, setBack] = useState('');
     const [backImage, setBackImage] = useState(null);
+    const [uploadingBack, setUploadingBack] = useState(false);
 
     // Edit state
     const [editingCardId, setEditingCardId] = useState(null);
     const [editFront, setEditFront] = useState('');
     const [editFrontImage, setEditFrontImage] = useState(null);
+    const [editUploadingFront, setEditUploadingFront] = useState(false);
     const [editBack, setEditBack] = useState('');
     const [editBackImage, setEditBackImage] = useState(null);
+    const [editUploadingBack, setEditUploadingBack] = useState(false);
 
     useEffect(() => {
         loadCards();
@@ -94,10 +98,27 @@ const CardEditor = ({ deckId }) => {
         }
     };
 
-    // Helper for generating mock images temporarily
-    const injectMockImage = (setter) => {
-        const randomId = Math.floor(Math.random() * 1000);
-        setter(`https://picsum.photos/seed/${randomId}/600/400`);
+    const handleImageUpload = async (e, setUrl, setUploading) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        // Basic frontend validation
+        if (file.size > 5 * 1024 * 1024) {
+            alert("File size exceeds 5MB limit");
+            return;
+        }
+
+        try {
+            setUploading(true);
+            const res = await uploadApi.image(file);
+            setUrl(res.url);
+        } catch (err) {
+            alert(err.message || 'Failed to upload image. Make sure server has valid B2 API keys.');
+        } finally {
+            setUploading(false);
+            // Reset input so the same file can be selected again if needed
+            e.target.value = '';
+        }
     };
 
     if (loading) return <div className="p-8 text-center text-slate-500 animate-pulse font-black uppercase tracking-widest flex items-center justify-center h-full">Loading Cards...</div>;
@@ -147,9 +168,11 @@ const CardEditor = ({ deckId }) => {
                     <div className="flex-1 space-y-2">
                         <div className="flex justify-between items-center mb-1">
                             <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Front (Question)</label>
-                            <button type="button" onClick={() => injectMockImage(setFrontImage)} className="text-[10px] text-indigo-400 font-bold uppercase tracking-widest flex items-center gap-1 hover:text-indigo-300 transition-colors bg-indigo-500/10 px-2 py-1 rounded">
-                                <ImageIcon size={12} /> Add Image
-                            </button>
+                            <label className={`text-[10px] ${uploadingFront ? 'text-slate-400 bg-slate-800' : 'text-indigo-400 bg-indigo-500/10 hover:text-indigo-300'} font-bold uppercase tracking-widest flex items-center gap-1 transition-colors px-2 py-1 rounded cursor-pointer`}>
+                                {uploadingFront ? <Loader2 size={12} className="animate-spin" /> : <ImageIcon size={12} />}
+                                {uploadingFront ? 'Uploading...' : 'Add Image'}
+                                <input type="file" accept="image/*" className="hidden" disabled={uploadingFront} onChange={(e) => handleImageUpload(e, setFrontImage, setUploadingFront)} />
+                            </label>
                         </div>
                         <textarea
                             value={front}
@@ -167,9 +190,11 @@ const CardEditor = ({ deckId }) => {
                     <div className="flex-1 space-y-2">
                         <div className="flex justify-between items-center mb-1">
                             <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Back (Answer)</label>
-                            <button type="button" onClick={() => injectMockImage(setBackImage)} className="text-[10px] text-indigo-400 font-bold uppercase tracking-widest flex items-center gap-1 hover:text-indigo-300 transition-colors bg-indigo-500/10 px-2 py-1 rounded">
-                                <ImageIcon size={12} /> Add Image
-                            </button>
+                            <label className={`text-[10px] ${uploadingBack ? 'text-slate-400 bg-slate-800' : 'text-indigo-400 bg-indigo-500/10 hover:text-indigo-300'} font-bold uppercase tracking-widest flex items-center gap-1 transition-colors px-2 py-1 rounded cursor-pointer`}>
+                                {uploadingBack ? <Loader2 size={12} className="animate-spin" /> : <ImageIcon size={12} />}
+                                {uploadingBack ? 'Uploading...' : 'Add Image'}
+                                <input type="file" accept="image/*" className="hidden" disabled={uploadingBack} onChange={(e) => handleImageUpload(e, setBackImage, setUploadingBack)} />
+                            </label>
                         </div>
                         <textarea
                             value={back}
@@ -187,7 +212,7 @@ const CardEditor = ({ deckId }) => {
                     <div className="flex sm:flex-col justify-end pt-6">
                         <button
                             type="submit"
-                            disabled={(!front.trim() && !frontImage) || (!back.trim() && !backImage)}
+                            disabled={uploadingFront || uploadingBack || (!front.trim() && !frontImage) || (!back.trim() && !backImage)}
                             className="h-20 px-6 bg-indigo-600 disabled:bg-slate-800 text-white disabled:text-slate-500 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-indigo-500 transition-colors shadow-lg shadow-indigo-600/20 disabled:shadow-none flex items-center justify-center gap-2 w-full sm:w-auto"
                         >
                             <Plus size={16} /> Add Card
@@ -217,9 +242,11 @@ const CardEditor = ({ deckId }) => {
                                             <div>
                                                 <div className="flex justify-between items-center mb-1">
                                                     <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Front (Question)</label>
-                                                    <button type="button" onClick={() => injectMockImage(setEditFrontImage)} className="text-[10px] text-indigo-400 font-bold uppercase tracking-widest flex items-center gap-1 hover:text-indigo-300 transition-colors bg-indigo-500/10 px-2 py-1 rounded">
-                                                        <ImageIcon size={12} /> Image
-                                                    </button>
+                                                    <label className={`text-[10px] ${editUploadingFront ? 'text-slate-400 bg-slate-800' : 'text-indigo-400 bg-indigo-500/10 hover:text-indigo-300'} font-bold uppercase tracking-widest flex items-center gap-1 transition-colors px-2 py-1 rounded cursor-pointer`}>
+                                                        {editUploadingFront ? <Loader2 size={12} className="animate-spin" /> : <ImageIcon size={12} />}
+                                                        {editUploadingFront ? 'Uploading...' : 'Image'}
+                                                        <input type="file" accept="image/*" className="hidden" disabled={editUploadingFront} onChange={(e) => handleImageUpload(e, setEditFrontImage, setEditUploadingFront)} />
+                                                    </label>
                                                 </div>
                                                 <textarea
                                                     value={editFront}
@@ -236,9 +263,11 @@ const CardEditor = ({ deckId }) => {
                                             <div>
                                                 <div className="flex justify-between items-center mb-1">
                                                     <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Back (Answer)</label>
-                                                    <button type="button" onClick={() => injectMockImage(setEditBackImage)} className="text-[10px] text-indigo-400 font-bold uppercase tracking-widest flex items-center gap-1 hover:text-indigo-300 transition-colors bg-indigo-500/10 px-2 py-1 rounded">
-                                                        <ImageIcon size={12} /> Image
-                                                    </button>
+                                                    <label className={`text-[10px] ${editUploadingBack ? 'text-slate-400 bg-slate-800' : 'text-indigo-400 bg-indigo-500/10 hover:text-indigo-300'} font-bold uppercase tracking-widest flex items-center gap-1 transition-colors px-2 py-1 rounded cursor-pointer`}>
+                                                        {editUploadingBack ? <Loader2 size={12} className="animate-spin" /> : <ImageIcon size={12} />}
+                                                        {editUploadingBack ? 'Uploading...' : 'Image'}
+                                                        <input type="file" accept="image/*" className="hidden" disabled={editUploadingBack} onChange={(e) => handleImageUpload(e, setEditBackImage, setEditUploadingBack)} />
+                                                    </label>
                                                 </div>
                                                 <textarea
                                                     value={editBack}
@@ -262,7 +291,7 @@ const CardEditor = ({ deckId }) => {
                                             </button>
                                             <button
                                                 onClick={() => handleSaveEdit(card.id)}
-                                                disabled={(!editFront.trim() && !editFrontImage) || (!editBack.trim() && !editBackImage)}
+                                                disabled={editUploadingFront || editUploadingBack || ((!editFront.trim() && !editFrontImage) || (!editBack.trim() && !editBackImage))}
                                                 className="px-4 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-500 transition-colors text-xs font-bold disabled:opacity-50 flex items-center gap-1.5 shadow-lg shadow-indigo-600/20"
                                             >
                                                 <Save size={14} /> Save Changes

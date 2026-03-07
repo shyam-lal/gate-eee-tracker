@@ -27,6 +27,7 @@ app.use('/api/syllabus', require('./routes/syllabusRoutes'));
 app.use('/api/social', require('./routes/socialRoutes'));
 app.use('/api/streak', require('./routes/streakRoutes'));
 app.use('/api/flashcards', require('./routes/flashcardRoutes'));
+app.use('/api/upload', require('./routes/uploadRoutes'));
 
 // Serve Static Files (production only)
 const distPath = path.join(__dirname, '../../dist');

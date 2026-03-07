@@ -292,3 +292,22 @@ export const flashcards = {
         return res.json();
     }
 };
+
+export const upload = {
+    image: async (file) => {
+        const formData = new FormData();
+        formData.append('image', file);
+
+        const token = localStorage.getItem('token');
+        const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+        // Note: Do not override Content-Type so browser sets multipart boundary automatically
+
+        const res = await fetch(`${API_URL}/upload`, {
+            method: 'POST',
+            headers,
+            body: formData
+        });
+        if (!res.ok) throw new Error((await res.json()).msg || 'Upload failed');
+        return res.json();
+    }
+};
