@@ -122,6 +122,17 @@ const StudySession = ({ deck, onComplete }) => {
     const lblGood = formatInterval(getExpectedInterval(4, rep, intDays, ef));
     const lblEasy = formatInterval(getExpectedInterval(5, rep, intDays, ef));
 
+    const extractImage = (content) => {
+        const match = content?.match(/\[IMAGE:(.*?)\]/);
+        if (match) {
+            return { text: content.replace(match[0], '').trim(), image: match[1] };
+        }
+        return { text: content || '', image: null };
+    };
+
+    const frontData = extractImage(currentCard.front_content);
+    const backData = extractImage(currentCard.back_content);
+
     return (
         <div className="h-full flex flex-col max-w-3xl mx-auto px-4 py-8">
             {/* Header */}
@@ -138,29 +149,37 @@ const StudySession = ({ deck, onComplete }) => {
 
             {/* Flashcard Area */}
             <div className="flex-1 flex flex-col items-center justify-center w-full perspective-1000 mb-8 min-h-0">
-                <div className="w-full h-full max-h-[400px] relative transition-all duration-500 transform-style-3d group">
+                <div className="w-full h-full relative transition-all duration-500 transform-style-3d group">
 
                     {/* Front of Card */}
-                    <div className={`absolute inset-0 w-full h-full backface-hidden flex flex-col bg-slate-900 border-2 border-slate-800 rounded-[2.5rem] shadow-2xl p-8 sm:p-12 transition-all duration-500 ${showBack ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100 scale-100'}`}>
-                        <div className="w-12 h-12 bg-indigo-500/10 rounded-2xl flex items-center justify-center text-indigo-400 mb-8 mx-auto self-start">
+                    <div className={`absolute inset-0 w-full h-full backface-hidden flex flex-col bg-slate-900 border-2 border-slate-800 rounded-[2.5rem] shadow-2xl p-6 sm:p-10 transition-all duration-500 ${showBack ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100 scale-100 z-10'}`}>
+                        <div className="w-12 h-12 bg-indigo-500/10 rounded-2xl flex items-center justify-center text-indigo-400 mb-6 mx-auto self-start flex-shrink-0">
                             <Brain size={24} />
                         </div>
-                        <div className="flex-1 flex items-center justify-center overflow-auto text-center">
-                            <h3 className="text-2xl sm:text-3xl font-bold text-white leading-relaxed">{currentCard.front_content}</h3>
+                        <div className="flex-1 overflow-y-auto no-scrollbar w-full flex flex-col fade-edge-y pb-2">
+                            <div className="m-auto flex flex-col items-center text-center space-y-8 w-full">
+                                <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white leading-relaxed">{frontData.text}</h3>
+                                {frontData.image && (
+                                    <img src={frontData.image} alt="Front illustration" className="max-h-[40vh] rounded-2xl object-contain border border-slate-700 shadow-xl shadow-black/50" />
+                                )}
+                            </div>
                         </div>
                     </div>
 
                     {/* Back of Card */}
-                    <div className={`absolute inset-0 w-full h-full backface-hidden flex flex-col bg-slate-800 border-2 border-indigo-500/50 rounded-[2.5rem] shadow-2xl shadow-indigo-500/10 p-8 sm:p-12 transition-all duration-500 ${!showBack ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100 scale-100'}`}>
-                        <div className="flex items-center justify-between mb-8 opacity-50 pb-6 border-b border-slate-700">
+                    <div className={`absolute inset-0 w-full h-full backface-hidden flex flex-col bg-slate-800 border-2 border-indigo-500/50 rounded-[2.5rem] shadow-2xl shadow-indigo-500/10 p-6 sm:p-10 transition-all duration-500 ${!showBack ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100 scale-100 z-10'}`}>
+                        <div className="flex items-center justify-between mb-6 opacity-50 pb-4 border-b border-slate-700 flex-shrink-0">
                             <div className="flex-1 text-center">
                                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Question</p>
-                                <p className="text-xs text-white font-medium line-clamp-2">{currentCard.front_content}</p>
+                                <p className="text-xs text-white font-medium line-clamp-2">{frontData.text}</p>
                             </div>
                         </div>
-                        <div className="flex-1 flex items-center justify-center overflow-auto text-center">
-                            <div className="max-w-xl mx-auto">
-                                <p className="text-2xl sm:text-3xl font-bold text-indigo-100 leading-relaxed whitespace-pre-wrap">{currentCard.back_content}</p>
+                        <div className="flex-1 overflow-y-auto no-scrollbar w-full flex flex-col fade-edge-y pb-2">
+                            <div className="m-auto flex flex-col items-center text-center space-y-10 w-full">
+                                <p className="text-2xl sm:text-3xl lg:text-4xl font-bold text-indigo-100 leading-relaxed whitespace-pre-wrap">{backData.text}</p>
+                                {backData.image && (
+                                    <img src={backData.image} alt="Back illustration" className="max-h-[50vh] mx-auto rounded-2xl object-contain border border-slate-700 shadow-xl shadow-black/50" />
+                                )}
                             </div>
                         </div>
                     </div>

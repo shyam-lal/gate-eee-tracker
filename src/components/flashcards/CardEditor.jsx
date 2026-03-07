@@ -1,17 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Trash2, BrainCircuit, Edit3, Save, X } from 'lucide-react';
+import { Plus, Trash2, BrainCircuit, Edit3, Save, X, Image as ImageIcon } from 'lucide-react';
 import { flashcards as flashcardsApi } from '../../services/api';
 
 const CardEditor = ({ deckId }) => {
     const [cards, setCards] = useState([]);
     const [loading, setLoading] = useState(true);
     const [front, setFront] = useState('');
+    const [frontImage, setFrontImage] = useState(null);
     const [back, setBack] = useState('');
+    const [backImage, setBackImage] = useState(null);
 
     // Edit state
     const [editingCardId, setEditingCardId] = useState(null);
     const [editFront, setEditFront] = useState('');
+    const [editFrontImage, setEditFrontImage] = useState(null);
     const [editBack, setEditBack] = useState('');
+    const [editBackImage, setEditBackImage] = useState(null);
 
     useEffect(() => {
         loadCards();
@@ -31,11 +35,16 @@ const CardEditor = ({ deckId }) => {
 
     const handleCreateCard = async (e) => {
         e.preventDefault();
-        if (!front.trim() || !back.trim()) return;
+        if ((!front.trim() && !frontImage) || (!back.trim() && !backImage)) return;
         try {
-            await flashcardsApi.createCard(deckId, front.trim(), back.trim());
+            const finalFront = front.trim() + (frontImage ? `\n\n[IMAGE:${frontImage}]` : '');
+            const finalBack = back.trim() + (backImage ? `\n\n[IMAGE:${backImage}]` : '');
+
+            await flashcardsApi.createCard(deckId, finalFront, finalBack);
             setFront('');
+            setFrontImage(null);
             setBack('');
+            setBackImage(null);
             loadCards();
         } catch (err) {
             alert('Failed to create card');
@@ -52,21 +61,43 @@ const CardEditor = ({ deckId }) => {
         }
     };
 
+    const extractImage = (content) => {
+        const match = content?.match(/\[IMAGE:(.*?)\]/);
+        if (match) {
+            return { text: content.replace(match[0], '').trim(), image: match[1] };
+        }
+        return { text: content || '', image: null };
+    };
+
     const startEdit = (card) => {
+        const frontData = extractImage(card.front_content);
+        const backData = extractImage(card.back_content);
+
         setEditingCardId(card.id);
-        setEditFront(card.front_content);
-        setEditBack(card.back_content);
+        setEditFront(frontData.text);
+        setEditFrontImage(frontData.image);
+        setEditBack(backData.text);
+        setEditBackImage(backData.image);
     };
 
     const handleSaveEdit = async (cardId) => {
-        if (!editFront.trim() || !editBack.trim()) return;
+        if ((!editFront.trim() && !editFrontImage) || (!editBack.trim() && !editBackImage)) return;
         try {
-            await flashcardsApi.updateCard(cardId, editFront.trim(), editBack.trim());
+            const finalFront = editFront.trim() + (editFrontImage ? `\n\n[IMAGE:${editFrontImage}]` : '');
+            const finalBack = editBack.trim() + (editBackImage ? `\n\n[IMAGE:${editBackImage}]` : '');
+
+            await flashcardsApi.updateCard(cardId, finalFront, finalBack);
             setEditingCardId(null);
             loadCards();
         } catch (err) {
             alert('Failed to update card');
         }
+    };
+
+    // Helper for generating mock images temporarily
+    const injectMockImage = (setter) => {
+        const randomId = Math.floor(Math.random() * 1000);
+        setter(`https://picsum.photos/seed/${randomId}/600/400`);
     };
 
     if (loading) return <div className="p-8 text-center text-slate-500 animate-pulse font-black uppercase tracking-widest flex items-center justify-center h-full">Loading Cards...</div>;
@@ -114,27 +145,49 @@ const CardEditor = ({ deckId }) => {
             <div className="bg-slate-900/90 border-b border-slate-800 p-6 flex-shrink-0 z-10 backdrop-blur-md">
                 <form onSubmit={handleCreateCard} className="flex flex-col sm:flex-row gap-4">
                     <div className="flex-1 space-y-2">
-                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Front (Question)</label>
+                        <div className="flex justify-between items-center mb-1">
+                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Front (Question)</label>
+                            <button type="button" onClick={() => injectMockImage(setFrontImage)} className="text-[10px] text-indigo-400 font-bold uppercase tracking-widest flex items-center gap-1 hover:text-indigo-300 transition-colors bg-indigo-500/10 px-2 py-1 rounded">
+                                <ImageIcon size={12} /> Add Image
+                            </button>
+                        </div>
                         <textarea
                             value={front}
                             onChange={e => setFront(e.target.value)}
                             placeholder="e.g. What is KVL?"
                             className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-5 py-3 text-sm font-medium text-white focus:border-indigo-500 outline-none resize-none h-20 shadow-inner"
                         />
+                        {frontImage && (
+                            <div className="relative inline-block mt-2">
+                                <img src={frontImage} alt="Front preview" className="h-20 rounded-lg border border-slate-800" />
+                                <button type="button" onClick={() => setFrontImage(null)} className="absolute -top-2 -right-2 bg-rose-500 text-white p-1 rounded-full shadow hover:scale-110 transition-transform"><X size={12} /></button>
+                            </div>
+                        )}
                     </div>
                     <div className="flex-1 space-y-2">
-                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Back (Answer)</label>
+                        <div className="flex justify-between items-center mb-1">
+                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Back (Answer)</label>
+                            <button type="button" onClick={() => injectMockImage(setBackImage)} className="text-[10px] text-indigo-400 font-bold uppercase tracking-widest flex items-center gap-1 hover:text-indigo-300 transition-colors bg-indigo-500/10 px-2 py-1 rounded">
+                                <ImageIcon size={12} /> Add Image
+                            </button>
+                        </div>
                         <textarea
                             value={back}
                             onChange={e => setBack(e.target.value)}
                             placeholder="e.g. The sum of all voltages around a closed loop is zero."
                             className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-5 py-3 text-sm font-medium text-white focus:border-indigo-500 outline-none resize-none h-20 shadow-inner"
                         />
+                        {backImage && (
+                            <div className="relative inline-block mt-2">
+                                <img src={backImage} alt="Back preview" className="h-20 rounded-lg border border-slate-800" />
+                                <button type="button" onClick={() => setBackImage(null)} className="absolute -top-2 -right-2 bg-rose-500 text-white p-1 rounded-full shadow hover:scale-110 transition-transform"><X size={12} /></button>
+                            </div>
+                        )}
                     </div>
-                    <div className="flex sm:flex-col justify-end">
+                    <div className="flex sm:flex-col justify-end pt-6">
                         <button
                             type="submit"
-                            disabled={!front.trim() || !back.trim()}
+                            disabled={(!front.trim() && !frontImage) || (!back.trim() && !backImage)}
                             className="h-20 px-6 bg-indigo-600 disabled:bg-slate-800 text-white disabled:text-slate-500 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-indigo-500 transition-colors shadow-lg shadow-indigo-600/20 disabled:shadow-none flex items-center justify-center gap-2 w-full sm:w-auto"
                         >
                             <Plus size={16} /> Add Card
@@ -162,20 +215,42 @@ const CardEditor = ({ deckId }) => {
                                     <div key={card.id} className="bg-slate-900 border border-indigo-500/50 rounded-2xl p-5 flex flex-col gap-4 relative shadow-lg shadow-indigo-500/10">
                                         <div className="flex-1 space-y-3">
                                             <div>
-                                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Front (Question)</label>
+                                                <div className="flex justify-between items-center mb-1">
+                                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Front (Question)</label>
+                                                    <button type="button" onClick={() => injectMockImage(setEditFrontImage)} className="text-[10px] text-indigo-400 font-bold uppercase tracking-widest flex items-center gap-1 hover:text-indigo-300 transition-colors bg-indigo-500/10 px-2 py-1 rounded">
+                                                        <ImageIcon size={12} /> Image
+                                                    </button>
+                                                </div>
                                                 <textarea
                                                     value={editFront}
                                                     onChange={e => setEditFront(e.target.value)}
                                                     className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2 text-sm font-medium text-white focus:border-indigo-500 outline-none resize-none h-20"
                                                 />
+                                                {editFrontImage && (
+                                                    <div className="relative inline-block mt-2">
+                                                        <img src={editFrontImage} alt="Front preview" className="h-16 rounded-lg border border-slate-800" />
+                                                        <button type="button" onClick={() => setEditFrontImage(null)} className="absolute -top-1.5 -right-1.5 bg-rose-500 text-white p-0.5 rounded-full shadow hover:scale-110 transition-transform"><X size={10} /></button>
+                                                    </div>
+                                                )}
                                             </div>
                                             <div>
-                                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Back (Answer)</label>
+                                                <div className="flex justify-between items-center mb-1">
+                                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Back (Answer)</label>
+                                                    <button type="button" onClick={() => injectMockImage(setEditBackImage)} className="text-[10px] text-indigo-400 font-bold uppercase tracking-widest flex items-center gap-1 hover:text-indigo-300 transition-colors bg-indigo-500/10 px-2 py-1 rounded">
+                                                        <ImageIcon size={12} /> Image
+                                                    </button>
+                                                </div>
                                                 <textarea
                                                     value={editBack}
                                                     onChange={e => setEditBack(e.target.value)}
                                                     className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2 text-sm font-medium text-white focus:border-indigo-500 outline-none resize-none h-20"
                                                 />
+                                                {editBackImage && (
+                                                    <div className="relative inline-block mt-2">
+                                                        <img src={editBackImage} alt="Back preview" className="h-16 rounded-lg border border-slate-800" />
+                                                        <button type="button" onClick={() => setEditBackImage(null)} className="absolute -top-1.5 -right-1.5 bg-rose-500 text-white p-0.5 rounded-full shadow hover:scale-110 transition-transform"><X size={10} /></button>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                         <div className="flex justify-end gap-2 pt-2 border-t border-slate-800">
@@ -187,7 +262,7 @@ const CardEditor = ({ deckId }) => {
                                             </button>
                                             <button
                                                 onClick={() => handleSaveEdit(card.id)}
-                                                disabled={!editFront.trim() || !editBack.trim()}
+                                                disabled={(!editFront.trim() && !editFrontImage) || (!editBack.trim() && !editBackImage)}
                                                 className="px-4 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-500 transition-colors text-xs font-bold disabled:opacity-50 flex items-center gap-1.5 shadow-lg shadow-indigo-600/20"
                                             >
                                                 <Save size={14} /> Save Changes
@@ -216,14 +291,20 @@ const CardEditor = ({ deckId }) => {
                                         </button>
                                     </div>
 
-                                    <div className="flex-1 pr-16">
+                                    <div className="flex-1 pr-16 space-y-2">
                                         <p className="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">Front</p>
-                                        <p className="text-sm text-white font-medium whitespace-pre-wrap">{card.front_content}</p>
+                                        <p className="text-sm text-white font-medium whitespace-pre-wrap">{extractImage(card.front_content).text}</p>
+                                        {extractImage(card.front_content).image && (
+                                            <img src={extractImage(card.front_content).image} alt="Front" className="h-16 rounded-lg border border-slate-800" />
+                                        )}
                                     </div>
                                     <div className="w-full h-px bg-slate-800/50 block"></div>
-                                    <div className="flex-1">
+                                    <div className="flex-1 space-y-2">
                                         <p className="text-xs font-black text-indigo-500 uppercase tracking-widest mb-1.5">Back</p>
-                                        <p className="text-sm text-slate-300 whitespace-pre-wrap">{card.back_content}</p>
+                                        <p className="text-sm text-slate-300 whitespace-pre-wrap">{extractImage(card.back_content).text}</p>
+                                        {extractImage(card.back_content).image && (
+                                            <img src={extractImage(card.back_content).image} alt="Back" className="h-16 rounded-lg border border-slate-800" />
+                                        )}
                                     </div>
 
                                     <div className="pt-2 flex items-center justify-between text-[10px] font-black text-slate-600 uppercase tracking-[0.2em]">
