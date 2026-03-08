@@ -109,20 +109,6 @@ const Wizard = ({ onComplete, onBack }) => {
                     </div>
 
                     <div
-                        onClick={() => setData({ ...data, mode: 'focus' })}
-                        className={`p-6 rounded-[2.5rem] border-2 transition-all cursor-pointer flex flex-col gap-6 relative group ${data.mode === 'focus' ? 'border-indigo-500 bg-indigo-500/10' : 'border-slate-800 bg-slate-900/50 hover:border-slate-700'}`}
-                    >
-                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${data.mode === 'focus' ? 'bg-indigo-500 text-white' : 'bg-slate-800 text-slate-500 group-hover:text-white'}`}>
-                            <Timer size={32} />
-                        </div>
-                        <div>
-                            <h4 className="font-black uppercase tracking-tight text-xl mb-2">Daily Focus Timer</h4>
-                            <p className="text-xs text-slate-500 font-medium leading-relaxed">Pure time tracking. Run the stopwatch whenever you study and map time directly to subjects or topics.</p>
-                        </div>
-                        {data.mode === 'focus' && <div className="absolute top-6 right-6"><CheckCircle2 className="text-indigo-400" /></div>}
-                    </div>
-
-                    <div
                         onClick={() => setData({ ...data, mode: 'flashcard' })}
                         className={`p-6 rounded-[2.5rem] border-2 transition-all cursor-pointer flex flex-col gap-6 relative group sm:col-span-2 ${data.mode === 'flashcard' ? 'border-indigo-500 bg-indigo-500/10' : 'border-slate-800 bg-slate-900/50 hover:border-slate-700'}`}
                     >

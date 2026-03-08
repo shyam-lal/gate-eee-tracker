@@ -52,9 +52,21 @@ const getTaggableItems = async (req, res) => {
     }
 };
 
+const clearData = async (req, res) => {
+    try {
+        const { toolId } = req.params;
+        const result = await focusService.clearData(toolId);
+        res.status(200).json(result);
+    } catch (error) {
+        console.error('Error clearing focus data:', error);
+        res.status(500).json({ error: 'Internal server error while clearing focus data' });
+    }
+};
+
 module.exports = {
     logSession,
     getSessions,
     getStats,
-    getTaggableItems
+    getTaggableItems,
+    clearData
 };

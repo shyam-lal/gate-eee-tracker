@@ -275,6 +275,18 @@ function App() {
     } catch (err) { alert("Failed to rename tool: " + err.message); }
   };
 
+  const handleClearToolData = async (toolId) => {
+    try {
+      const targetTool = userTools.find(t => t.id === toolId);
+      if (targetTool?.tool_type === 'focus') {
+        const focusApi = (await import('./services/api')).focus;
+        await focusApi.clearData(toolId);
+        await loadData(); // refresh dashboard stats
+        alert(`${targetTool.name} data cleared successfully.`);
+      }
+    } catch (err) { alert("Failed to clear tool data: " + err.message); }
+  };
+
   const openEditor = (subject = null) => {
     if (subject) {
       setEditingId(subject.id);
@@ -437,6 +449,7 @@ function App() {
         onSetupTool={() => setView('wizard')}
         onDeleteTool={handleDeleteTool}
         onRenameTool={handleRenameTool}
+        onClearToolData={handleClearToolData}
         onStartFocus={() => setIsFocusOverlayOpen(true)}
       />
     );

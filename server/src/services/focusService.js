@@ -136,6 +136,18 @@ const focusService = {
         }
 
         return Object.values(subjectsMap);
+    },
+
+    // 5. Clear all session data for a focus tool
+    clearData: async (toolId) => {
+        // Just delete all sessions for this tool. 
+        // Note: This does NOT reverse the activity_logs that were already synced, 
+        // as those are considered permanent Course Progress once logged.
+        const res = await db.query(
+            `DELETE FROM focus_sessions WHERE tool_id = $1`,
+            [toolId]
+        );
+        return { deleted: res.rowCount };
     }
 };
 

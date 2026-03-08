@@ -4,11 +4,11 @@ import {
     ChevronRight, Play, Clock, Target,
     Zap, Calendar, BarChart3, LayoutGrid,
     BookOpen, Trophy, Sparkles, Users, Plus, Layers,
-    MoreVertical, Edit3, Trash2, X, BrainCircuit, AlertCircle, Timer
+    MoreVertical, Edit3, Trash2, X, BrainCircuit, AlertCircle, Timer, RotateCcw
 } from 'lucide-react';
 import UserStreakWidget from './ui/UserStreakWidget';
 
-const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenSocial, onSetupTool, onDeleteTool, onRenameTool, onStartFocus }) => {
+const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenSocial, onSetupTool, onDeleteTool, onRenameTool, onStartFocus, onClearToolData }) => {
 
     const [menuOpen, setMenuOpen] = useState(null); // toolId of open menu
     const [renamingTool, setRenamingTool] = useState(null);
@@ -23,11 +23,19 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
     };
 
     const submitRename = () => {
-        if (renameValue.trim() && renamingTool) {
-            onRenameTool(renamingTool, renameValue.trim());
+        if (!renamingTool || !renameValue.trim()) {
+            setRenamingTool(null);
+            return;
         }
+        onRenameTool(renamingTool, renameValue.trim());
         setRenamingTool(null);
-        setRenameValue('');
+    };
+
+    const handleClearData = (tool) => {
+        if (window.confirm(`Are you sure you want to clear all focus session history for ${tool.name}? Your auto-synced course progress will NOT be affected.`)) {
+            onClearToolData(tool.id);
+        }
+        setMenuOpen(null);
     };
 
     const handleDelete = (tool) => {
@@ -153,9 +161,16 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
                                             <button onClick={() => handleRename(tool)} className="w-full text-left px-4 py-3 text-xs font-bold text-slate-300 hover:bg-indigo-500/10 hover:text-indigo-400 flex items-center gap-3 uppercase tracking-widest transition-colors">
                                                 <Edit3 size={14} /> Rename
                                             </button>
-                                            <button onClick={() => handleDelete(tool)} className="w-full text-left px-4 py-3 text-xs font-bold text-rose-400/60 hover:bg-rose-500/10 hover:text-rose-400 flex items-center gap-3 uppercase tracking-widest transition-colors">
-                                                <Trash2 size={14} /> Delete
-                                            </button>
+
+                                            {tool.tool_type === 'focus' ? (
+                                                <button onClick={() => handleClearData(tool)} className="w-full text-left px-4 py-3 text-xs font-bold text-amber-400/60 hover:bg-amber-500/10 hover:text-amber-400 flex items-center gap-3 uppercase tracking-widest transition-colors">
+                                                    <RotateCcw size={14} /> Clear Data
+                                                </button>
+                                            ) : (
+                                                <button onClick={() => handleDelete(tool)} className="w-full text-left px-4 py-3 text-xs font-bold text-rose-400/60 hover:bg-rose-500/10 hover:text-rose-400 flex items-center gap-3 uppercase tracking-widest transition-colors">
+                                                    <Trash2 size={14} /> Delete
+                                                </button>
+                                            )}
                                         </div>
                                     )}
                                 </div>

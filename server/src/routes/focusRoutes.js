@@ -18,4 +18,7 @@ router.get('/tools/:toolId/sessions', focusController.getSessions);
 // Get high level stats (total time, time today)
 router.get('/tools/:toolId/stats', focusController.getStats);
 
+// Clear all focus sessions for a specific tool
+router.delete('/tools/:toolId/clear', focusController.clearData);
+
 module.exports = router;

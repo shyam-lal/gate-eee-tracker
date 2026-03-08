@@ -336,5 +336,13 @@ export const focus = {
         const res = await fetch(`${API_URL}/focus/tools/${toolId}/stats`, { headers: getHeaders() });
         if (!res.ok) throw new Error('Failed to fetch stats');
         return res.json();
+    },
+    clearData: async (toolId) => {
+        const res = await fetch(`${API_URL}/focus/tools/${toolId}/clear`, {
+            method: 'DELETE',
+            headers: getHeaders()
+        });
+        if (!res.ok) throw new Error('Failed to clear focus data');
+        return res.json();
     }
 };
