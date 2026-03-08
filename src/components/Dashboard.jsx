@@ -4,11 +4,11 @@ import {
     ChevronRight, Play, Clock, Target,
     Zap, Calendar, BarChart3, LayoutGrid,
     BookOpen, Trophy, Sparkles, Users, Plus, Layers,
-    MoreVertical, Edit3, Trash2, X, BrainCircuit, AlertCircle
+    MoreVertical, Edit3, Trash2, X, BrainCircuit, AlertCircle, Timer
 } from 'lucide-react';
 import UserStreakWidget from './ui/UserStreakWidget';
 
-const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenSocial, onSetupTool, onDeleteTool, onRenameTool }) => {
+const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenSocial, onSetupTool, onDeleteTool, onRenameTool, onStartFocus }) => {
 
     const [menuOpen, setMenuOpen] = useState(null); // toolId of open menu
     const [renamingTool, setRenamingTool] = useState(null);
@@ -100,12 +100,18 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
                         <h2 className="text-4xl sm:text-5xl md:text-6xl font-black text-white uppercase tracking-tighter leading-[0.9]">
                             Welcome back, <br /> <span className="text-slate-500">{user.username}.</span>
                         </h2>
-                        <p className="text-slate-400 text-sm font-medium max-w-lg leading-relaxed">
+                        <p className="text-slate-400 text-sm font-medium max-w-lg leading-relaxed mb-6">
                             {hasTools
                                 ? `You have ${tools.length} tool${tools.length > 1 ? 's' : ''} configured. Launch one to continue your preparation or create a new one.`
                                 : 'Your Vault is empty. Create your first tracking tool to begin your GATE preparation journey.'
                             }
                         </p>
+                        <button
+                            onClick={onStartFocus}
+                            className="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-full font-black uppercase tracking-widest text-xs flex items-center gap-2 transition-all shadow-lg hover:shadow-indigo-500/25 active:scale-95 w-max"
+                        >
+                            <Target size={16} /> Start Focus Mode
+                        </button>
                     </div>
 
                     {/* User Streak Widget */}
@@ -157,7 +163,7 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
                                 {/* Tool Content */}
                                 <div className="mb-6">
                                     <div className="w-14 h-14 bg-indigo-500/10 rounded-2xl flex items-center justify-center text-indigo-400 border border-indigo-500/20 group-hover:scale-110 transition-transform mb-5">
-                                        {tool.tool_type === 'module' ? <Layers size={28} /> : tool.tool_type === 'flashcard' ? <BrainCircuit size={28} /> : <Clock size={28} />}
+                                        {tool.tool_type === 'module' ? <Layers size={28} /> : tool.tool_type === 'flashcard' ? <BrainCircuit size={28} /> : tool.tool_type === 'focus' ? <Timer size={28} /> : <Clock size={28} />}
                                     </div>
 
                                     {/* Tool Name - editable when renaming */}
@@ -181,7 +187,7 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
 
                                     <div className="flex items-center flex-wrap gap-2">
                                         <span className="text-[10px] bg-slate-800 text-slate-400 px-3 py-1 rounded-full font-black uppercase tracking-widest shrink-0">
-                                            {tool.tool_type === 'module' ? 'Module' : tool.tool_type === 'flashcard' ? 'SRS' : 'Course'} Based
+                                            {tool.tool_type === 'module' ? 'Module' : tool.tool_type === 'flashcard' ? 'SRS' : tool.tool_type === 'focus' ? 'Focus' : 'Course'} Based
                                         </span>
                                         <span className="text-[10px] text-slate-600 font-bold uppercase tracking-widest shrink-0">
                                             {tool.selected_exam || 'GATE'}
@@ -216,7 +222,7 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
                                     Create New Tool
                                 </h4>
                                 <p className="text-[10px] text-slate-600 font-bold uppercase tracking-widest leading-relaxed">
-                                    Course tracker • Module tracker
+                                    Course • Module • Focus
                                 </p>
                             </div>
                         </div>

@@ -1,4 +1,5 @@
 const userService = require('../services/userService');
+const toolService = require('../services/toolService');
 const jwt = require('jsonwebtoken');
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '../../.env') });
@@ -17,6 +18,15 @@ const register = async (req, res) => {
         }
 
         const user = await userService.createUser(username, email, password);
+
+        // Auto-provision a Global Focus Tracker for the new user
+        try {
+            await toolService.createTool(user.id, "Global Focus Tracker", "focus", "General");
+        } catch (toolErr) {
+            console.error("Warning: Failed to auto-provision Global Focus Tracker for new user", toolErr);
+            // Non-fatal, we still let registration succeed
+        }
+
         const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
         res.status(201).json({

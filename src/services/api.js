@@ -311,3 +311,30 @@ export const upload = {
         return res.json();
     }
 };
+
+export const focus = {
+    getTaggableItems: async () => {
+        const res = await fetch(`${API_URL}/focus/taggable-items`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to fetch taggable items');
+        return res.json();
+    },
+    logSession: async (data) => {
+        const res = await fetch(`${API_URL}/focus/sessions`, {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify(data)
+        });
+        if (!res.ok) throw new Error('Failed to log session');
+        return res.json();
+    },
+    getSessions: async (toolId) => {
+        const res = await fetch(`${API_URL}/focus/tools/${toolId}/sessions`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to fetch sessions');
+        return res.json();
+    },
+    getStats: async (toolId) => {
+        const res = await fetch(`${API_URL}/focus/tools/${toolId}/stats`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to fetch stats');
+        return res.json();
+    }
+};
