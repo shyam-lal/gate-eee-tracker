@@ -29,7 +29,7 @@ const Landing = ({ onStart }) => {
                 <div className="max-w-7xl mx-auto relative z-10 text-center">
                     <div className="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 px-4 py-2 rounded-full mb-8 animate-in fade-in slide-in-from-top-4 duration-700">
                         <Zap size={14} className="text-indigo-400" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-300">New: Module-based tracking live</span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-300">New: Course progress tracking live</span>
                     </div>
 
                     <h1 className="text-5xl md:text-8xl font-black tracking-tighter uppercase leading-[0.9] mb-8 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
@@ -71,7 +71,7 @@ const Landing = ({ onStart }) => {
                             <Clock size={28} />
                         </div>
                         <h3 className="text-xl font-black uppercase mb-4 tracking-tighter">Dual Modes</h3>
-                        <p className="text-slate-500 font-medium">Choose between classic time-based tracking or the new module-based system for a more granular approach.</p>
+                        <p className="text-slate-500 font-medium">Choose between course progress tracking or the module-based system for a more granular approach.</p>
                     </div>
 
                     <div className="bg-slate-900/40 border border-slate-800 p-8 rounded-[2.5rem] hover:border-indigo-500/30 transition-all group">

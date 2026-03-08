@@ -30,7 +30,7 @@ const Wizard = ({ onComplete, onBack }) => {
                         <input
                             type="text"
                             autoFocus
-                            placeholder="e.g. GATE EE Module Tracker"
+                            placeholder="e.g. GATE EE Course Tracker"
                             className="w-full bg-slate-950 border border-slate-800 rounded-2xl p-5 text-xl font-bold text-white placeholder-slate-700 focus:border-indigo-500 outline-none transition-all shadow-inner"
                             value={data.name}
                             onChange={e => setData({ ...data, name: e.target.value })}
@@ -88,8 +88,8 @@ const Wizard = ({ onComplete, onBack }) => {
                             <Clock size={32} />
                         </div>
                         <div>
-                            <h4 className="font-black uppercase tracking-tight text-xl mb-2">Time-Based</h4>
-                            <p className="text-xs text-slate-500 font-medium leading-relaxed">Classic tracking. Set hour estimates for topics and log your study minutes. Best for strict schedules.</p>
+                            <h4 className="font-black uppercase tracking-tight text-xl mb-2">Course Progress</h4>
+                            <p className="text-xs text-slate-500 font-medium leading-relaxed">Track your course completion. Set hour estimates for topics and log study time to see when you'll finish. Best for course-based prep.</p>
                         </div>
                         {data.mode === 'time' && <div className="absolute top-6 right-6"><CheckCircle2 className="text-indigo-400" /></div>}
                     </div>

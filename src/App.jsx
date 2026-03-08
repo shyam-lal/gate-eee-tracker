@@ -805,7 +805,7 @@ function App() {
           <div className="space-y-1 text-center md:text-left">
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tighter uppercase leading-none">{activeTool?.name || 'VAULT'}</h1>
             <p className="text-slate-500 font-bold tracking-widest text-[9px] sm:text-[10px] uppercase italic">
-              Engineer: {user.username} • {activeTool?.tool_type === 'module' ? 'MODULE' : 'TIME'} MODE • {activeTool?.selected_exam || 'GATE'}
+              Engineer: {user.username} • {activeTool?.tool_type === 'module' ? 'MODULE' : 'COURSE'} MODE • {activeTool?.selected_exam || 'GATE'}
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">

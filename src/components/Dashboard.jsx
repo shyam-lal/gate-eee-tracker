@@ -181,7 +181,7 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
 
                                     <div className="flex items-center flex-wrap gap-2">
                                         <span className="text-[10px] bg-slate-800 text-slate-400 px-3 py-1 rounded-full font-black uppercase tracking-widest shrink-0">
-                                            {tool.tool_type === 'module' ? 'Module' : tool.tool_type === 'flashcard' ? 'SRS' : 'Time'} Based
+                                            {tool.tool_type === 'module' ? 'Module' : tool.tool_type === 'flashcard' ? 'SRS' : 'Course'} Based
                                         </span>
                                         <span className="text-[10px] text-slate-600 font-bold uppercase tracking-widest shrink-0">
                                             {tool.selected_exam || 'GATE'}
@@ -216,7 +216,7 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
                                     Create New Tool
                                 </h4>
                                 <p className="text-[10px] text-slate-600 font-bold uppercase tracking-widest leading-relaxed">
-                                    Time tracker • Module tracker
+                                    Course tracker • Module tracker
                                 </p>
                             </div>
                         </div>
