@@ -4,11 +4,15 @@ const getDailyNote = async (req, res) => {
     try {
         const userId = req.user.id;
         const dateStr = req.params.date; // e.g. '2024-03-25'
-        const note = await plannerService.getDailyNote(userId, dateStr);
+        const noteType = req.query.type || 'daily';
+        let note = await plannerService.getNote(userId, dateStr, noteType);
+        if (!note) {
+            note = { content: '', isNew: true };
+        }
         res.status(200).json(note);
     } catch (error) {
-        console.error('Error fetching daily note:', error);
-        res.status(500).json({ error: 'Internal server error fetching daily note' });
+        console.error('Error fetching planner note:', error);
+        res.status(500).json({ error: 'Internal server error fetching planner note' });
     }
 };
 
@@ -16,13 +20,29 @@ const saveDailyNote = async (req, res) => {
     try {
         const userId = req.user.id;
         const dateStr = req.params.date;
-        const { content } = req.body;
+        const { content, type } = req.body;
+        const noteType = type || 'daily';
 
-        const note = await plannerService.saveDailyNote(userId, dateStr, content);
-        res.status(200).json(note);
+        const updatedNote = await plannerService.saveNote(userId, dateStr, content, noteType);
+        res.status(200).json(updatedNote);
     } catch (error) {
-        console.error('Error saving daily note:', error);
-        res.status(500).json({ error: 'Internal server error saving daily note' });
+        console.error('Error saving planner note:', error);
+        res.status(500).json({ error: 'Internal server error saving planner note' });
+    }
+};
+
+const getNoteIndicators = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { start, end, type } = req.query;
+        if (!start || !end) return res.status(400).json({ error: 'Must provide start and end dates' });
+
+        const noteType = type || 'daily';
+        const dates = await plannerService.getNoteIndicators(userId, start, end, noteType);
+        res.status(200).json({ dates });
+    } catch (error) {
+        console.error('Error fetching note indicators:', error);
+        res.status(500).json({ error: 'Internal server error fetching indicators' });
     }
 };
 
@@ -104,6 +124,7 @@ const deleteGoal = async (req, res) => {
 module.exports = {
     getDailyNote,
     saveDailyNote,
+    getNoteIndicators,
     getWeeklyGoals,
     createWeeklyGoal,
     updateGoalStatus,

@@ -1,41 +1,42 @@
 const db = require('../config/db');
 
 const plannerService = {
-    // --- DAILY NOTES ---
+    // --- PLANNER NOTES (Daily, Monthly, Half-Yearly) ---
 
-    getDailyNote: async (userId, dateStr) => {
-        // Find existing note
+    getNote: async (userId, dateStr, noteType = 'daily') => {
         const query = `
-            SELECT id, content, updated_at
-            FROM daily_notes
-            WHERE user_id = $1 AND note_date = $2::date
+            SELECT * FROM planner_notes 
+            WHERE user_id = $1 AND note_date = $2::date AND note_type = $3
         `;
-        const res = await db.query(query, [userId, dateStr]);
-
-        // If not found, return empty placeholder
-        if (res.rows.length === 0) {
-            return {
-                content: '',
-                isNew: true
-            };
-        }
-
+        const res = await db.query(query, [userId, dateStr, noteType]);
         return res.rows[0];
     },
 
-    saveDailyNote: async (userId, dateStr, content) => {
-        // Upsert the daily note
+    saveNote: async (userId, dateStr, content, noteType = 'daily') => {
         const query = `
-            INSERT INTO daily_notes (user_id, note_date, content, updated_at)
-            VALUES ($1, $2::date, $3, CURRENT_TIMESTAMP)
-            ON CONFLICT (user_id, note_date) 
-            DO UPDATE SET 
-                content = EXCLUDED.content,
-                updated_at = CURRENT_TIMESTAMP
-            RETURNING id, content, updated_at
+            INSERT INTO planner_notes (user_id, note_date, note_type, content)
+            VALUES ($1, $2::date, $3, $4)
+            ON CONFLICT (user_id, note_date, note_type) 
+            DO UPDATE SET content = EXCLUDED.content, updated_at = CURRENT_TIMESTAMP
+            RETURNING *
         `;
-        const res = await db.query(query, [userId, dateStr, content]);
+        const res = await db.query(query, [userId, dateStr, noteType, content]);
         return res.rows[0];
+    },
+
+    getNoteIndicators: async (userId, startDateStr, endDateStr, noteType = 'daily') => {
+        // Return an array of dates that have content > 0 within a range
+        const query = `
+            SELECT note_date 
+            FROM planner_notes 
+            WHERE user_id = $1 
+              AND note_date >= $2::date 
+              AND note_date <= $3::date
+              AND note_type = $4
+              AND LENGTH(TRIM(content)) > 0
+        `;
+        const res = await db.query(query, [userId, startDateStr, endDateStr, noteType]);
+        return res.rows.map(r => r.note_date);
     },
 
     // --- WEEKLY GOALS (Now fetched by arbitrary ranges for Timeline views) ---

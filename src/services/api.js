@@ -356,19 +356,24 @@ export const analytics = {
 };
 
 export const planner = {
-    // Daily Notes
-    getDailyNote: async (dateStr) => {
-        const res = await fetch(`${API_URL}/planner/daily/${dateStr}`, { headers: getHeaders() });
-        if (!res.ok) throw new Error('Failed to fetch daily note');
+    // Planner Notes (Dynamic Types)
+    getNote: async (dateStr, type = 'daily') => {
+        const res = await fetch(`${API_URL}/planner/notes/${dateStr}?type=${type}`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to fetch note');
         return res.json();
     },
-    saveDailyNote: async (dateStr, content) => {
-        const res = await fetch(`${API_URL}/planner/daily/${dateStr}`, {
+    saveNote: async (dateStr, content, type = 'daily') => {
+        const res = await fetch(`${API_URL}/planner/notes/${dateStr}`, {
             method: 'PUT',
             headers: getHeaders(),
-            body: JSON.stringify({ content })
+            body: JSON.stringify({ content, type })
         });
-        if (!res.ok) throw new Error('Failed to save daily note');
+        if (!res.ok) throw new Error('Failed to save note');
+        return res.json();
+    },
+    getNoteIndicators: async (startStr, endStr, type = 'daily') => {
+        const res = await fetch(`${API_URL}/planner/indicators?start=${startStr}&end=${endStr}&type=${type}`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to fetch note indicators');
         return res.json();
     },
 

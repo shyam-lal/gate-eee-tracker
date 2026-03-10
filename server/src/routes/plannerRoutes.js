@@ -5,9 +5,10 @@ const plannerController = require('../controllers/plannerController');
 
 router.use(authMiddleware);
 
-// Daily Notes
-router.get('/daily/:date', plannerController.getDailyNote);
-router.put('/daily/:date', plannerController.saveDailyNote);
+// Planner Notes
+router.get('/notes/:date', plannerController.getDailyNote); // ?type=monthly
+router.put('/notes/:date', plannerController.saveDailyNote); // body: { content, type }
+router.get('/indicators', plannerController.getNoteIndicators); // ?start=&end=&type=
 
 // Weekly Goals
 router.get('/goals', plannerController.getWeeklyGoals); // Uses query params: ?start=&end=
