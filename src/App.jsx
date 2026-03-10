@@ -10,6 +10,10 @@ import DatePicker from './components/ui/DatePicker';
 import TimeInput from './components/ui/TimeInput';
 import StreakCalendar from './components/ui/StreakCalendar';
 import FlashcardDashboard from './components/flashcards/FlashcardDashboard';
+import StudySession from './components/flashcards/StudySession';
+import DeckManager from './components/flashcards/DeckManager';
+import CardEditor from './components/flashcards/CardEditor';
+import PlannerDashboard from './components/planner/PlannerDashboard';
 import FocusTool from './components/focus/FocusTool';
 import GlobalFocusOverlay from './components/focus/GlobalFocusOverlay';
 import {
@@ -446,6 +450,7 @@ function App() {
         onOpenTool={handleOpenTool}
         onOpenProfile={() => setView('profile')}
         onOpenSocial={() => setView('social_terminal')}
+        onOpenPlanner={() => setView('planner')}
         onSetupTool={() => setView('wizard')}
         onDeleteTool={handleDeleteTool}
         onRenameTool={handleRenameTool}
@@ -454,6 +459,7 @@ function App() {
       />
     );
     if (view === 'social_terminal') return <Social currentUser={user} onBack={() => setView('dashboard')} />;
+    if (view === 'planner') return <PlannerDashboard onBack={() => setView('dashboard')} />;
 
     return (
       <div className="min-h-screen bg-[#020617] text-slate-200 font-sans p-4 md:p-8 pb-32 selection:bg-indigo-500/30">

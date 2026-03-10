@@ -9,7 +9,7 @@ import {
 import UserStreakWidget from './ui/UserStreakWidget';
 import GlobalAnalytics from './analytics/GlobalAnalytics';
 
-const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenSocial, onSetupTool, onDeleteTool, onRenameTool, onStartFocus, onClearToolData }) => {
+const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenSocial, onOpenPlanner, onSetupTool, onDeleteTool, onRenameTool, onStartFocus, onClearToolData }) => {
 
     const [menuOpen, setMenuOpen] = useState(null); // toolId of open menu
     const [renamingTool, setRenamingTool] = useState(null);
@@ -287,16 +287,19 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
 
                 {/* Quick Access Bar */}
                 <div className="flex justify-center pb-8 pt-4">
-                    <div className="bg-slate-900/80 backdrop-blur-2xl border border-white/10 p-2 rounded-2xl flex items-center gap-2 shadow-2xl">
-                        <button onClick={onSetupTool} className="flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-xl font-black text-xs uppercase tracking-widest hover:bg-indigo-500 transition-all">
+                    <div className="bg-slate-900/80 backdrop-blur-2xl border border-white/10 p-2 rounded-2xl flex items-center gap-2 shadow-2xl overflow-x-auto w-full max-w-lg md:max-w-none no-scrollbar snap-x relative z-50 pointer-events-auto">
+                        <button onClick={onSetupTool} className="shrink-0 snap-start flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-xl font-black text-xs uppercase tracking-widest hover:bg-indigo-500 transition-all">
                             <Plus size={16} /> New Tool
                         </button>
-                        <button onClick={onOpenSocial} className="p-3 text-slate-400 hover:text-white transition-colors relative">
+                        <button onClick={onOpenPlanner} className="shrink-0 snap-start flex items-center gap-2 px-6 py-3 bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-emerald-600/30 hover:text-emerald-300 transition-all">
+                            <BookOpen size={16} /> Planner
+                        </button>
+                        <div className="w-px h-6 bg-white/10 mx-2 shrink-0 hidden sm:block"></div>
+                        <button onClick={onOpenSocial} className="p-3 text-slate-400 hover:text-white transition-colors relative shrink-0">
                             <Users size={20} />
                         </button>
-                        <div className="w-px h-6 bg-white/10 mx-2"></div>
-                        <button className="p-3 text-slate-400 hover:text-white transition-colors"><Settings size={20} /></button>
-                        <button className="p-3 text-slate-400 hover:text-white transition-colors relative">
+                        <button className="p-3 text-slate-400 hover:text-white transition-colors shrink-0"><Settings size={20} /></button>
+                        <button className="p-3 text-slate-400 hover:text-white transition-colors relative shrink-0">
                             <Bell size={20} />
                             <div className="absolute top-2 right-2 w-2 h-2 bg-indigo-500 rounded-full border border-slate-900"></div>
                         </button>

@@ -354,3 +354,60 @@ export const analytics = {
         return res.json();
     }
 };
+
+export const planner = {
+    // Daily Notes
+    getDailyNote: async (dateStr) => {
+        const res = await fetch(`${API_URL}/planner/daily/${dateStr}`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to fetch daily note');
+        return res.json();
+    },
+    saveDailyNote: async (dateStr, content) => {
+        const res = await fetch(`${API_URL}/planner/daily/${dateStr}`, {
+            method: 'PUT',
+            headers: getHeaders(),
+            body: JSON.stringify({ content })
+        });
+        if (!res.ok) throw new Error('Failed to save daily note');
+        return res.json();
+    },
+
+    // Weekly Goals (Fetched by range)
+    getGoals: async (startStr, endStr) => {
+        let url = `${API_URL}/planner/goals`;
+        if (startStr && endStr) {
+            url += `?start=${startStr}&end=${endStr}`;
+        } else if (startStr) {
+            url += `?weekStart=${startStr}`;
+        }
+        const res = await fetch(url, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to fetch goals');
+        return res.json();
+    },
+    createWeeklyGoal: async (weekStartStr, title, linkedSubjectId = null) => {
+        const res = await fetch(`${API_URL}/planner/weekly`, {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify({ week_start_date: weekStartStr, title, linked_subject_id: linkedSubjectId })
+        });
+        if (!res.ok) throw new Error('Failed to create weekly goal');
+        return res.json();
+    },
+    updateGoalStatus: async (goalId, status) => {
+        const res = await fetch(`${API_URL}/planner/weekly/${goalId}/status`, {
+            method: 'PUT',
+            headers: getHeaders(),
+            body: JSON.stringify({ status })
+        });
+        if (!res.ok) throw new Error('Failed to update goal status');
+        return res.json();
+    },
+    deleteGoal: async (goalId) => {
+        const res = await fetch(`${API_URL}/planner/weekly/${goalId}`, {
+            method: 'DELETE',
+            headers: getHeaders()
+        });
+        if (!res.ok) throw new Error('Failed to delete goal');
+        return res.json();
+    }
+};

@@ -30,6 +30,7 @@ app.use('/api/flashcards', require('./routes/flashcardRoutes'));
 app.use('/api/upload', require('./routes/uploadRoutes'));
 app.use('/api/focus', require('./routes/focusRoutes'));
 app.use('/api/analytics', require('./routes/analyticsRoutes'));
+app.use('/api/planner', require('./routes/plannerRoutes'));
 
 // Serve Static Files (production only)
 const distPath = path.join(__dirname, '../../dist');
