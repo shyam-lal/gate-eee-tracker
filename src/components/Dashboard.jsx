@@ -4,15 +4,17 @@ import {
     ChevronRight, Play, Clock, Target,
     Zap, Calendar, BarChart3, LayoutGrid,
     BookOpen, Trophy, Sparkles, Users, Plus, Layers,
-    MoreVertical, Edit3, Trash2, X, BrainCircuit, AlertCircle, Timer, RotateCcw
+    MoreVertical, Edit3, Trash2, X, BrainCircuit, AlertCircle, Timer, RotateCcw, Activity
 } from 'lucide-react';
 import UserStreakWidget from './ui/UserStreakWidget';
+import GlobalAnalytics from './analytics/GlobalAnalytics';
 
 const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenSocial, onSetupTool, onDeleteTool, onRenameTool, onStartFocus, onClearToolData }) => {
 
     const [menuOpen, setMenuOpen] = useState(null); // toolId of open menu
     const [renamingTool, setRenamingTool] = useState(null);
     const [renameValue, setRenameValue] = useState('');
+    const [showInsights, setShowInsights] = useState(false);
 
     const hasTools = tools && tools.length > 0;
 
@@ -114,12 +116,20 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
                                 : 'Your Vault is empty. Create your first tracking tool to begin your GATE preparation journey.'
                             }
                         </p>
-                        <button
-                            onClick={onStartFocus}
-                            className="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-full font-black uppercase tracking-widest text-xs flex items-center gap-2 transition-all shadow-lg hover:shadow-indigo-500/25 active:scale-95 w-max"
-                        >
-                            <Target size={16} /> Start Focus Mode
-                        </button>
+                        <div className="flex flex-wrap gap-3">
+                            <button
+                                onClick={onStartFocus}
+                                className="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-full font-black uppercase tracking-widest text-xs flex items-center gap-2 transition-all shadow-lg hover:shadow-indigo-500/25 active:scale-95 w-max"
+                            >
+                                <Target size={16} /> Start Focus Mode
+                            </button>
+                            <button
+                                onClick={() => setShowInsights(true)}
+                                className="bg-slate-800 hover:bg-slate-700 text-white px-6 py-3 rounded-full font-black uppercase tracking-widest text-xs flex items-center gap-2 transition-all shadow-lg active:scale-95 w-max border border-slate-700"
+                            >
+                                <Activity size={16} /> View Insights
+                            </button>
+                        </div>
                     </div>
 
                     {/* User Streak Widget */}
@@ -137,7 +147,7 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
 
                 {/* Tools Grid */}
                 <div className="mb-8">
-                    <div className="flex justify-between items-center mb-6">
+                    <div className="flex items-center gap-3 mb-6 px-2">
                         <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">My Tools</h3>
                         <span className="text-[10px] font-black text-slate-700 uppercase tracking-widest">{tools?.length || 0} Active</span>
                     </div>
@@ -293,6 +303,28 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
                     </div>
                 </div>
             </main>
+
+            {/* Global Analytics Modal */}
+            {showInsights && (
+                <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-in fade-in duration-300" onClick={() => setShowInsights(false)}>
+                    <div className="bg-[#0b1121] border border-slate-700 w-full max-w-5xl rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 max-h-[90vh] flex flex-col" onClick={e => e.stopPropagation()}>
+                        <div className="flex justify-between items-center p-6 md:p-8 border-b border-slate-800/50">
+                            <div>
+                                <h3 className="font-black text-white text-2xl uppercase tracking-tighter flex items-center gap-3">
+                                    <Activity className="text-indigo-400" size={24} /> Global Insights
+                                </h3>
+                                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">Cross-tool productivity analytics</p>
+                            </div>
+                            <button onClick={() => setShowInsights(false)} className="p-3 bg-slate-800/50 hover:bg-slate-800 rounded-2xl text-slate-400 hover:text-white transition-all">
+                                <X size={20} />
+                            </button>
+                        </div>
+                        <div className="p-6 md:p-8 overflow-y-auto no-scrollbar flex-1 bg-slate-950/50">
+                            <GlobalAnalytics />
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Click-away listener for context menus */}
             {menuOpen && (

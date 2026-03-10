@@ -346,3 +346,11 @@ export const focus = {
         return res.json();
     }
 };
+
+export const analytics = {
+    getGlobalInsights: async () => {
+        const res = await fetch(`${API_URL}/analytics/global`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to fetch global analytics');
+        return res.json();
+    }
+};

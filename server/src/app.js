@@ -29,6 +29,7 @@ app.use('/api/streak', require('./routes/streakRoutes'));
 app.use('/api/flashcards', require('./routes/flashcardRoutes'));
 app.use('/api/upload', require('./routes/uploadRoutes'));
 app.use('/api/focus', require('./routes/focusRoutes'));
+app.use('/api/analytics', require('./routes/analyticsRoutes'));
 
 // Serve Static Files (production only)
 const distPath = path.join(__dirname, '../../dist');
