@@ -367,7 +367,7 @@ const PlannerDashboard = ({ onBack }) => {
                 [Node.TEXT_NODE, function (node, delta) {
                     const text = node.data;
                     // Match LaTeX delimiters: \(...\) or $...$
-                    const latexRegex = /\\\((.+?)\\\)|\$([^$]+?)\$/g;
+                    const latexRegex = /\\\((.+?)\\\)|$([^$]+?)$/g;
                     if (!latexRegex.test(text)) return delta;
                     latexRegex.lastIndex = 0;
 

@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import UserStreakWidget from './ui/UserStreakWidget';
 import GlobalAnalytics from './analytics/GlobalAnalytics';
+import CourseCalculatorModal from './calculator/CourseCalculatorModal';
 
 const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenSocial, onOpenPlanner, onSetupTool, onDeleteTool, onRenameTool, onStartFocus, onClearToolData }) => {
 
@@ -15,6 +16,7 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
     const [renamingTool, setRenamingTool] = useState(null);
     const [renameValue, setRenameValue] = useState('');
     const [showInsights, setShowInsights] = useState(false);
+    const [showCalculator, setShowCalculator] = useState(false);
 
     const hasTools = tools && tools.length > 0;
 
@@ -294,6 +296,9 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
                         <button onClick={onOpenPlanner} className="shrink-0 snap-start flex items-center gap-2 px-6 py-3 bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-emerald-600/30 hover:text-emerald-300 transition-all">
                             <BookOpen size={16} /> Planner
                         </button>
+                        <button onClick={() => setShowCalculator(true)} className="shrink-0 snap-start flex items-center gap-2 px-6 py-3 bg-fuchsia-600/20 text-fuchsia-400 border border-fuchsia-500/30 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-fuchsia-600/30 hover:text-fuchsia-300 transition-all">
+                            <Timer size={16} /> Estimator
+                        </button>
                         <div className="w-px h-6 bg-white/10 mx-2 shrink-0 hidden sm:block"></div>
                         <button onClick={onOpenSocial} className="p-3 text-slate-400 hover:text-white transition-colors relative shrink-0">
                             <Users size={20} />
@@ -328,6 +333,9 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
                     </div>
                 </div>
             )}
+
+            {/* Course Calculator Modal */}
+            {showCalculator && <CourseCalculatorModal onClose={() => setShowCalculator(false)} />}
 
             {/* Click-away listener for context menus */}
             {menuOpen && (
