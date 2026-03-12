@@ -1,6 +1,59 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import ReactQuill, { Quill } from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
+import katex from 'katex';
+import 'katex/dist/katex.min.css';
 import { Plus, Trash2, BrainCircuit, Edit3, Save, X, Image as ImageIcon, Loader2 } from 'lucide-react';
 import { flashcards as flashcardsApi, upload as uploadApi } from '../../services/api';
+
+window.katex = katex;
+
+// Register Divider blot if not already
+try {
+    const BlockEmbed = Quill.import('blots/block/embed');
+    class FCDividerBlot extends BlockEmbed { }
+    FCDividerBlot.blotName = 'divider';
+    FCDividerBlot.tagName = 'hr';
+    Quill.register(FCDividerBlot, true);
+} catch (e) { /* already registered */ }
+
+const Delta = Quill.import('delta');
+
+// Compact toolbar for flashcard editors
+const COMPACT_MODULES = {
+    formula: true,
+    clipboard: {
+        matchers: [
+            [Node.TEXT_NODE, function (node, delta) {
+                const text = node.data;
+                const latexRegex = /\\\((.+?)\\\)|\$([^$]+?)\$/g;
+                if (!latexRegex.test(text)) return delta;
+                latexRegex.lastIndex = 0;
+                const newDelta = new Delta();
+                let lastIndex = 0;
+                let match;
+                while ((match = latexRegex.exec(text)) !== null) {
+                    if (match.index > lastIndex) newDelta.insert(text.slice(lastIndex, match.index));
+                    newDelta.insert({ formula: match[1] || match[2] });
+                    lastIndex = match.index + match[0].length;
+                }
+                if (lastIndex < text.length) newDelta.insert(text.slice(lastIndex));
+                return newDelta;
+            }]
+        ]
+    },
+    toolbar: {
+        container: [
+            ['bold', 'italic', 'underline'],
+            [{ 'color': [] }],
+            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+            ['formula', 'code-block'],
+            ['clean']
+        ]
+    }
+};
+
+const FORMATS = ['bold', 'italic', 'underline', 'color', 'list', 'formula', 'code-block'];
 
 const CardEditor = ({ deckId }) => {
     const [cards, setCards] = useState([]);
@@ -37,12 +90,19 @@ const CardEditor = ({ deckId }) => {
         }
     };
 
+    const isQuillEmpty = (html) => {
+        if (!html) return true;
+        const stripped = html.replace(/<[^>]*>/g, '').trim();
+        return stripped.length === 0;
+    };
+
     const handleCreateCard = async (e) => {
         e.preventDefault();
-        if ((!front.trim() && !frontImage) || (!back.trim() && !backImage)) return;
+        if (isQuillEmpty(front) && !frontImage) return;
+        if (isQuillEmpty(back) && !backImage) return;
         try {
-            const finalFront = front.trim() + (frontImage ? `\n\n[IMAGE:${frontImage}]` : '');
-            const finalBack = back.trim() + (backImage ? `\n\n[IMAGE:${backImage}]` : '');
+            const finalFront = (isQuillEmpty(front) ? '' : front) + (frontImage ? `\n\n[IMAGE:${frontImage}]` : '');
+            const finalBack = (isQuillEmpty(back) ? '' : back) + (backImage ? `\n\n[IMAGE:${backImage}]` : '');
 
             await flashcardsApi.createCard(deckId, finalFront, finalBack);
             setFront('');
@@ -85,10 +145,11 @@ const CardEditor = ({ deckId }) => {
     };
 
     const handleSaveEdit = async (cardId) => {
-        if ((!editFront.trim() && !editFrontImage) || (!editBack.trim() && !editBackImage)) return;
+        if (isQuillEmpty(editFront) && !editFrontImage) return;
+        if (isQuillEmpty(editBack) && !editBackImage) return;
         try {
-            const finalFront = editFront.trim() + (editFrontImage ? `\n\n[IMAGE:${editFrontImage}]` : '');
-            const finalBack = editBack.trim() + (editBackImage ? `\n\n[IMAGE:${editBackImage}]` : '');
+            const finalFront = (isQuillEmpty(editFront) ? '' : editFront) + (editFrontImage ? `\n\n[IMAGE:${editFrontImage}]` : '');
+            const finalBack = (isQuillEmpty(editBack) ? '' : editBack) + (editBackImage ? `\n\n[IMAGE:${editBackImage}]` : '');
 
             await flashcardsApi.updateCard(cardId, finalFront, finalBack);
             setEditingCardId(null);
@@ -102,7 +163,6 @@ const CardEditor = ({ deckId }) => {
         const file = e.target.files?.[0];
         if (!file) return;
 
-        // Basic frontend validation
         if (file.size > 5 * 1024 * 1024) {
             alert("File size exceeds 5MB limit");
             return;
@@ -116,14 +176,12 @@ const CardEditor = ({ deckId }) => {
             alert(err.message || 'Failed to upload image. Make sure server has valid B2 API keys.');
         } finally {
             setUploading(false);
-            // Reset input so the same file can be selected again if needed
             e.target.value = '';
         }
     };
 
     if (loading) return <div className="p-8 text-center text-slate-500 animate-pulse font-black uppercase tracking-widest flex items-center justify-center h-full">Loading Cards...</div>;
 
-    // Derived analytics, ignoring UTC string shifts
     const formatLocalDate = (dateVal) => {
         if (!dateVal) return '9999-12-31';
         const d = new Date(dateVal);
@@ -142,6 +200,56 @@ const CardEditor = ({ deckId }) => {
 
     return (
         <div className="flex flex-col h-full bg-slate-950">
+            {/* Quill Styles */}
+            <style>{`
+                .fc-quill .quill { display: flex; flex-direction: column; height: 100%; }
+                .fc-quill .ql-toolbar {
+                    background-color: rgba(15, 23, 42, 0.8) !important;
+                    border: none !important;
+                    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+                    padding: 6px 8px !important;
+                    border-radius: 0.75rem 0.75rem 0 0;
+                }
+                .fc-quill .ql-container {
+                    border: none !important;
+                    background-color: transparent;
+                    font-family: inherit;
+                }
+                .fc-quill .ql-editor { font-size: 0.875rem; color: #e2e8f0; padding: 12px 16px; min-height: 80px; max-height: 120px; overflow-y: auto; }
+                .fc-quill .ql-editor.ql-blank::before { color: #64748b; font-style: italic; }
+                .fc-quill .ql-editor hr { border: 0; height: 1px; background: rgba(255, 255, 255, 0.1); margin: 0.5rem 0; }
+                .fc-quill .ql-snow .ql-stroke { stroke: #94a3b8; }
+                .fc-quill .ql-snow .ql-fill { fill: #94a3b8; }
+                .fc-quill .ql-snow .ql-picker { color: #94a3b8; }
+                .fc-quill .ql-snow .ql-picker-options { background-color: #0f172a; border-color: rgba(255,255,255,0.1); }
+                .fc-quill .ql-snow .ql-picker-item:hover { color: #fff; }
+                .fc-quill button.ql-active .ql-stroke { stroke: #8b5cf6 !important; }
+                .fc-quill .ql-tooltip {
+                    background-color: #0f172a !important;
+                    border: 1px solid rgba(255,255,255,0.1) !important;
+                    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
+                    border-radius: 0.5rem !important;
+                    color: white !important;
+                    z-index: 100 !important;
+                }
+                .fc-quill .ql-tooltip input[type=text] {
+                    background: #1e293b !important;
+                    border: 1px solid rgba(255,255,255,0.1) !important;
+                    color: white !important;
+                }
+                .fc-quill .ql-tooltip[data-mode="formula"]::before { color: #94a3b8 !important; }
+
+                .fc-quill-edit .ql-editor { min-height: 70px; max-height: 100px; }
+
+                /* Card display rich content */
+                .card-rich-display { color: #e2e8f0; font-size: 0.875rem; line-height: 1.6; }
+                .card-rich-display p { margin: 0.25em 0; }
+                .card-rich-display strong { color: white; }
+                .card-rich-display ul, .card-rich-display ol { padding-left: 1.5em; margin: 0.25em 0; }
+                .card-rich-display .ql-formula { font-size: 1em; }
+                .card-rich-display pre.ql-syntax { background: #1e293b; border-radius: 0.5rem; padding: 0.5rem; font-size: 0.8rem; overflow-x: auto; }
+            `}</style>
+
             {/* Deck Analytics Summary */}
             <div className="bg-slate-900 border-b border-slate-800 p-6 flex-shrink-0 grid grid-cols-2 sm:grid-cols-4 gap-4 z-20 shadow-md">
                 <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
@@ -174,12 +282,16 @@ const CardEditor = ({ deckId }) => {
                                 <input type="file" accept="image/*" className="hidden" disabled={uploadingFront} onChange={(e) => handleImageUpload(e, setFrontImage, setUploadingFront)} />
                             </label>
                         </div>
-                        <textarea
-                            value={front}
-                            onChange={e => setFront(e.target.value)}
-                            placeholder="e.g. What is KVL?"
-                            className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-5 py-3 text-sm font-medium text-white focus:border-indigo-500 outline-none resize-none h-20 shadow-inner"
-                        />
+                        <div className="fc-quill bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden shadow-inner">
+                            <ReactQuill
+                                theme="snow"
+                                value={front}
+                                onChange={setFront}
+                                modules={COMPACT_MODULES}
+                                formats={FORMATS}
+                                placeholder="e.g. What is KVL?"
+                            />
+                        </div>
                         {frontImage && (
                             <div className="relative inline-block mt-2">
                                 <img src={frontImage} alt="Front preview" className="h-20 rounded-lg border border-slate-800" />
@@ -196,12 +308,16 @@ const CardEditor = ({ deckId }) => {
                                 <input type="file" accept="image/*" className="hidden" disabled={uploadingBack} onChange={(e) => handleImageUpload(e, setBackImage, setUploadingBack)} />
                             </label>
                         </div>
-                        <textarea
-                            value={back}
-                            onChange={e => setBack(e.target.value)}
-                            placeholder="e.g. The sum of all voltages around a closed loop is zero."
-                            className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-5 py-3 text-sm font-medium text-white focus:border-indigo-500 outline-none resize-none h-20 shadow-inner"
-                        />
+                        <div className="fc-quill bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden shadow-inner">
+                            <ReactQuill
+                                theme="snow"
+                                value={back}
+                                onChange={setBack}
+                                modules={COMPACT_MODULES}
+                                formats={FORMATS}
+                                placeholder="e.g. The sum of all voltages around a closed loop is zero."
+                            />
+                        </div>
                         {backImage && (
                             <div className="relative inline-block mt-2">
                                 <img src={backImage} alt="Back preview" className="h-20 rounded-lg border border-slate-800" />
@@ -212,7 +328,7 @@ const CardEditor = ({ deckId }) => {
                     <div className="flex sm:flex-col justify-end pt-6">
                         <button
                             type="submit"
-                            disabled={uploadingFront || uploadingBack || (!front.trim() && !frontImage) || (!back.trim() && !backImage)}
+                            disabled={uploadingFront || uploadingBack || (isQuillEmpty(front) && !frontImage) || (isQuillEmpty(back) && !backImage)}
                             className="h-20 px-6 bg-indigo-600 disabled:bg-slate-800 text-white disabled:text-slate-500 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-indigo-500 transition-colors shadow-lg shadow-indigo-600/20 disabled:shadow-none flex items-center justify-center gap-2 w-full sm:w-auto"
                         >
                             <Plus size={16} /> Add Card
@@ -248,11 +364,15 @@ const CardEditor = ({ deckId }) => {
                                                         <input type="file" accept="image/*" className="hidden" disabled={editUploadingFront} onChange={(e) => handleImageUpload(e, setEditFrontImage, setEditUploadingFront)} />
                                                     </label>
                                                 </div>
-                                                <textarea
-                                                    value={editFront}
-                                                    onChange={e => setEditFront(e.target.value)}
-                                                    className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2 text-sm font-medium text-white focus:border-indigo-500 outline-none resize-none h-20"
-                                                />
+                                                <div className="fc-quill fc-quill-edit bg-slate-950 border border-slate-700 rounded-xl overflow-hidden">
+                                                    <ReactQuill
+                                                        theme="snow"
+                                                        value={editFront}
+                                                        onChange={setEditFront}
+                                                        modules={COMPACT_MODULES}
+                                                        formats={FORMATS}
+                                                    />
+                                                </div>
                                                 {editFrontImage && (
                                                     <div className="relative inline-block mt-2">
                                                         <img src={editFrontImage} alt="Front preview" className="h-16 rounded-lg border border-slate-800" />
@@ -269,11 +389,15 @@ const CardEditor = ({ deckId }) => {
                                                         <input type="file" accept="image/*" className="hidden" disabled={editUploadingBack} onChange={(e) => handleImageUpload(e, setEditBackImage, setEditUploadingBack)} />
                                                     </label>
                                                 </div>
-                                                <textarea
-                                                    value={editBack}
-                                                    onChange={e => setEditBack(e.target.value)}
-                                                    className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2 text-sm font-medium text-white focus:border-indigo-500 outline-none resize-none h-20"
-                                                />
+                                                <div className="fc-quill fc-quill-edit bg-slate-950 border border-slate-700 rounded-xl overflow-hidden">
+                                                    <ReactQuill
+                                                        theme="snow"
+                                                        value={editBack}
+                                                        onChange={setEditBack}
+                                                        modules={COMPACT_MODULES}
+                                                        formats={FORMATS}
+                                                    />
+                                                </div>
                                                 {editBackImage && (
                                                     <div className="relative inline-block mt-2">
                                                         <img src={editBackImage} alt="Back preview" className="h-16 rounded-lg border border-slate-800" />
@@ -291,7 +415,7 @@ const CardEditor = ({ deckId }) => {
                                             </button>
                                             <button
                                                 onClick={() => handleSaveEdit(card.id)}
-                                                disabled={editUploadingFront || editUploadingBack || ((!editFront.trim() && !editFrontImage) || (!editBack.trim() && !editBackImage))}
+                                                disabled={editUploadingFront || editUploadingBack || ((isQuillEmpty(editFront) && !editFrontImage) || (isQuillEmpty(editBack) && !editBackImage))}
                                                 className="px-4 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-500 transition-colors text-xs font-bold disabled:opacity-50 flex items-center gap-1.5 shadow-lg shadow-indigo-600/20"
                                             >
                                                 <Save size={14} /> Save Changes
@@ -322,7 +446,7 @@ const CardEditor = ({ deckId }) => {
 
                                     <div className="flex-1 pr-16 space-y-2">
                                         <p className="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">Front</p>
-                                        <p className="text-sm text-white font-medium whitespace-pre-wrap">{extractImage(card.front_content).text}</p>
+                                        <div className="card-rich-display" dangerouslySetInnerHTML={{ __html: extractImage(card.front_content).text }} />
                                         {extractImage(card.front_content).image && (
                                             <img src={extractImage(card.front_content).image} alt="Front" className="h-16 rounded-lg border border-slate-800" />
                                         )}
@@ -330,7 +454,7 @@ const CardEditor = ({ deckId }) => {
                                     <div className="w-full h-px bg-slate-800/50 block"></div>
                                     <div className="flex-1 space-y-2">
                                         <p className="text-xs font-black text-indigo-500 uppercase tracking-widest mb-1.5">Back</p>
-                                        <p className="text-sm text-slate-300 whitespace-pre-wrap">{extractImage(card.back_content).text}</p>
+                                        <div className="card-rich-display text-slate-300" dangerouslySetInnerHTML={{ __html: extractImage(card.back_content).text }} />
                                         {extractImage(card.back_content).image && (
                                             <img src={extractImage(card.back_content).image} alt="Back" className="h-16 rounded-lg border border-slate-800" />
                                         )}

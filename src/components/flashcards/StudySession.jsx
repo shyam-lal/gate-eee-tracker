@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Brain, ArrowLeft, RefreshCcw, CheckCircle2 } from 'lucide-react';
 import { flashcards as flashcardsApi } from '../../services/api';
+import 'katex/dist/katex.min.css';
 
 const StudySession = ({ deck, onComplete }) => {
     const [dueCards, setDueCards] = useState([]);
@@ -135,6 +136,15 @@ const StudySession = ({ deck, onComplete }) => {
 
     return (
         <div className="h-full flex flex-col max-w-3xl mx-auto px-4 py-8">
+            {/* Rich content styles for study cards */}
+            <style>{`
+                .study-card-content { line-height: 1.8; }
+                .study-card-content p { margin: 0.3em 0; }
+                .study-card-content strong { color: white; }
+                .study-card-content ul, .study-card-content ol { padding-left: 1.5em; margin: 0.5em 0; }
+                .study-card-content .ql-formula { font-size: 1.1em; }
+                .study-card-content pre.ql-syntax { background: #1e293b; border-radius: 0.75rem; padding: 1rem; font-size: 0.85rem; overflow-x: auto; margin: 0.5em 0; }
+            `}</style>
             {/* Header */}
             <div className="flex items-center justify-between mb-8 flex-shrink-0">
                 <button onClick={onComplete} className="text-slate-500 hover:text-white transition-colors flex items-center gap-2 text-xs font-black uppercase tracking-widest">
@@ -158,7 +168,7 @@ const StudySession = ({ deck, onComplete }) => {
                         </div>
                         <div className="flex-1 overflow-y-auto no-scrollbar w-full flex flex-col fade-edge-y pb-2">
                             <div className="m-auto flex flex-col items-center text-center space-y-8 w-full">
-                                <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white leading-relaxed">{frontData.text}</h3>
+                                <div className="study-card-content text-2xl sm:text-3xl lg:text-4xl font-bold text-white leading-relaxed" dangerouslySetInnerHTML={{ __html: frontData.text }} />
                                 {frontData.image && (
                                     <img src={frontData.image} alt="Front illustration" className="max-h-[40vh] rounded-2xl object-contain border border-slate-700 shadow-xl shadow-black/50" />
                                 )}
@@ -171,12 +181,12 @@ const StudySession = ({ deck, onComplete }) => {
                         <div className="flex items-center justify-between mb-6 opacity-50 pb-4 border-b border-slate-700 flex-shrink-0">
                             <div className="flex-1 text-center">
                                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Question</p>
-                                <p className="text-xs text-white font-medium line-clamp-2">{frontData.text}</p>
+                                <div className="text-xs text-white font-medium line-clamp-2" dangerouslySetInnerHTML={{ __html: frontData.text }} />
                             </div>
                         </div>
                         <div className="flex-1 overflow-y-auto no-scrollbar w-full flex flex-col fade-edge-y pb-2">
                             <div className="m-auto flex flex-col items-center text-center space-y-10 w-full">
-                                <p className="text-2xl sm:text-3xl lg:text-4xl font-bold text-indigo-100 leading-relaxed whitespace-pre-wrap">{backData.text}</p>
+                                <div className="study-card-content text-2xl sm:text-3xl lg:text-4xl font-bold text-indigo-100 leading-relaxed" dangerouslySetInnerHTML={{ __html: backData.text }} />
                                 {backData.image && (
                                     <img src={backData.image} alt="Back illustration" className="max-h-[50vh] mx-auto rounded-2xl object-contain border border-slate-700 shadow-xl shadow-black/50" />
                                 )}
