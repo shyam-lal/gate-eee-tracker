@@ -85,11 +85,11 @@ async function deleteQuestion(questionId) {
 
 // ─── ATTEMPTS ────────────────────────────────────────────────────────────
 
-async function createAttempt(setId, questionOrder) {
+async function createAttempt(setId, questionOrder, mode = 'exam') {
     const result = await db.query(
-        `INSERT INTO revision_attempts (set_id, question_order)
-         VALUES ($1, $2) RETURNING *`,
-        [setId, JSON.stringify(questionOrder)]
+        `INSERT INTO revision_attempts (set_id, question_order, mode)
+         VALUES ($1, $2, $3) RETURNING *`,
+        [setId, JSON.stringify(questionOrder), mode]
     );
     return result.rows[0];
 }

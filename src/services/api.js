@@ -464,10 +464,10 @@ export const revision = {
         return res.json();
     },
     // Attempts
-    createAttempt: async (setId, questionOrder) => {
+    createAttempt: async (setId, questionOrder, mode = 'exam') => {
         const res = await fetch(`${API_URL}/revision/sets/${setId}/attempts`, {
             method: 'POST', headers: getHeaders(),
-            body: JSON.stringify({ questionOrder })
+            body: JSON.stringify({ questionOrder, mode })
         });
         if (!res.ok) throw new Error('Failed to create attempt');
         return res.json();

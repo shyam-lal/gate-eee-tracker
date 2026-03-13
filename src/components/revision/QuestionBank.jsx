@@ -15,6 +15,7 @@ const QuestionBank = ({ set, onStartTest, onBack }) => {
     const [history, setHistory] = useState([]);
     const [showHistory, setShowHistory] = useState(false);
     const [inProgress, setInProgress] = useState(null);
+    const [testMode, setTestMode] = useState('exam'); // 'exam' or 'study'
 
     useEffect(() => { loadData(); }, [set.id]);
 
@@ -52,7 +53,7 @@ const QuestionBank = ({ set, onStartTest, onBack }) => {
         }
         try {
             const attempt = await revisionApi.createAttempt(set.id, order);
-            onStartTest(setData, attempt);
+            onStartTest(setData, attempt, testMode);
         } catch (err) { alert('Failed to start test'); }
     };
 
@@ -60,7 +61,8 @@ const QuestionBank = ({ set, onStartTest, onBack }) => {
         if (!inProgress) return;
         try {
             const attempt = await revisionApi.getAttempt(inProgress.id);
-            onStartTest(setData, attempt);
+            // Try to infer mode from attempt or default to exam
+            onStartTest(setData, attempt, inProgress.mode || 'exam');
         } catch (err) { alert('Failed to resume'); }
     };
 
@@ -83,6 +85,21 @@ const QuestionBank = ({ set, onStartTest, onBack }) => {
                             <span key={i} className="px-2 py-0.5 bg-amber-500/10 text-amber-400 rounded text-[9px] font-black uppercase tracking-widest">{t.trim()}</span>
                         ))}
                     </div>
+                </div>
+                {/* Mode Selector */}
+                <div className="flex bg-slate-900 border border-slate-800 p-1 rounded-2xl">
+                    <button
+                        onClick={() => setTestMode('exam')}
+                        className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${testMode === 'exam' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
+                    >
+                        Exam
+                    </button>
+                    <button
+                        onClick={() => setTestMode('study')}
+                        className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${testMode === 'study' ? 'bg-amber-500 text-black shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
+                    >
+                        Study
+                    </button>
                 </div>
             </div>
 

@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Pause, Play, SkipForward, ChevronLeft, ChevronRight, Flag, X, Loader2, Clock, AlertTriangle } from 'lucide-react';
+import { Pause, Play, SkipForward, ChevronLeft, ChevronRight, Flag, X, Loader2, Clock, AlertTriangle, CheckCircle2, XCircle, BookOpen } from 'lucide-react';
 import { revision as revisionApi } from '../../services/api';
 
-const TestEngine = ({ set, attempt, onComplete, onExit }) => {
+const TestEngine = ({ set, attempt, mode = 'exam', onComplete, onExit }) => {
     const [questions, setQuestions] = useState([]);
     const [questionMap, setQuestionMap] = useState({});
     const [currentIdx, setCurrentIdx] = useState(0);
@@ -15,6 +15,8 @@ const TestEngine = ({ set, attempt, onComplete, onExit }) => {
     const [showPauseMenu, setShowPauseMenu] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [checked, setChecked] = useState({}); // { questionId: { isCorrect, revealed } }
+    const [feedback, setFeedback] = useState(null); // { isCorrect, message }
 
     const timerRef = useRef(null);
     const timePerQ = set.time_per_question || 180;
@@ -54,7 +56,7 @@ const TestEngine = ({ set, attempt, onComplete, onExit }) => {
 
     // Timer
     useEffect(() => {
-        if (paused || loading) return;
+        if (paused || loading || mode === 'study') return; // Disable question timer in study mode or if paused
         timerRef.current = setInterval(() => {
             setTimer(t => {
                 if (t + 1 >= timePerQ) {
@@ -67,7 +69,16 @@ const TestEngine = ({ set, attempt, onComplete, onExit }) => {
             setTotalTime(t => t + 1);
         }, 1000);
         return () => clearInterval(timerRef.current);
-    }, [paused, loading, currentIdx]);
+    }, [paused, loading, currentIdx, mode]);
+
+    // Secondary timer for total time if in study mode
+    useEffect(() => {
+        if (paused || loading || mode !== 'study') return;
+        const interval = setInterval(() => {
+            setTotalTime(t => t + 1);
+        }, 1000);
+        return () => clearInterval(interval);
+    }, [paused, loading, mode]);
 
     const currentQId = questions[currentIdx];
     const currentQ = questionMap[currentQId];
@@ -94,6 +105,38 @@ const TestEngine = ({ set, attempt, onComplete, onExit }) => {
         setAnswers(prev => ({ ...prev, [currentQId]: { value: parseFloat(value) || value } }));
     };
 
+    const isAnswerCorrect = (userAns, correctAns, type) => {
+        if (!userAns) return false;
+        if (type === 'mcq') return Array.isArray(userAns) && userAns[0] === correctAns[0];
+        if (type === 'msq') {
+            if (!Array.isArray(userAns) || userAns.length !== correctAns.length) return false;
+            return userAns.every(v => correctAns.includes(v)) && correctAns.every(v => userAns.includes(v));
+        }
+        if (type === 'nat') {
+            const val = parseFloat(userAns.value);
+            const target = parseFloat(correctAns.value);
+            const tol = parseFloat(correctAns.tolerance) || 0.01;
+            return Math.abs(val - target) <= tol;
+        }
+        return false;
+    };
+
+    const handleCheckAnswer = () => {
+        const userAns = answers[currentQId];
+        if (userAns === undefined || userAns === null) return;
+
+        const isCorrect = isAnswerCorrect(userAns, currentQ.correct_answer, currentQ.question_type);
+        setChecked(prev => ({ ...prev, [currentQId]: { ...prev[currentQId], isCorrect } }));
+        setFeedback({
+            isCorrect,
+            message: isCorrect ? 'Excellent! That is correct.' : 'Not quite. Try again or reveal the answer.'
+        });
+    };
+
+    const handleRevealAnswer = () => {
+        setChecked(prev => ({ ...prev, [currentQId]: { ...prev[currentQId], revealed: true } }));
+    };
+
     const saveCurrentAnswer = async () => {
         const qId = currentQId;
         const answer = answers[qId];
@@ -109,6 +152,7 @@ const TestEngine = ({ set, attempt, onComplete, onExit }) => {
     const handleNext = async (autoAdvance = false) => {
         await saveCurrentAnswer();
         setTimer(0);
+        setFeedback(null);
         if (currentIdx + 1 < questions.length) {
             setCurrentIdx(prev => prev + 1);
         } else if (!autoAdvance) {
@@ -126,6 +170,7 @@ const TestEngine = ({ set, attempt, onComplete, onExit }) => {
     const jumpToQuestion = async (idx) => {
         await saveCurrentAnswer();
         setTimer(0);
+        setFeedback(null);
         setCurrentIdx(idx);
     };
 
@@ -197,10 +242,17 @@ const TestEngine = ({ set, attempt, onComplete, onExit }) => {
 
                 {/* Timer */}
                 <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2 bg-slate-800 rounded-xl px-3 py-2">
-                        <Clock size={14} className={timerPct > 80 ? 'text-red-400' : 'text-slate-400'} />
-                        <span className={`text-sm font-mono font-black ${timerPct > 80 ? 'text-red-400' : 'text-white'}`}>{formatTime(timePerQ - timer)}</span>
-                    </div>
+                    {mode === 'exam' ? (
+                        <div className="flex items-center gap-2 bg-slate-800 rounded-xl px-3 py-2">
+                            <Clock size={14} className={timerPct > 80 ? 'text-red-400' : 'text-slate-400'} />
+                            <span className={`text-sm font-mono font-black ${timerPct > 80 ? 'text-red-400' : 'text-white'}`}>{formatTime(timePerQ - timer)}</span>
+                        </div>
+                    ) : (
+                        <div className="flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 rounded-xl px-3 py-2">
+                            <BookOpen size={14} className="text-amber-400" />
+                            <span className="text-[10px] font-black text-amber-400 uppercase tracking-widest">Study Mode</span>
+                        </div>
+                    )}
                     <div className="hidden sm:flex items-center gap-2 bg-slate-800/50 rounded-xl px-3 py-2">
                         <span className="text-[10px] text-slate-500 font-bold">Total:</span>
                         <span className="text-xs font-mono font-bold text-slate-400">{formatTime(totalTime)}</span>
@@ -236,9 +288,9 @@ const TestEngine = ({ set, attempt, onComplete, onExit }) => {
                                 key={qId}
                                 onClick={() => jumpToQuestion(idx)}
                                 className={`w-8 h-8 rounded-lg text-[10px] font-black transition-all border ${isCurrent ? 'bg-amber-500 text-black border-amber-400 scale-110' :
-                                        isMarked ? 'bg-purple-500/20 text-purple-400 border-purple-500/30' :
-                                            isAnswered ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' :
-                                                'bg-slate-800 text-slate-500 border-slate-700 hover:border-slate-600'
+                                    isMarked ? 'bg-purple-500/20 text-purple-400 border-purple-500/30' :
+                                        isAnswered ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' :
+                                            'bg-slate-800 text-slate-500 border-slate-700 hover:border-slate-600'
                                     }`}
                             >
                                 {idx + 1}
@@ -255,8 +307,8 @@ const TestEngine = ({ set, attempt, onComplete, onExit }) => {
                         {/* Question type badge + marks */}
                         <div className="flex items-center gap-2 mb-4">
                             <span className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border ${currentQ.question_type === 'mcq' ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' :
-                                    currentQ.question_type === 'msq' ? 'bg-purple-500/10 text-purple-400 border-purple-500/20' :
-                                        'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                                currentQ.question_type === 'msq' ? 'bg-purple-500/10 text-purple-400 border-purple-500/20' :
+                                    'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
                                 }`}>
                                 {currentQ.question_type?.toUpperCase()}
                             </span>
@@ -275,17 +327,24 @@ const TestEngine = ({ set, attempt, onComplete, onExit }) => {
 
                         {/* Answer area */}
                         {currentQ.question_type === 'nat' ? (
-                            <div className="space-y-3">
+                            <div className="space-y-4">
                                 <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Your Answer (Numerical)</label>
-                                <input
-                                    type="number"
-                                    step="any"
-                                    value={answers[currentQId]?.value ?? ''}
-                                    onChange={e => handleNATInput(e.target.value)}
-                                    placeholder="Enter your answer"
-                                    className="w-full max-w-sm bg-slate-900 border border-slate-700 rounded-2xl px-5 py-4 text-white text-lg font-mono font-bold focus:border-amber-500 outline-none transition-colors"
-                                    autoFocus
-                                />
+                                <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+                                    <input
+                                        type="number"
+                                        step="any"
+                                        disabled={checked[currentQId]?.isCorrect}
+                                        value={answers[currentQId]?.value ?? ''}
+                                        onChange={e => handleNATInput(e.target.value)}
+                                        placeholder="Enter your answer"
+                                        className={`w-full max-w-sm bg-slate-900 border rounded-2xl px-5 py-4 text-white text-lg font-mono font-bold outline-none transition-all ${checked[currentQId]?.isCorrect ? 'border-emerald-500/50 bg-emerald-500/5' : 'border-slate-700 focus:border-amber-500'
+                                            }`}
+                                        autoFocus
+                                    />
+                                    {mode === 'study' && !checked[currentQId]?.isCorrect && (
+                                        <button onClick={handleCheckAnswer} className="px-6 py-4 bg-indigo-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-indigo-500 transition-all">Check</button>
+                                    )}
+                                </div>
                             </div>
                         ) : (
                             <div className="space-y-3">
@@ -293,27 +352,82 @@ const TestEngine = ({ set, attempt, onComplete, onExit }) => {
                                     <p className="text-[10px] font-bold text-purple-400 uppercase tracking-widest mb-2">Select one or more correct answers</p>
                                 )}
                                 {(currentQ.options || []).map((opt, optIdx) => {
+                                    const isCorrect = currentQ.correct_answer.includes(optIdx);
                                     const selected = currentQ.question_type === 'msq'
                                         ? (Array.isArray(answers[currentQId]) && answers[currentQId].includes(optIdx))
                                         : (Array.isArray(answers[currentQId]) && answers[currentQId][0] === optIdx);
 
+                                    const isRevealed = checked[currentQId]?.revealed;
+                                    const isVerified = checked[currentQId]?.isCorrect;
+
+                                    let borderClass = 'border-slate-800 bg-slate-900/50 hover:border-slate-700';
+                                    if (selected) borderClass = 'border-amber-500 bg-amber-500/10';
+                                    if (mode === 'study' && (isRevealed || (selected && isVerified))) {
+                                        if (isCorrect) borderClass = 'border-emerald-500 bg-emerald-500/10 shadow-[0_0_15px_rgba(16,185,129,0.1)]';
+                                        else if (selected) borderClass = 'border-rose-500 bg-rose-500/10';
+                                    }
+
                                     return (
                                         <button
                                             key={optIdx}
+                                            disabled={checked[currentQId]?.isCorrect || checked[currentQId]?.revealed}
                                             onClick={() => currentQ.question_type === 'msq' ? handleMSQToggle(optIdx) : handleMCQSelect(optIdx)}
-                                            className={`w-full text-left p-4 rounded-2xl border-2 transition-all flex items-center gap-4 group ${selected
-                                                    ? 'border-amber-500 bg-amber-500/10'
-                                                    : 'border-slate-800 bg-slate-900/50 hover:border-slate-700'
-                                                }`}
+                                            className={`w-full text-left p-4 rounded-2xl border-2 transition-all flex items-center gap-4 group ${borderClass}`}
                                         >
-                                            <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-black text-xs shrink-0 transition-all ${selected ? 'bg-amber-500 text-black' : 'bg-slate-800 text-slate-400 group-hover:bg-slate-700'
+                                            <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-black text-xs shrink-0 transition-all ${selected ? 'bg-amber-500 text-black' :
+                                                    (mode === 'study' && (isRevealed || isVerified) && isCorrect) ? 'bg-emerald-500 text-white' :
+                                                        'bg-slate-800 text-slate-400 group-hover:bg-slate-700'
                                                 }`}>
                                                 {String.fromCharCode(65 + optIdx)}
                                             </div>
-                                            <span className={`text-sm font-medium ${selected ? 'text-white' : 'text-slate-300'}`}>{opt}</span>
+                                            <span className={`text-sm font-medium flex-1 ${selected ? 'text-white' : 'text-slate-300'}`}>{opt}</span>
+                                            {mode === 'study' && (isRevealed || isVerified) && isCorrect && <CheckCircle2 size={18} className="text-emerald-500 animate-in zoom-in" />}
                                         </button>
                                     );
                                 })}
+                                {mode === 'study' && !checked[currentQId]?.isCorrect && !checked[currentQId]?.revealed && (
+                                    <button onClick={handleCheckAnswer} className="w-full py-4 mt-2 bg-indigo-600/20 text-indigo-400 border border-indigo-600/30 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-indigo-600/30 transition-all">Check Selected Answer</button>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Study Feedback Section */}
+                        {mode === 'study' && (
+                            <div className="mt-8 animate-in slide-in-from-top-4 duration-300">
+                                {feedback && (
+                                    <div className={`flex items-start gap-4 p-5 rounded-[2rem] border ${feedback.isCorrect ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-rose-500/10 border-rose-500/20 text-rose-400'}`}>
+                                        <div className={`p-2 rounded-xl ${feedback.isCorrect ? 'bg-emerald-500/20' : 'bg-rose-500/20'}`}>
+                                            {feedback.isCorrect ? <CheckCircle2 size={24} /> : <XCircle size={24} />}
+                                        </div>
+                                        <div className="flex-1">
+                                            <p className="font-black uppercase tracking-widest text-xs mb-1">{feedback.isCorrect ? 'Correct!' : 'Incorrect'}</p>
+                                            <p className="text-sm font-medium">{feedback.message}</p>
+                                        </div>
+                                        {!feedback.isCorrect && !checked[currentQId]?.revealed && (
+                                            <button onClick={handleRevealAnswer} className="px-4 py-2 bg-slate-800 text-white rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-slate-700 transition-colors">Reveal Answer</button>
+                                        )}
+                                    </div>
+                                )}
+
+                                {checked[currentQId]?.revealed && (
+                                    <div className="mt-6 bg-slate-900/80 border border-slate-800 rounded-[2rem] p-6 animate-in fade-in duration-500">
+                                        <div className="flex items-center gap-2 mb-4 text-amber-400">
+                                            <BookOpen size={16} />
+                                            <span className="text-xs font-black uppercase tracking-widest">Explanation & Answer</span>
+                                        </div>
+                                        <div className="space-y-4">
+                                            <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4">
+                                                <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest mb-1">Correct Answer</p>
+                                                <p className="text-sm font-bold text-white">
+                                                    {currentQ.question_type === 'nat'
+                                                        ? `${currentQ.correct_answer.value} (Tolerance: ±${currentQ.correct_answer.tolerance || 0.01})`
+                                                        : currentQ.correct_answer.map(idx => String.fromCharCode(65 + idx)).join(', ')}
+                                                </p>
+                                            </div>
+                                            <div className="text-sm text-slate-300 leading-relaxed study-explanation" dangerouslySetInnerHTML={{ __html: currentQ.explanation }} />
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>
@@ -333,8 +447,8 @@ const TestEngine = ({ set, attempt, onComplete, onExit }) => {
                 <button
                     onClick={() => handleNext()}
                     className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-black text-xs uppercase tracking-widest transition-all ${isLastQuestion
-                            ? 'bg-emerald-500 text-black hover:bg-emerald-400'
-                            : 'bg-amber-500 text-black hover:bg-amber-400'
+                        ? 'bg-emerald-500 text-black hover:bg-emerald-400'
+                        : 'bg-amber-500 text-black hover:bg-amber-400'
                         }`}
                 >
                     {isLastQuestion ? 'Finish' : 'Next'} <ChevronRight size={16} />

@@ -12,6 +12,7 @@ const RevisionDashboard = ({ tool }) => {
     const [view, setView] = useState('list'); // 'list', 'create', 'questions', 'test', 'results'
     const [activeSet, setActiveSet] = useState(null);
     const [activeAttempt, setActiveAttempt] = useState(null);
+    const [testMode, setTestMode] = useState('exam'); // 'exam' or 'study'
 
     useEffect(() => { loadSets(); }, []);
 
@@ -38,9 +39,10 @@ const RevisionDashboard = ({ tool }) => {
         } catch (err) { alert('Failed to delete set'); }
     };
 
-    const handleStartTest = (set, attempt) => {
+    const handleStartTest = (set, attempt, mode = 'exam') => {
         setActiveSet(set);
         setActiveAttempt(attempt);
+        setTestMode(mode);
         setView('test');
     };
 
@@ -66,7 +68,7 @@ const RevisionDashboard = ({ tool }) => {
     }
 
     if (view === 'test' && activeSet) {
-        return <TestEngine set={activeSet} attempt={activeAttempt} onComplete={handleTestComplete} onExit={goBack} />;
+        return <TestEngine set={activeSet} attempt={activeAttempt} mode={testMode} onComplete={handleTestComplete} onExit={goBack} />;
     }
 
     if (view === 'results' && activeAttempt) {

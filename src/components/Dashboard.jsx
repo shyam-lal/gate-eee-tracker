@@ -4,7 +4,7 @@ import {
     ChevronRight, Play, Clock, Target,
     Zap, Calendar, BarChart3, LayoutGrid,
     BookOpen, Trophy, Sparkles, Users, Plus, Layers,
-    MoreVertical, Edit3, Trash2, X, BrainCircuit, AlertCircle, Timer, RotateCcw, Activity
+    MoreVertical, Edit3, Trash2, X, BrainCircuit, AlertCircle, Timer, RotateCcw, Activity, ClipboardCheck
 } from 'lucide-react';
 import UserStreakWidget from './ui/UserStreakWidget';
 import GlobalAnalytics from './analytics/GlobalAnalytics';

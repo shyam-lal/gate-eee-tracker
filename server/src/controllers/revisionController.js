@@ -88,11 +88,11 @@ exports.getPrompt = async (req, res) => {
 
 exports.createAttempt = async (req, res) => {
     try {
-        const { questionOrder } = req.body;
+        const { questionOrder, mode } = req.body;
         if (!questionOrder || !Array.isArray(questionOrder)) {
             return res.status(400).json({ error: 'questionOrder array is required' });
         }
-        const attempt = await revisionService.createAttempt(req.params.id, questionOrder);
+        const attempt = await revisionService.createAttempt(req.params.id, questionOrder, mode || 'exam');
         res.json(attempt);
     } catch (err) {
         console.error('createAttempt error:', err);
