@@ -6,29 +6,55 @@ const authMiddleware = require('../middleware/authMiddleware');
 // Protect all flashcard routes
 router.use(authMiddleware);
 
+// --- GROUPS ---
+
+// Create a new group (subject)
+router.post('/tools/:toolId/groups', async (req, res) => {
+    try {
+        const { name } = req.body;
+        if (!name) return res.status(400).json({ error: 'Name is required' });
+        const group = await flashcardService.createGroup(req.params.toolId, name);
+        res.status(201).json(group);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to create group' });
+    }
+});
+
+// Get all groups and their decks for a tool
+router.get('/tools/:toolId/groups', async (req, res) => {
+    try {
+        const groups = await flashcardService.getGroupsWithDecks(req.params.toolId);
+        res.json(groups);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to get groups' });
+    }
+});
+
+// Delete a group
+router.delete('/groups/:id', async (req, res) => {
+    try {
+        const group = await flashcardService.deleteGroup(req.params.id);
+        res.json({ message: 'Group deleted', group });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to delete group' });
+    }
+});
+
 // --- DECKS ---
 
-// Create a new deck
-router.post('/decks', async (req, res) => {
+// Create a new deck inside a group
+router.post('/groups/:groupId/decks', async (req, res) => {
     try {
-        const { toolId, name } = req.body;
-        if (!toolId || !name) return res.status(400).json({ error: 'Tool ID and name are required' });
-        const deck = await flashcardService.createDeck(toolId, name);
+        const { name } = req.body;
+        if (!name) return res.status(400).json({ error: 'Name is required' });
+        const deck = await flashcardService.createDeck(req.params.groupId, name);
         res.status(201).json(deck);
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Failed to create deck' });
-    }
-});
-
-// Get all decks for a tool
-router.get('/tools/:toolId/decks', async (req, res) => {
-    try {
-        const decks = await flashcardService.getDecksByTool(req.params.toolId);
-        res.json(decks);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Failed to get decks' });
     }
 });
 

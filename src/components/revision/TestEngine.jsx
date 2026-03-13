@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Pause, Play, SkipForward, ChevronLeft, ChevronRight, Flag, X, Loader2, Clock, AlertTriangle, CheckCircle2, XCircle, BookOpen } from 'lucide-react';
 import { revision as revisionApi } from '../../services/api';
+import 'katex/dist/katex.min.css';
+import renderMathInElement from 'katex/dist/contrib/auto-render.js';
 
 const TestEngine = ({ set, attempt, mode = 'exam', onComplete, onExit }) => {
     const [questions, setQuestions] = useState([]);
@@ -19,7 +21,23 @@ const TestEngine = ({ set, attempt, mode = 'exam', onComplete, onExit }) => {
     const [feedback, setFeedback] = useState(null); // { isCorrect, message }
 
     const timerRef = useRef(null);
+    const containerRef = useRef(null);
     const timePerQ = set.time_per_question || 180;
+
+    // Render LaTeX equations whenever the current question or feedback changes
+    useEffect(() => {
+        if (containerRef.current) {
+            renderMathInElement(containerRef.current, {
+                delimiters: [
+                    { left: '$$', right: '$$', display: true },
+                    { left: '$', right: '$', display: false },
+                    { left: '\\(', right: '\\)', display: false },
+                    { left: '\\[', right: '\\]', display: true }
+                ],
+                throwOnError: false
+            });
+        }
+    }, [currentIdx, checked, feedback, questions]);
 
     // Load questions on mount
     useEffect(() => {
@@ -227,7 +245,7 @@ const TestEngine = ({ set, attempt, mode = 'exam', onComplete, onExit }) => {
     const isLastQuestion = currentIdx === questions.length - 1;
 
     return (
-        <div className="fixed inset-0 z-[100] bg-[#020617] flex flex-col">
+        <div ref={containerRef} className="fixed inset-0 z-[100] bg-[#020617] flex flex-col">
             {/* Top Bar */}
             <div className="bg-slate-900 border-b border-slate-800 px-4 py-3 flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-3">
@@ -375,8 +393,8 @@ const TestEngine = ({ set, attempt, mode = 'exam', onComplete, onExit }) => {
                                             className={`w-full text-left p-4 rounded-2xl border-2 transition-all flex items-center gap-4 group ${borderClass}`}
                                         >
                                             <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-black text-xs shrink-0 transition-all ${selected ? 'bg-amber-500 text-black' :
-                                                    (mode === 'study' && (isRevealed || isVerified) && isCorrect) ? 'bg-emerald-500 text-white' :
-                                                        'bg-slate-800 text-slate-400 group-hover:bg-slate-700'
+                                                (mode === 'study' && (isRevealed || isVerified) && isCorrect) ? 'bg-emerald-500 text-white' :
+                                                    'bg-slate-800 text-slate-400 group-hover:bg-slate-700'
                                                 }`}>
                                                 {String.fromCharCode(65 + optIdx)}
                                             </div>

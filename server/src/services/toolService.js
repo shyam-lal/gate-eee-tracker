@@ -17,7 +17,8 @@ const getUserTools = async (userId) => {
              SELECT COUNT(c.id)
              FROM cards c
              JOIN decks d ON c.deck_id = d.id
-             WHERE d.tool_id = t.id AND c.next_review_date <= CURRENT_DATE
+             JOIN flashcard_groups fg ON d.group_id = fg.id
+             WHERE fg.tool_id = t.id AND c.next_review_date <= CURRENT_DATE
          )::int as due_cards_count
          FROM tools t WHERE t.user_id = $1 ORDER BY t.created_at DESC`,
         [userId]

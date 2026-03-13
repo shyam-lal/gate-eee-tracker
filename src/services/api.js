@@ -214,19 +214,38 @@ export const streak = {
 };
 
 export const flashcards = {
-    // DECKS
-    createDeck: async (toolId, name) => {
-        const res = await fetch(`${API_URL}/flashcards/decks`, {
+    // GROUPS
+    createGroup: async (toolId, name) => {
+        const res = await fetch(`${API_URL}/flashcards/tools/${toolId}/groups`, {
             method: 'POST',
             headers: getHeaders(),
-            body: JSON.stringify({ toolId, name })
+            body: JSON.stringify({ name })
         });
-        if (!res.ok) throw new Error('Failed to create deck');
+        if (!res.ok) throw new Error('Failed to create group');
         return res.json();
     },
-    getDecks: async (toolId) => {
-        const res = await fetch(`${API_URL}/flashcards/tools/${toolId}/decks`, { headers: getHeaders() });
-        if (!res.ok) throw new Error('Failed to fetch decks');
+    getGroups: async (toolId) => {
+        const res = await fetch(`${API_URL}/flashcards/tools/${toolId}/groups`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to fetch groups');
+        return res.json();
+    },
+    deleteGroup: async (groupId) => {
+        const res = await fetch(`${API_URL}/flashcards/groups/${groupId}`, {
+            method: 'DELETE',
+            headers: getHeaders()
+        });
+        if (!res.ok) throw new Error('Failed to delete group');
+        return res.json();
+    },
+
+    // DECKS
+    createDeck: async (groupId, name) => {
+        const res = await fetch(`${API_URL}/flashcards/groups/${groupId}/decks`, {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify({ name })
+        });
+        if (!res.ok) throw new Error('Failed to create deck');
         return res.json();
     },
     getAnalytics: async (toolId) => {

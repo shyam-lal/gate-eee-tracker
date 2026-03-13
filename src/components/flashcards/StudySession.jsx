@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Brain, ArrowLeft, RefreshCcw, CheckCircle2, ChevronRight } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Brain, ArrowLeft, RefreshCcw, CheckCircle2, ChevronRight, RotateCw, Zap, BookOpen } from 'lucide-react';
 import { flashcards as flashcardsApi } from '../../services/api';
 import 'katex/dist/katex.min.css';
+import renderMathInElement from 'katex/dist/contrib/auto-render.js';
 
 const StudySession = ({ deck, onComplete, mode = 'srs' }) => {
     const [cards, setCards] = useState([]); // Renamed from dueCards
@@ -9,6 +10,9 @@ const StudySession = ({ deck, onComplete, mode = 'srs' }) => {
     const [showBack, setShowBack] = useState(false);
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
+
+    // Ref for the card content container to target for LaTeX rendering
+    const cardContentRef = useRef(null);
     const [completed, setCompleted] = useState(false);
 
     useEffect(() => {
@@ -33,6 +37,21 @@ const StudySession = ({ deck, onComplete, mode = 'srs' }) => {
             setLoading(false);
         }
     };
+
+    // Render LaTeX equations whenever the content changes (card flip or next card)
+    useEffect(() => {
+        if (cardContentRef.current) {
+            renderMathInElement(cardContentRef.current, {
+                delimiters: [
+                    { left: '$$', right: '$$', display: true },
+                    { left: '$', right: '$', display: false },
+                    { left: '\\(', right: '\\)', display: false },
+                    { left: '\\[', right: '\\]', display: true }
+                ],
+                throwOnError: false
+            });
+        }
+    }, [currentIndex, showBack, cards]);
 
     const handleFlip = () => {
         setShowBack(true);
@@ -179,7 +198,7 @@ const StudySession = ({ deck, onComplete, mode = 'srs' }) => {
                         <div className="w-12 h-12 bg-indigo-500/10 rounded-2xl flex items-center justify-center text-indigo-400 mb-6 mx-auto self-start flex-shrink-0">
                             <Brain size={24} />
                         </div>
-                        <div className="flex-1 overflow-y-auto no-scrollbar w-full flex flex-col fade-edge-y pb-2">
+                        <div ref={!showBack ? cardContentRef : null} className="flex-1 overflow-y-auto no-scrollbar w-full flex flex-col fade-edge-y pb-2">
                             <div className="m-auto flex flex-col items-center space-y-8 w-full">
                                 <div className="study-card-content text-2xl sm:text-3xl lg:text-4xl font-bold text-white leading-relaxed" dangerouslySetInnerHTML={{ __html: frontData.text }} />
                                 {frontData.image && (
@@ -197,7 +216,7 @@ const StudySession = ({ deck, onComplete, mode = 'srs' }) => {
                                 <div className="text-xs text-white font-medium line-clamp-2" dangerouslySetInnerHTML={{ __html: frontData.text }} />
                             </div>
                         </div>
-                        <div className="flex-1 overflow-y-auto no-scrollbar w-full flex flex-col fade-edge-y pb-2">
+                        <div ref={showBack ? cardContentRef : null} className="flex-1 overflow-y-auto no-scrollbar w-full flex flex-col fade-edge-y pb-2">
                             <div className="m-auto flex flex-col items-center space-y-10 w-full">
                                 <div className="study-card-content text-2xl sm:text-3xl lg:text-4xl font-bold text-indigo-100 leading-relaxed" dangerouslySetInnerHTML={{ __html: backData.text }} />
                                 {backData.image && (

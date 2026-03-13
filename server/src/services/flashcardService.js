@@ -13,28 +13,57 @@ function getLocalDateStr(date) {
 }
 
 const flashcardService = {
-    // --- DECKS ---
-    createDeck: async (toolId, name) => {
+    // --- GROUPS (SUBJECTS) ---
+    createGroup: async (toolId, name) => {
         const res = await pool.query(
-            'INSERT INTO decks (tool_id, name) VALUES ($1, $2) RETURNING *',
+            'INSERT INTO flashcard_groups (tool_id, name) VALUES ($1, $2) RETURNING *',
             [toolId, name]
         );
         return res.rows[0];
     },
 
-    getDecksByTool: async (toolId) => {
-        const res = await pool.query(
+    getGroupsWithDecks: async (toolId) => {
+        // Fetch all groups for this tool
+        const groupsRes = await pool.query(
+            'SELECT * FROM flashcard_groups WHERE tool_id = $1 ORDER BY created_at ASC',
+            [toolId]
+        );
+        const groups = groupsRes.rows;
+
+        // Fetch all decks for these groups, along with their card counts
+        const decksRes = await pool.query(
             `SELECT d.*, 
             COUNT(c.id) as total_cards,
             COUNT(CASE WHEN c.next_review_date <= CURRENT_DATE THEN 1 END) as due_cards
             FROM decks d
+            JOIN flashcard_groups fg ON d.group_id = fg.id
             LEFT JOIN cards c ON d.id = c.deck_id
-            WHERE d.tool_id = $1
+            WHERE fg.tool_id = $1
             GROUP BY d.id
             ORDER BY d.created_at ASC`,
             [toolId]
         );
-        return res.rows;
+        const allDecks = decksRes.rows;
+
+        // Nest decks inside their respective groups
+        return groups.map(group => ({
+            ...group,
+            decks: allDecks.filter(deck => deck.group_id === group.id)
+        }));
+    },
+
+    deleteGroup: async (groupId) => {
+        const res = await pool.query('DELETE FROM flashcard_groups WHERE id = $1 RETURNING *', [groupId]);
+        return res.rows[0];
+    },
+
+    // --- DECKS ---
+    createDeck: async (groupId, name) => {
+        const res = await pool.query(
+            'INSERT INTO decks (group_id, name) VALUES ($1, $2) RETURNING *',
+            [groupId, name]
+        );
+        return res.rows[0];
     },
 
     deleteDeck: async (deckId) => {
