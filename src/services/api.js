@@ -214,6 +214,22 @@ export const streak = {
 };
 
 export const flashcards = {
+    // AI GENERATION
+    getPrompt: async (topic, count) => {
+        const res = await fetch(`${API_URL}/flashcards/prompt?topic=${encodeURIComponent(topic)}&count=${count}`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to fetch prompt');
+        return res.json();
+    },
+    importCards: async (deckId, cards) => {
+        const res = await fetch(`${API_URL}/flashcards/decks/${deckId}/import`, {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify({ cards })
+        });
+        if (!res.ok) throw new Error('Failed to import cards');
+        return res.json();
+    },
+
     // GROUPS
     createGroup: async (toolId, name) => {
         const res = await fetch(`${API_URL}/flashcards/tools/${toolId}/groups`, {

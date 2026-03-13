@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { ArrowLeft, Sparkles, Copy, Clipboard, Check, AlertCircle, Loader2 } from 'lucide-react';
 import { revision as revisionApi } from '../../services/api';
+import { parseAIJson } from '../../utils/jsonUtils';
 
 const SetCreator = ({ onCreated, onBack }) => {
     const [step, setStep] = useState(1); // 1: details, 2: prompt, 3: paste JSON
@@ -49,17 +50,13 @@ const SetCreator = ({ onCreated, onBack }) => {
         setError('');
         setImporting(true);
         try {
-            let parsed = JSON.parse(jsonInput);
+            let parsed = parseAIJson(jsonInput);
             // Accept both { questions: [...] } and bare [...]
             if (Array.isArray(parsed)) parsed = { questions: parsed };
             await revisionApi.importQuestions(createdSet.id, parsed);
             onCreated(createdSet);
         } catch (err) {
-            if (err instanceof SyntaxError) {
-                setError('Invalid JSON format. Make sure you paste the exact output from the AI.');
-            } else {
-                setError(err.message || 'Failed to import questions');
-            }
+            setError(err.message || 'Failed to import questions. Invalid JSON.');
         } finally {
             setImporting(false);
         }

@@ -3,8 +3,9 @@ import ReactQuill, { Quill } from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import katex from 'katex';
 import 'katex/dist/katex.min.css';
-import { Plus, Trash2, BrainCircuit, Edit3, Save, X, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { Plus, Trash2, BrainCircuit, Edit3, Save, X, Image as ImageIcon, Loader2, Bot } from 'lucide-react';
 import { flashcards as flashcardsApi, upload as uploadApi } from '../../services/api';
+import AIGenerator from './AIGenerator';
 
 window.katex = katex;
 
@@ -21,7 +22,6 @@ const Delta = Quill.import('delta');
 
 // Compact toolbar for flashcard editors
 const COMPACT_MODULES = {
-    formula: true,
     clipboard: {
         matchers: [
             [Node.TEXT_NODE, function (node, delta) {
@@ -34,7 +34,8 @@ const COMPACT_MODULES = {
                 let match;
                 while ((match = latexRegex.exec(text)) !== null) {
                     if (match.index > lastIndex) newDelta.insert(text.slice(lastIndex, match.index));
-                    newDelta.insert({ formula: match[1] || match[2] });
+                    // We just insert the text. The formula module is not needed.
+                    newDelta.insert(`\\(${match[1] || match[2]}\\)`);
                     lastIndex = match.index + match[0].length;
                 }
                 if (lastIndex < text.length) newDelta.insert(text.slice(lastIndex));
@@ -47,17 +48,18 @@ const COMPACT_MODULES = {
             ['bold', 'italic', 'underline'],
             [{ 'color': [] }],
             [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-            ['formula', 'code-block'],
+            ['code-block'],
             ['clean']
         ]
     }
 };
 
-const FORMATS = ['bold', 'italic', 'underline', 'color', 'list', 'formula', 'code-block'];
+const FORMATS = ['bold', 'italic', 'underline', 'color', 'list', 'code-block'];
 
 const CardEditor = ({ deckId }) => {
     const [cards, setCards] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [showAIGenerator, setShowAIGenerator] = useState(false);
     const [front, setFront] = useState('');
     const [frontImage, setFrontImage] = useState(null);
     const [uploadingFront, setUploadingFront] = useState(false);
@@ -113,6 +115,11 @@ const CardEditor = ({ deckId }) => {
         } catch (err) {
             alert('Failed to create card');
         }
+    };
+
+    const handleImportComplete = () => {
+        setShowAIGenerator(false);
+        loadCards();
     };
 
     const handleDeleteCard = async (cardId) => {
@@ -251,22 +258,45 @@ const CardEditor = ({ deckId }) => {
             `}</style>
 
             {/* Deck Analytics Summary */}
-            <div className="bg-slate-900 border-b border-slate-800 p-6 flex-shrink-0 grid grid-cols-2 sm:grid-cols-4 gap-4 z-20 shadow-md">
-                <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Cards</p>
-                    <p className="text-2xl font-black text-white">{cards.length}</p>
+            <div className="bg-slate-900 border-b border-slate-800 p-6 flex-shrink-0 flex flex-col gap-4 z-20 shadow-md">
+                <div className="flex items-center justify-between">
+                    <h3 className="text-xl font-black text-white px-2">Deck Details</h3>
+                    <button
+                        onClick={() => setShowAIGenerator(!showAIGenerator)}
+                        className={`px-4 py-2 rounded-xl font-bold text-xs uppercase tracking-widest flex items-center gap-2 transition-all shadow-lg ${showAIGenerator ? 'bg-slate-800 text-slate-400 hover:text-white' : 'bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500 hover:text-white hover:border-emerald-500'}`}
+                    >
+                        {showAIGenerator ? <X size={14} /> : <Bot size={14} />}
+                        {showAIGenerator ? 'Close AI' : 'AI Generate'}
+                    </button>
                 </div>
-                <div className="bg-amber-500/10 rounded-xl p-4 border border-amber-500/20">
-                    <p className="text-[10px] font-black text-amber-500 uppercase tracking-widest mb-1">Due Today</p>
-                    <p className="text-2xl font-black text-amber-400">{dueCount}</p>
-                </div>
-                <div className="bg-indigo-500/10 rounded-xl p-4 border border-indigo-500/20">
-                    <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1">Learned</p>
-                    <p className="text-2xl font-black text-indigo-400">{learnedCards.length}</p>
-                </div>
-                <div className="bg-emerald-500/10 rounded-xl p-4 border border-emerald-500/20">
-                    <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1">Avg Ease</p>
-                    <p className="text-2xl font-black text-emerald-400">{avgEaseNode}</p>
+
+                {showAIGenerator && (
+                    <div className="pt-2">
+                        <AIGenerator
+                            deckId={deckId}
+                            onImportComplete={handleImportComplete}
+                            onCancel={() => setShowAIGenerator(false)}
+                        />
+                    </div>
+                )}
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-2">
+                    <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Cards</p>
+                        <p className="text-2xl font-black text-white">{cards.length}</p>
+                    </div>
+                    <div className="bg-amber-500/10 rounded-xl p-4 border border-amber-500/20">
+                        <p className="text-[10px] font-black text-amber-500 uppercase tracking-widest mb-1">Due Today</p>
+                        <p className="text-2xl font-black text-amber-400">{dueCount}</p>
+                    </div>
+                    <div className="bg-indigo-500/10 rounded-xl p-4 border border-indigo-500/20">
+                        <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1">Learned</p>
+                        <p className="text-2xl font-black text-indigo-400">{learnedCards.length}</p>
+                    </div>
+                    <div className="bg-emerald-500/10 rounded-xl p-4 border border-emerald-500/20">
+                        <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1">Avg Ease</p>
+                        <p className="text-2xl font-black text-emerald-400">{avgEaseNode}</p>
+                    </div>
                 </div>
             </div>
 

@@ -58,6 +58,17 @@ const flashcardService = {
     },
 
     // --- DECKS ---
+    verifyDeckOwnership: async (deckId, userId) => {
+        const res = await pool.query(
+            `SELECT d.id FROM decks d
+             JOIN flashcard_groups fg ON d.group_id = fg.id
+             JOIN tools t ON fg.tool_id = t.id
+             WHERE d.id = $1 AND t.user_id = $2`,
+            [deckId, userId]
+        );
+        return res.rowCount > 0;
+    },
+
     createDeck: async (groupId, name) => {
         const res = await pool.query(
             'INSERT INTO decks (group_id, name) VALUES ($1, $2) RETURNING *',
@@ -149,9 +160,10 @@ const flashcardService = {
                 COUNT(CASE WHEN c.next_review_date <= $2 THEN 1 END) as due_cards,
                 COUNT(CASE WHEN c.repetition > 0 THEN 1 END) as learned_cards,
                 ROUND(AVG(CASE WHEN c.repetition > 0 THEN c.ease_factor ELSE NULL END)::numeric, 2) as avg_ease_factor
-             FROM decks d
+             FROM flashcard_groups g
+             JOIN decks d ON d.group_id = g.id
              LEFT JOIN cards c ON d.id = c.deck_id
-             WHERE d.tool_id = $1`,
+             WHERE g.tool_id = $1`,
             [toolId, todayStr]
         );
         return res.rows[0];

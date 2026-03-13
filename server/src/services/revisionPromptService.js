@@ -24,8 +24,6 @@ Rules:
 7. For NAT, provide a tolerance range for decimal answers
 8. Make sure to make no mistake in making the questions or answers.
 9. If you are unable to make correct questions and answers, do not make up wrong questions or answers.
-10. Do not place unnecessary backslashes in the string that will cause issues in the json.
-11. Do not place unnecessary double quotes in the string that will cause issues in the json.
 
 Return ONLY valid JSON in this exact format (no markdown, no code fences, just raw JSON):
 {

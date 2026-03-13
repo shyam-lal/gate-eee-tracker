@@ -1,10 +1,56 @@
 const express = require('express');
 const router = express.Router();
 const flashcardService = require('../services/flashcardService');
+const flashcardPromptService = require('../services/flashcardPromptService');
 const authMiddleware = require('../middleware/authMiddleware');
 
 // Protect all flashcard routes
 router.use(authMiddleware);
+
+// --- AI GENERATION ---
+router.get('/prompt', async (req, res) => {
+    try {
+        const { topic, count } = req.query;
+        if (!topic) return res.status(400).json({ error: 'Topic is required' });
+        const c = parseInt(count) || 10;
+        const prompt = flashcardPromptService.generateFlashcardPrompt(topic, c);
+        res.json({ prompt });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to generate prompt' });
+    }
+});
+
+router.post('/decks/:deckId/import', async (req, res) => {
+    try {
+        const deckId = req.params.deckId;
+        const { cards } = req.body; // Expects an array: [{front: '', back: ''}]
+
+        if (!Array.isArray(cards) || cards.length === 0) {
+            return res.status(400).json({ error: 'Valid cards array is required' });
+        }
+
+        // Verify deck ownership
+        const isOwner = await flashcardService.verifyDeckOwnership(deckId, req.user.id);
+        if (!isOwner) {
+            return res.status(404).json({ error: 'Deck not found or access denied' });
+        }
+
+        // Insert all cards
+        let insertedCount = 0;
+        for (const card of cards) {
+            if (card.front && card.back) {
+                await flashcardService.createCard(deckId, card.front, card.back);
+                insertedCount++;
+            }
+        }
+
+        res.status(201).json({ message: `Successfully imported ${insertedCount} cards.`, count: insertedCount });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Server error importing cards' });
+    }
+});
 
 // --- GROUPS ---
 
