@@ -16,20 +16,38 @@ export const parseAIJson = (val) => {
     try {
         return JSON.parse(cleanVal);
     } catch (err) {
-        // 3. Fallback A: Fix invalid escape sequences (anything that isn't \", \\, \/, \b, \f, \n, \r, \t, or \u)
-        let fixedVal = cleanVal.replace(/\\([^"\\/bfnrtu])/g, '\\\\$1');
+        // 3. Fallback A: Fix typical LaTeX control-character collisions
+        // LLMs often output \frac, \tau, \rho, \nu which get parsed as \f (form feed), \t (tab), \r (carriage return), \n (newline).
+        // Since we are expecting LaTeX, we aggressively double-escape single backslashes in front of ANY letter, 
+        // completely ignoring JSON's standard \f, \t, \r, \n escapes because they shouldn't exist as raw escapes in AI output anyway unless it's LaTeX.
+        
+        let fixedVal = cleanVal
+            // First, protect things that are already double escaped
+            .replace(/\\\\/g, '@@DOUBLE@@')
+            // Protect escaped quotes
+            .replace(/\\"/g, '@@QUOTE@@')
+            // Now, any remaining single backslash followed by a letter (like \frac, \tau, \rho, \nu, \alpha, \beta, \hphantom) 
+            // gets forced into a double backslash.
+            .replace(/\\([a-zA-Z])/g, '\\\\$1')
+            // Restore protections
+            .replace(/@@DOUBLE@@/g, '\\\\')
+            .replace(/@@QUOTE@@/g, '\\"');
+
         try {
             return JSON.parse(fixedVal);
         } catch (err2) {
-            // 4. Fallback B: Brute force. Replace ALL single backslashes with double backslashes,
-            // but protect valid double backslashes and escaped quotes first.
-            let bruteVal = cleanVal.replace(/\\\\/g, '@@DOUBLE@@')
+            // 4. Fallback B: Brute force. Replace ALL remaining single backslashes with double backslashes
+            let bruteVal = fixedVal.replace(/\\/g, '\\\\');
+            // But we actually need to be careful with quotes:
+            // Since we protected quotes earlier, let's just do a blanket clean:
+            let superBrute = cleanVal.replace(/\\\\/g, '@@DOUBLE@@')
                 .replace(/\\"/g, '@@QUOTE@@')
-                .replace(/\\/g, '\\\\')
+                .replace(/\\/g, '\\\\') // Duplicate EVERY single backslash
                 .replace(/@@DOUBLE@@/g, '\\\\')
                 .replace(/@@QUOTE@@/g, '\\"');
+            
             try {
-                return JSON.parse(bruteVal);
+                return JSON.parse(superBrute);
             } catch (err3) {
                 // If all parsing fails, throw
                 throw new Error('Invalid JSON format. Please ensure the AI output is valid JSON.');

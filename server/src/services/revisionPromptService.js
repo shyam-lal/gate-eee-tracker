@@ -24,6 +24,13 @@ Rules:
 7. For NAT, provide a tolerance range for decimal answers
 8. Make sure to make no mistake in making the questions or answers.
 9. If you are unable to make correct questions and answers, do not make up wrong questions or answers.
+10. Do not place unnecessary backslashes or unsupported escape sequences in the string.
+11. Do not place unnecessary double quotes in the string that will cause issues in the json.
+12. VERY IMPORTANT FOR MATH/EQUATIONS: Always enclose mathematical equations or symbols in standard LaTeX delimiters.
+    - For inline math, use \\\\( ... \\\\) (e.g., \\\\( x^2 \\\\)).
+    - For block math, use \\\\[ ... \\\\] (e.g., \\\\[ F = ma \\\\]).
+    - NEVER use single $ or double $$ delimiters.
+13. Do NOT use markdown formatting (like bold **, italics _, or code blocks \`\`\`) inside the text strings. It must be plain text and LaTeX only so it renders safely.
 
 Return ONLY valid JSON in this exact format (no markdown, no code fences, just raw JSON):
 {
