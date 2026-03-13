@@ -31,6 +31,7 @@ app.use('/api/upload', require('./routes/uploadRoutes'));
 app.use('/api/focus', require('./routes/focusRoutes'));
 app.use('/api/analytics', require('./routes/analyticsRoutes'));
 app.use('/api/planner', require('./routes/plannerRoutes'));
+app.use('/api/revision', require('./routes/revisionRoutes'));
 
 // Serve Static Files (production only)
 const distPath = path.join(__dirname, '../../dist');

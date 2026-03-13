@@ -3,8 +3,8 @@ import { Brain, ArrowLeft, RefreshCcw, CheckCircle2 } from 'lucide-react';
 import { flashcards as flashcardsApi } from '../../services/api';
 import 'katex/dist/katex.min.css';
 
-const StudySession = ({ deck, onComplete }) => {
-    const [dueCards, setDueCards] = useState([]);
+const StudySession = ({ deck, onComplete, mode = 'srs' }) => {
+    const [cards, setCards] = useState([]); // Renamed from dueCards
     const [currentIndex, setCurrentIndex] = useState(0);
     const [showBack, setShowBack] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -18,11 +18,14 @@ const StudySession = ({ deck, onComplete }) => {
     const loadDueCards = async () => {
         try {
             setLoading(true);
-            const cards = await flashcardsApi.getDueCards(deck.id);
-            if (cards.length === 0) {
+            const data = mode === 'cram'
+                ? await flashcardsApi.getCards(deck.id)
+                : await flashcardsApi.getDueCards(deck.id);
+
+            if (data.length === 0) {
                 setCompleted(true);
             } else {
-                setDueCards(cards);
+                setCards(data);
             }
         } catch (err) {
             console.error(err);
@@ -39,11 +42,15 @@ const StudySession = ({ deck, onComplete }) => {
         if (submitting) return;
         try {
             setSubmitting(true);
-            const card = dueCards[currentIndex];
-            await flashcardsApi.submitReview(card.id, score);
+            const card = cards[currentIndex];
+
+            // Only submit review to server if in SRS mode
+            if (mode === 'srs') {
+                await flashcardsApi.submitReview(card.id, score);
+            }
 
             // Move to next card
-            if (currentIndex + 1 < dueCards.length) {
+            if (currentIndex + 1 < cards.length) {
                 setShowBack(false);
                 setCurrentIndex(prev => prev + 1);
             } else {
@@ -67,7 +74,9 @@ const StudySession = ({ deck, onComplete }) => {
                 </div>
                 <h2 className="text-4xl font-black text-white uppercase tracking-tighter mb-4 text-center">Session Complete!</h2>
                 <p className="text-slate-400 text-center max-w-sm mb-8 font-medium">
-                    Great job! You've reviewed all due flashcards in <span className="text-white font-bold">{deck.name}</span> for today. Come back tomorrow!
+                    {mode === 'cram'
+                        ? `You've reviewed all ${cards.length} cards in ${deck.name}. Ready for more?`
+                        : `Great job! You've reviewed all due flashcards in ${deck.name} for today. Come back tomorrow!`}
                 </p>
                 <button
                     onClick={onComplete}
@@ -104,6 +113,7 @@ const StudySession = ({ deck, onComplete }) => {
     };
 
     const formatInterval = (days) => {
+        if (mode === 'cram') return "Cram";
         if (days === 0) return "< 1 min";
         if (days === 1) return "1 day";
         if (days < 30) return `${days} days`;
@@ -151,8 +161,8 @@ const StudySession = ({ deck, onComplete }) => {
                     <ArrowLeft size={16} /> Exit
                 </button>
                 <div className="text-center">
-                    <h2 className="text-white font-black uppercase tracking-tighter text-lg">{deck.name}</h2>
-                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em]">{currentIndex + 1} / {dueCards.length} Due</p>
+                    <h2 className="text-white font-black uppercase tracking-tighter text-lg">{deck.name} {mode === 'cram' && <span className="text-amber-500 ml-2">CRAM</span>}</h2>
+                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em]">{currentIndex + 1} / {cards.length} {mode === 'cram' ? 'Cards' : 'Due'}</p>
                 </div>
                 <div className="w-20"></div> {/* Spacer for centering */}
             </div>
@@ -207,39 +217,50 @@ const StudySession = ({ deck, onComplete }) => {
                         <RefreshCcw size={18} /> Reveal Answer
                     </button>
                 ) : (
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4 w-full animate-in fade-in slide-in-from-bottom-4">
-                        <button
-                            onClick={() => handleReview(0)} // Again
-                            disabled={submitting}
-                            className="bg-rose-500/10 border border-rose-500/20 hover:border-rose-500 hover:bg-rose-500 text-rose-500 hover:text-white rounded-2xl h-16 sm:h-20 flex flex-col items-center justify-center gap-1 transition-all disabled:opacity-50"
-                        >
-                            <span className="font-black uppercase tracking-widest text-xs">Again</span>
-                            <span className="text-[10px] opacity-70 font-semibold">{lblAgain}</span>
-                        </button>
-                        <button
-                            onClick={() => handleReview(3)} // Hard
-                            disabled={submitting}
-                            className="bg-amber-500/10 border border-amber-500/20 hover:border-amber-500 hover:bg-amber-500 text-amber-500 hover:text-white rounded-2xl h-16 sm:h-20 flex flex-col items-center justify-center gap-1 transition-all disabled:opacity-50"
-                        >
-                            <span className="font-black uppercase tracking-widest text-xs">Hard</span>
-                            <span className="text-[10px] opacity-70 font-semibold">{lblHard}</span>
-                        </button>
-                        <button
-                            onClick={() => handleReview(4)} // Good
-                            disabled={submitting}
-                            className="bg-emerald-500/10 border border-emerald-500/20 hover:border-emerald-500 hover:bg-emerald-500 text-emerald-500 hover:text-white rounded-2xl h-16 sm:h-20 flex flex-col items-center justify-center gap-1 transition-all disabled:opacity-50"
-                        >
-                            <span className="font-black uppercase tracking-widest text-xs">Good</span>
-                            <span className="text-[10px] opacity-70 font-semibold">{lblGood}</span>
-                        </button>
-                        <button
-                            onClick={() => handleReview(5)} // Easy
-                            disabled={submitting}
-                            className="bg-sky-500/10 border border-sky-500/20 hover:border-sky-500 hover:bg-sky-500 text-sky-500 hover:text-white rounded-2xl h-16 sm:h-20 flex flex-col items-center justify-center gap-1 transition-all disabled:opacity-50"
-                        >
-                            <span className="font-black uppercase tracking-widest text-xs">Easy</span>
-                            <span className="text-[10px] opacity-70 font-semibold">{lblEasy}</span>
-                        </button>
+                    <div className="flex flex-col gap-3 w-full animate-in fade-in slide-in-from-bottom-4">
+                        {mode === 'cram' ? (
+                            <button
+                                onClick={() => handleReview(4)}
+                                className="w-full h-16 bg-amber-500 text-black rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-amber-400 transition-all flex items-center justify-center gap-2"
+                            >
+                                Next Card <ChevronRight size={18} />
+                            </button>
+                        ) : (
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4 w-full">
+                                <button
+                                    onClick={() => handleReview(0)} // Again
+                                    disabled={submitting}
+                                    className="bg-rose-500/10 border border-rose-500/20 hover:border-rose-500 hover:bg-rose-500 text-rose-500 hover:text-white rounded-2xl h-16 sm:h-20 flex flex-col items-center justify-center gap-1 transition-all disabled:opacity-50"
+                                >
+                                    <span className="font-black uppercase tracking-widest text-xs">Again</span>
+                                    <span className="text-[10px] opacity-70 font-semibold">{lblAgain}</span>
+                                </button>
+                                <button
+                                    onClick={() => handleReview(3)} // Hard
+                                    disabled={submitting}
+                                    className="bg-amber-500/10 border border-amber-500/20 hover:border-amber-500 hover:bg-amber-500 text-amber-500 hover:text-white rounded-2xl h-16 sm:h-20 flex flex-col items-center justify-center gap-1 transition-all disabled:opacity-50"
+                                >
+                                    <span className="font-black uppercase tracking-widest text-xs">Hard</span>
+                                    <span className="text-[10px] opacity-70 font-semibold">{lblHard}</span>
+                                </button>
+                                <button
+                                    onClick={() => handleReview(4)} // Good
+                                    disabled={submitting}
+                                    className="bg-emerald-500/10 border border-emerald-500/20 hover:border-emerald-500 hover:bg-emerald-500 text-emerald-500 hover:text-white rounded-2xl h-16 sm:h-20 flex flex-col items-center justify-center gap-1 transition-all disabled:opacity-50"
+                                >
+                                    <span className="font-black uppercase tracking-widest text-xs">Good</span>
+                                    <span className="text-[10px] opacity-70 font-semibold">{lblGood}</span>
+                                </button>
+                                <button
+                                    onClick={() => handleReview(5)} // Easy
+                                    disabled={submitting}
+                                    className="bg-sky-500/10 border border-sky-500/20 hover:border-sky-500 hover:bg-sky-500 text-sky-500 hover:text-white rounded-2xl h-16 sm:h-20 flex flex-col items-center justify-center gap-1 transition-all disabled:opacity-50"
+                                >
+                                    <span className="font-black uppercase tracking-widest text-xs">Easy</span>
+                                    <span className="text-[10px] opacity-70 font-semibold">{lblEasy}</span>
+                                </button>
+                            </div>
+                        )}
                     </div>
                 )}
             </div>

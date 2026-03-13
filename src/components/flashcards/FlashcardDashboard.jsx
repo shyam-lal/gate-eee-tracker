@@ -9,10 +9,18 @@ const FlashcardDashboard = ({ tool }) => {
     // view can be 'decks', 'manage_cards', 'study'
     const [view, setView] = useState('decks');
     const [activeDeck, setActiveDeck] = useState(null);
+    const [studyMode, setStudyMode] = useState('srs');
 
     const handleDeckAction = (deck, actionType) => {
         setActiveDeck(deck);
-        if (actionType === 'study') setView('study');
+        if (actionType === 'study') {
+            setStudyMode('srs');
+            setView('study');
+        }
+        if (actionType === 'cram') {
+            setStudyMode('cram');
+            setView('study');
+        }
         if (actionType === 'manage') setView('manage_cards');
     };
 
@@ -48,7 +56,7 @@ const FlashcardDashboard = ({ tool }) => {
 
             {view === 'study' && activeDeck && (
                 <div className="animate-in slide-in-from-bottom-8 duration-300 h-full">
-                    <StudySession deck={activeDeck} onComplete={goBackToDecks} />
+                    <StudySession deck={activeDeck} onComplete={goBackToDecks} mode={studyMode} />
                 </div>
             )}
         </div>

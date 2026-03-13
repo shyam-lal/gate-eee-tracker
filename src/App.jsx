@@ -16,6 +16,7 @@ import CardEditor from './components/flashcards/CardEditor';
 import PlannerDashboard from './components/planner/PlannerDashboard';
 import FocusTool from './components/focus/FocusTool';
 import GlobalFocusOverlay from './components/focus/GlobalFocusOverlay';
+import RevisionDashboard from './components/revision/RevisionDashboard';
 import {
   Calendar as CalendarIcon, Trash2, Plus, X,
   ChevronDown, ChevronRight, Clock, Edit3,
@@ -907,6 +908,8 @@ function App() {
             <FlashcardDashboard tool={activeTool} />
           ) : activeTool?.tool_type === 'focus' ? (
             <FocusTool tool={activeTool} />
+          ) : activeTool?.tool_type === 'revision' ? (
+            <RevisionDashboard tool={activeTool} />
           ) : (
             <>
               {/* SYLLABUS GRID */}

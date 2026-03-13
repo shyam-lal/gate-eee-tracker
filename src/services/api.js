@@ -416,3 +416,98 @@ export const planner = {
         return res.json();
     }
 };
+
+export const revision = {
+    // Sets
+    createSet: async (title, topics, questionCount, timePerQuestion) => {
+        const res = await fetch(`${API_URL}/revision/sets`, {
+            method: 'POST', headers: getHeaders(),
+            body: JSON.stringify({ title, topics, questionCount, timePerQuestion })
+        });
+        if (!res.ok) throw new Error('Failed to create set');
+        return res.json();
+    },
+    getUserSets: async () => {
+        const res = await fetch(`${API_URL}/revision/sets`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to get sets');
+        return res.json();
+    },
+    getSet: async (setId) => {
+        const res = await fetch(`${API_URL}/revision/sets/${setId}`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to get set');
+        return res.json();
+    },
+    deleteSet: async (setId) => {
+        const res = await fetch(`${API_URL}/revision/sets/${setId}`, { method: 'DELETE', headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to delete set');
+        return res.json();
+    },
+    // Questions
+    importQuestions: async (setId, questionsJson) => {
+        const res = await fetch(`${API_URL}/revision/sets/${setId}/import`, {
+            method: 'POST', headers: getHeaders(),
+            body: JSON.stringify({ questions: questionsJson })
+        });
+        if (!res.ok) throw new Error((await res.json()).error || 'Failed to import');
+        return res.json();
+    },
+    deleteQuestion: async (questionId) => {
+        const res = await fetch(`${API_URL}/revision/questions/${questionId}`, { method: 'DELETE', headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to delete question');
+        return res.json();
+    },
+    // Prompt
+    getPrompt: async (topics, count, examType) => {
+        const params = new URLSearchParams({ topics, count: count || 10, examType: examType || 'GATE' });
+        const res = await fetch(`${API_URL}/revision/prompt?${params}`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to generate prompt');
+        return res.json();
+    },
+    // Attempts
+    createAttempt: async (setId, questionOrder) => {
+        const res = await fetch(`${API_URL}/revision/sets/${setId}/attempts`, {
+            method: 'POST', headers: getHeaders(),
+            body: JSON.stringify({ questionOrder })
+        });
+        if (!res.ok) throw new Error('Failed to create attempt');
+        return res.json();
+    },
+    getAttempt: async (attemptId) => {
+        const res = await fetch(`${API_URL}/revision/attempts/${attemptId}`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to get attempt');
+        return res.json();
+    },
+    saveAnswer: async (attemptId, questionId, answer, timeSpent) => {
+        const res = await fetch(`${API_URL}/revision/attempts/${attemptId}/answer`, {
+            method: 'PUT', headers: getHeaders(),
+            body: JSON.stringify({ questionId, answer, timeSpent })
+        });
+        if (!res.ok) throw new Error('Failed to save answer');
+        return res.json();
+    },
+    pauseAttempt: async (attemptId, currentIndex, timeTaken) => {
+        const res = await fetch(`${API_URL}/revision/attempts/${attemptId}/pause`, {
+            method: 'PUT', headers: getHeaders(),
+            body: JSON.stringify({ currentIndex, timeTaken })
+        });
+        if (!res.ok) throw new Error('Failed to pause attempt');
+        return res.json();
+    },
+    completeAttempt: async (attemptId) => {
+        const res = await fetch(`${API_URL}/revision/attempts/${attemptId}/complete`, {
+            method: 'PUT', headers: getHeaders()
+        });
+        if (!res.ok) throw new Error('Failed to complete attempt');
+        return res.json();
+    },
+    getAttemptHistory: async (setId) => {
+        const res = await fetch(`${API_URL}/revision/sets/${setId}/history`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to get history');
+        return res.json();
+    },
+    getInProgressAttempt: async (setId) => {
+        const res = await fetch(`${API_URL}/revision/sets/${setId}/attempts/in-progress`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to check in-progress');
+        return res.json();
+    }
+};

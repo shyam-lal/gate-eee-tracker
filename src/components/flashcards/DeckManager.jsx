@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, FolderOpen, Play, CalendarClock, MoreVertical, Trash2 } from 'lucide-react';
+import { Plus, FolderOpen, Play, CalendarClock, MoreVertical, Trash2, Zap } from 'lucide-react';
 import { flashcards as flashcardsApi } from '../../services/api';
 
 const DeckManager = ({ toolId, onStudyDeck }) => {
@@ -127,6 +127,14 @@ const DeckManager = ({ toolId, onStudyDeck }) => {
                                         className={`flex-1 py-3 rounded-xl font-bold text-sm tracking-wide flex items-center justify-center gap-2 transition-all ${dueCount > 0 ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20 hover:bg-indigo-500' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}`}
                                     >
                                         <Play size={16} fill="currentColor" /> Study Due
+                                    </button>
+                                    <button
+                                        onClick={() => onStudyDeck(deck, 'cram')}
+                                        disabled={totalCount === 0}
+                                        className={`flex-1 py-3 rounded-xl font-bold text-sm tracking-wide flex items-center justify-center gap-2 transition-all ${totalCount > 0 ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20 hover:bg-amber-500 hover:text-white hover:border-amber-500' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}`}
+                                        title="Cram Mode (Study all cards without SRS)"
+                                    >
+                                        <Zap size={16} fill="currentColor" /> Cram
                                     </button>
                                     <button
                                         onClick={() => onStudyDeck(deck, 'manage')}
