@@ -155,8 +155,8 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {/* Existing Tool Cards */}
-                        {tools?.map(tool => (
+                        {/* Existing Tool Cards (Excluding Revision) */}
+                        {tools?.filter(t => t.tool_type !== 'revision').map(tool => (
                             <div key={tool.id} className="bg-slate-900/40 backdrop-blur-xl border border-white/5 p-6 sm:p-8 rounded-[2.5rem] group hover:border-indigo-500/30 transition-all relative shadow-2xl shadow-indigo-500/5">
 
                                 {/* Context Menu Button */}
@@ -192,8 +192,7 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
                                     <div className="w-14 h-14 bg-indigo-500/10 rounded-2xl flex items-center justify-center text-indigo-400 border border-indigo-500/20 group-hover:scale-110 transition-transform mb-5">
                                         {tool.tool_type === 'module' ? <Layers size={28} /> :
                                             tool.tool_type === 'flashcard' ? <BrainCircuit size={28} /> :
-                                                tool.tool_type === 'revision' ? <ClipboardCheck size={28} /> :
-                                                    tool.tool_type === 'focus' ? <Timer size={28} /> : <Clock size={28} />}
+                                                tool.tool_type === 'focus' ? <Timer size={28} /> : <Clock size={28} />}
                                     </div>
 
                                     {/* Tool Name - editable when renaming */}
@@ -219,8 +218,7 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
                                         <span className="text-[10px] bg-slate-800 text-slate-400 px-3 py-1 rounded-full font-black uppercase tracking-widest shrink-0">
                                             {tool.tool_type === 'module' ? 'Module' :
                                                 tool.tool_type === 'flashcard' ? 'SRS' :
-                                                    tool.tool_type === 'revision' ? 'Revision' :
-                                                        tool.tool_type === 'focus' ? 'Focus' : 'Course'} Based
+                                                    tool.tool_type === 'focus' ? 'Focus' : 'Course'} Based
                                         </span>
                                         <span className="text-[10px] text-slate-600 font-bold uppercase tracking-widest shrink-0">
                                             {tool.selected_exam || 'GATE'}
@@ -304,6 +302,13 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
                         </button>
                         <button onClick={() => setShowCalculator(true)} className="shrink-0 snap-start flex items-center gap-2 px-6 py-3 bg-fuchsia-600/20 text-fuchsia-400 border border-fuchsia-500/30 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-fuchsia-600/30 hover:text-fuchsia-300 transition-all">
                             <Timer size={16} /> Estimator
+                        </button>
+                        <button onClick={() => {
+                            const revisionTool = tools?.find(t => t.tool_type === 'revision');
+                            if (revisionTool) onOpenTool(revisionTool);
+                            else alert("Revision tool not found. Please log out and log back in to activate it.");
+                        }} className="shrink-0 snap-start flex items-center gap-2 px-6 py-3 bg-amber-500/20 text-amber-500 border border-amber-500/30 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-amber-500/30 hover:text-amber-400 transition-all">
+                            <ClipboardCheck size={16} /> Revision Tests
                         </button>
                         <div className="w-px h-6 bg-white/10 mx-2 shrink-0 hidden sm:block"></div>
                         <button onClick={onOpenSocial} className="p-3 text-slate-400 hover:text-white transition-colors relative shrink-0">

@@ -19,11 +19,12 @@ const register = async (req, res) => {
 
         const user = await userService.createUser(username, email, password);
 
-        // Auto-provision a Global Focus Tracker for the new user
+        // Auto-provision a Global Focus Tracker and Global Revision Tests for the new user
         try {
             await toolService.createTool(user.id, "Global Focus Tracker", "focus", "General");
+            await toolService.createTool(user.id, "Global Revision Tests", "revision", user.selected_exam || "GATE");
         } catch (toolErr) {
-            console.error("Warning: Failed to auto-provision Global Focus Tracker for new user", toolErr);
+            console.error("Warning: Failed to auto-provision default tools for new user", toolErr);
             // Non-fatal, we still let registration succeed
         }
 

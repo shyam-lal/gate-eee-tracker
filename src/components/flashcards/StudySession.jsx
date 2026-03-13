@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Brain, ArrowLeft, RefreshCcw, CheckCircle2 } from 'lucide-react';
+import { Brain, ArrowLeft, RefreshCcw, CheckCircle2, ChevronRight } from 'lucide-react';
 import { flashcards as flashcardsApi } from '../../services/api';
 import 'katex/dist/katex.min.css';
 
@@ -88,7 +88,7 @@ const StudySession = ({ deck, onComplete, mode = 'srs' }) => {
         );
     }
 
-    const currentCard = dueCards[currentIndex];
+    const currentCard = cards[currentIndex];
 
     // Calculate dynamic UI labels reflecting Anki algorithm
     const getExpectedInterval = (score, repetition, interval, easeFactor) => {
