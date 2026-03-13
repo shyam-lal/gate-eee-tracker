@@ -148,12 +148,15 @@ const StudySession = ({ deck, onComplete, mode = 'srs' }) => {
         <div className="h-full flex flex-col max-w-3xl mx-auto px-4 py-8">
             {/* Rich content styles for study cards */}
             <style>{`
-                .study-card-content { line-height: 1.8; }
+                .study-card-content { line-height: 1.8; text-align: left; max-width: 90%; margin: 0 auto; }
                 .study-card-content p { margin: 0.3em 0; }
                 .study-card-content strong { color: white; }
-                .study-card-content ul, .study-card-content ol { padding-left: 1.5em; margin: 0.5em 0; }
+                .study-card-content ul { list-style-type: disc; padding-left: 1.5em; margin: 0.5em 0; text-align: left; }
+                .study-card-content ol { list-style-type: decimal; padding-left: 1.5em; margin: 0.5em 0; text-align: left; }
+                .study-card-content li { margin-bottom: 0.25em; }
                 .study-card-content .ql-formula { font-size: 1.1em; }
-                .study-card-content pre.ql-syntax { background: #1e293b; border-radius: 0.75rem; padding: 1rem; font-size: 0.85rem; overflow-x: auto; margin: 0.5em 0; }
+                .study-card-content pre.ql-syntax { background: #1e293b; border-radius: 0.75rem; padding: 1rem; font-size: 0.85rem; overflow-x: auto; margin: 0.5em 0; text-align: left; }
+                .study-card-content blockquote { border-left: 4px solid #4f46e5; padding-left: 1rem; margin: 0.5em 0; color: #cbd5e1; font-style: italic; text-align: left; }
             `}</style>
             {/* Header */}
             <div className="flex items-center justify-between mb-8 flex-shrink-0">
@@ -177,7 +180,7 @@ const StudySession = ({ deck, onComplete, mode = 'srs' }) => {
                             <Brain size={24} />
                         </div>
                         <div className="flex-1 overflow-y-auto no-scrollbar w-full flex flex-col fade-edge-y pb-2">
-                            <div className="m-auto flex flex-col items-center text-center space-y-8 w-full">
+                            <div className="m-auto flex flex-col items-center space-y-8 w-full">
                                 <div className="study-card-content text-2xl sm:text-3xl lg:text-4xl font-bold text-white leading-relaxed" dangerouslySetInnerHTML={{ __html: frontData.text }} />
                                 {frontData.image && (
                                     <img src={frontData.image} alt="Front illustration" className="max-h-[40vh] rounded-2xl object-contain border border-slate-700 shadow-xl shadow-black/50" />
@@ -195,7 +198,7 @@ const StudySession = ({ deck, onComplete, mode = 'srs' }) => {
                             </div>
                         </div>
                         <div className="flex-1 overflow-y-auto no-scrollbar w-full flex flex-col fade-edge-y pb-2">
-                            <div className="m-auto flex flex-col items-center text-center space-y-10 w-full">
+                            <div className="m-auto flex flex-col items-center space-y-10 w-full">
                                 <div className="study-card-content text-2xl sm:text-3xl lg:text-4xl font-bold text-indigo-100 leading-relaxed" dangerouslySetInnerHTML={{ __html: backData.text }} />
                                 {backData.image && (
                                     <img src={backData.image} alt="Back illustration" className="max-h-[50vh] mx-auto rounded-2xl object-contain border border-slate-700 shadow-xl shadow-black/50" />
