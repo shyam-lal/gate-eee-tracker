@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Brain, ArrowLeft, RefreshCcw, CheckCircle2, ChevronRight, RotateCw, Zap, BookOpen } from 'lucide-react';
 import { flashcards as flashcardsApi } from '../../services/api';
+import { healLatexContent } from '../../utils/jsonUtils';
 import 'katex/dist/katex.min.css';
 import renderMathInElement from 'katex/dist/contrib/auto-render.js';
 
@@ -153,11 +154,12 @@ const StudySession = ({ deck, onComplete, mode = 'srs' }) => {
     const lblEasy = formatInterval(getExpectedInterval(5, rep, intDays, ef));
 
     const extractImage = (content) => {
-        const match = content?.match(/\[IMAGE:(.*?)\]/);
+        const healed = healLatexContent(content);
+        const match = healed?.match(/\[IMAGE:(.*?)\]/);
         if (match) {
-            return { text: content.replace(match[0], '').trim(), image: match[1] };
+            return { text: healed.replace(match[0], '').trim(), image: match[1] };
         }
-        return { text: content || '', image: null };
+        return { text: healed || '', image: null };
     };
 
     const frontData = extractImage(currentCard.front_content);

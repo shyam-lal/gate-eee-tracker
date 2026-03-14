@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Pause, Play, SkipForward, ChevronLeft, ChevronRight, Flag, X, Loader2, Clock, AlertTriangle, CheckCircle2, XCircle, BookOpen } from 'lucide-react';
 import { revision as revisionApi } from '../../services/api';
+import { healLatexContent } from '../../utils/jsonUtils';
 import 'katex/dist/katex.min.css';
 import renderMathInElement from 'katex/dist/contrib/auto-render.js';
 
@@ -341,7 +342,7 @@ const TestEngine = ({ set, attempt, mode = 'exam', onComplete, onExit }) => {
                         </div>
 
                         {/* Question text */}
-                        <h3 className="text-lg md:text-xl font-bold text-white leading-relaxed mb-8">{currentQ.question_text}</h3>
+                        <h3 className="text-lg md:text-xl font-bold text-white leading-relaxed mb-8">{healLatexContent(currentQ.question_text)}</h3>
 
                         {/* Answer area */}
                         {currentQ.question_type === 'nat' ? (
@@ -398,7 +399,7 @@ const TestEngine = ({ set, attempt, mode = 'exam', onComplete, onExit }) => {
                                                 }`}>
                                                 {String.fromCharCode(65 + optIdx)}
                                             </div>
-                                            <span className={`text-sm font-medium flex-1 ${selected ? 'text-white' : 'text-slate-300'}`}>{opt}</span>
+                                            <span className={`text-sm font-medium flex-1 ${selected ? 'text-white' : 'text-slate-300'}`}>{healLatexContent(opt)}</span>
                                             {mode === 'study' && (isRevealed || isVerified) && isCorrect && <CheckCircle2 size={18} className="text-emerald-500 animate-in zoom-in" />}
                                         </button>
                                     );
@@ -442,7 +443,7 @@ const TestEngine = ({ set, attempt, mode = 'exam', onComplete, onExit }) => {
                                                         : currentQ.correct_answer.map(idx => String.fromCharCode(65 + idx)).join(', ')}
                                                 </p>
                                             </div>
-                                            <div className="text-sm text-slate-300 leading-relaxed study-explanation" dangerouslySetInnerHTML={{ __html: currentQ.explanation }} />
+                                            <div className="text-sm text-slate-300 leading-relaxed study-explanation" dangerouslySetInnerHTML={{ __html: healLatexContent(currentQ.explanation) }} />
                                         </div>
                                     </div>
                                 )}

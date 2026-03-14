@@ -1,57 +1,146 @@
 /**
- * Utility string methods for AI JSON generation parsing.
+ * Utility for parsing AI-generated JSON that may contain LaTeX.
  * 
- * LLMs frequently produce JSON containing invalid escape sequences
- * when writing LaTeX (e.g., "\alpha" contains the invalid JSON escape "\a").
- * This robust parser attempts to heal such formatting errors.
+ * PROBLEM: LLMs produce JSON with LaTeX like \frac, \tau, \rho, \nu.
+ * JSON.parse interprets \f as form-feed, \t as tab, \r as carriage-return,
+ * \n as newline — silently corrupting the LaTeX into control characters.
+ * Similarly, \[ and \( are invalid JSON escapes that cause parse errors.
+ * 
+ * SOLUTION: We heal the raw text BEFORE parsing by converting all
+ * single-backslash sequences (except \\, \", \/) into double-backslash,
+ * so \frac becomes \\frac (a literal backslash + "frac" in the parsed string).
  */
 
 export const parseAIJson = (val) => {
     if (!val) return null;
 
     // 1. Remove markdown code blocks (e.g., ```json ... ```)
-    let cleanVal = val.replace(/^```[a-z]*\s*/gim, '').replace(/```\s*$/gim, '').trim();
+    let raw = val.replace(/^```[a-z]*\s*/gim, '').replace(/```\s*$/gim, '').trim();
 
-    // 2. Try standard parse
+    // 2. ALWAYS heal LaTeX/JSON collisions BEFORE parsing.
+    let healed = healLatexEscapes(raw);
+
+    // 3. Try parsing the healed version
     try {
-        return JSON.parse(cleanVal);
+        return JSON.parse(healed);
     } catch (err) {
-        // 3. Fallback A: Fix typical LaTeX control-character collisions
-        // LLMs often output \frac, \tau, \rho, \nu which get parsed as \f (form feed), \t (tab), \r (carriage return), \n (newline).
-        // Since we are expecting LaTeX, we aggressively double-escape single backslashes in front of ANY letter, 
-        // completely ignoring JSON's standard \f, \t, \r, \n escapes because they shouldn't exist as raw escapes in AI output anyway unless it's LaTeX.
-        
-        let fixedVal = cleanVal
-            // First, protect things that are already double escaped
-            .replace(/\\\\/g, '@@DOUBLE@@')
-            // Protect escaped quotes
-            .replace(/\\"/g, '@@QUOTE@@')
-            // Now, any remaining single backslash followed by a letter (like \frac, \tau, \rho, \nu, \alpha, \beta, \hphantom) 
-            // gets forced into a double backslash.
-            .replace(/\\([a-zA-Z])/g, '\\\\$1')
-            // Restore protections
-            .replace(/@@DOUBLE@@/g, '\\\\')
-            .replace(/@@QUOTE@@/g, '\\"');
-
+        // 4. Fallback: try the raw version (maybe it was already properly escaped)
         try {
-            return JSON.parse(fixedVal);
+            return JSON.parse(raw);
         } catch (err2) {
-            // 4. Fallback B: Brute force. Replace ALL remaining single backslashes with double backslashes
-            let bruteVal = fixedVal.replace(/\\/g, '\\\\');
-            // But we actually need to be careful with quotes:
-            // Since we protected quotes earlier, let's just do a blanket clean:
-            let superBrute = cleanVal.replace(/\\\\/g, '@@DOUBLE@@')
-                .replace(/\\"/g, '@@QUOTE@@')
-                .replace(/\\/g, '\\\\') // Duplicate EVERY single backslash
-                .replace(/@@DOUBLE@@/g, '\\\\')
-                .replace(/@@QUOTE@@/g, '\\"');
-            
-            try {
-                return JSON.parse(superBrute);
-            } catch (err3) {
-                // If all parsing fails, throw
-                throw new Error('Invalid JSON format. Please ensure the AI output is valid JSON.');
+            throw new Error('Invalid JSON format. Please ensure the AI output is valid JSON.');
+        }
+    }
+};
+
+/**
+ * Heals LaTeX escape collisions inside JSON string values.
+ * 
+ * Walks through the raw JSON text character by character,
+ * only modifying content inside quoted strings.
+ * 
+ * Inside strings, the ONLY valid JSON escapes we preserve are:
+ *   \\  \"  \/  \uXXXX
+ * 
+ * Everything else (\f \t \r \n \b and any invalid escapes like \a \[ \( etc.)
+ * gets double-escaped because in our context they are almost always
+ * LaTeX commands, not actual control characters.
+ */
+function healLatexEscapes(raw) {
+    let result = '';
+    let inString = false;
+    let i = 0;
+
+    while (i < raw.length) {
+        const ch = raw[i];
+
+        if (!inString) {
+            // Outside a string: just copy characters, watch for opening quote
+            if (ch === '"') {
+                inString = true;
+            }
+            result += ch;
+            i++;
+        } else {
+            // Inside a string
+            if (ch === '"') {
+                // End of string (unescaped quote)
+                inString = false;
+                result += ch;
+                i++;
+            } else if (ch === '\\') {
+                const next = raw[i + 1];
+                if (next === undefined) {
+                    // Trailing backslash at end of input
+                    result += ch;
+                    i++;
+                } else if (next === '\\') {
+                    // Already a double backslash (\\), keep as is
+                    result += '\\\\';
+                    i += 2;
+                } else if (next === '"') {
+                    // Escaped quote (\"), keep as is
+                    result += '\\"';
+                    i += 2;
+                } else if (next === '/') {
+                    // Escaped slash (\/), keep as is 
+                    result += '\\/';
+                    i += 2;
+                } else if (next === 'u' && /^[0-9a-fA-F]{4}/.test(raw.slice(i + 2, i + 6))) {
+                    // Unicode escape (\uXXXX), keep as is
+                    result += raw.slice(i, i + 6);
+                    i += 6;
+                } else {
+                    // EVERYTHING ELSE gets double-escaped.
+                    // This catches:
+                    //   \f (form-feed, but we want \frac)
+                    //   \t (tab, but we want \tau, \theta)
+                    //   \r (carriage return, but we want \rho)
+                    //   \n (newline, but we want \nu)
+                    //   \b (backspace, but we want \beta)
+                    //   \a, \c, \d, \e, \g, \h, \i, ... (all LaTeX commands)
+                    //   \[, \], \(, \) (LaTeX delimiters)
+                    //   Any other non-standard escape
+                    result += '\\\\' + next;
+                    i += 2;
+                }
+            } else {
+                result += ch;
+                i++;
             }
         }
     }
+
+    return result;
+}
+
+/**
+ * Heals already-parsed/stored content where control characters 
+ * replaced LaTeX commands during a faulty JSON.parse.
+ * 
+ * For example:
+ *   \frac -> form-feed + "rac"  (char code 12)
+ *   \tau  -> tab + "au"         (char code 9)
+ *   \rho  -> carriage-return + "ho" (char code 13) 
+ *   \nu   -> newline + "u"      (char code 10)
+ *   \beta -> backspace + "eta"  (char code 8)
+ * 
+ * This function reverses those corruptions.
+ */
+export const healLatexContent = (text) => {
+    if (!text || typeof text !== 'string') return text;
+    
+    return text
+        // Form feed (0x0C) -> was \f (e.g., \frac, \flat, \forall)
+        .replace(/\x0C/g, '\\f')
+        // Tab (0x09) -> was \t (e.g., \tau, \theta, \times, \text)
+        .replace(/\x09/g, '\\t')
+        // Carriage return (0x0D) -> was \r (e.g., \rho, \rightarrow, \rangle) 
+        .replace(/\x0D/g, '\\r')
+        // Newline (0x0A) inside card content -> was \n (e.g., \nu, \nabla, \neq)
+        // NOTE: We only replace \n that is followed by common LaTeX suffixes
+        // to avoid breaking intentional newlines in rich text
+        .replace(/\n(u[^a-z]|u$|abla|eq|ot|ewline|i|cap|cup|otin|e\b)/g, '\\n$1')
+        // Backspace (0x08) -> was \b (e.g., \beta, \bar, \binom, \boldsymbol)
+        .replace(/\x08/g, '\\b');
 };

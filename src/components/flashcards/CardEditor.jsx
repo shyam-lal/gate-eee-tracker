@@ -5,6 +5,7 @@ import katex from 'katex';
 import 'katex/dist/katex.min.css';
 import { Plus, Trash2, BrainCircuit, Edit3, Save, X, Image as ImageIcon, Loader2, Bot } from 'lucide-react';
 import { flashcards as flashcardsApi, upload as uploadApi } from '../../services/api';
+import { healLatexContent } from '../../utils/jsonUtils';
 import AIGenerator from './AIGenerator';
 
 window.katex = katex;
@@ -133,11 +134,12 @@ const CardEditor = ({ deckId }) => {
     };
 
     const extractImage = (content) => {
-        const match = content?.match(/\[IMAGE:(.*?)\]/);
+        const healed = healLatexContent(content);
+        const match = healed?.match(/\[IMAGE:(.*?)\]/);
         if (match) {
-            return { text: content.replace(match[0], '').trim(), image: match[1] };
+            return { text: healed.replace(match[0], '').trim(), image: match[1] };
         }
-        return { text: content || '', image: null };
+        return { text: healed || '', image: null };
     };
 
     const startEdit = (card) => {
