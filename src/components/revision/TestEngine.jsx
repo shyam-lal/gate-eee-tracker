@@ -5,7 +5,7 @@ import { healLatexContent } from '../../utils/jsonUtils';
 import 'katex/dist/katex.min.css';
 import renderMathInElement from 'katex/dist/contrib/auto-render.js';
 
-const TestEngine = ({ set, attempt, mode = 'exam', onComplete, onExit }) => {
+const TestEngine = ({ set, attempt, mode = 'exam', toolId, onComplete, onExit }) => {
     const [questions, setQuestions] = useState([]);
     const [questionMap, setQuestionMap] = useState({});
     const [currentIdx, setCurrentIdx] = useState(0);
@@ -222,7 +222,7 @@ const TestEngine = ({ set, attempt, mode = 'exam', onComplete, onExit }) => {
         clearInterval(timerRef.current);
         await saveCurrentAnswer();
         try {
-            const result = await revisionApi.completeAttempt(attempt.id);
+            const result = await revisionApi.completeAttempt(attempt.id, toolId);
             onComplete({ id: attempt.id, ...result });
         } catch (err) {
             alert('Failed to submit test');

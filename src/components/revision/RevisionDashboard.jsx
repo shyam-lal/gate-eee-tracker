@@ -68,7 +68,7 @@ const RevisionDashboard = ({ tool }) => {
     }
 
     if (view === 'test' && activeSet) {
-        return <TestEngine set={activeSet} attempt={activeAttempt} mode={testMode} onComplete={handleTestComplete} onExit={goBack} />;
+        return <TestEngine set={activeSet} attempt={activeAttempt} mode={testMode} toolId={tool?.id} onComplete={handleTestComplete} onExit={goBack} />;
     }
 
     if (view === 'results' && activeAttempt) {

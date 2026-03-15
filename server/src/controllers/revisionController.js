@@ -136,7 +136,8 @@ exports.pauseAttempt = async (req, res) => {
 
 exports.completeAttempt = async (req, res) => {
     try {
-        const result = await revisionService.completeAttempt(req.params.id);
+        const { toolId } = req.body;
+        const result = await revisionService.completeAttempt(req.params.id, toolId, req.user.id);
         res.json(result);
     } catch (err) {
         console.error('completeAttempt error:', err);

@@ -124,9 +124,16 @@ const flashcardService = {
     },
 
     // --- SRS REVIEW ---
-    submitReview: async (cardId, score) => {
-        // 1. Fetch current card algorithm state
-        const cardRes = await pool.query('SELECT * FROM cards WHERE id = $1', [cardId]);
+    submitReview: async (cardId, score, userId) => {
+        // 1. Fetch current card algorithm state and its tool_id via joins
+        const cardRes = await pool.query(
+            `SELECT c.*, t.id as tool_id 
+             FROM cards c
+             JOIN decks d ON c.deck_id = d.id
+             JOIN flashcard_groups fg ON d.group_id = fg.id
+             JOIN tools t ON fg.tool_id = t.id
+             WHERE c.id = $1`, 
+            [cardId]);
         if (cardRes.rows.length === 0) throw new Error('Card not found');
         const card = cardRes.rows[0];
 
@@ -148,6 +155,29 @@ const flashcardService = {
         );
 
         return updateRes.rows[0];
+    },
+
+    logSessionComplete: async (deckId, userId) => {
+        const res = await pool.query(
+            `SELECT t.id as tool_id 
+             FROM decks d
+             JOIN flashcard_groups fg ON d.group_id = fg.id
+             JOIN tools t ON fg.tool_id = t.id
+             WHERE d.id = $1`,
+            [deckId]
+        );
+        if (res.rows.length === 0) throw new Error('Deck not found');
+        
+        await pool.query(
+            `INSERT INTO activity_logs (user_id, tool_id, minutes_logged, log_date) 
+             SELECT $1, $2, 0, $3
+             WHERE NOT EXISTS (
+                SELECT 1 FROM activity_logs 
+                WHERE user_id = $1 AND tool_id = $2 AND log_date = $3
+             )`,
+            [userId, res.rows[0].tool_id, getLocalDateStr()]
+        );
+        return { success: true };
     },
 
     // --- ANALYTICS ---

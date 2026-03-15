@@ -51,13 +51,10 @@ function calculateStreak(sortedDaysDesc) {
  */
 const getToolStreak = async (userId, toolId, year, month) => {
     // 1. Get ALL unique active days for this tool (for streak calculation)
-    // Cast to ::text to avoid node-postgres Date parsing timezone issues
     const activeDaysRes = await pool.query(`
-        SELECT DISTINCT DATE(al.created_at)::text as activity_date
+        SELECT DISTINCT al.log_date::text as activity_date
         FROM activity_logs al
-        JOIN topics t ON al.topic_id = t.id
-        JOIN subjects s ON t.subject_id = s.id
-        WHERE s.tool_id = $1 AND al.user_id = $2
+        WHERE al.tool_id = $1 AND al.user_id = $2
         ORDER BY activity_date DESC
     `, [toolId, userId]);
 
@@ -73,18 +70,18 @@ const getToolStreak = async (userId, toolId, year, month) => {
 
     const detailsRes = await pool.query(`
         SELECT
-            DATE(al.created_at)::text as activity_date,
-            s.name as subject_name,
-            t.name as topic_name,
+            al.log_date::text as activity_date,
+            COALESCE(s.name, 'General Study') as subject_name,
+            COALESCE(t.name, 'Tool Activity') as topic_name,
             SUM(COALESCE(al.minutes_logged, 0)) as total_minutes,
             SUM(COALESCE(al.modules_logged, 0)) as total_modules
         FROM activity_logs al
-        JOIN topics t ON al.topic_id = t.id
-        JOIN subjects s ON t.subject_id = s.id
-        WHERE s.tool_id = $1 AND al.user_id = $2
-            AND al.created_at >= $3 AND al.created_at < $4
-        GROUP BY DATE(al.created_at)::text, s.name, t.name
-        ORDER BY activity_date, s.name, t.name
+        LEFT JOIN topics t ON al.topic_id = t.id
+        LEFT JOIN subjects s ON t.subject_id = s.id
+        WHERE al.tool_id = $1 AND al.user_id = $2
+            AND al.log_date >= $3 AND al.log_date < $4
+        GROUP BY al.log_date, s.name, t.name
+        ORDER BY activity_date, subject_name, topic_name
     `, [toolId, userId, startDate, endDate]);
 
     // Group details by day
@@ -116,7 +113,7 @@ const getToolStreak = async (userId, toolId, year, month) => {
 const getUserStreak = async (userId) => {
     // 1. Get all unique active days across ALL tools
     const activeDaysRes = await pool.query(`
-        SELECT DISTINCT DATE(al.created_at)::text as activity_date
+        SELECT DISTINCT al.log_date::text as activity_date
         FROM activity_logs al
         WHERE al.user_id = $1
         ORDER BY activity_date DESC
@@ -133,15 +130,13 @@ const getUserStreak = async (userId) => {
 
     const toolActivityRes = await pool.query(`
         SELECT DISTINCT
-            DATE(al.created_at)::text as activity_date,
+            al.log_date::text as activity_date,
             tools.id as tool_id,
             tools.name as tool_name,
             tools.tool_type
         FROM activity_logs al
-        JOIN topics t ON al.topic_id = t.id
-        JOIN subjects s ON t.subject_id = s.id
-        JOIN tools ON s.tool_id = tools.id
-        WHERE al.user_id = $1 AND al.created_at >= $2
+        JOIN tools ON al.tool_id = tools.id
+        WHERE al.user_id = $1 AND al.log_date >= $2
         ORDER BY activity_date DESC
     `, [userId, sixtyDaysAgoStr]);
 

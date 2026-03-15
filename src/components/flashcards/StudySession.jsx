@@ -74,6 +74,11 @@ const StudySession = ({ deck, onComplete, mode = 'srs' }) => {
                 setShowBack(false);
                 setCurrentIndex(prev => prev + 1);
             } else {
+                try {
+                    await flashcardsApi.completeSession(deck.id);
+                } catch (e) {
+                    console.error('Failed to log session completion for streak', e);
+                }
                 setCompleted(true);
             }
         } catch (err) {
@@ -222,9 +227,9 @@ const StudySession = ({ deck, onComplete, mode = 'srs' }) => {
                     {/* Back of Card */}
                     <div className={`absolute inset-0 w-full h-full backface-hidden flex flex-col bg-slate-800 border-2 border-indigo-500/50 rounded-[2.5rem] shadow-2xl shadow-indigo-500/10 p-6 sm:p-10 transition-all duration-500 ${!showBack ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100 scale-100 z-10'}`}>
                         <div className="flex items-center justify-between mb-6 opacity-50 pb-4 border-b border-slate-700 flex-shrink-0">
-                            <div className="flex-1 text-center">
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Question</p>
-                                <div className="text-xs text-white font-medium line-clamp-2" dangerouslySetInnerHTML={{ __html: frontData.text }} />
+                            <div className="flex-1 text-center px-4 w-full overflow-hidden">
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 w-full">Question</p>
+                                <div className="text-xs text-white font-medium line-clamp-2 break-words w-full" style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }} dangerouslySetInnerHTML={{ __html: frontData.text }} />
                             </div>
                         </div>
                         <div ref={showBack ? cardContentRef : null} className="flex-1 overflow-y-auto no-scrollbar w-full flex flex-col fade-edge-y pb-2">

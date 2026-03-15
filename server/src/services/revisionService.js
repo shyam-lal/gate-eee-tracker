@@ -1,5 +1,13 @@
 const db = require('../config/db');
 
+function getLocalDateStr(date) {
+    const d = date || new Date();
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
 // ─── SETS ────────────────────────────────────────────────────────────────
 
 async function createSet(userId, title, topics, questionCount, timePerQuestion = 180) {
@@ -157,7 +165,7 @@ async function pauseAttempt(attemptId, currentIndex, timeTaken) {
     );
 }
 
-async function completeAttempt(attemptId) {
+async function completeAttempt(attemptId, toolId, userId) {
     // Calculate score from answers
     const answersResult = await db.query(
         `SELECT ra.is_correct, ra.time_spent_seconds, rq.marks, rq.negative_marks
@@ -198,6 +206,21 @@ async function completeAttempt(attemptId) {
         `UPDATE revision_attempts SET status = 'completed', finished_at = NOW(), score = $1, max_score = $2, time_taken_seconds = $3 WHERE id = $4`,
         [score, maxScore, totalTime, attemptId]
     );
+
+    // Track activity for global streaks
+    if (toolId && userId) {
+        // Log the actual minutes spent (minimum 1 minute if they spent any time)
+        const minutesLog = Math.max(1, Math.round(totalTime / 60));
+        await db.query(`
+             INSERT INTO activity_logs (user_id, tool_id, minutes_logged, log_date) 
+             SELECT $1, $2, $3, $4
+             WHERE NOT EXISTS (
+                SELECT 1 FROM activity_logs 
+                WHERE user_id = $1 AND tool_id = $2 AND log_date = $4
+             )`,
+            [userId, toolId, minutesLog, getLocalDateStr()]
+        );
+    }
 
     return { score, maxScore, totalTime };
 }

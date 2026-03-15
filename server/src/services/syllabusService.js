@@ -1,5 +1,13 @@
 const pool = require('../config/db');
 
+function getLocalDateStr(date) {
+    const d = date || new Date();
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
 // --- SUBJECTS ---
 const getSyllabus = async (userId, toolId = null) => {
     // Fetch subjects, optionally scoped to a tool
@@ -84,10 +92,11 @@ const updateTopic = async (topicId, updates) => {
 
 // --- LOGGING ---
 const logActivity = async (userId, topicId, minutes = 0, modules = 0) => {
-    // 1. Create Log Entry
+    // 1. Create Log Entry - fetch tool_id automatically via the topic's subject
     const logRes = await pool.query(
-        'INSERT INTO activity_logs (user_id, topic_id, minutes_logged, modules_logged) VALUES ($1, $2, $3, $4) RETURNING *',
-        [userId, topicId, minutes, modules]
+        `INSERT INTO activity_logs (user_id, topic_id, tool_id, minutes_logged, modules_logged, log_date) 
+         VALUES ($1, $2, (SELECT s.tool_id FROM subjects s JOIN topics t on t.subject_id = s.id WHERE t.id = $2), $3, $4, $5) RETURNING *`,
+        [userId, topicId, minutes, modules, getLocalDateStr()]
     );
 
     // 2. Update Topic Totals
@@ -135,10 +144,11 @@ const getActivityLogs = async (userId, topicId = null) => {
 
 const logManualTime = async (userId, subjectId, minutes) => {
     // For manual time directly on subject (legacy/offline support)
-    // We log it in activity_logs with null topic_id but track it in subjects table
+    // We log it in activity_logs with null topic_id but fetch tool_id from subject
     await pool.query(
-        'INSERT INTO activity_logs (user_id, topic_id, minutes_logged) VALUES ($1, NULL, $2)',
-        [userId, minutes]
+        `INSERT INTO activity_logs (user_id, topic_id, tool_id, minutes_logged, log_date) 
+         VALUES ($1, NULL, (SELECT tool_id FROM subjects WHERE id = $2), $3, $4)`,
+        [userId, subjectId, minutes, getLocalDateStr()]
     );
 
     const updateRes = await pool.query(

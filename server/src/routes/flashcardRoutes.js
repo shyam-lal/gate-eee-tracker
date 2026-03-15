@@ -213,11 +213,22 @@ router.post('/cards/:id/review', async (req, res) => {
         if (score === undefined || score < 0 || score > 5) {
             return res.status(400).json({ error: 'Valid score (0-5) is required' });
         }
-        const updatedCard = await flashcardService.submitReview(req.params.id, score);
+        const updatedCard = await flashcardService.submitReview(req.params.id, score, req.user.id);
         res.json(updatedCard);
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Failed to submit review' });
+    }
+});
+
+// Log session completion (Streak tracking)
+router.post('/decks/:deckId/complete-session', async (req, res) => {
+    try {
+        await flashcardService.logSessionComplete(req.params.deckId, req.user.id);
+        res.json({ success: true });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to complete session' });
     }
 });
 

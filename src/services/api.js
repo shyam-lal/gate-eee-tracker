@@ -325,6 +325,14 @@ export const flashcards = {
         });
         if (!res.ok) throw new Error('Failed to submit review');
         return res.json();
+    },
+    completeSession: async (deckId) => {
+        const res = await fetch(`${API_URL}/flashcards/decks/${deckId}/complete-session`, {
+            method: 'POST',
+            headers: getHeaders()
+        });
+        if (!res.ok) throw new Error('Failed to complete session');
+        return res.json();
     }
 };
 
@@ -528,9 +536,10 @@ export const revision = {
         if (!res.ok) throw new Error('Failed to pause attempt');
         return res.json();
     },
-    completeAttempt: async (attemptId) => {
+    completeAttempt: async (attemptId, toolId) => {
         const res = await fetch(`${API_URL}/revision/attempts/${attemptId}/complete`, {
-            method: 'PUT', headers: getHeaders()
+            method: 'PUT', headers: getHeaders(),
+            body: JSON.stringify({ toolId })
         });
         if (!res.ok) throw new Error('Failed to complete attempt');
         return res.json();
