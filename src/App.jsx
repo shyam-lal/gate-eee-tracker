@@ -851,57 +851,59 @@ function App() {
 
 
           {/* SUMMARY TILES */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-            <div className="w-full">
-              <StreakCalendar
-                toolId={activeTool?.id}
-                currentStreak={toolStreakData?.currentStreak || 0}
-                activeDays={toolStreakData?.activeDays || []}
-                dayDetails={toolStreakData?.dayDetails || {}}
-                onMonthChange={(y, m) => loadToolStreak(activeTool?.id, y, m)}
-                formatTime={formatTime}
-              />
-            </div>
-            <div className="bg-slate-900/50 border border-slate-800/50 p-6 rounded-3xl flex items-center gap-6 relative overflow-hidden group">
-              <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none transition-opacity"><Flame size={120} /></div>
-              <div className="p-4 bg-orange-500/10 rounded-2xl text-orange-500"><Flame size={32} fill="currentColor" /></div>
-              <div><p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Efficiency</p><h2 className="text-3xl sm:text-4xl font-black text-white leading-none tracking-tighter">PREMIUM</h2></div>
-            </div>
-            <div onClick={() => setShowAnalytics(true)} className="bg-slate-900/50 border border-slate-800 border-indigo-500/20 p-6 rounded-3xl flex items-center gap-6 relative overflow-hidden group cursor-pointer hover:border-indigo-500/50 transition-all active:scale-[0.98]">
-              <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none transition-opacity group-hover:opacity-10"><BarChart3 size={120} /></div>
-              <div className="p-4 bg-indigo-500/10 rounded-2xl text-indigo-400 group-hover:scale-110 transition-transform"><BarChart3 size={32} /></div>
-              <div className="flex-1">
-                {trackingMode === 'module' ? (
-                  <>
-                    <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1 flex justify-between">Modules <span className="text-indigo-400">{progressPercentage}%</span></p>
-                    <h2 className="text-3xl sm:text-4xl font-black text-white leading-none tracking-tighter">
-                      {syllabus.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + (t.completedModules || 0), 0), 0)}
-                      <span className="text-[10px] text-slate-600 align-middle"> / {syllabus.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + (t.totalModules || 0), 0), 0)} DONE</span>
-                    </h2>
-                    <div className="mt-3 space-y-1">
-                      <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden shrink-0"><div className="h-full bg-indigo-500 transition-all duration-1000" style={{ width: `${progressPercentage}%` }} /></div>
-                      <div className="flex justify-between items-center text-[9px] font-black text-slate-500 uppercase tracking-widest">
-                        <span>{syllabus.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + Math.max(0, (t.totalModules || 0) - (t.completedModules || 0)), 0), 0)} modules left</span>
-                        <span className="text-indigo-400">{progressPercentage}% cleared</span>
+          {!(activeTool?.tool_type === 'flashcard' || activeTool?.tool_type === 'revision') && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+              <div className="w-full">
+                <StreakCalendar
+                  toolId={activeTool?.id}
+                  currentStreak={toolStreakData?.currentStreak || 0}
+                  activeDays={toolStreakData?.activeDays || []}
+                  dayDetails={toolStreakData?.dayDetails || {}}
+                  onMonthChange={(y, m) => loadToolStreak(activeTool?.id, y, m)}
+                  formatTime={formatTime}
+                />
+              </div>
+              <div className="bg-slate-900/50 border border-slate-800/50 p-6 rounded-3xl flex items-center gap-6 relative overflow-hidden group">
+                <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none transition-opacity"><Flame size={120} /></div>
+                <div className="p-4 bg-orange-500/10 rounded-2xl text-orange-500"><Flame size={32} fill="currentColor" /></div>
+                <div><p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Efficiency</p><h2 className="text-3xl sm:text-4xl font-black text-white leading-none tracking-tighter">PREMIUM</h2></div>
+              </div>
+              <div onClick={() => setShowAnalytics(true)} className="bg-slate-900/50 border border-slate-800 border-indigo-500/20 p-6 rounded-3xl flex items-center gap-6 relative overflow-hidden group cursor-pointer hover:border-indigo-500/50 transition-all active:scale-[0.98]">
+                <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none transition-opacity group-hover:opacity-10"><BarChart3 size={120} /></div>
+                <div className="p-4 bg-indigo-500/10 rounded-2xl text-indigo-400 group-hover:scale-110 transition-transform"><BarChart3 size={32} /></div>
+                <div className="flex-1">
+                  {trackingMode === 'module' ? (
+                    <>
+                      <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1 flex justify-between">Modules <span className="text-indigo-400">{progressPercentage}%</span></p>
+                      <h2 className="text-3xl sm:text-4xl font-black text-white leading-none tracking-tighter">
+                        {syllabus.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + (t.completedModules || 0), 0), 0)}
+                        <span className="text-[10px] text-slate-600 align-middle"> / {syllabus.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + (t.totalModules || 0), 0), 0)} DONE</span>
+                      </h2>
+                      <div className="mt-3 space-y-1">
+                        <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden shrink-0"><div className="h-full bg-indigo-500 transition-all duration-1000" style={{ width: `${progressPercentage}%` }} /></div>
+                        <div className="flex justify-between items-center text-[9px] font-black text-slate-500 uppercase tracking-widest">
+                          <span>{syllabus.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + Math.max(0, (t.totalModules || 0) - (t.completedModules || 0)), 0), 0)} modules left</span>
+                          <span className="text-indigo-400">{progressPercentage}% cleared</span>
+                        </div>
                       </div>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1 flex justify-between">Study Hours <span className="text-indigo-400">{progressPercentage}%</span></p>
-                    <h2 className="text-3xl sm:text-4xl font-black text-white leading-none tracking-tighter">{formatTime(totalStudyMins)} <span className="text-[10px] text-slate-600 align-middle"> DONE</span></h2>
-                    <div className="mt-3 space-y-1">
-                      <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden shrink-0"><div className="h-full bg-indigo-500 transition-all duration-1000" style={{ width: `${progressPercentage}%` }} /></div>
-                      <div className="flex justify-between items-center text-[9px] font-black text-slate-500 uppercase tracking-widest">
-                        <span>Goal: {formatTime(dailyGoalMins)}</span>
-                        <span className="text-slate-600">{formatTime(remainingMins)} LEFT</span>
+                    </>
+                  ) : (
+                    <>
+                      <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1 flex justify-between">Study Hours <span className="text-indigo-400">{progressPercentage}%</span></p>
+                      <h2 className="text-3xl sm:text-4xl font-black text-white leading-none tracking-tighter">{formatTime(totalStudyMins)} <span className="text-[10px] text-slate-600 align-middle"> DONE</span></h2>
+                      <div className="mt-3 space-y-1">
+                        <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden shrink-0"><div className="h-full bg-indigo-500 transition-all duration-1000" style={{ width: `${progressPercentage}%` }} /></div>
+                        <div className="flex justify-between items-center text-[9px] font-black text-slate-500 uppercase tracking-widest">
+                          <span>Goal: {formatTime(dailyGoalMins)}</span>
+                          <span className="text-slate-600">{formatTime(remainingMins)} LEFT</span>
+                        </div>
                       </div>
-                    </div>
-                  </>
-                )}
+                    </>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* MAIN TOOL VIEW */}
           {activeTool?.tool_type === 'flashcard' ? (

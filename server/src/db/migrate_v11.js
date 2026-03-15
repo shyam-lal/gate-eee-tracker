@@ -18,7 +18,7 @@ async function runMigration() {
         await pool.query('ROLLBACK');
         console.error('Migration v11 failed:', err);
     } finally {
-        pool.end();
+        process.exit();
     }
 }
 

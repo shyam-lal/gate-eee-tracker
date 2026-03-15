@@ -251,7 +251,7 @@ const CardEditor = ({ deckId }) => {
                 .fc-quill-edit .ql-editor { min-height: 70px; max-height: 100px; }
 
                 /* Card display rich content */
-                .card-rich-display { color: #e2e8f0; font-size: 0.875rem; line-height: 1.6; }
+                .card-rich-display { color: #e2e8f0; font-size: 0.875rem; line-height: 1.6; word-break: break-word; overflow-wrap: break-word; }
                 .card-rich-display p { margin: 0.25em 0; }
                 .card-rich-display strong { color: white; }
                 .card-rich-display ul, .card-rich-display ol { padding-left: 1.5em; margin: 0.25em 0; }

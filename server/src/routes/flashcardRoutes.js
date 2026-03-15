@@ -78,6 +78,23 @@ router.get('/tools/:toolId/groups', async (req, res) => {
     }
 });
 
+// Backward compatibility for mobile app: Get all decks for a tool flattened
+router.get('/tools/:toolId/decks', async (req, res) => {
+    try {
+        const groups = await flashcardService.getGroupsWithDecks(req.params.toolId);
+        const decks = [];
+        for (const group of groups) {
+            for (const deck of group.decks) {
+                decks.push({ ...deck, group_name: group.name });
+            }
+        }
+        res.json(decks);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to get decks' });
+    }
+});
+
 // Delete a group
 router.delete('/groups/:id', async (req, res) => {
     try {

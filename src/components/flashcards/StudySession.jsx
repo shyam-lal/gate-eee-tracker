@@ -165,11 +165,20 @@ const StudySession = ({ deck, onComplete, mode = 'srs' }) => {
     const frontData = extractImage(currentCard.front_content);
     const backData = extractImage(currentCard.back_content);
 
+    const getFontSizeClass = (text) => {
+        if (!text) return 'text-2xl sm:text-3xl lg:text-4xl';
+        const len = text.length;
+        if (len > 300) return 'text-base sm:text-lg lg:text-xl';
+        if (len > 150) return 'text-lg sm:text-xl lg:text-2xl';
+        if (len > 80) return 'text-xl sm:text-2xl lg:text-3xl';
+        return 'text-2xl sm:text-3xl lg:text-4xl';
+    };
+
     return (
         <div className="h-full flex flex-col max-w-3xl mx-auto px-4 py-8">
             {/* Rich content styles for study cards */}
             <style>{`
-                .study-card-content { line-height: 1.8; text-align: left; max-width: 90%; margin: 0 auto; }
+                .study-card-content { line-height: 1.8; text-align: left; max-width: 90%; margin: 0 auto; word-break: break-word; overflow-wrap: break-word; }
                 .study-card-content p { margin: 0.3em 0; }
                 .study-card-content strong { color: white; }
                 .study-card-content ul { list-style-type: disc; padding-left: 1.5em; margin: 0.5em 0; text-align: left; }
@@ -202,7 +211,7 @@ const StudySession = ({ deck, onComplete, mode = 'srs' }) => {
                         </div>
                         <div ref={!showBack ? cardContentRef : null} className="flex-1 overflow-y-auto no-scrollbar w-full flex flex-col fade-edge-y pb-2">
                             <div className="m-auto flex flex-col items-center space-y-8 w-full">
-                                <div className="study-card-content text-2xl sm:text-3xl lg:text-4xl font-bold text-white leading-relaxed" dangerouslySetInnerHTML={{ __html: frontData.text }} />
+                                <div className={`study-card-content font-bold text-white leading-relaxed ${getFontSizeClass(frontData.text)}`} dangerouslySetInnerHTML={{ __html: frontData.text }} />
                                 {frontData.image && (
                                     <img src={frontData.image} alt="Front illustration" className="max-h-[40vh] rounded-2xl object-contain border border-slate-700 shadow-xl shadow-black/50" />
                                 )}
@@ -220,7 +229,7 @@ const StudySession = ({ deck, onComplete, mode = 'srs' }) => {
                         </div>
                         <div ref={showBack ? cardContentRef : null} className="flex-1 overflow-y-auto no-scrollbar w-full flex flex-col fade-edge-y pb-2">
                             <div className="m-auto flex flex-col items-center space-y-10 w-full">
-                                <div className="study-card-content text-2xl sm:text-3xl lg:text-4xl font-bold text-indigo-100 leading-relaxed" dangerouslySetInnerHTML={{ __html: backData.text }} />
+                                <div className={`study-card-content font-bold text-indigo-100 leading-relaxed ${getFontSizeClass(backData.text)}`} dangerouslySetInnerHTML={{ __html: backData.text }} />
                                 {backData.image && (
                                     <img src={backData.image} alt="Back illustration" className="max-h-[50vh] mx-auto rounded-2xl object-contain border border-slate-700 shadow-xl shadow-black/50" />
                                 )}
