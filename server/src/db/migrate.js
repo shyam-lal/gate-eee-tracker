@@ -9,9 +9,17 @@ const pool = new Pool({
 
 const migrate = async () => {
     try {
-        const sql = fs.readFileSync(path.join(__dirname, 'migration_v2.sql'), 'utf8');
-        await pool.query(sql);
-        console.log('Migration successful!');
+        const files = fs.readdirSync(__dirname)
+            .filter(file => file.startsWith('migration_') && file.endsWith('.sql'))
+            .sort(); // Very basic sort, assuming names format is somewhat ordered or they don't depend strictly on numbering
+
+        for (const file of files) {
+            console.log(`Running migration: ${file}...`);
+            const sql = fs.readFileSync(path.join(__dirname, file), 'utf8');
+            await pool.query(sql);
+            console.log(`✓ ${file} completed`);
+        }
+        console.log('All migrations executed successfully!');
     } catch (err) {
         console.error('Migration failed:', err);
     } finally {
