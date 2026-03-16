@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ArrowLeft, Trash2, Play, Shuffle, Loader2, BookOpen, History, Clock, AlertCircle } from 'lucide-react';
 import { revision as revisionApi } from '../../services/api';
+import 'katex/dist/katex.min.css';
+import renderMathInElement from 'katex/dist/contrib/auto-render.js';
 
 const TYPE_BADGES = {
     mcq: { label: 'MCQ', class: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' },
@@ -16,8 +18,23 @@ const QuestionBank = ({ set, onStartTest, onBack }) => {
     const [showHistory, setShowHistory] = useState(false);
     const [inProgress, setInProgress] = useState(null);
     const [testMode, setTestMode] = useState('exam'); // 'exam' or 'study'
+    const containerRef = useRef(null);
 
     useEffect(() => { loadData(); }, [set.id]);
+
+    useEffect(() => {
+        if (containerRef.current && setData?.questions) {
+            renderMathInElement(containerRef.current, {
+                delimiters: [
+                    { left: '$$', right: '$$', display: true },
+                    { left: '$', right: '$', display: false },
+                    { left: '\\(', right: '\\)', display: false },
+                    { left: '\\[', right: '\\]', display: true }
+                ],
+                throwOnError: false
+            });
+        }
+    }, [setData]);
 
     const loadData = async () => {
         try {
@@ -144,7 +161,7 @@ const QuestionBank = ({ set, onStartTest, onBack }) => {
             )}
 
             {/* Questions List */}
-            <div className="space-y-3">
+            <div className="space-y-3" ref={containerRef}>
                 <div className="flex items-center justify-between mb-2">
                     <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest"><BookOpen size={14} className="inline mr-1" /> {questions.length} Questions</h4>
                 </div>
