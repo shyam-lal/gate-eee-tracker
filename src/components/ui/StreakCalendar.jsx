@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { ChevronLeft, ChevronRight, Flame, Clock, Layers } from 'lucide-react';
 
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -188,7 +189,7 @@ const StreakCalendar = ({ toolId, currentStreak = 0, activeDays = [], dayDetails
             </div>
 
             {/* Tooltip */}
-            {tooltip && (
+            {tooltip && createPortal(
                 <div
                     className="fixed z-[500] pointer-events-none animate-in fade-in zoom-in-95 duration-150"
                     style={{
@@ -220,7 +221,8 @@ const StreakCalendar = ({ toolId, currentStreak = 0, activeDays = [], dayDetails
                     <div className="flex justify-center">
                         <div className="w-2 h-2 bg-slate-900 border-r border-b border-slate-700 transform rotate-45 -mt-1" />
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
         </div>
     );

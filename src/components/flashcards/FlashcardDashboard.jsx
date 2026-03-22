@@ -30,7 +30,7 @@ const FlashcardDashboard = ({ tool }) => {
     };
 
     return (
-        <div className="w-full max-w-7xl mx-auto h-[calc(100vh-8rem)]">
+        <div className={`w-full max-w-7xl mx-auto ${view === 'manage_cards' ? 'min-h-[calc(100vh-8rem)] pb-12' : 'h-[calc(100vh-8rem)]'}`}>
             {view === 'decks' && (
                 <div className="animate-in fade-in zoom-in-95 duration-300">
                     <DeckManager toolId={tool.id} onStudyDeck={handleDeckAction} />
@@ -38,7 +38,7 @@ const FlashcardDashboard = ({ tool }) => {
             )}
 
             {view === 'manage_cards' && activeDeck && (
-                <div className="animate-in slide-in-from-right-8 duration-300 h-full flex flex-col">
+                <div className="animate-in slide-in-from-right-8 duration-300 flex flex-col">
                     <div className="flex items-center gap-4 mb-6">
                         <button onClick={goBackToDecks} className="w-10 h-10 flex items-center justify-center bg-slate-900 border border-slate-800 rounded-xl text-slate-400 hover:text-white hover:border-slate-600 transition-colors">
                             <ArrowLeft size={18} />
@@ -48,7 +48,7 @@ const FlashcardDashboard = ({ tool }) => {
                             <p className="text-xs text-slate-500 font-medium">Deck Details & Cards</p>
                         </div>
                     </div>
-                    <div className="flex-1 min-h-0 bg-slate-900/60 backdrop-blur-xl border border-white/5 rounded-[2rem] overflow-hidden">
+                    <div className="bg-slate-900/60 backdrop-blur-xl border border-white/5 rounded-[2rem] overflow-hidden">
                         <CardEditor deckId={activeDeck.id} />
                     </div>
                 </div>

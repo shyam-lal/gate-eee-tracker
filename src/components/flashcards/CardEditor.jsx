@@ -208,7 +208,7 @@ const CardEditor = ({ deckId }) => {
         : '2.50';
 
     return (
-        <div className="flex flex-col h-full bg-slate-950">
+        <div className="flex flex-col bg-slate-950">
             {/* Quill Styles */}
             <style>{`
                 .fc-quill .quill { display: flex; flex-direction: column; height: 100%; }
@@ -370,7 +370,7 @@ const CardEditor = ({ deckId }) => {
             </div>
 
             {/* Existing Cards List */}
-            <div className="flex-1 overflow-y-auto p-6 scroll-smooth">
+            <div className="p-6">
                 {cards.length === 0 ? (
                     <div className="h-full flex flex-col items-center justify-center text-center opacity-50">
                         <BrainCircuit size={48} className="text-slate-600 mb-4" />
