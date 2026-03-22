@@ -21,7 +21,7 @@ import AdminPanel from './components/admin/AdminPanel';
 import { ExamProvider } from './contexts/ExamContext';
 import ExamOnboarding from './components/exam/ExamOnboarding';
 import ExamSwitcher from './components/exam/ExamSwitcher';
-import StudyMaterials from './components/materials/StudyMaterials';
+import VirtualLibrary from './components/materials/VirtualLibrary';
 import {
   Calendar as CalendarIcon, Trash2, Plus, X,
   ChevronDown, ChevronRight, Clock, Edit3,
@@ -481,7 +481,7 @@ function App() {
     if (view === 'admin' && (user?.role === 'admin' || user?.role === 'super_admin')) {
       return <AdminPanel user={user} onBack={() => setView('dashboard')} />;
     }
-    if (view === 'materials') return <StudyMaterials examId={user?.active_exam_id} examName={user?.selected_exam || 'Exam'} syllabus={[]} onBack={() => setView('dashboard')} />;
+    if (view === 'materials') return <VirtualLibrary examId={user?.active_exam_id} examName={user?.selected_exam || 'Exam'} onBack={() => setView('dashboard')} />;
     if (view === 'social_terminal') return <Social currentUser={user} onBack={() => setView('dashboard')} />;
     if (view === 'planner') return <PlannerDashboard onBack={() => setView('dashboard')} />;
 
