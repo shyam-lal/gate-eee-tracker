@@ -48,16 +48,17 @@ export const user = {
 };
 
 export const tools = {
-    list: async () => {
-        const res = await fetch(`${API_URL}/tools`, { headers: getHeaders() });
+    list: async (examId = null) => {
+        const url = examId ? `${API_URL}/tools?exam_id=${examId}` : `${API_URL}/tools`;
+        const res = await fetch(url, { headers: getHeaders() });
         if (!res.ok) throw new Error('Failed to fetch tools');
         return res.json();
     },
-    create: async (name, toolType = 'time', selectedExam = 'GATE') => {
+    create: async (name, toolType = 'time', selectedExam = 'GATE', examId = null) => {
         const res = await fetch(`${API_URL}/tools`, {
             method: 'POST',
             headers: getHeaders(),
-            body: JSON.stringify({ name, toolType, selectedExam })
+            body: JSON.stringify({ name, toolType, selectedExam, examId })
         });
         if (!res.ok) throw new Error('Failed to create tool');
         return res.json();
@@ -462,16 +463,17 @@ export const planner = {
 
 export const revision = {
     // Sets
-    createSet: async (title, topics, questionCount, timePerQuestion) => {
+    createSet: async (title, topics, questionCount, timePerQuestion, examId = null) => {
         const res = await fetch(`${API_URL}/revision/sets`, {
             method: 'POST', headers: getHeaders(),
-            body: JSON.stringify({ title, topics, questionCount, timePerQuestion })
+            body: JSON.stringify({ title, topics, questionCount, timePerQuestion, examId })
         });
         if (!res.ok) throw new Error('Failed to create set');
         return res.json();
     },
-    getUserSets: async () => {
-        const res = await fetch(`${API_URL}/revision/sets`, { headers: getHeaders() });
+    getUserSets: async (examId = null) => {
+        const url = examId ? `${API_URL}/revision/sets?exam_id=${examId}` : `${API_URL}/revision/sets`;
+        const res = await fetch(url, { headers: getHeaders() });
         if (!res.ok) throw new Error('Failed to get sets');
         return res.json();
     },
@@ -553,5 +555,208 @@ export const revision = {
         const res = await fetch(`${API_URL}/revision/sets/${setId}/attempts/in-progress`, { headers: getHeaders() });
         if (!res.ok) throw new Error('Failed to check in-progress');
         return res.json();
+    }
+};
+
+// ═══════════════════════════════════════════════════
+// Exam Platform API
+// ═══════════════════════════════════════════════════
+
+export const exams = {
+    // Public
+    getCategories: async () => {
+        const res = await fetch(`${API_URL}/exams/categories`);
+        if (!res.ok) throw new Error('Failed to fetch categories');
+        return res.json();
+    },
+    getAll: async (categoryId = null) => {
+        const url = categoryId ? `${API_URL}/exams?category_id=${categoryId}` : `${API_URL}/exams`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('Failed to fetch exams');
+        return res.json();
+    },
+    getById: async (id) => {
+        const res = await fetch(`${API_URL}/exams/${id}`);
+        if (!res.ok) throw new Error('Failed to fetch exam');
+        return res.json();
+    },
+    getSyllabus: async (examId) => {
+        const res = await fetch(`${API_URL}/exams/${examId}/syllabus`);
+        if (!res.ok) throw new Error('Failed to fetch syllabus');
+        return res.json();
+    },
+    getMaterials: async (examId, filters = {}) => {
+        const params = new URLSearchParams();
+        if (filters.subject_id) params.set('subject_id', filters.subject_id);
+        if (filters.topic_id) params.set('topic_id', filters.topic_id);
+        if (filters.content_type) params.set('content_type', filters.content_type);
+        const res = await fetch(`${API_URL}/exams/${examId}/materials?${params}`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to fetch materials');
+        return res.json();
+    },
+
+    // User enrollment
+    getEnrollments: async () => {
+        const res = await fetch(`${API_URL}/exams/user/enrollments`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to fetch enrollments');
+        return res.json();
+    },
+    enroll: async (examId, targetDate = null) => {
+        const res = await fetch(`${API_URL}/exams/user/enroll`, {
+            method: 'POST', headers: getHeaders(),
+            body: JSON.stringify({ exam_id: examId, target_date: targetDate })
+        });
+        if (!res.ok) throw new Error('Failed to enroll');
+        return res.json();
+    },
+    switchExam: async (examId) => {
+        const res = await fetch(`${API_URL}/exams/user/switch`, {
+            method: 'POST', headers: getHeaders(),
+            body: JSON.stringify({ exam_id: examId })
+        });
+        if (!res.ok) throw new Error('Failed to switch exam');
+        return res.json();
+    },
+    completeOnboarding: async () => {
+        const res = await fetch(`${API_URL}/exams/user/onboarding-complete`, {
+            method: 'POST', headers: getHeaders()
+        });
+        if (!res.ok) throw new Error('Failed to complete onboarding');
+        return res.json();
+    },
+
+    // Admin - Categories
+    admin: {
+        createCategory: async (data) => {
+            const res = await fetch(`${API_URL}/exams/admin/categories`, {
+                method: 'POST', headers: getHeaders(), body: JSON.stringify(data)
+            });
+            if (!res.ok) throw new Error((await res.json()).error || 'Failed to create category');
+            return res.json();
+        },
+        updateCategory: async (id, data) => {
+            const res = await fetch(`${API_URL}/exams/admin/categories/${id}`, {
+                method: 'PUT', headers: getHeaders(), body: JSON.stringify(data)
+            });
+            if (!res.ok) throw new Error('Failed to update category');
+            return res.json();
+        },
+        createExam: async (data) => {
+            const res = await fetch(`${API_URL}/exams/admin/exams`, {
+                method: 'POST', headers: getHeaders(), body: JSON.stringify(data)
+            });
+            if (!res.ok) throw new Error((await res.json()).error || 'Failed to create exam');
+            return res.json();
+        },
+        updateExam: async (id, data) => {
+            const res = await fetch(`${API_URL}/exams/admin/exams/${id}`, {
+                method: 'PUT', headers: getHeaders(), body: JSON.stringify(data)
+            });
+            if (!res.ok) throw new Error('Failed to update exam');
+            return res.json();
+        },
+        deleteExam: async (id) => {
+            const res = await fetch(`${API_URL}/exams/admin/exams/${id}`, {
+                method: 'DELETE', headers: getHeaders()
+            });
+            if (!res.ok) throw new Error('Failed to delete exam');
+            return res.json();
+        },
+        createSubject: async (examId, data) => {
+            const res = await fetch(`${API_URL}/exams/admin/exams/${examId}/subjects`, {
+                method: 'POST', headers: getHeaders(), body: JSON.stringify(data)
+            });
+            if (!res.ok) throw new Error('Failed to create subject');
+            return res.json();
+        },
+        updateSubject: async (id, data) => {
+            const res = await fetch(`${API_URL}/exams/admin/subjects/${id}`, {
+                method: 'PUT', headers: getHeaders(), body: JSON.stringify(data)
+            });
+            if (!res.ok) throw new Error('Failed to update subject');
+            return res.json();
+        },
+        deleteSubject: async (id) => {
+            const res = await fetch(`${API_URL}/exams/admin/subjects/${id}`, {
+                method: 'DELETE', headers: getHeaders()
+            });
+            if (!res.ok) throw new Error('Failed to delete subject');
+            return res.json();
+        },
+        createTopic: async (subjectId, data) => {
+            const res = await fetch(`${API_URL}/exams/admin/subjects/${subjectId}/topics`, {
+                method: 'POST', headers: getHeaders(), body: JSON.stringify(data)
+            });
+            if (!res.ok) throw new Error('Failed to create topic');
+            return res.json();
+        },
+        updateTopic: async (id, data) => {
+            const res = await fetch(`${API_URL}/exams/admin/topics/${id}`, {
+                method: 'PUT', headers: getHeaders(), body: JSON.stringify(data)
+            });
+            if (!res.ok) throw new Error('Failed to update topic');
+            return res.json();
+        },
+        deleteTopic: async (id) => {
+            const res = await fetch(`${API_URL}/exams/admin/topics/${id}`, {
+                method: 'DELETE', headers: getHeaders()
+            });
+            if (!res.ok) throw new Error('Failed to delete topic');
+            return res.json();
+        },
+        createMaterial: async (data) => {
+            const res = await fetch(`${API_URL}/exams/admin/materials`, {
+                method: 'POST', headers: getHeaders(), body: JSON.stringify(data)
+            });
+            if (!res.ok) throw new Error('Failed to create material');
+            return res.json();
+        },
+        updateMaterial: async (id, data) => {
+            const res = await fetch(`${API_URL}/exams/admin/materials/${id}`, {
+                method: 'PUT', headers: getHeaders(), body: JSON.stringify(data)
+            });
+            if (!res.ok) throw new Error('Failed to update material');
+            return res.json();
+        },
+        deleteMaterial: async (id) => {
+            const res = await fetch(`${API_URL}/exams/admin/materials/${id}`, {
+                method: 'DELETE', headers: getHeaders()
+            });
+            if (!res.ok) throw new Error('Failed to delete material');
+            return res.json();
+        },
+        uploadMaterial: async (formData) => {
+            // FormData requires browser to set Content-Type with boundary automatically
+            const headers = getHeaders();
+            delete headers['Content-Type']; 
+            
+            const res = await fetch(`${API_URL}/exams/admin/materials/upload`, {
+                method: 'POST', headers, body: formData
+            });
+            if (!res.ok) throw new Error((await res.json()).error || 'Failed to upload material');
+            return res.json();
+        },
+        importSyllabus: async (examId, subjects, clearExisting = false) => {
+            const res = await fetch(`${API_URL}/exams/admin/exams/${examId}/syllabus/import`, {
+                method: 'POST', headers: getHeaders(),
+                body: JSON.stringify({ subjects, clearExisting })
+            });
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({ error: 'Import failed' }));
+                throw new Error(err.error || 'Failed to import syllabus');
+            }
+            return res.json();
+        },
+        importQuestions: async (examId, questions, clearExisting = false) => {
+            const res = await fetch(`${API_URL}/exams/admin/exams/${examId}/questions/import`, {
+                method: 'POST', headers: getHeaders(),
+                body: JSON.stringify({ questions, clearExisting })
+            });
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({ error: 'Import failed' }));
+                throw new Error(err.error || 'Failed to import questions');
+            }
+            return res.json();
+        },
     }
 };

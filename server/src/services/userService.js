@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const createUser = async (username, email, password) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const result = await pool.query(
-        'INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3) RETURNING id, username, email, selected_exam, tracking_mode, current_streak',
+        'INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3) RETURNING id, username, email, selected_exam, tracking_mode, current_streak, role, active_exam_id, onboarding_completed',
         [username, email, hashedPassword]
     );
     return result.rows[0];
@@ -16,7 +16,7 @@ const findUserByEmail = async (email) => {
 };
 
 const findUserById = async (id) => {
-    const result = await pool.query('SELECT id, username, email, selected_exam, tracking_mode, current_streak FROM users WHERE id = $1', [id]);
+    const result = await pool.query('SELECT id, username, email, selected_exam, tracking_mode, current_streak, role, active_exam_id, onboarding_completed FROM users WHERE id = $1', [id]);
     return result.rows[0];
 };
 

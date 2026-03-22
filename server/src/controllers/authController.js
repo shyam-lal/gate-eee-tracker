@@ -28,7 +28,11 @@ const register = async (req, res) => {
             // Non-fatal, we still let registration succeed
         }
 
-        const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '7d' });
+        const token = jwt.sign(
+            { id: user.id, username: user.username, role: user.role || 'user' },
+            process.env.JWT_SECRET,
+            { expiresIn: '7d' }
+        );
 
         res.status(201).json({
             message: 'User registered successfully',
@@ -38,7 +42,10 @@ const register = async (req, res) => {
                 email: user.email,
                 selected_exam: user.selected_exam,
                 tracking_mode: user.tracking_mode,
-                current_streak: user.current_streak
+                current_streak: user.current_streak,
+                role: user.role || 'user',
+                active_exam_id: user.active_exam_id || null,
+                onboarding_completed: user.onboarding_completed || false,
             },
             token
         });
@@ -65,7 +72,11 @@ const login = async (req, res) => {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
-        const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '7d' });
+        const token = jwt.sign(
+            { id: user.id, username: user.username, role: user.role || 'user' },
+            process.env.JWT_SECRET,
+            { expiresIn: '7d' }
+        );
         res.json({
             message: 'Login successful',
             user: {
@@ -74,7 +85,10 @@ const login = async (req, res) => {
                 email: user.email,
                 selected_exam: user.selected_exam,
                 tracking_mode: user.tracking_mode,
-                current_streak: user.current_streak
+                current_streak: user.current_streak,
+                role: user.role || 'user',
+                active_exam_id: user.active_exam_id || null,
+                onboarding_completed: user.onboarding_completed || false,
             },
             token
         });

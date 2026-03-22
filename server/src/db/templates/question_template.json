@@ -1,0 +1,52 @@
+{
+  "_instruction": "Use this template to extract previous year questions (PYQs) from a PDF. Follow the structure exactly. Do not add fields. Return ONLY valid JSON.",
+  "prompt_for_chatgpt": "Extract all questions from the provided exam PDF and output them as a JSON array EXACTLY matching this structure. Use 'mcq' (1 correct), 'msq' (multiple correct), 'nat' (numerical), or 'subjective' for question_type. For 'correct', use the 0-indexed position of the correct option(s) for mcq/msq, or {\"value\": X, \"tolerance\": Y} for nat. Ensure subject_id and topic_id are filled if known, otherwise leave null.",
+  "questions": [
+    {
+      "question_text": "The DC gain of the system G(s) = 10 / (s^2 + 3s + 2) is ___",
+      "question_type": "nat",
+      "options": null,
+      "correct": { "value": 5, "tolerance": 0.1 },
+      "explanation": "DC gain is calculated by setting s = 0. G(0) = 10 / 2 = 5.",
+      "year": 2024,
+      "marks": 2,
+      "negative": 0,
+      "difficulty": "medium",
+      "tags": ["control-systems", "transfer-function", "dc-gain"]
+    },
+    {
+      "question_text": "Which of the following are Maxwell's equations? (Select all that apply)",
+      "question_type": "msq",
+      "options": [
+        "∇·D = ρ",
+        "∇×E = -∂B/∂t",
+        "F = ma",
+        "V = IR"
+      ],
+      "correct": [0, 1],
+      "explanation": "Options A and B are Gauss's law and Faraday's law, which are part of Maxwell's equations.",
+      "year": 2023,
+      "marks": 1,
+      "negative": 0,
+      "difficulty": "hard",
+      "tags": ["electromagnetics", "maxwells"]
+    },
+    {
+      "question_text": "A 3-phase induction motor operates at a slip of 4%. If the synchronous speed is 1500 RPM, what is the rotor speed?",
+      "question_type": "mcq",
+      "options": [
+        "1440 RPM",
+        "1500 RPM",
+        "1560 RPM",
+        "1400 RPM"
+      ],
+      "correct": [0],
+      "explanation": "Rotor speed = Ns(1 - s) = 1500(1 - 0.04) = 1440 RPM.",
+      "year": 2024,
+      "marks": 1,
+      "negative": 0.33,
+      "difficulty": "easy",
+      "tags": ["machines", "induction-motor"]
+    }
+  ]
+}

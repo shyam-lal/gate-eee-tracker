@@ -1,18 +1,17 @@
 const pool = require('../config/db');
 
-const createTool = async (userId, name, toolType = 'time', selectedExam = 'GATE') => {
+const createTool = async (userId, name, toolType = 'time', selectedExam = 'GATE', examId = null) => {
     const res = await pool.query(
-        `INSERT INTO tools (user_id, name, tool_type, selected_exam) 
-         VALUES ($1, $2, $3, $4) 
-         RETURNING id, user_id, name, tool_type, selected_exam, TO_CHAR(target_date, 'YYYY-MM-DD') as target_date, created_at`,
-        [userId, name, toolType, selectedExam]
+        `INSERT INTO tools (user_id, name, tool_type, selected_exam, exam_id) 
+         VALUES ($1, $2, $3, $4, $5) 
+         RETURNING id, user_id, name, tool_type, selected_exam, exam_id, TO_CHAR(target_date, 'YYYY-MM-DD') as target_date, created_at`,
+        [userId, name, toolType, selectedExam, examId]
     );
     return res.rows[0];
 };
 
-const getUserTools = async (userId) => {
-    const res = await pool.query(
-        `SELECT t.id, t.user_id, t.name, t.tool_type, t.selected_exam, TO_CHAR(t.target_date, 'YYYY-MM-DD') as target_date, t.created_at,
+const getUserTools = async (userId, examId = null) => {
+    let query = `SELECT t.id, t.user_id, t.name, t.tool_type, t.selected_exam, t.exam_id, TO_CHAR(t.target_date, 'YYYY-MM-DD') as target_date, t.created_at,
          (
              SELECT COUNT(c.id)
              FROM cards c
@@ -20,15 +19,20 @@ const getUserTools = async (userId) => {
              JOIN flashcard_groups fg ON d.group_id = fg.id
              WHERE fg.tool_id = t.id AND c.next_review_date <= CURRENT_DATE
          )::int as due_cards_count
-         FROM tools t WHERE t.user_id = $1 ORDER BY t.created_at DESC`,
-        [userId]
-    );
+         FROM tools t WHERE t.user_id = $1`;
+    const params = [userId];
+    if (examId) {
+        query += ' AND t.exam_id = $2';
+        params.push(examId);
+    }
+    query += ' ORDER BY t.created_at DESC';
+    const res = await pool.query(query, params);
     return res.rows;
 };
 
 const getToolById = async (toolId) => {
     const res = await pool.query(
-        `SELECT id, user_id, name, tool_type, selected_exam, TO_CHAR(target_date, 'YYYY-MM-DD') as target_date, created_at 
+        `SELECT id, user_id, name, tool_type, selected_exam, exam_id, TO_CHAR(target_date, 'YYYY-MM-DD') as target_date, created_at 
          FROM tools WHERE id = $1`,
         [toolId]
     );
@@ -53,7 +57,7 @@ const updateTool = async (toolId, updates) => {
     values.push(toolId);
     const res = await pool.query(
         `UPDATE tools SET ${fields.join(', ')} WHERE id = $${idx} 
-         RETURNING id, user_id, name, tool_type, selected_exam, TO_CHAR(target_date, 'YYYY-MM-DD') as target_date, created_at`,
+         RETURNING id, user_id, name, tool_type, selected_exam, exam_id, TO_CHAR(target_date, 'YYYY-MM-DD') as target_date, created_at`,
         values
     );
     return res.rows[0];

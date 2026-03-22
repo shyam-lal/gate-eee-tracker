@@ -10,27 +10,30 @@ function getLocalDateStr(date) {
 
 // ─── SETS ────────────────────────────────────────────────────────────────
 
-async function createSet(userId, title, topics, questionCount, timePerQuestion = 180) {
+async function createSet(userId, title, topics, questionCount, timePerQuestion = 180, examId = null) {
     const result = await db.query(
-        `INSERT INTO revision_sets (user_id, title, topics, question_count, time_per_question)
-         VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-        [userId, title, topics, questionCount, timePerQuestion]
+        `INSERT INTO revision_sets (user_id, title, topics, question_count, time_per_question, exam_id)
+         VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+        [userId, title, topics, questionCount, timePerQuestion, examId]
     );
     return result.rows[0];
 }
 
-async function getUserSets(userId) {
-    const result = await db.query(
-        `SELECT rs.*,
+async function getUserSets(userId, examId = null) {
+    let query = `SELECT rs.*,
             (SELECT COUNT(*) FROM revision_questions rq WHERE rq.set_id = rs.id) as actual_question_count,
             (SELECT COUNT(*) FROM revision_attempts ra WHERE ra.set_id = rs.id AND ra.status = 'completed') as attempt_count,
             (SELECT MAX(ra.score) FROM revision_attempts ra WHERE ra.set_id = rs.id AND ra.status = 'completed') as best_score,
             (SELECT MAX(ra.max_score) FROM revision_attempts ra WHERE ra.set_id = rs.id AND ra.status = 'completed') as best_max_score
          FROM revision_sets rs
-         WHERE rs.user_id = $1
-         ORDER BY rs.created_at DESC`,
-        [userId]
-    );
+         WHERE rs.user_id = $1`;
+    const params = [userId];
+    if (examId) {
+        query += ' AND rs.exam_id = $2';
+        params.push(examId);
+    }
+    query += ' ORDER BY rs.created_at DESC';
+    const result = await db.query(query, params);
     return result.rows;
 }
 

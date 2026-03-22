@@ -17,6 +17,11 @@ import PlannerDashboard from './components/planner/PlannerDashboard';
 import FocusTool from './components/focus/FocusTool';
 import GlobalFocusOverlay from './components/focus/GlobalFocusOverlay';
 import RevisionDashboard from './components/revision/RevisionDashboard';
+import AdminPanel from './components/admin/AdminPanel';
+import { ExamProvider } from './contexts/ExamContext';
+import ExamOnboarding from './components/exam/ExamOnboarding';
+import ExamSwitcher from './components/exam/ExamSwitcher';
+import StudyMaterials from './components/materials/StudyMaterials';
 import {
   Calendar as CalendarIcon, Trash2, Plus, X,
   ChevronDown, ChevronRight, Clock, Edit3,
@@ -176,10 +181,16 @@ function App() {
 
   useEffect(() => {
     if (user) {
-      console.log('User detected, setting view to dashboard');
       loadTools();
       loadUserStreak();
-      setView('dashboard');
+      // Redirect new users to exam onboarding if they haven't completed it
+      if (!user.onboarding_completed && !user.active_exam_id) {
+        console.log('User has not completed onboarding, redirecting to exam_onboarding');
+        setView('exam_onboarding');
+      } else {
+        console.log('User detected, setting view to dashboard');
+        setView('dashboard');
+      }
     } else {
       console.log('No user, setting view to landing');
       setView('landing');
@@ -442,6 +453,12 @@ function App() {
     if (view === 'landing') return <Landing onStart={() => setView(user ? 'dashboard' : 'auth')} />;
     if (view === 'auth' && !user) return <Auth onLogin={(u) => { setUser(u); }} />;
     if (view === 'wizard') return <Wizard onComplete={onWizardComplete} onBack={() => setView('dashboard')} />;
+    if (view === 'exam_onboarding') return <ExamOnboarding onComplete={(enrolledExamId) => {
+      // Update user state with onboarding completion + active exam
+      const updatedUser = { ...user, onboarding_completed: true, active_exam_id: enrolledExamId || user.active_exam_id };
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      setUser(updatedUser);
+    }} onBack={() => setView('dashboard')} />;
     if (view === 'profile') return <Profile user={user} onBack={() => setView('dashboard')} onResetProgress={handleResetProgress} onLogout={logout} />;
     if (view === 'dashboard') return (
       <Dashboard
@@ -457,8 +474,14 @@ function App() {
         onRenameTool={handleRenameTool}
         onClearToolData={handleClearToolData}
         onStartFocus={() => setIsFocusOverlayOpen(true)}
+        onOpenAdmin={user?.role === 'admin' || user?.role === 'super_admin' ? () => setView('admin') : undefined}
+        onOpenMaterials={user?.active_exam_id ? () => setView('materials') : undefined}
       />
     );
+    if (view === 'admin' && (user?.role === 'admin' || user?.role === 'super_admin')) {
+      return <AdminPanel user={user} onBack={() => setView('dashboard')} />;
+    }
+    if (view === 'materials') return <StudyMaterials examId={user?.active_exam_id} examName={user?.selected_exam || 'Exam'} syllabus={[]} onBack={() => setView('dashboard')} />;
     if (view === 'social_terminal') return <Social currentUser={user} onBack={() => setView('dashboard')} />;
     if (view === 'planner') return <PlannerDashboard onBack={() => setView('dashboard')} />;
 
@@ -1091,4 +1114,26 @@ function App() {
   );
 }
 
-export default App;
+function AppWrapper() {
+  // Read user from localStorage just for providing to ExamProvider
+  const [user, setUser] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('user')); } catch { return null; }
+  });
+
+  // Listen for storage changes so ExamProvider updates  
+  useEffect(() => {
+    const onStorage = () => {
+      try { setUser(JSON.parse(localStorage.getItem('user'))); } catch { setUser(null); }
+    };
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, []);
+
+  return (
+    <ExamProvider user={user}>
+      <App />
+    </ExamProvider>
+  );
+}
+
+export default AppWrapper;

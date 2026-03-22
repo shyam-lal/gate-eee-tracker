@@ -8,11 +8,11 @@ router.use(authenticateToken);
 // Create a new tool
 router.post('/', async (req, res) => {
     try {
-        const { name, toolType, selectedExam } = req.body;
+        const { name, toolType, selectedExam, examId } = req.body;
         if (!name || !name.trim()) {
             return res.status(400).json({ error: 'Tool name is required' });
         }
-        const tool = await toolService.createTool(req.user.id, name.trim(), toolType, selectedExam);
+        const tool = await toolService.createTool(req.user.id, name.trim(), toolType, selectedExam, examId || null);
         res.status(201).json(tool);
     } catch (err) {
         console.error(err);
@@ -20,10 +20,10 @@ router.post('/', async (req, res) => {
     }
 });
 
-// Get all tools for the current user
+// Get all tools for the current user (optionally filtered by exam_id)
 router.get('/', async (req, res) => {
     try {
-        const tools = await toolService.getUserTools(req.user.id);
+        const tools = await toolService.getUserTools(req.user.id, req.query.exam_id || null);
         res.json(tools);
     } catch (err) {
         console.error(err);

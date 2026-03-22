@@ -30,8 +30,8 @@ router.post('/', auth, upload.single('image'), async (req, res) => {
             return res.status(400).json({ msg: 'No file uploaded.' });
         }
 
-        // Upload to Backblaze
-        const publicUrl = await uploadFile(req.file.buffer, req.file.originalname, req.file.mimetype);
+        // Upload to Cloudflare R2
+        const { url: publicUrl } = await uploadFile(req.file.buffer, req.file.originalname, req.file.mimetype, 'flashcards');
 
         res.json({
             success: true,

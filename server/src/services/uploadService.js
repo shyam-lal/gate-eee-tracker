@@ -1,4 +1,4 @@
-const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
+const { S3Client, PutObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
 const crypto = require('crypto');
 const path = require('path');
 
@@ -12,11 +12,19 @@ const s3Client = new S3Client({
     }
 });
 
-const uploadFile = async (fileBuffer, originalName, mimetype) => {
-    // Generate a unique filename to prevent overwrites
+/**
+ * Upload a file to Cloudflare R2.
+ * 
+ * @param {Buffer} fileBuffer - The file data
+ * @param {string} originalName - Original filename (for extension)
+ * @param {string} mimetype - MIME type
+ * @param {string} folder - R2 folder/prefix (e.g. 'flashcards', 'materials', 'questions')
+ * @returns {{ url: string, key: string }} Public URL and R2 object key
+ */
+const uploadFile = async (fileBuffer, originalName, mimetype, folder = 'uploads') => {
     const uniqueSuffix = Date.now() + '-' + crypto.randomBytes(6).toString('hex');
     const ext = path.extname(originalName);
-    const key = `flashcards/${uniqueSuffix}${ext}`; // Store in 'flashcards' folder
+    const key = `${folder}/${uniqueSuffix}${ext}`;
 
     const command = new PutObjectCommand({
         Bucket: process.env.R2_BUCKET_NAME,
@@ -27,21 +35,37 @@ const uploadFile = async (fileBuffer, originalName, mimetype) => {
 
     try {
         await s3Client.send(command);
-
-        // Construct the public URL for Cloudflare R2
-        // R2 requires a public custom domain or r2.dev subdomain enabled
-        // Example R2_PUBLIC_DOMAIN: "https://pub-xxxxxxxxxxxxxx.r2.dev" or "https://cdn.yourdomain.com"
-        // Ensure NO trailing slash in the env variable.
-
-        const publicUrl = `${process.env.R2_PUBLIC_DOMAIN}/${key}`;
-
-        return publicUrl;
+        const url = `${process.env.R2_PUBLIC_DOMAIN}/${key}`;
+        return { url, key };
     } catch (error) {
         console.error("Error uploading to Cloudflare R2:", error);
         throw new Error('Failed to upload file to storage.');
     }
 };
 
+/**
+ * Delete a file from Cloudflare R2.
+ * 
+ * @param {string} key - The R2 object key (e.g. 'materials/1234-abc.pdf')
+ */
+const deleteFile = async (key) => {
+    if (!key) return;
+    
+    const command = new DeleteObjectCommand({
+        Bucket: process.env.R2_BUCKET_NAME,
+        Key: key,
+    });
+
+    try {
+        await s3Client.send(command);
+        console.log(`R2: Deleted ${key}`);
+    } catch (error) {
+        console.error(`R2: Failed to delete ${key}:`, error);
+        // Don't throw — deletion failure shouldn't block the DB operation
+    }
+};
+
 module.exports = {
-    uploadFile
+    uploadFile,
+    deleteFile
 };

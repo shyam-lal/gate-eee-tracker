@@ -1,0 +1,53 @@
+{
+  "_instructions": "Use this template when asking ChatGPT/Gemini to extract a syllabus from a PDF. Copy this entire JSON structure and tell the AI: 'Extract the syllabus from this PDF into the following JSON format. Fill in subjects and topics with real data.'",
+  "_chatgpt_prompt": "Extract the syllabus from this PDF into the following JSON structure. Each subject should have a name, optional weightage percentage, and a list of topics. Each topic should have a name, estimated study hours, and difficulty (easy/medium/hard). Return ONLY valid JSON, no markdown.",
+
+  "exam": {
+    "name": "GATE EE 2027",
+    "full_name": "Graduate Aptitude Test in Engineering - Electrical Engineering",
+    "category": "Engineering Entrance",
+    "description": "National level exam for admission to postgraduate programs in engineering",
+    "primary_color": "#6366f1",
+    "accent_color": "#818cf8"
+  },
+
+  "subjects": [
+    {
+      "name": "Electric Circuits",
+      "weightage": 10,
+      "topics": [
+        { "name": "KCL and KVL", "estimated_hours": 8, "difficulty": "easy" },
+        { "name": "Network Theorems", "estimated_hours": 15, "difficulty": "medium" },
+        { "name": "Transient Response", "estimated_hours": 12, "difficulty": "medium" },
+        { "name": "Sinusoidal Steady State Analysis", "estimated_hours": 14, "difficulty": "hard" },
+        { "name": "Resonance", "estimated_hours": 6, "difficulty": "medium" },
+        { "name": "Two-port Networks", "estimated_hours": 10, "difficulty": "hard" }
+      ]
+    },
+    {
+      "name": "Control Systems",
+      "weightage": 12,
+      "topics": [
+        { "name": "Transfer Functions", "estimated_hours": 10, "difficulty": "medium" },
+        { "name": "Block Diagram and Signal Flow Graphs", "estimated_hours": 8, "difficulty": "easy" },
+        { "name": "Time Domain Analysis", "estimated_hours": 12, "difficulty": "medium" },
+        { "name": "Root Locus", "estimated_hours": 14, "difficulty": "hard" },
+        { "name": "Bode Plots", "estimated_hours": 12, "difficulty": "hard" },
+        { "name": "Nyquist Plots", "estimated_hours": 10, "difficulty": "hard" },
+        { "name": "State Space Analysis", "estimated_hours": 15, "difficulty": "hard" }
+      ]
+    },
+    {
+      "name": "Power Systems",
+      "weightage": 15,
+      "topics": [
+        { "name": "Power Generation Concepts", "estimated_hours": 8, "difficulty": "easy" },
+        { "name": "Transmission Lines", "estimated_hours": 14, "difficulty": "medium" },
+        { "name": "Per Unit System", "estimated_hours": 6, "difficulty": "medium" },
+        { "name": "Load Flow Analysis", "estimated_hours": 12, "difficulty": "hard" },
+        { "name": "Symmetrical Components", "estimated_hours": 10, "difficulty": "hard" },
+        { "name": "Power System Stability", "estimated_hours": 15, "difficulty": "hard" }
+      ]
+    }
+  ]
+}

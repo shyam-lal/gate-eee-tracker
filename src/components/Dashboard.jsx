@@ -4,13 +4,14 @@ import {
     ChevronRight, Play, Clock, Target,
     Zap, Calendar, BarChart3, LayoutGrid,
     BookOpen, Trophy, Sparkles, Users, Plus, Layers,
-    MoreVertical, Edit3, Trash2, X, BrainCircuit, AlertCircle, Timer, RotateCcw, Activity, ClipboardCheck
+    MoreVertical, Edit3, Trash2, X, BrainCircuit, AlertCircle, Timer, RotateCcw, Activity, ClipboardCheck, Shield
 } from 'lucide-react';
 import UserStreakWidget from './ui/UserStreakWidget';
 import GlobalAnalytics from './analytics/GlobalAnalytics';
 import CourseCalculatorModal from './calculator/CourseCalculatorModal';
+import ExamSwitcher from './exam/ExamSwitcher';
 
-const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenSocial, onOpenPlanner, onSetupTool, onDeleteTool, onRenameTool, onStartFocus, onClearToolData }) => {
+const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenSocial, onOpenPlanner, onSetupTool, onDeleteTool, onRenameTool, onStartFocus, onClearToolData, onOpenAdmin, onOpenMaterials }) => {
 
     const [menuOpen, setMenuOpen] = useState(null); // toolId of open menu
     const [renamingTool, setRenamingTool] = useState(null);
@@ -71,6 +72,7 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
                         <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest">Global Search</span>
                         <div className="px-1.5 py-0.5 bg-slate-800 rounded text-[9px] font-mono text-slate-600">CTRL K</div>
                     </div>
+                    <ExamSwitcher />
                     <button onClick={onOpenProfile} className="relative group">
                         <div className="w-10 h-10 bg-slate-800 rounded-full border border-slate-700 overflow-hidden group-hover:border-indigo-500 transition-colors">
                             <div className="w-full h-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black">
@@ -310,7 +312,17 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
                         }} className="shrink-0 snap-start flex items-center gap-2 px-6 py-3 bg-amber-500/20 text-amber-500 border border-amber-500/30 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-amber-500/30 hover:text-amber-400 transition-all">
                             <ClipboardCheck size={16} /> Revision Tests
                         </button>
+                        {onOpenMaterials && (
+                            <button onClick={onOpenMaterials} className="shrink-0 snap-start flex items-center gap-2 px-6 py-3 bg-cyan-600/20 text-cyan-400 border border-cyan-500/30 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-cyan-600/30 hover:text-cyan-300 transition-all">
+                                <BookOpen size={16} /> Materials
+                            </button>
+                        )}
                         <div className="w-px h-6 bg-white/10 mx-2 shrink-0 hidden sm:block"></div>
+                        {onOpenAdmin && (
+                            <button onClick={onOpenAdmin} className="shrink-0 snap-start flex items-center gap-2 px-4 py-3 bg-rose-600/20 text-rose-400 border border-rose-500/30 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-rose-600/30 hover:text-rose-300 transition-all">
+                                <Shield size={16} /> Admin
+                            </button>
+                        )}
                         <button onClick={onOpenSocial} className="p-3 text-slate-400 hover:text-white transition-colors relative shrink-0">
                             <Users size={20} />
                         </button>

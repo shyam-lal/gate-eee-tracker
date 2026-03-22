@@ -5,9 +5,9 @@ const { generatePrompt } = require('../services/revisionPromptService');
 
 exports.createSet = async (req, res) => {
     try {
-        const { title, topics, questionCount, timePerQuestion } = req.body;
+        const { title, topics, questionCount, timePerQuestion, examId } = req.body;
         if (!title || !topics) return res.status(400).json({ error: 'Title and topics are required' });
-        const set = await revisionService.createSet(req.user.id, title, topics, questionCount || 10, timePerQuestion || 180);
+        const set = await revisionService.createSet(req.user.id, title, topics, questionCount || 10, timePerQuestion || 180, examId || null);
         res.json(set);
     } catch (err) {
         console.error('createSet error:', err);
@@ -17,7 +17,7 @@ exports.createSet = async (req, res) => {
 
 exports.getUserSets = async (req, res) => {
     try {
-        const sets = await revisionService.getUserSets(req.user.id);
+        const sets = await revisionService.getUserSets(req.user.id, req.query.exam_id || null);
         res.json(sets);
     } catch (err) {
         console.error('getUserSets error:', err);
