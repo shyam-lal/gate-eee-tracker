@@ -24,7 +24,7 @@ const TestResults = ({ attemptId, set, onBack, onRetry }) => {
         finally { setLoading(false); }
     };
 
-    if (loading) return <div className="flex items-center justify-center h-64"><Loader2 className="animate-spin text-slate-500" size={32} /></div>;
+    if (loading) return <div className="flex items-center justify-center h-64"><Loader2 className="animate-spin text-surface-500" size={32} /></div>;
     if (!attempt) return null;
 
     const answers = attempt.answers || [];
@@ -72,12 +72,12 @@ const TestResults = ({ attemptId, set, onBack, onRetry }) => {
         <div className="w-full max-w-4xl mx-auto animate-in fade-in zoom-in-95 duration-500 p-2">
             {/* Header */}
             <div className="flex items-center gap-4 mb-8">
-                <button onClick={onBack} className="w-10 h-10 flex items-center justify-center bg-slate-900 border border-slate-800 rounded-xl text-slate-400 hover:text-white hover:border-slate-600 transition-colors">
+                <button onClick={onBack} className="w-10 h-10 flex items-center justify-center bg-surface-900 border border-surface-800 rounded-xl text-surface-400 hover:text-white hover:border-slate-600 transition-colors">
                     <ArrowLeft size={18} />
                 </button>
                 <div>
                     <h2 className="text-2xl font-black text-white uppercase tracking-tighter">Test Results</h2>
-                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{set?.title || 'Revision Set'}</p>
+                    <p className="text-[10px] text-surface-500 font-bold uppercase tracking-widest">{set?.title || 'Revision Set'}</p>
                 </div>
             </div>
 
@@ -88,7 +88,7 @@ const TestResults = ({ attemptId, set, onBack, onRetry }) => {
                 }`}>
                 <div className="flex items-baseline justify-center gap-2 mb-2">
                     <h1 className="text-6xl font-black text-white">{score}</h1>
-                    <span className="text-2xl font-bold text-slate-400">/ {maxScore}</span>
+                    <span className="text-2xl font-bold text-surface-400">/ {maxScore}</span>
                 </div>
                 <p className={`text-lg font-black uppercase tracking-widest ${pct >= 70 ? 'text-emerald-400' : pct >= 40 ? 'text-amber-400' : 'text-rose-400'
                     }`}>{pct}%</p>
@@ -99,28 +99,28 @@ const TestResults = ({ attemptId, set, onBack, onRetry }) => {
                             <CheckCircle2 size={16} className="text-emerald-400" />
                             <span className="text-2xl font-black text-white">{correct}</span>
                         </div>
-                        <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Correct</p>
+                        <p className="text-[9px] font-black text-surface-500 uppercase tracking-widest">Correct</p>
                     </div>
                     <div className="text-center">
                         <div className="flex items-center justify-center gap-1.5 mb-1">
                             <XCircle size={16} className="text-rose-400" />
                             <span className="text-2xl font-black text-white">{wrong}</span>
                         </div>
-                        <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Wrong</p>
+                        <p className="text-[9px] font-black text-surface-500 uppercase tracking-widest">Wrong</p>
                     </div>
                     <div className="text-center">
                         <div className="flex items-center justify-center gap-1.5 mb-1">
-                            <Minus size={16} className="text-slate-400" />
+                            <Minus size={16} className="text-surface-400" />
                             <span className="text-2xl font-black text-white">{unanswered}</span>
                         </div>
-                        <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Skipped</p>
+                        <p className="text-[9px] font-black text-surface-500 uppercase tracking-widest">Skipped</p>
                     </div>
                     <div className="text-center">
                         <div className="flex items-center justify-center gap-1.5 mb-1">
-                            <Clock size={16} className="text-indigo-400" />
+                            <Clock size={16} className="text-primary-400" />
                             <span className="text-2xl font-black text-white">{formatTime(totalTime)}</span>
                         </div>
-                        <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Time</p>
+                        <p className="text-[9px] font-black text-surface-500 uppercase tracking-widest">Time</p>
                     </div>
                 </div>
             </div>
@@ -130,13 +130,13 @@ const TestResults = ({ attemptId, set, onBack, onRetry }) => {
                 <button onClick={onRetry} className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-amber-500 text-black rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-amber-400 transition-all shadow-lg shadow-amber-500/20">
                     <RefreshCcw size={16} /> Retry Test
                 </button>
-                <button onClick={onBack} className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-slate-800 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-700 transition-all">
+                <button onClick={onBack} className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-surface-800 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-surface-700 transition-all">
                     <ArrowLeft size={16} /> Back to Set
                 </button>
             </div>
 
             {/* Per-Question Breakdown */}
-            <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Question Breakdown</h4>
+            <h4 className="text-xs font-black text-surface-400 uppercase tracking-widest mb-4">Question Breakdown</h4>
             <div className="space-y-2">
                 {questions.map((q, idx) => {
                     const ans = answers.find(a => a.question_id === q.id);
@@ -146,30 +146,30 @@ const TestResults = ({ attemptId, set, onBack, onRetry }) => {
                     return (
                         <div key={q.id} className={`border rounded-2xl transition-all ${isCorrect ? 'bg-emerald-500/5 border-emerald-500/20' :
                                 ans && !isCorrect ? 'bg-rose-500/5 border-rose-500/20' :
-                                    'bg-slate-900/50 border-slate-800'
+                                    'bg-surface-900/50 border-surface-800'
                             }`}>
                             <button onClick={() => setExpandedQ(isExpanded ? null : q.id)} className="w-full flex items-center gap-3 p-4 text-left">
-                                <span className="text-xs font-black text-slate-500 w-6 text-center shrink-0">{idx + 1}</span>
+                                <span className="text-xs font-black text-surface-500 w-6 text-center shrink-0">{idx + 1}</span>
                                 {isCorrect ? (
                                     <CheckCircle2 size={18} className="text-emerald-400 shrink-0" />
                                 ) : ans ? (
                                     <XCircle size={18} className="text-rose-400 shrink-0" />
                                 ) : (
-                                    <Minus size={18} className="text-slate-500 shrink-0" />
+                                    <Minus size={18} className="text-surface-500 shrink-0" />
                                 )}
                                 <p className="text-sm text-white font-medium flex-1 line-clamp-1">
                                     {q.question_text}
                                 </p>
                                 {ans && (
-                                    <span className="text-[10px] text-slate-500 font-bold shrink-0 mr-2">
+                                    <span className="text-[10px] text-surface-500 font-bold shrink-0 mr-2">
                                         {ans.time_spent_seconds ? formatTime(ans.time_spent_seconds) : ''}
                                     </span>
                                 )}
-                                {isExpanded ? <ChevronUp size={16} className="text-slate-500 shrink-0" /> : <ChevronDown size={16} className="text-slate-500 shrink-0" />}
+                                {isExpanded ? <ChevronUp size={16} className="text-surface-500 shrink-0" /> : <ChevronDown size={16} className="text-surface-500 shrink-0" />}
                             </button>
                             {isExpanded && (
                                 <div className="px-4 pb-4 pt-0 border-t border-white/5 animate-in slide-in-from-top-2 duration-200">
-                                    <p className="text-sm text-slate-300 mb-4 leading-relaxed">{q.question_text}</p>
+                                    <p className="text-sm text-surface-400 mb-4 leading-relaxed">{q.question_text}</p>
 
                                     {q.options && (
                                         <div className="space-y-1.5 mb-4">
@@ -179,7 +179,7 @@ const TestResults = ({ attemptId, set, onBack, onRetry }) => {
                                                 return (
                                                     <div key={oi} className={`flex items-center gap-2 p-2 rounded-lg text-xs ${isCorrectOpt ? 'bg-emerald-500/10 text-emerald-400' :
                                                             isUserAnswer ? 'bg-rose-500/10 text-rose-400' :
-                                                                'text-slate-400'
+                                                                'text-surface-400'
                                                         }`}>
                                                         <span className="font-black w-5">{String.fromCharCode(65 + oi)}</span>
                                                         <span className="font-medium">{opt}</span>
@@ -193,15 +193,15 @@ const TestResults = ({ attemptId, set, onBack, onRetry }) => {
 
                                     {q.question_type === 'nat' && (
                                         <div className="flex gap-4 mb-4 text-xs">
-                                            <div><span className="text-slate-500 font-bold">Your answer: </span><span className="text-white font-bold">{getAnswerLabel(q, ans?.user_answer)}</span></div>
-                                            <div><span className="text-slate-500 font-bold">Correct: </span><span className="text-emerald-400 font-bold">{getCorrectLabel(q)}</span></div>
+                                            <div><span className="text-surface-500 font-bold">Your answer: </span><span className="text-white font-bold">{getAnswerLabel(q, ans?.user_answer)}</span></div>
+                                            <div><span className="text-surface-500 font-bold">Correct: </span><span className="text-emerald-400 font-bold">{getCorrectLabel(q)}</span></div>
                                         </div>
                                     )}
 
                                     {q.explanation && (
-                                        <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-3 mt-2">
-                                            <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1">Explanation</p>
-                                            <p className="text-xs text-slate-300 leading-relaxed">{q.explanation}</p>
+                                        <div className="bg-surface-900/50 border border-surface-800 rounded-xl p-3 mt-2">
+                                            <p className="text-[10px] font-black text-primary-400 uppercase tracking-widest mb-1">Explanation</p>
+                                            <p className="text-xs text-surface-400 leading-relaxed">{q.explanation}</p>
                                         </div>
                                     )}
                                 </div>

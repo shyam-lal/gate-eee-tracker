@@ -28,8 +28,8 @@ const GlobalAnalytics = () => {
     };
 
     if (loading) return (
-        <div className="h-48 rounded-[2.5rem] border border-white/5 bg-slate-900/40 animate-pulse flex items-center justify-center">
-            <span className="text-slate-500 font-bold uppercase tracking-widest text-xs">Loading Insights...</span>
+        <div className="h-48 rounded-[2.5rem] border border-white/5 bg-surface-900/40 animate-pulse flex items-center justify-center">
+            <span className="text-surface-500 font-bold uppercase tracking-widest text-xs">Loading Insights...</span>
         </div>
     );
 
@@ -61,7 +61,7 @@ const GlobalAnalytics = () => {
     return (
         <div className="space-y-6 mt-8 mb-12 animate-in fade-in duration-700">
             <div className="flex items-center gap-3 px-2">
-                <div className="p-2 bg-indigo-500/10 rounded-xl text-indigo-400">
+                <div className="p-2 bg-primary-500/10 rounded-xl text-primary-400">
                     <Activity size={20} />
                 </div>
                 <h3 className="font-black text-white text-xl uppercase tracking-tighter">Global Insights</h3>
@@ -69,9 +69,9 @@ const GlobalAnalytics = () => {
 
             {/* Top Level Metric Cards */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-slate-900/40 backdrop-blur-xl border border-white/5 p-6 rounded-3xl relative overflow-hidden group hover:border-indigo-500/30 transition-all">
-                    <div className="absolute -right-4 -top-4 opacity-5 text-indigo-500 group-hover:scale-110 transition-transform"><Clock size={100} /></div>
-                    <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2 relative z-10">Last 7 Days</p>
+                <div className="bg-surface-900/40 backdrop-blur-xl border border-white/5 p-6 rounded-3xl relative overflow-hidden group hover:border-primary-500/30 transition-all">
+                    <div className="absolute -right-4 -top-4 opacity-5 text-primary-500 group-hover:scale-110 transition-transform"><Clock size={100} /></div>
+                    <p className="text-[10px] font-black text-surface-500 uppercase tracking-widest mb-2 relative z-10">Last 7 Days</p>
                     <p className="text-3xl font-black text-white tracking-tighter relative z-10">
                         {formatTime(data.weeklyRecap?.currentWeekMins)}
                     </p>
@@ -79,27 +79,27 @@ const GlobalAnalytics = () => {
                         {data.weeklyRecap?.percentageChange > 0 ? (
                             <span className="text-xs font-bold text-emerald-400 flex items-center bg-emerald-500/10 px-2 py-0.5 rounded-full">+{data.weeklyRecap?.percentageChange}%</span>
                         ) : (
-                            <span className="text-xs font-bold text-slate-500 flex items-center bg-slate-800 px-2 py-0.5 rounded-full">{data.weeklyRecap?.percentageChange}%</span>
+                            <span className="text-xs font-bold text-surface-500 flex items-center bg-surface-800 px-2 py-0.5 rounded-full">{data.weeklyRecap?.percentageChange}%</span>
                         )}
-                        <span className="text-[9px] font-bold text-slate-600 uppercase">vs last week</span>
+                        <span className="text-[9px] font-bold text-surface-600 uppercase">vs last week</span>
                     </div>
                 </div>
 
-                <div className="bg-slate-900/40 backdrop-blur-xl border border-white/5 p-6 rounded-3xl relative overflow-hidden group hover:border-emerald-500/30 transition-all">
+                <div className="bg-surface-900/40 backdrop-blur-xl border border-white/5 p-6 rounded-3xl relative overflow-hidden group hover:border-emerald-500/30 transition-all">
                     <div className="absolute -right-4 -top-4 opacity-5 text-emerald-500 group-hover:scale-110 transition-transform"><Award size={100} /></div>
-                    <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2 relative z-10">Consistency</p>
+                    <p className="text-[10px] font-black text-surface-500 uppercase tracking-widest mb-2 relative z-10">Consistency</p>
                     <p className="text-3xl font-black text-emerald-400 tracking-tighter relative z-10">
                         {data.consistencyScore}%
                     </p>
-                    <p className="text-[9px] font-bold text-slate-600 uppercase mt-2 relative z-10">Days active out of 30</p>
+                    <p className="text-[9px] font-bold text-surface-600 uppercase mt-2 relative z-10">Days active out of 30</p>
                 </div>
 
-                <div className="col-span-2 bg-gradient-to-br from-indigo-900/20 to-purple-900/20 backdrop-blur-xl border border-indigo-500/20 p-6 rounded-3xl flex items-center">
+                <div className="col-span-2 bg-gradient-to-br from-primary-700/20 to-secondary-600/20 backdrop-blur-xl border border-primary-500/20 p-6 rounded-3xl flex items-center">
                     <div>
-                        <h4 className="flex items-center gap-2 text-indigo-400 font-black uppercase tracking-widest text-xs mb-1">
+                        <h4 className="flex items-center gap-2 text-primary-400 font-black uppercase tracking-widest text-xs mb-1">
                             <Flame size={14} /> AI Insight
                         </h4>
-                        <p className="text-indigo-100/80 font-medium text-sm leading-relaxed">
+                        <p className="text-primary-100/80 font-medium text-sm leading-relaxed">
                             {data.weeklyRecap?.currentWeekMins > data.weeklyRecap?.previousWeekMins
                                 ? "You're accelerating! You've logged more deep work this week than last week. Keep riding this momentum."
                                 : "Your study volume is down slightly this week. Consider setting a small, highly achievable 25m Focus Session today to rebuild momentum."}
@@ -112,13 +112,13 @@ const GlobalAnalytics = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
                 {/* 30-Day Activity Trend */}
-                <div className="lg:col-span-2 bg-slate-900/40 backdrop-blur-xl border border-white/5 p-6 md:p-8 rounded-[2.5rem] relative">
+                <div className="lg:col-span-2 bg-surface-900/40 backdrop-blur-xl border border-white/5 p-6 md:p-8 rounded-[2.5rem] relative">
                     <div className="flex justify-between items-start mb-8">
                         <div>
                             <h4 className="text-white font-black uppercase tracking-tighter text-lg mb-1">30-Day Velocity</h4>
-                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Daily Minutes & 3-Day Trend</p>
+                            <p className="text-[10px] text-surface-500 font-bold uppercase tracking-widest">Daily Minutes & 3-Day Trend</p>
                         </div>
-                        <div className="p-2 bg-slate-800 rounded-xl text-slate-400"><TrendingUp size={16} /></div>
+                        <div className="p-2 bg-surface-800 rounded-xl text-surface-400"><TrendingUp size={16} /></div>
                     </div>
 
                     <div className="h-64 w-full">
@@ -163,13 +163,13 @@ const GlobalAnalytics = () => {
                 </div>
 
                 {/* Tool Distribution */}
-                <div className="bg-slate-900/40 backdrop-blur-xl border border-white/5 p-6 md:p-8 rounded-[2.5rem] relative flex flex-col">
+                <div className="bg-surface-900/40 backdrop-blur-xl border border-white/5 p-6 md:p-8 rounded-[2.5rem] relative flex flex-col">
                     <div className="flex justify-between items-start mb-4">
                         <div>
                             <h4 className="text-white font-black uppercase tracking-tighter text-lg mb-1">Allocation</h4>
-                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Time by Subject/Tool</p>
+                            <p className="text-[10px] text-surface-500 font-bold uppercase tracking-widest">Time by Subject/Tool</p>
                         </div>
-                        <div className="p-2 bg-slate-800 rounded-xl text-slate-400"><PieChartIcon size={16} /></div>
+                        <div className="p-2 bg-surface-800 rounded-xl text-surface-400"><PieChartIcon size={16} /></div>
                     </div>
 
                     <div className="flex-1 flex flex-col justify-center items-center">
@@ -200,7 +200,7 @@ const GlobalAnalytics = () => {
                                         <div key={idx} className="flex justify-between items-center text-xs">
                                             <div className="flex items-center gap-2">
                                                 <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[idx % COLORS.length] }} />
-                                                <span className="text-slate-300 font-bold truncate max-w-[120px]">{entry.name}</span>
+                                                <span className="text-surface-400 font-bold truncate max-w-[120px]">{entry.name}</span>
                                             </div>
                                             <span className="text-white font-black">{formatTime(entry.value)}</span>
                                         </div>
@@ -208,7 +208,7 @@ const GlobalAnalytics = () => {
                                 </div>
                             </>
                         ) : (
-                            <div className="text-center text-sm font-bold text-slate-600 uppercase tracking-widest p-8">
+                            <div className="text-center text-sm font-bold text-surface-600 uppercase tracking-widest p-8">
                                 No data logged yet
                             </div>
                         )}

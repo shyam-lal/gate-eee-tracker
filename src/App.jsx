@@ -486,15 +486,15 @@ function App() {
     if (view === 'planner') return <PlannerDashboard onBack={() => setView('dashboard')} />;
 
     return (
-      <div className="min-h-screen bg-[#020617] text-slate-200 font-sans p-4 md:p-8 pb-32 selection:bg-indigo-500/30">
+      <div className="min-h-screen bg-base text-surface-400 font-sans p-4 md:p-8 pb-32 selection:bg-primary-500/30">
 
         {(editingLog) && (
           <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200" onClick={() => setEditingLog(null)}>
-            <div className="bg-[#0b1121] border border-slate-700 p-6 md:p-8 rounded-3xl shadow-2xl w-full max-w-sm" onClick={e => e.stopPropagation()}>
-              <h3 className="font-black text-white text-xl mb-6 uppercase tracking-tight flex items-center gap-2"><Edit3 size={20} className="text-indigo-400" /> Edit Total</h3>
+            <div className="bg-surface-950 border border-surface-700 p-6 md:p-8 rounded-3xl shadow-2xl w-full max-w-sm" onClick={e => e.stopPropagation()}>
+              <h3 className="font-black text-white text-xl mb-6 uppercase tracking-tight flex items-center gap-2"><Edit3 size={20} className="text-primary-400" /> Edit Total</h3>
               <div className="mb-6">
-                <p className="text-indigo-400 font-black text-lg leading-tight uppercase tracking-tighter">{editingLog.topicName}</p>
-                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Adjust total {trackingMode === 'module' ? 'modules completed' : 'time logged'}</p>
+                <p className="text-primary-400 font-black text-lg leading-tight uppercase tracking-tighter">{editingLog.topicName}</p>
+                <p className="text-[10px] text-surface-500 font-bold uppercase tracking-widest">Adjust total {trackingMode === 'module' ? 'modules completed' : 'time logged'}</p>
               </div>
               <div className="space-y-4">
                 {trackingMode === 'module' ? (
@@ -502,7 +502,7 @@ function App() {
                     type="number"
                     min="0"
                     id="edit-log-input"
-                    className="w-full bg-slate-900 border border-slate-800 rounded-2xl p-4 text-white text-lg font-mono text-center focus:border-indigo-500 outline-none"
+                    className="w-full bg-surface-900 border border-surface-800 rounded-2xl p-4 text-white text-lg font-mono text-center focus:border-primary-500 outline-none"
                     defaultValue={editingLog.modules || 0}
                     autoFocus
                   />
@@ -514,7 +514,7 @@ function App() {
                   />
                 )}
                 <div className="flex gap-2">
-                  <button onClick={() => setEditingLog(null)} className="flex-1 bg-slate-800 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs">Cancel</button>
+                  <button onClick={() => setEditingLog(null)} className="flex-1 bg-surface-800 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs">Cancel</button>
                   <button
                     onClick={() => {
                       if (trackingMode === 'module') {
@@ -523,7 +523,7 @@ function App() {
                         handleEditLogSave(editingLog.topicId, String(editTotalMinutes));
                       }
                     }}
-                    className="flex-[2] bg-indigo-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs"
+                    className="flex-[2] bg-primary-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs"
                   >Update Total</button>
                 </div>
               </div>
@@ -533,9 +533,9 @@ function App() {
 
         {celebration === 'topic' && (
           <div className="fixed inset-0 pointer-events-none z-[250] flex items-center justify-center animate-in zoom-in-50 duration-300">
-            <div className="bg-slate-900/90 backdrop-blur border border-indigo-500/50 p-8 rounded-3xl shadow-2xl flex flex-col items-center gap-4">
+            <div className="bg-surface-900/90 backdrop-blur border border-primary-500/50 p-8 rounded-3xl shadow-2xl flex flex-col items-center gap-4">
               <PartyPopper size={64} className="text-yellow-400 animate-bounce" />
-              <h2 className="text-2xl font-black text-white bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent uppercase tracking-tighter">Time Synced!</h2>
+              <h2 className="text-2xl font-black text-white bg-gradient-to-r from-primary-400 to-secondary-400 bg-clip-text text-transparent uppercase tracking-tighter">Time Synced!</h2>
             </div>
           </div>
         )}
@@ -543,23 +543,23 @@ function App() {
         {/* ANALYTICS MODAL */}
         {showAnalytics && (
           <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-in fade-in duration-300" onClick={() => setShowAnalytics(false)}>
-            <div className="bg-[#0b1121] border border-slate-700 w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300" onClick={e => e.stopPropagation()}>
-              <div className="bg-slate-900 px-6 py-4 border-b border-slate-800 flex justify-between items-center">
+            <div className="bg-surface-950 border border-surface-700 w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300" onClick={e => e.stopPropagation()}>
+              <div className="bg-surface-900 px-6 py-4 border-b border-surface-800 flex justify-between items-center">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-indigo-500/10 rounded-lg text-indigo-400"><TrendingUp size={20} /></div>
+                  <div className="p-2 bg-primary-500/10 rounded-lg text-primary-400"><TrendingUp size={20} /></div>
                   <h3 className="text-white font-black uppercase tracking-tighter text-lg sm:text-xl">{activeTool?.tool_type === 'flashcard' ? 'Flashcard Analytics' : 'Vault Analytics'}</h3>
                 </div>
-                <button onClick={() => setShowAnalytics(false)} className="p-2 hover:bg-slate-800 rounded-full text-slate-500 hover:text-white transition-colors"><X size={20} /></button>
+                <button onClick={() => setShowAnalytics(false)} className="p-2 hover:bg-surface-800 rounded-full text-surface-500 hover:text-white transition-colors"><X size={20} /></button>
               </div>
 
               <div className="p-6 md:p-8 space-y-8 overflow-y-auto max-h-[80vh] no-scrollbar">
                 {activeTool?.tool_type === 'flashcard' ? (
                   <div className="space-y-8">
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-slate-900/50 p-6 rounded-3xl border border-slate-800/50 text-center">
-                        <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Cards Learned</h4>
-                        <p className="text-5xl font-black text-indigo-400">{flashcardAnalytics?.learned_cards || 0}</p>
-                        <p className="text-xs font-bold text-slate-500 mt-2">Started spaced repetition</p>
+                      <div className="bg-surface-900/50 p-6 rounded-3xl border border-surface-800/50 text-center">
+                        <h4 className="text-[10px] font-black text-surface-500 uppercase tracking-widest mb-2">Cards Learned</h4>
+                        <p className="text-5xl font-black text-primary-400">{flashcardAnalytics?.learned_cards || 0}</p>
+                        <p className="text-xs font-bold text-surface-500 mt-2">Started spaced repetition</p>
                       </div>
                       <div className="bg-slate-900/50 p-6 rounded-3xl border border-slate-800/50 text-center">
                         <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Avg. Ease Factor</h4>
@@ -567,15 +567,15 @@ function App() {
                         <p className="text-xs font-bold text-slate-500 mt-2">Higher = Easier recall</p>
                       </div>
                     </div>
-                    <div className="bg-indigo-900/20 p-6 rounded-3xl border border-indigo-500/30">
-                      <h4 className="text-sm font-black text-white uppercase tracking-widest mb-2 flex items-center gap-2"><Sparkles size={16} className="text-indigo-400" /> AI Content Integration</h4>
-                      <p className="text-sm text-indigo-200">Our upcoming AI engine will automatically scan your Vault documents and suggest high-yield flashcards to add to your decks. The more you use your Vault, the smarter your study sessions will become.</p>
+                    <div className="bg-primary-700/20 p-6 rounded-3xl border border-primary-500/30">
+                      <h4 className="text-sm font-black text-white uppercase tracking-widest mb-2 flex items-center gap-2"><Sparkles size={16} className="text-primary-400" /> AI Content Integration</h4>
+                      <p className="text-sm text-primary-100">Our upcoming AI engine will automatically scan your Vault documents and suggest high-yield flashcards to add to your decks. The more you use your Vault, the smarter your study sessions will become.</p>
                     </div>
                   </div>
                 ) : (
                   <>
                     {/* Target Date Section */}
-                    <div className="bg-slate-900/50 p-6 rounded-3xl border border-slate-800/50">
+                    <div className="bg-surface-900/50 p-6 rounded-3xl border border-surface-800/50">
                       <DatePicker
                         value={targetDate}
                         onChange={updateTargetDate}
@@ -588,47 +588,47 @@ function App() {
                     <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12 py-4">
                       <div className="relative w-48 h-48 shrink-0">
                         <svg className="w-full h-full transform -rotate-90">
-                          <circle cx="96" cy="96" r="88" stroke="currentColor" strokeWidth="12" fill="transparent" className="text-slate-800" />
-                          <circle cx="96" cy="96" r="88" stroke="currentColor" strokeWidth="12" fill="transparent" strokeDasharray={552.9} strokeDashoffset={552.9 - (552.9 * progressPercentage) / 100} className="text-indigo-500 transition-all duration-1000 ease-out" strokeLinecap="round" />
+                          <circle cx="96" cy="96" r="88" stroke="currentColor" strokeWidth="12" fill="transparent" className="text-surface-800" />
+                          <circle cx="96" cy="96" r="88" stroke="currentColor" strokeWidth="12" fill="transparent" strokeDasharray={552.9} strokeDashoffset={552.9 - (552.9 * progressPercentage) / 100} className="text-primary-500 transition-all duration-1000 ease-out" strokeLinecap="round" />
                         </svg>
                         <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
                           <span className="text-4xl font-black text-white leading-none">{progressPercentage}%</span>
-                          <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-1">Cleared</span>
+                          <span className="text-[10px] font-black text-surface-500 uppercase tracking-widest mt-1">Cleared</span>
                         </div>
                       </div>
                       <div className="flex-1 grid grid-cols-2 gap-4 w-full">
                         {trackingMode === 'module' ? (
                           <>
-                            <div className="bg-slate-900/30 p-4 rounded-2xl border border-slate-800/30">
-                              <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Modules Done</p>
-                              <p className="text-xl font-black text-emerald-400 tracking-tighter">{syllabus.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + (t.completedModules || 0), 0), 0)} <span className="text-xs text-slate-500 font-bold">DONE</span></p>
+                            <div className="bg-surface-900/30 p-4 rounded-2xl border border-surface-800/30">
+                              <p className="text-[9px] font-black text-surface-500 uppercase tracking-widest mb-1">Modules Done</p>
+                              <p className="text-xl font-black text-emerald-400 tracking-tighter">{syllabus.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + (t.completedModules || 0), 0), 0)} <span className="text-xs text-surface-500 font-bold">DONE</span></p>
                             </div>
-                            <div className="bg-slate-900/30 p-4 rounded-2xl border border-slate-800/30">
-                              <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Modules Left</p>
-                              <p className="text-xl font-black text-indigo-400 tracking-tighter">{syllabus.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + Math.max(0, (t.totalModules || 0) - (t.completedModules || 0)), 0), 0)} <span className="text-xs text-slate-500 font-bold">LEFT</span></p>
+                            <div className="bg-surface-900/30 p-4 rounded-2xl border border-surface-800/30">
+                              <p className="text-[9px] font-black text-surface-500 uppercase tracking-widest mb-1">Modules Left</p>
+                              <p className="text-xl font-black text-primary-400 tracking-tighter">{syllabus.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + Math.max(0, (t.totalModules || 0) - (t.completedModules || 0)), 0), 0)} <span className="text-xs text-surface-500 font-bold">LEFT</span></p>
                             </div>
-                            <div className="bg-slate-900/30 p-4 rounded-2xl border border-slate-800/30 col-span-2 flex items-center justify-between">
+                            <div className="bg-surface-900/30 p-4 rounded-2xl border border-surface-800/30 col-span-2 flex items-center justify-between">
                               <div>
-                                <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Total Modules</p>
-                                <p className="text-2xl font-black text-white tracking-tighter">{syllabus.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + (t.totalModules || 0), 0), 0)} <span className="text-xs text-slate-500 font-bold">UNITS</span></p>
+                                <p className="text-[9px] font-black text-surface-500 uppercase tracking-widest mb-1">Total Modules</p>
+                                <p className="text-2xl font-black text-white tracking-tighter">{syllabus.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + (t.totalModules || 0), 0), 0)} <span className="text-xs text-surface-500 font-bold">UNITS</span></p>
                               </div>
                               <Zap size={24} className="text-yellow-400 opacity-50" />
                             </div>
                           </>
                         ) : (
                           <>
-                            <div className="bg-slate-900/30 p-4 rounded-2xl border border-slate-800/30">
+                            <div className="bg-surface-900/30 p-4 rounded-2xl border border-surface-800/30">
                               <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Study Done</p>
                               <p className="text-xl font-black text-emerald-400 tracking-tighter">{formatTime(totalStudyMins)}</p>
                             </div>
-                            <div className="bg-slate-900/30 p-4 rounded-2xl border border-slate-800/30">
+                            <div className="bg-surface-900/30 p-4 rounded-2xl border border-surface-800/30">
                               <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Time Left</p>
-                              <p className="text-xl font-black text-indigo-400 tracking-tighter">{formatTime(remainingMins)}</p>
+                              <p className="text-xl font-black text-primary-400 tracking-tighter">{formatTime(remainingMins)}</p>
                             </div>
-                            <div className="bg-slate-900/30 p-4 rounded-2xl border border-slate-800/30 col-span-2 flex items-center justify-between">
+                            <div className="bg-surface-900/30 p-4 rounded-2xl border border-surface-800/30 col-span-2 flex items-center justify-between">
                               <div>
                                 <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Required Daily</p>
-                                <p className="text-2xl font-black text-white tracking-tighter">{formatTime(dailyGoalMins)} <span className="text-xs text-slate-500 font-bold">/ day</span></p>
+                                <p className="text-2xl font-black text-white tracking-tighter">{formatTime(dailyGoalMins)} <span className="text-xs text-surface-500 font-bold">/ day</span></p>
                               </div>
                               <Zap size={24} className="text-yellow-400 opacity-50" />
                             </div>
@@ -639,7 +639,7 @@ function App() {
 
                     {/* Graphical representation (Syllabus Weight) */}
                     <div className="space-y-4">
-                      <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block pl-1">Syllabus Weight Distribution</label>
+                      <label className="text-[10px] font-black text-surface-500 uppercase tracking-widest block pl-1">Syllabus Weight Distribution</label>
                       <div className="space-y-3">
                         {syllabus.map(sub => {
                           const subTotal = sub.topics.reduce((acc, t) => acc + (t.time || 0), 0);
@@ -650,10 +650,10 @@ function App() {
                             <div key={sub.id} className="space-y-1.5">
                               <div className="flex justify-between text-[11px] font-bold">
                                 <span className="text-slate-300">{sub.name} <span className="text-slate-600 font-black ml-2">{weight}% Weight</span></span>
-                                <span className="text-indigo-400">{subProgress}%</span>
+                                <span className="text-primary-400">{subProgress}%</span>
                               </div>
-                              <div className="h-2 bg-slate-900 rounded-full overflow-hidden flex">
-                                <div className="h-full bg-indigo-500 transition-all duration-1000" style={{ width: `${subProgress}%` }} />
+                              <div className="h-2 bg-surface-900 rounded-full overflow-hidden flex">
+                                <div className="h-full bg-primary-500 transition-all duration-1000" style={{ width: `${subProgress}%` }} />
                               </div>
                             </div>
                           )
@@ -670,23 +670,23 @@ function App() {
         {/* GLOBAL HUB EDITOR (Create / Edit Subject) */}
         {editingId && (
           <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-in fade-in duration-300">
-            <div className="bg-[#0b1121] border border-slate-700 w-full max-w-3xl rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
-              <div className="bg-slate-900 px-6 py-4 border-b border-slate-800 flex justify-between items-center">
+            <div className="bg-surface-950 border border-surface-700 w-full max-w-3xl rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+              <div className="bg-surface-900 px-6 py-4 border-b border-surface-800 flex justify-between items-center">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-indigo-500/10 rounded-lg text-indigo-400">
+                  <div className="p-2 bg-primary-500/10 rounded-lg text-primary-400">
                     {editingId === 'new' ? <Plus size={20} /> : <Edit3 size={20} />}
                   </div>
                   <h3 className="text-white font-black uppercase tracking-tighter text-lg sm:text-xl">
                     {editingId === 'new' ? "New Subject Pack" : "Syllabus Hub Editor"}
                   </h3>
                 </div>
-                <button onClick={() => setEditingId(null)} className="p-2 hover:bg-slate-800 rounded-full text-slate-500 hover:text-white transition-colors"><X size={20} /></button>
+                <button onClick={() => setEditingId(null)} className="p-2 hover:bg-surface-800 rounded-full text-surface-500 hover:text-white transition-colors"><X size={20} /></button>
               </div>
 
               <form onSubmit={saveSubject} className="p-6 md:p-8 space-y-8 max-h-[85vh] overflow-y-auto no-scrollbar">
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
-                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block pl-1">Subject Name</label>
+                    <label className="text-[10px] font-black text-surface-500 uppercase tracking-widest block pl-1">Subject Name</label>
                     {editingId !== 'new' && (
                       <button type="button" onClick={() => handleDeleteSubject(editingId, editorData.name)} className="text-[10px] text-rose-500/50 hover:text-rose-500 font-bold uppercase tracking-widest transition-colors flex items-center gap-1"><Trash2 size={12} /> Delete Subject</button>
                     )}
@@ -695,7 +695,7 @@ function App() {
                     type="text"
                     autoFocus
                     placeholder="e.g. Electrical Machines"
-                    className="w-full bg-slate-900/50 border border-slate-800 rounded-2xl p-4 md:p-5 text-lg md:text-xl font-bold text-white placeholder-slate-700 focus:border-indigo-500 outline-none transition-all shadow-inner"
+                    className="w-full bg-surface-900/50 border border-surface-800 rounded-2xl p-4 md:p-5 text-lg md:text-xl font-bold text-white placeholder-surface-700 focus:border-primary-500 outline-none transition-all shadow-inner"
                     value={editorData.name}
                     onChange={e => setEditorData({ ...editorData, name: e.target.value })}
                     required
@@ -704,23 +704,23 @@ function App() {
 
                 <div className="space-y-4">
                   <div className="flex justify-between items-center pl-1">
-                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block">Syllabus Breakdown</label>
+                    <label className="text-[10px] font-black text-surface-500 uppercase tracking-widest block">Syllabus Breakdown</label>
                     <button
                       type="button"
                       onClick={() => setEditorData({ ...editorData, topics: [...editorData.topics, { name: "", estimate: "12h", modules: 1, timeSpent: 0, completedModules: 0, id: null }] })}
-                      className="text-[10px] bg-indigo-500/10 text-indigo-400 font-black uppercase tracking-widest px-4 py-2 rounded-xl hover:bg-indigo-500 hover:text-white transition-all flex items-center gap-2"
+                      className="text-[10px] bg-primary-500/10 text-primary-400 font-black uppercase tracking-widest px-4 py-2 rounded-xl hover:bg-primary-500 hover:text-white transition-all flex items-center gap-2"
                     ><Plus size={14} /> Add Topic</button>
 
                   </div>
 
                   <div className="space-y-3">
                     {editorData.topics.map((topic, idx) => (
-                      <div key={idx} className="flex flex-col gap-3 p-4 bg-slate-900/40 rounded-2xl border border-slate-800/30 animate-in slide-in-from-left-2 transition-all">
+                      <div key={idx} className="flex flex-col gap-3 p-4 bg-surface-900/40 rounded-2xl border border-surface-800/30 animate-in slide-in-from-left-2 transition-all">
                         <div className="flex flex-col sm:flex-row gap-3">
                           <input
                             type="text"
                             placeholder="Topic name"
-                            className="flex-1 bg-slate-900/50 border border-slate-800 rounded-xl p-3 text-sm text-white focus:border-indigo-500 outline-none"
+                            className="flex-1 bg-surface-900/50 border border-surface-800 rounded-xl p-3 text-sm text-white focus:border-primary-500 outline-none"
                             value={topic.name}
                             onChange={e => {
                               const updated = [...editorData.topics];
@@ -734,7 +734,7 @@ function App() {
                               <input
                                 type="text"
                                 placeholder={trackingMode === 'module' ? "Modules" : "12h"}
-                                className="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-sm text-center text-indigo-400 font-mono font-bold focus:border-indigo-500 outline-none"
+                                className="w-full bg-surface-900 border border-surface-800 rounded-xl p-3 text-sm text-center text-primary-400 font-mono font-bold focus:border-primary-500 outline-none"
                                 value={trackingMode === 'module' ? topic.modules : topic.estimate}
                                 onChange={e => {
                                   const updated = [...editorData.topics];
@@ -756,18 +756,18 @@ function App() {
                                   setEditorData({ ...editorData, topics: updated });
                                 }
                               }}
-                              className="p-3 text-slate-600 hover:text-rose-500 disabled:opacity-0 transition-colors"
+                              className="p-3 text-surface-600 hover:text-rose-500 disabled:opacity-0 transition-colors"
                             ><Trash2 size={18} /></button>
                           </div>
                         </div>
                         {topic.id && (
-                          <div className="bg-slate-950/50 p-3 rounded-xl border border-slate-800/50 space-y-2.5">
+                          <div className="bg-surface-950/50 p-3 rounded-xl border border-surface-800/50 space-y-2.5">
                             {/* Progress Section */}
                             <div>
                               <div className="flex justify-between items-center mb-1">
-                                <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Progress</span>
+                                <span className="text-[10px] font-black text-surface-600 uppercase tracking-widest">Progress</span>
                                 <div className="flex items-center gap-2">
-                                  <span className="text-[10px] font-mono text-indigo-400 font-bold">
+                                  <span className="text-[10px] font-mono text-primary-400 font-bold">
                                     {trackingMode === 'module'
                                       ? `${topic.completedModules} / ${topic.modules} Modules`
                                       : `${formatTime(topic.timeSpent)} Logged`}
@@ -782,18 +782,18 @@ function App() {
                                         topicName: topic.name
                                       });
                                     }}
-                                    className="p-1 text-slate-600 hover:text-indigo-400 transition-colors rounded hover:bg-slate-800" title="Edit total"
+                                    className="p-1 text-surface-600 hover:text-primary-400 transition-colors rounded hover:bg-surface-800" title="Edit total"
                                   ><Edit3 size={11} /></button>
                                 </div>
                               </div>
-                              <div className="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
-                                <div className="h-full bg-indigo-500" style={{ width: `${Math.min(100, (trackingMode === 'module' ? (topic.completedModules / (topic.modules || 1)) : (topic.timeSpent / parseFormalTime(topic.estimate))) * 100)}%` }} />
+                              <div className="h-1 w-full bg-surface-800 rounded-full overflow-hidden">
+                                <div className="h-full bg-primary-500" style={{ width: `${Math.min(100, (trackingMode === 'module' ? (topic.completedModules / (topic.modules || 1)) : (topic.timeSpent / parseFormalTime(topic.estimate))) * 100)}%` }} />
                               </div>
                             </div>
 
                             {/* Log Activity Section */}
-                            <div className="bg-slate-900/60 border border-dashed border-slate-700/60 rounded-lg p-2.5">
-                              <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest block mb-2">Log Activity</span>
+                            <div className="bg-surface-900/60 border border-dashed border-surface-700/60 rounded-lg p-2.5">
+                              <span className="text-[9px] font-black text-surface-600 uppercase tracking-widest block mb-2">Log Activity</span>
                               <div className="flex items-center gap-2">
                                 {trackingMode === 'module' ? (
                                   <input
@@ -801,7 +801,7 @@ function App() {
                                     min="0"
                                     id={`log-hub-${topic.id}`}
                                     placeholder="+ Mod"
-                                    className="w-20 bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-center text-white focus:border-indigo-500 outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                    className="w-20 bg-surface-950 border border-surface-800 rounded-lg p-2 text-xs text-center text-white focus:border-primary-500 outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                   />
                                 ) : (
                                   <TimeInput
@@ -827,7 +827,7 @@ function App() {
                                       }
                                     }
                                   }}
-                                  className="px-3 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-all text-[10px] font-black uppercase tracking-wider whitespace-nowrap"
+                                  className="px-3 py-2 bg-primary-600 hover:bg-primary-500 text-white rounded-lg transition-all text-[10px] font-black uppercase tracking-wider whitespace-nowrap"
                                 >Log</button>
                               </div>
                             </div>
@@ -838,8 +838,8 @@ function App() {
                   </div>
                 </div>
 
-                <div className="pt-4 sticky bottom-0 bg-[#0b1121] pb-2">
-                  <button disabled={loading} className="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-4 md:py-5 rounded-2xl font-black text-base md:text-lg uppercase tracking-widest flex items-center justify-center gap-3 transition-all shadow-xl shadow-indigo-600/20">
+                <div className="pt-4 sticky bottom-0 bg-surface-950 pb-2">
+                  <button disabled={loading} className="w-full bg-primary-600 hover:bg-primary-500 text-white py-4 md:py-5 rounded-2xl font-black text-base md:text-lg uppercase tracking-widest flex items-center justify-center gap-3 transition-all shadow-xl shadow-primary-600/20">
                     {loading ? (
                       <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                     ) : <Save size={20} />}
@@ -853,21 +853,21 @@ function App() {
 
         {/* DASHBOARD CONTENT */}
         <div className="max-w-7xl mx-auto space-y-8 md:space-y-12">
-          <header className="flex flex-col md:flex-row justify-between items-center md:items-end gap-6 border-b border-slate-900 pb-8">
+          <header className="flex flex-col md:flex-row justify-between items-center md:items-end gap-6 border-b border-surface-900 pb-8">
             <div className="space-y-1 text-center md:text-left">
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tighter uppercase leading-none">{activeTool?.name || 'VAULT'}</h1>
-              <p className="text-slate-500 font-bold tracking-widest text-[9px] sm:text-[10px] uppercase italic">
+              <p className="text-surface-500 font-bold tracking-widest text-[9px] sm:text-[10px] uppercase italic">
                 Engineer: {user.username} • {activeTool?.tool_type === 'module' ? 'MODULE' : 'COURSE'} MODE • {activeTool?.selected_exam || 'GATE'}
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
               <button
                 onClick={() => { setActiveTool(null); setSyllabus([]); loadTools(); loadUserStreak(); setView('dashboard'); }}
-                className="flex items-center justify-center gap-2 text-slate-400 hover:text-white transition-colors font-black uppercase tracking-widest text-[10px] border border-slate-800 px-6 py-4 sm:py-2 rounded-xl"
+                className="flex items-center justify-center gap-2 text-surface-400 hover:text-white transition-colors font-black uppercase tracking-widest text-[10px] border border-surface-800 px-6 py-4 sm:py-2 rounded-xl"
               >
                 <ArrowLeft size={16} /> HUB
               </button>
-              <button onClick={() => openEditor()} className="bg-white text-black px-8 py-4 rounded-xl sm:rounded-2xl flex items-center justify-center sm:justify-start gap-3 font-black transition-all hover:bg-indigo-500 hover:text-white shadow-xl shadow-white/5 uppercase tracking-tighter"><Plus size={20} /> NEW SUBJECT</button>
+              <button onClick={() => openEditor()} className="bg-white text-black px-8 py-4 rounded-xl sm:rounded-2xl flex items-center justify-center sm:justify-start gap-3 font-black transition-all hover:bg-primary-500 hover:text-white shadow-xl shadow-white/5 uppercase tracking-tighter"><Plus size={20} /> NEW SUBJECT</button>
             </div>
 
           </header>
@@ -886,39 +886,39 @@ function App() {
                   formatTime={formatTime}
                 />
               </div>
-              <div className="bg-slate-900/50 border border-slate-800/50 p-6 rounded-3xl flex items-center gap-6 relative overflow-hidden group">
+              <div className="bg-surface-900/50 border border-surface-800/50 p-6 rounded-3xl flex items-center gap-6 relative overflow-hidden group">
                 <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none transition-opacity"><Flame size={120} /></div>
                 <div className="p-4 bg-orange-500/10 rounded-2xl text-orange-500"><Flame size={32} fill="currentColor" /></div>
-                <div><p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Efficiency</p><h2 className="text-3xl sm:text-4xl font-black text-white leading-none tracking-tighter">PREMIUM</h2></div>
+                <div><p className="text-[10px] font-black text-surface-500 uppercase tracking-widest leading-none mb-1">Efficiency</p><h2 className="text-3xl sm:text-4xl font-black text-white leading-none tracking-tighter">PREMIUM</h2></div>
               </div>
-              <div onClick={() => setShowAnalytics(true)} className="bg-slate-900/50 border border-slate-800 border-indigo-500/20 p-6 rounded-3xl flex items-center gap-6 relative overflow-hidden group cursor-pointer hover:border-indigo-500/50 transition-all active:scale-[0.98]">
+              <div onClick={() => setShowAnalytics(true)} className="bg-surface-900/50 border border-surface-800 border-primary-500/20 p-6 rounded-3xl flex items-center gap-6 relative overflow-hidden group cursor-pointer hover:border-primary-500/50 transition-all active:scale-[0.98]">
                 <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none transition-opacity group-hover:opacity-10"><BarChart3 size={120} /></div>
-                <div className="p-4 bg-indigo-500/10 rounded-2xl text-indigo-400 group-hover:scale-110 transition-transform"><BarChart3 size={32} /></div>
+                <div className="p-4 bg-primary-500/10 rounded-2xl text-primary-400 group-hover:scale-110 transition-transform"><BarChart3 size={32} /></div>
                 <div className="flex-1">
                   {trackingMode === 'module' ? (
                     <>
-                      <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1 flex justify-between">Modules <span className="text-indigo-400">{progressPercentage}%</span></p>
+                      <p className="text-[10px] font-black text-surface-500 uppercase tracking-widest leading-none mb-1 flex justify-between">Modules <span className="text-primary-400">{progressPercentage}%</span></p>
                       <h2 className="text-3xl sm:text-4xl font-black text-white leading-none tracking-tighter">
                         {syllabus.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + (t.completedModules || 0), 0), 0)}
-                        <span className="text-[10px] text-slate-600 align-middle"> / {syllabus.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + (t.totalModules || 0), 0), 0)} DONE</span>
+                        <span className="text-[10px] text-surface-600 align-middle"> / {syllabus.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + (t.totalModules || 0), 0), 0)} DONE</span>
                       </h2>
                       <div className="mt-3 space-y-1">
-                        <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden shrink-0"><div className="h-full bg-indigo-500 transition-all duration-1000" style={{ width: `${progressPercentage}%` }} /></div>
-                        <div className="flex justify-between items-center text-[9px] font-black text-slate-500 uppercase tracking-widest">
+                        <div className="h-1.5 w-full bg-surface-800 rounded-full overflow-hidden shrink-0"><div className="h-full bg-primary-500 transition-all duration-1000" style={{ width: `${progressPercentage}%` }} /></div>
+                        <div className="flex justify-between items-center text-[9px] font-black text-surface-500 uppercase tracking-widest">
                           <span>{syllabus.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + Math.max(0, (t.totalModules || 0) - (t.completedModules || 0)), 0), 0)} modules left</span>
-                          <span className="text-indigo-400">{progressPercentage}% cleared</span>
+                          <span className="text-primary-400">{progressPercentage}% cleared</span>
                         </div>
                       </div>
                     </>
                   ) : (
                     <>
-                      <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1 flex justify-between">Study Hours <span className="text-indigo-400">{progressPercentage}%</span></p>
-                      <h2 className="text-3xl sm:text-4xl font-black text-white leading-none tracking-tighter">{formatTime(totalStudyMins)} <span className="text-[10px] text-slate-600 align-middle"> DONE</span></h2>
+                      <p className="text-[10px] font-black text-surface-500 uppercase tracking-widest leading-none mb-1 flex justify-between">Study Hours <span className="text-primary-400">{progressPercentage}%</span></p>
+                      <h2 className="text-3xl sm:text-4xl font-black text-white leading-none tracking-tighter">{formatTime(totalStudyMins)} <span className="text-[10px] text-surface-600 align-middle"> DONE</span></h2>
                       <div className="mt-3 space-y-1">
-                        <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden shrink-0"><div className="h-full bg-indigo-500 transition-all duration-1000" style={{ width: `${progressPercentage}%` }} /></div>
-                        <div className="flex justify-between items-center text-[9px] font-black text-slate-500 uppercase tracking-widest">
+                        <div className="h-1.5 w-full bg-surface-800 rounded-full overflow-hidden shrink-0"><div className="h-full bg-primary-500 transition-all duration-1000" style={{ width: `${progressPercentage}%` }} /></div>
+                        <div className="flex justify-between items-center text-[9px] font-black text-surface-500 uppercase tracking-widest">
                           <span>Goal: {formatTime(dailyGoalMins)}</span>
-                          <span className="text-slate-600">{formatTime(remainingMins)} LEFT</span>
+                          <span className="text-surface-600">{formatTime(remainingMins)} LEFT</span>
                         </div>
                       </div>
                     </>
@@ -953,25 +953,25 @@ function App() {
 
 
                   return (
-                    <div key={sub.id} className={`bg-slate-900 border ${subProgress >= 100 ? 'border-emerald-500/30' : 'border-slate-800/50'} rounded-2xl sm:rounded-[2rem] p-6 sm:p-8 transition-all hover:bg-[#0c1225] hover:border-indigo-500/40 relative group shadow-sm flex flex-col`}>
+                    <div key={sub.id} className={`bg-surface-900 border ${subProgress >= 100 ? 'border-emerald-500/30' : 'border-surface-800/50'} rounded-2xl sm:rounded-[2rem] p-6 sm:p-8 transition-all hover:bg-surface-950 hover:border-primary-500/40 relative group shadow-sm flex flex-col`}>
                       <div className="flex justify-between items-start mb-6">
                         <div className="cursor-pointer select-none flex-1 pr-2" onClick={() => toggleExpand(sub.id)}>
-                          <h3 className="font-black uppercase text-sm sm:text-base leading-tight tracking-tighter group-hover:text-indigo-400 transition-colors">{sub.name}</h3>
+                          <h3 className="font-black uppercase text-sm sm:text-base leading-tight tracking-tighter group-hover:text-primary-400 transition-colors">{sub.name}</h3>
                         </div>
                         <div className="flex gap-2">
-                          <button onClick={() => openEditor(sub)} className="p-1.5 text-slate-700 hover:text-white transition-colors"><Edit3 size={16} /></button>
+                          <button onClick={() => openEditor(sub)} className="p-1.5 text-surface-700 hover:text-white transition-colors"><Edit3 size={16} /></button>
                         </div>
                       </div>
 
-                      <div className="flex justify-between items-end mb-2 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                      <div className="flex justify-between items-end mb-2 text-[10px] font-black uppercase tracking-widest text-surface-500">
                         <span>
                           {trackingMode === 'module' ? `${subDone} / ${subTotal} Modules` : `${formatTime(subDone)} / ${formatTime(subTotal)}`}
                         </span>
                         <span className={subProgress >= 100 ? 'text-emerald-400' : 'text-indigo-400'}>{subProgress}%</span>
                       </div>
 
-                      <div className="h-2 w-full bg-slate-800/50 rounded-full overflow-hidden mb-6 cursor-pointer" onClick={() => toggleExpand(sub.id)}>
-                        <div className={`h-full ${subProgress >= 100 ? 'bg-emerald-500' : 'bg-gradient-to-r from-indigo-600 to-indigo-400'} transition-all duration-1000`} style={{ width: `${subProgress}%` }} />
+                      <div className="h-2 w-full bg-surface-800/50 rounded-full overflow-hidden mb-6 cursor-pointer" onClick={() => toggleExpand(sub.id)}>
+                        <div className={`h-full ${subProgress >= 100 ? 'bg-emerald-500' : 'bg-gradient-to-r from-primary-600 to-primary-400'} transition-all duration-1000`} style={{ width: `${subProgress}%` }} />
                       </div>
 
                       <div className={`expand-container ${isOpen ? 'open' : ''}`}>
@@ -982,13 +982,13 @@ function App() {
                               const done = trackingMode === 'module' ? t.completedModules : t.timeSpent;
                               const tp = weight > 0 ? (done / weight) * 100 : 0;
                               return (
-                                <div key={tIdx} className="group/topic bg-slate-950/40 border border-slate-800/30 rounded-xl p-3 sm:p-4 transition-all hover:border-indigo-500/20 active:scale-[0.98]">
+                                <div key={tIdx} className="group/topic bg-surface-950/40 border border-surface-800/30 rounded-xl p-3 sm:p-4 transition-all hover:border-primary-500/20 active:scale-[0.98]">
                                   <div className="flex justify-between items-center mb-1 gap-2">
                                     <span onClick={() => setLoggingTopic({ subId: sub.id, topicName: t.name, currentSpent: done, topicId: t.id })} className={`text-[11px] sm:text-xs font-bold leading-tight flex-1 cursor-pointer ${tp >= 100 ? 'text-emerald-400 opacity-60' : 'text-slate-300'}`}>{t.name}</span>
                                     <div className="flex items-center gap-2 min-w-max">
                                       {trackingMode === 'module'
-                                        ? <span className="text-[9px] font-mono text-slate-600 font-black">{done}/{weight}</span>
-                                        : <span className="text-[9px] font-mono text-slate-600 font-black">{formatTime(done)} / {formatTime(weight)}</span>
+                                        ? <span className="text-[9px] font-mono text-surface-600 font-black">{done}/{weight}</span>
+                                        : <span className="text-[9px] font-mono text-surface-600 font-black">{formatTime(done)} / {formatTime(weight)}</span>
                                       }
                                       <div className="flex gap-1">
                                         <button onClick={() => {
@@ -998,30 +998,30 @@ function App() {
                                             modules: done,
                                             topicName: t.name
                                           });
-                                        }} className="p-1 hover:text-indigo-400 transition-colors" title="Edit total"><Edit3 size={10} /></button>
-                                        <button onClick={() => setLoggingTopic({ subId: sub.id, topicName: t.name, currentSpent: done, topicId: t.id })} className="p-1 hover:text-indigo-400 transition-colors"><Plus size={10} /></button>
+                                        }} className="p-1 hover:text-primary-400 transition-colors" title="Edit total"><Edit3 size={10} /></button>
+                                        <button onClick={() => setLoggingTopic({ subId: sub.id, topicName: t.name, currentSpent: done, topicId: t.id })} className="p-1 hover:text-primary-400 transition-colors"><Plus size={10} /></button>
                                       </div>
                                     </div>
                                   </div>
 
-                                  <div className="h-1 w-full bg-slate-900 rounded-full overflow-hidden">
-                                    <div className={`h-full ${tp >= 100 ? 'bg-emerald-500' : 'bg-indigo-600'} transition-all duration-500`} style={{ width: `${Math.min(100, tp)}%` }} />
+                                  <div className="h-1 w-full bg-surface-900 rounded-full overflow-hidden">
+                                    <div className={`h-full ${tp >= 100 ? 'bg-emerald-500' : 'bg-primary-600'} transition-all duration-500`} style={{ width: `${Math.min(100, tp)}%` }} />
                                   </div>
                                 </div>
                               )
                             })}
-                            <button onClick={() => openEditor(sub)} className="w-full py-3 sm:py-4 border-2 border-dashed border-slate-800/50 rounded-2xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-slate-600 hover:text-indigo-400 hover:border-indigo-500/30 transition-all flex items-center justify-center gap-2 mt-2 font-black">+ Update Syllabus</button>
+                            <button onClick={() => openEditor(sub)} className="w-full py-3 sm:py-4 border-2 border-dashed border-surface-800/50 rounded-2xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-surface-600 hover:text-primary-400 hover:border-primary-500/30 transition-all flex items-center justify-center gap-2 mt-2 font-black">+ Update Syllabus</button>
                           </div>
                         </div>
                       </div>
 
-                      {!isOpen && sub.topics.length > 0 && <div className="text-center py-2 opacity-50 group-hover:opacity-100 transition-opacity cursor-pointer text-slate-700 hover:text-indigo-500" onClick={() => toggleExpand(sub.id)}><ChevronDown size={14} className="mx-auto" /></div>}
+                      {!isOpen && sub.topics.length > 0 && <div className="text-center py-2 opacity-50 group-hover:opacity-100 transition-opacity cursor-pointer text-surface-700 hover:text-primary-500" onClick={() => toggleExpand(sub.id)}><ChevronDown size={14} className="mx-auto" /></div>}
                     </div>
                   );
                 })}
 
-                <button onClick={() => openEditor()} className="border-2 border-dashed border-slate-800/50 rounded-2xl sm:rounded-[2rem] p-8 flex flex-col items-center justify-center gap-4 text-slate-700 hover:text-indigo-500 hover:border-indigo-500/30 transition-all group h-full min-h-[220px]">
-                  <div className="p-4 bg-slate-900 rounded-2xl group-hover:scale-110 transition-transform"><Plus size={32} /></div>
+                <button onClick={() => openEditor()} className="border-2 border-dashed border-surface-800/50 rounded-2xl sm:rounded-[2rem] p-8 flex flex-col items-center justify-center gap-4 text-surface-700 hover:text-primary-500 hover:border-primary-500/30 transition-all group h-full min-h-[220px]">
+                  <div className="p-4 bg-surface-900 rounded-2xl group-hover:scale-110 transition-transform"><Plus size={32} /></div>
                   <span className="font-black uppercase tracking-widest text-[9px] sm:text-[10px]">Add New Subject</span>
                 </button>
               </div>
@@ -1032,11 +1032,11 @@ function App() {
         {/* QUICK LOG MODAL */}
         {loggingTopic && (
           <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200" onClick={() => setLoggingTopic(null)}>
-            <div className="bg-[#0b1121] border border-slate-700 p-6 md:p-8 rounded-3xl shadow-2xl w-full max-w-sm animate-in zoom-in-95" onClick={e => e.stopPropagation()}>
-              <h3 className="font-black text-white text-xl mb-6 uppercase tracking-tight flex items-center gap-2"><Clock size={20} className="text-indigo-400" /> {trackingMode === 'module' ? 'Check Unit' : 'Log Time'}</h3>
+            <div className="bg-surface-950 border border-surface-700 p-6 md:p-8 rounded-3xl shadow-2xl w-full max-w-sm animate-in zoom-in-95" onClick={e => e.stopPropagation()}>
+              <h3 className="font-black text-white text-xl mb-6 uppercase tracking-tight flex items-center gap-2"><Clock size={20} className="text-primary-400" /> {trackingMode === 'module' ? 'Check Unit' : 'Log Time'}</h3>
               <div className="mb-6 space-y-1 text-center sm:text-left">
-                <p className="text-indigo-400 font-black text-lg leading-tight uppercase tracking-tighter">{loggingTopic.topicName}</p>
-                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Currently: {trackingMode === 'module' ? `${loggingTopic.currentSpent} Done` : formatTime(loggingTopic.currentSpent)}</p>
+                <p className="text-primary-400 font-black text-lg leading-tight uppercase tracking-tighter">{loggingTopic.topicName}</p>
+                <p className="text-[10px] text-surface-500 font-bold uppercase tracking-widest">Currently: {trackingMode === 'module' ? `${loggingTopic.currentSpent} Done` : formatTime(loggingTopic.currentSpent)}</p>
               </div>
 
               <div className="space-y-4">
@@ -1048,7 +1048,7 @@ function App() {
                         type="number"
                         min="0"
                         id="quick-log-input"
-                        className="bg-slate-900 border border-slate-800 rounded-2xl p-4 text-white text-lg font-mono text-center focus:border-indigo-500 outline-none transition-all shadow-inner [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        className="bg-surface-900 border border-surface-800 rounded-2xl p-4 text-white text-lg font-mono text-center focus:border-primary-500 outline-none transition-all shadow-inner [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         placeholder="0"
                         autoFocus
                       />
@@ -1072,7 +1072,7 @@ function App() {
                       setLoggingTopic(null);
                       setQuickLogMinutes(0);
                     }}
-                    className="bg-indigo-600 text-white px-6 py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-indigo-500 transition-all active:scale-95 shadow-lg shadow-indigo-600/10"
+                    className="bg-primary-600 text-white px-6 py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-primary-500 transition-all active:scale-95 shadow-lg shadow-primary-600/10"
                   >{trackingMode === 'module' ? 'Finish Units' : 'Log Work'}</button>
                 </div>
               </div>

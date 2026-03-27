@@ -5,7 +5,7 @@ import 'katex/dist/katex.min.css';
 import renderMathInElement from 'katex/dist/contrib/auto-render.js';
 
 const TYPE_BADGES = {
-    mcq: { label: 'MCQ', class: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' },
+    mcq: { label: 'MCQ', class: 'bg-primary-500/10 text-primary-400 border-primary-500/20' },
     msq: { label: 'MSQ', class: 'bg-purple-500/10 text-purple-400 border-purple-500/20' },
     nat: { label: 'NAT', class: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' },
     tf: { label: 'T/F', class: 'bg-amber-500/10 text-amber-400 border-amber-500/20' }
@@ -83,7 +83,7 @@ const QuestionBank = ({ set, onStartTest, onBack }) => {
         } catch (err) { alert('Failed to resume'); }
     };
 
-    if (loading) return <div className="flex items-center justify-center h-64"><Loader2 className="animate-spin text-slate-500" size={32} /></div>;
+    if (loading) return <div className="flex items-center justify-center h-64"><Loader2 className="animate-spin text-surface-500" size={32} /></div>;
     if (!setData) return null;
 
     const questions = setData.questions || [];
@@ -92,7 +92,7 @@ const QuestionBank = ({ set, onStartTest, onBack }) => {
         <div className="w-full max-w-4xl mx-auto animate-in fade-in slide-in-from-right-8 duration-300 p-2">
             {/* Header */}
             <div className="flex items-center gap-4 mb-6">
-                <button onClick={onBack} className="w-10 h-10 flex items-center justify-center bg-slate-900 border border-slate-800 rounded-xl text-slate-400 hover:text-white hover:border-slate-600 transition-colors">
+                <button onClick={onBack} className="w-10 h-10 flex items-center justify-center bg-surface-900 border border-surface-800 rounded-xl text-surface-400 hover:text-white hover:border-slate-600 transition-colors">
                     <ArrowLeft size={18} />
                 </button>
                 <div className="flex-1">
@@ -104,16 +104,16 @@ const QuestionBank = ({ set, onStartTest, onBack }) => {
                     </div>
                 </div>
                 {/* Mode Selector */}
-                <div className="flex bg-slate-900 border border-slate-800 p-1 rounded-2xl">
+                <div className="flex bg-surface-900 border border-surface-800 p-1 rounded-2xl">
                     <button
                         onClick={() => setTestMode('exam')}
-                        className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${testMode === 'exam' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
+                        className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${testMode === 'exam' ? 'bg-primary-600 text-white shadow-lg' : 'text-surface-500 hover:text-surface-400'}`}
                     >
                         Exam
                     </button>
                     <button
                         onClick={() => setTestMode('study')}
-                        className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${testMode === 'study' ? 'bg-amber-500 text-black shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
+                        className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${testMode === 'study' ? 'bg-amber-500 text-black shadow-lg' : 'text-surface-500 hover:text-surface-400'}`}
                     >
                         Study
                     </button>
@@ -127,30 +127,30 @@ const QuestionBank = ({ set, onStartTest, onBack }) => {
                         <Play size={14} /> Resume Test
                     </button>
                 )}
-                <button onClick={() => handleStartTest(false)} disabled={questions.length === 0} className="flex items-center gap-2 px-5 py-3 bg-emerald-500 disabled:bg-slate-800 text-black disabled:text-slate-500 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/20 disabled:shadow-none">
+                <button onClick={() => handleStartTest(false)} disabled={questions.length === 0} className="flex items-center gap-2 px-5 py-3 bg-emerald-500 disabled:bg-surface-800 text-black disabled:text-surface-500 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/20 disabled:shadow-none">
                     <Play size={14} /> Start Test
                 </button>
-                <button onClick={() => handleStartTest(true)} disabled={questions.length === 0} className="flex items-center gap-2 px-5 py-3 bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-indigo-500/30 transition-all disabled:opacity-40">
+                <button onClick={() => handleStartTest(true)} disabled={questions.length === 0} className="flex items-center gap-2 px-5 py-3 bg-primary-500/20 text-primary-400 border border-primary-500/30 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-primary-500/30 transition-all disabled:opacity-40">
                     <Shuffle size={14} /> Shuffle & Start
                 </button>
-                <button onClick={() => setShowHistory(!showHistory)} className="flex items-center gap-2 px-5 py-3 bg-slate-800 text-slate-300 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-700 transition-all">
+                <button onClick={() => setShowHistory(!showHistory)} className="flex items-center gap-2 px-5 py-3 bg-surface-800 text-surface-400 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-surface-700 transition-all">
                     <History size={14} /> History ({history.filter(h => h.status === 'completed').length})
                 </button>
             </div>
 
             {/* History Panel */}
             {showHistory && history.length > 0 && (
-                <div className="bg-slate-900/60 border border-white/5 rounded-2xl p-5 mb-6 animate-in slide-in-from-top-4 duration-300">
-                    <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Attempt History</h4>
+                <div className="bg-surface-900/60 border border-white/5 rounded-2xl p-5 mb-6 animate-in slide-in-from-top-4 duration-300">
+                    <h4 className="text-xs font-black text-surface-400 uppercase tracking-widest mb-4">Attempt History</h4>
                     <div className="space-y-2">
                         {history.filter(h => h.status === 'completed').map((a, i) => (
-                            <div key={a.id} className="flex items-center justify-between bg-slate-950/50 rounded-xl p-3 border border-slate-800">
+                            <div key={a.id} className="flex items-center justify-between bg-surface-950/50 rounded-xl p-3 border border-surface-800">
                                 <div className="flex items-center gap-3">
-                                    <span className="text-xs font-black text-slate-500">#{history.filter(h => h.status === 'completed').length - i}</span>
+                                    <span className="text-xs font-black text-surface-500">#{history.filter(h => h.status === 'completed').length - i}</span>
                                     <span className="text-sm font-bold text-white">{a.score}/{a.max_score}</span>
-                                    <span className="text-xs text-slate-500">({a.max_score > 0 ? Math.round((a.score / a.max_score) * 100) : 0}%)</span>
+                                    <span className="text-xs text-surface-500">({a.max_score > 0 ? Math.round((a.score / a.max_score) * 100) : 0}%)</span>
                                 </div>
-                                <div className="flex items-center gap-3 text-[10px] text-slate-500 font-bold">
+                                <div className="flex items-center gap-3 text-[10px] text-surface-500 font-bold">
                                     <span className="flex items-center gap-1"><Clock size={10} /> {Math.round((a.time_taken_seconds || 0) / 60)}m</span>
                                     <span>{new Date(a.started_at).toLocaleDateString()}</span>
                                 </div>
@@ -163,30 +163,30 @@ const QuestionBank = ({ set, onStartTest, onBack }) => {
             {/* Questions List */}
             <div className="space-y-3" ref={containerRef}>
                 <div className="flex items-center justify-between mb-2">
-                    <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest"><BookOpen size={14} className="inline mr-1" /> {questions.length} Questions</h4>
+                    <h4 className="text-xs font-black text-surface-400 uppercase tracking-widest"><BookOpen size={14} className="inline mr-1" /> {questions.length} Questions</h4>
                 </div>
 
                 {questions.length === 0 ? (
                     <div className="text-center py-12 opacity-50">
-                        <AlertCircle size={32} className="mx-auto text-slate-600 mb-3" />
-                        <p className="text-sm text-slate-400">No questions imported yet. Go back and import questions.</p>
+                        <AlertCircle size={32} className="mx-auto text-surface-600 mb-3" />
+                        <p className="text-sm text-surface-400">No questions imported yet. Go back and import questions.</p>
                     </div>
                 ) : (
                     questions.map((q, idx) => {
                         const badge = TYPE_BADGES[q.question_type] || TYPE_BADGES.mcq;
                         return (
-                            <div key={q.id} className="bg-slate-950/50 border border-slate-800 hover:border-slate-700 rounded-2xl p-4 flex items-start gap-4 group transition-colors">
-                                <span className="text-xs font-black text-slate-600 mt-1 w-6 text-center shrink-0">{idx + 1}</span>
+                            <div key={q.id} className="bg-surface-950/50 border border-surface-800 hover:border-surface-700 rounded-2xl p-4 flex items-start gap-4 group transition-colors">
+                                <span className="text-xs font-black text-surface-600 mt-1 w-6 text-center shrink-0">{idx + 1}</span>
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-2 mb-1.5">
                                         <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest border ${badge.class}`}>{badge.label}</span>
-                                        <span className="text-[10px] font-bold text-slate-500">{q.marks} mark{q.marks > 1 ? 's' : ''}{q.negative_marks > 0 ? ` / -${q.negative_marks}` : ''}</span>
+                                        <span className="text-[10px] font-bold text-surface-500">{q.marks} mark{q.marks > 1 ? 's' : ''}{q.negative_marks > 0 ? ` / -${q.negative_marks}` : ''}</span>
                                     </div>
                                     <p className="text-sm text-white font-medium line-clamp-2">{q.question_text}</p>
                                 </div>
                                 <button
                                     onClick={() => handleDeleteQuestion(q.id)}
-                                    className="p-2 text-slate-600 hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-all shrink-0"
+                                    className="p-2 text-surface-600 hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-all shrink-0"
                                     title="Remove question"
                                 >
                                     <Trash2 size={14} />

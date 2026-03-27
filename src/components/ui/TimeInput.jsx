@@ -55,9 +55,9 @@ const TimeInput = forwardRef(({ value = null, onChange, compact = false, autoFoc
                         placeholder="0"
                         value={hours}
                         onChange={e => setHours(e.target.value)}
-                        className="w-14 bg-slate-900 border border-slate-800 rounded-lg p-2 pr-1 text-xs text-center text-white focus:border-indigo-500 outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        className="w-14 bg-surface-900 border border-surface-800 rounded-lg p-2 pr-1 text-xs text-center text-white focus:border-primary-500 outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     />
-                    <span className="absolute right-1.5 top-1/2 -translate-y-1/2 text-[8px] font-black text-slate-600 uppercase pointer-events-none">h</span>
+                    <span className="absolute right-1.5 top-1/2 -translate-y-1/2 text-[8px] font-black text-surface-600 uppercase pointer-events-none">h</span>
                 </div>
                 <div className="relative">
                     <input
@@ -67,9 +67,9 @@ const TimeInput = forwardRef(({ value = null, onChange, compact = false, autoFoc
                         placeholder="0"
                         value={minutes}
                         onChange={e => setMinutes(e.target.value)}
-                        className="w-14 bg-slate-900 border border-slate-800 rounded-lg p-2 pr-1 text-xs text-center text-white focus:border-indigo-500 outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        className="w-14 bg-surface-900 border border-surface-800 rounded-lg p-2 pr-1 text-xs text-center text-white focus:border-primary-500 outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     />
-                    <span className="absolute right-1.5 top-1/2 -translate-y-1/2 text-[8px] font-black text-slate-600 uppercase pointer-events-none">m</span>
+                    <span className="absolute right-1.5 top-1/2 -translate-y-1/2 text-[8px] font-black text-surface-600 uppercase pointer-events-none">m</span>
                 </div>
             </div>
         );
@@ -79,7 +79,7 @@ const TimeInput = forwardRef(({ value = null, onChange, compact = false, autoFoc
         <div className="flex items-stretch gap-3">
             {/* Hours */}
             <div className="flex-1 space-y-1.5">
-                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block pl-1">Hours</label>
+                <label className="text-[10px] font-black text-surface-500 uppercase tracking-widest block pl-1">Hours</label>
                 <div className="relative">
                     <input
                         type="number"
@@ -88,18 +88,18 @@ const TimeInput = forwardRef(({ value = null, onChange, compact = false, autoFoc
                         autoFocus={autoFocus}
                         value={hours}
                         onChange={e => setHours(e.target.value)}
-                        className="w-full bg-slate-900 border border-slate-800 rounded-2xl p-4 text-white text-lg font-mono text-center focus:border-indigo-500 outline-none transition-all shadow-inner [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        className="w-full bg-surface-900 border border-surface-800 rounded-2xl p-4 text-white text-lg font-mono text-center focus:border-primary-500 outline-none transition-all shadow-inner [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-black text-slate-600 uppercase pointer-events-none">hr</span>
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-black text-surface-600 uppercase pointer-events-none">hr</span>
                 </div>
             </div>
 
             {/* Separator */}
-            <div className="flex items-end pb-5 text-slate-700 font-black text-xl">:</div>
+            <div className="flex items-end pb-5 text-surface-700 font-black text-xl">:</div>
 
             {/* Minutes */}
             <div className="flex-1 space-y-1.5">
-                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block pl-1">Minutes</label>
+                <label className="text-[10px] font-black text-surface-500 uppercase tracking-widest block pl-1">Minutes</label>
                 <div className="relative">
                     <input
                         type="number"
@@ -108,9 +108,9 @@ const TimeInput = forwardRef(({ value = null, onChange, compact = false, autoFoc
                         placeholder="0"
                         value={minutes}
                         onChange={e => setMinutes(e.target.value)}
-                        className="w-full bg-slate-900 border border-slate-800 rounded-2xl p-4 text-white text-lg font-mono text-center focus:border-indigo-500 outline-none transition-all shadow-inner [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        className="w-full bg-surface-900 border border-surface-800 rounded-2xl p-4 text-white text-lg font-mono text-center focus:border-primary-500 outline-none transition-all shadow-inner [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-black text-slate-600 uppercase pointer-events-none">min</span>
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-black text-surface-600 uppercase pointer-events-none">min</span>
                 </div>
             </div>
         </div>

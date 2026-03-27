@@ -189,7 +189,7 @@ const CardEditor = ({ deckId }) => {
         }
     };
 
-    if (loading) return <div className="p-8 text-center text-slate-500 animate-pulse font-black uppercase tracking-widest flex items-center justify-center h-full">Loading Cards...</div>;
+    if (loading) return <div className="p-8 text-center text-surface-500 animate-pulse font-black uppercase tracking-widest flex items-center justify-center h-full">Loading Cards...</div>;
 
     const formatLocalDate = (dateVal) => {
         if (!dateVal) return '9999-12-31';
@@ -208,7 +208,7 @@ const CardEditor = ({ deckId }) => {
         : '2.50';
 
     return (
-        <div className="flex flex-col bg-slate-950">
+        <div className="flex flex-col bg-surface-950">
             {/* Quill Styles */}
             <style>{`
                 .fc-quill .quill { display: flex; flex-direction: column; height: 100%; }
@@ -260,12 +260,12 @@ const CardEditor = ({ deckId }) => {
             `}</style>
 
             {/* Deck Analytics Summary */}
-            <div className="bg-slate-900 border-b border-slate-800 p-6 flex-shrink-0 flex flex-col gap-4 z-20 shadow-md">
+            <div className="bg-surface-900 border-b border-surface-800 p-6 flex-shrink-0 flex flex-col gap-4 z-20 shadow-md">
                 <div className="flex items-center justify-between">
                     <h3 className="text-xl font-black text-white px-2">Deck Details</h3>
                     <button
                         onClick={() => setShowAIGenerator(!showAIGenerator)}
-                        className={`px-4 py-2 rounded-xl font-bold text-xs uppercase tracking-widest flex items-center gap-2 transition-all shadow-lg ${showAIGenerator ? 'bg-slate-800 text-slate-400 hover:text-white' : 'bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500 hover:text-white hover:border-emerald-500'}`}
+                        className={`px-4 py-2 rounded-xl font-bold text-xs uppercase tracking-widest flex items-center gap-2 transition-all shadow-lg ${showAIGenerator ? 'bg-surface-800 text-surface-400 hover:text-white' : 'bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500 hover:text-white hover:border-emerald-500'}`}
                     >
                         {showAIGenerator ? <X size={14} /> : <Bot size={14} />}
                         {showAIGenerator ? 'Close AI' : 'AI Generate'}
@@ -283,17 +283,17 @@ const CardEditor = ({ deckId }) => {
                 )}
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-2">
-                    <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Cards</p>
+                    <div className="bg-surface-800/50 rounded-xl p-4 border border-surface-700/50">
+                        <p className="text-[10px] font-black text-surface-400 uppercase tracking-widest mb-1">Total Cards</p>
                         <p className="text-2xl font-black text-white">{cards.length}</p>
                     </div>
                     <div className="bg-amber-500/10 rounded-xl p-4 border border-amber-500/20">
                         <p className="text-[10px] font-black text-amber-500 uppercase tracking-widest mb-1">Due Today</p>
                         <p className="text-2xl font-black text-amber-400">{dueCount}</p>
                     </div>
-                    <div className="bg-indigo-500/10 rounded-xl p-4 border border-indigo-500/20">
-                        <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1">Learned</p>
-                        <p className="text-2xl font-black text-indigo-400">{learnedCards.length}</p>
+                    <div className="bg-primary-500/10 rounded-xl p-4 border border-primary-500/20">
+                        <p className="text-[10px] font-black text-primary-400 uppercase tracking-widest mb-1">Learned</p>
+                        <p className="text-2xl font-black text-primary-400">{learnedCards.length}</p>
                     </div>
                     <div className="bg-emerald-500/10 rounded-xl p-4 border border-emerald-500/20">
                         <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1">Avg Ease</p>
@@ -303,18 +303,18 @@ const CardEditor = ({ deckId }) => {
             </div>
 
             {/* New Card Form (Sticky Top) */}
-            <div className="bg-slate-900/90 border-b border-slate-800 p-6 flex-shrink-0 z-10 backdrop-blur-md">
+            <div className="bg-surface-900/90 border-b border-surface-800 p-6 flex-shrink-0 z-10 backdrop-blur-md">
                 <form onSubmit={handleCreateCard} className="flex flex-col sm:flex-row gap-4">
                     <div className="flex-1 space-y-2">
                         <div className="flex justify-between items-center mb-1">
-                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Front (Question)</label>
-                            <label className={`text-[10px] ${uploadingFront ? 'text-slate-400 bg-slate-800' : 'text-indigo-400 bg-indigo-500/10 hover:text-indigo-300'} font-bold uppercase tracking-widest flex items-center gap-1 transition-colors px-2 py-1 rounded cursor-pointer`}>
+                            <label className="text-[10px] font-black text-surface-500 uppercase tracking-[0.2em] ml-1">Front (Question)</label>
+                            <label className={`text-[10px] ${uploadingFront ? 'text-surface-400 bg-surface-800' : 'text-primary-400 bg-primary-500/10 hover:text-primary-300'} font-bold uppercase tracking-widest flex items-center gap-1 transition-colors px-2 py-1 rounded cursor-pointer`}>
                                 {uploadingFront ? <Loader2 size={12} className="animate-spin" /> : <ImageIcon size={12} />}
                                 {uploadingFront ? 'Uploading...' : 'Add Image'}
                                 <input type="file" accept="image/*" className="hidden" disabled={uploadingFront} onChange={(e) => handleImageUpload(e, setFrontImage, setUploadingFront)} />
                             </label>
                         </div>
-                        <div className="fc-quill bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden shadow-inner">
+                        <div className="fc-quill bg-surface-950 border border-surface-800 rounded-2xl overflow-hidden shadow-inner">
                             <ReactQuill
                                 theme="snow"
                                 value={front}
@@ -326,21 +326,21 @@ const CardEditor = ({ deckId }) => {
                         </div>
                         {frontImage && (
                             <div className="relative inline-block mt-2">
-                                <img src={frontImage} alt="Front preview" className="h-20 rounded-lg border border-slate-800" />
+                                <img src={frontImage} alt="Front preview" className="h-20 rounded-lg border border-surface-800" />
                                 <button type="button" onClick={() => setFrontImage(null)} className="absolute -top-2 -right-2 bg-rose-500 text-white p-1 rounded-full shadow hover:scale-110 transition-transform"><X size={12} /></button>
                             </div>
                         )}
                     </div>
                     <div className="flex-1 space-y-2">
                         <div className="flex justify-between items-center mb-1">
-                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Back (Answer)</label>
-                            <label className={`text-[10px] ${uploadingBack ? 'text-slate-400 bg-slate-800' : 'text-indigo-400 bg-indigo-500/10 hover:text-indigo-300'} font-bold uppercase tracking-widest flex items-center gap-1 transition-colors px-2 py-1 rounded cursor-pointer`}>
+                            <label className="text-[10px] font-black text-surface-500 uppercase tracking-[0.2em] ml-1">Back (Answer)</label>
+                            <label className={`text-[10px] ${uploadingBack ? 'text-surface-400 bg-surface-800' : 'text-primary-400 bg-primary-500/10 hover:text-primary-300'} font-bold uppercase tracking-widest flex items-center gap-1 transition-colors px-2 py-1 rounded cursor-pointer`}>
                                 {uploadingBack ? <Loader2 size={12} className="animate-spin" /> : <ImageIcon size={12} />}
                                 {uploadingBack ? 'Uploading...' : 'Add Image'}
                                 <input type="file" accept="image/*" className="hidden" disabled={uploadingBack} onChange={(e) => handleImageUpload(e, setBackImage, setUploadingBack)} />
                             </label>
                         </div>
-                        <div className="fc-quill bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden shadow-inner">
+                        <div className="fc-quill bg-surface-950 border border-surface-800 rounded-2xl overflow-hidden shadow-inner">
                             <ReactQuill
                                 theme="snow"
                                 value={back}
@@ -352,7 +352,7 @@ const CardEditor = ({ deckId }) => {
                         </div>
                         {backImage && (
                             <div className="relative inline-block mt-2">
-                                <img src={backImage} alt="Back preview" className="h-20 rounded-lg border border-slate-800" />
+                                <img src={backImage} alt="Back preview" className="h-20 rounded-lg border border-surface-800" />
                                 <button type="button" onClick={() => setBackImage(null)} className="absolute -top-2 -right-2 bg-rose-500 text-white p-1 rounded-full shadow hover:scale-110 transition-transform"><X size={12} /></button>
                             </div>
                         )}
@@ -361,7 +361,7 @@ const CardEditor = ({ deckId }) => {
                         <button
                             type="submit"
                             disabled={uploadingFront || uploadingBack || (isQuillEmpty(front) && !frontImage) || (isQuillEmpty(back) && !backImage)}
-                            className="h-20 px-6 bg-indigo-600 disabled:bg-slate-800 text-white disabled:text-slate-500 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-indigo-500 transition-colors shadow-lg shadow-indigo-600/20 disabled:shadow-none flex items-center justify-center gap-2 w-full sm:w-auto"
+                            className="h-20 px-6 bg-primary-600 disabled:bg-surface-800 text-white disabled:text-surface-500 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-primary-500 transition-colors shadow-lg shadow-primary-600/20 disabled:shadow-none flex items-center justify-center gap-2 w-full sm:w-auto"
                         >
                             <Plus size={16} /> Add Card
                         </button>
@@ -373,9 +373,9 @@ const CardEditor = ({ deckId }) => {
             <div className="p-6">
                 {cards.length === 0 ? (
                     <div className="h-full flex flex-col items-center justify-center text-center opacity-50">
-                        <BrainCircuit size={48} className="text-slate-600 mb-4" />
+                        <BrainCircuit size={48} className="text-surface-600 mb-4" />
                         <h3 className="text-xl font-black text-white mb-2">Deck is Empty</h3>
-                        <p className="text-slate-400 text-sm max-w-sm">Use the form above to add your first flashcard to this deck.</p>
+                        <p className="text-surface-400 text-sm max-w-sm">Use the form above to add your first flashcard to this deck.</p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -385,18 +385,18 @@ const CardEditor = ({ deckId }) => {
 
                             if (isEditing) {
                                 return (
-                                    <div key={card.id} className="bg-slate-900 border border-indigo-500/50 rounded-2xl p-5 flex flex-col gap-4 relative shadow-lg shadow-indigo-500/10">
+                                    <div key={card.id} className="bg-surface-900 border border-primary-500/50 rounded-2xl p-5 flex flex-col gap-4 relative shadow-lg shadow-primary-500/10">
                                         <div className="flex-1 space-y-3">
                                             <div>
                                                 <div className="flex justify-between items-center mb-1">
-                                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Front (Question)</label>
-                                                    <label className={`text-[10px] ${editUploadingFront ? 'text-slate-400 bg-slate-800' : 'text-indigo-400 bg-indigo-500/10 hover:text-indigo-300'} font-bold uppercase tracking-widest flex items-center gap-1 transition-colors px-2 py-1 rounded cursor-pointer`}>
+                                                    <label className="text-[10px] font-black text-surface-500 uppercase tracking-[0.2em] ml-1">Front (Question)</label>
+                                                    <label className={`text-[10px] ${editUploadingFront ? 'text-surface-400 bg-surface-800' : 'text-primary-400 bg-primary-500/10 hover:text-primary-300'} font-bold uppercase tracking-widest flex items-center gap-1 transition-colors px-2 py-1 rounded cursor-pointer`}>
                                                         {editUploadingFront ? <Loader2 size={12} className="animate-spin" /> : <ImageIcon size={12} />}
                                                         {editUploadingFront ? 'Uploading...' : 'Image'}
                                                         <input type="file" accept="image/*" className="hidden" disabled={editUploadingFront} onChange={(e) => handleImageUpload(e, setEditFrontImage, setEditUploadingFront)} />
                                                     </label>
                                                 </div>
-                                                <div className="fc-quill fc-quill-edit bg-slate-950 border border-slate-700 rounded-xl overflow-hidden">
+                                                <div className="fc-quill fc-quill-edit bg-surface-950 border border-surface-700 rounded-xl overflow-hidden">
                                                     <ReactQuill
                                                         theme="snow"
                                                         value={editFront}
@@ -407,21 +407,21 @@ const CardEditor = ({ deckId }) => {
                                                 </div>
                                                 {editFrontImage && (
                                                     <div className="relative inline-block mt-2">
-                                                        <img src={editFrontImage} alt="Front preview" className="h-16 rounded-lg border border-slate-800" />
+                                                        <img src={editFrontImage} alt="Front preview" className="h-16 rounded-lg border border-surface-800" />
                                                         <button type="button" onClick={() => setEditFrontImage(null)} className="absolute -top-1.5 -right-1.5 bg-rose-500 text-white p-0.5 rounded-full shadow hover:scale-110 transition-transform"><X size={10} /></button>
                                                     </div>
                                                 )}
                                             </div>
                                             <div>
                                                 <div className="flex justify-between items-center mb-1">
-                                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Back (Answer)</label>
-                                                    <label className={`text-[10px] ${editUploadingBack ? 'text-slate-400 bg-slate-800' : 'text-indigo-400 bg-indigo-500/10 hover:text-indigo-300'} font-bold uppercase tracking-widest flex items-center gap-1 transition-colors px-2 py-1 rounded cursor-pointer`}>
+                                                    <label className="text-[10px] font-black text-surface-500 uppercase tracking-[0.2em] ml-1">Back (Answer)</label>
+                                                    <label className={`text-[10px] ${editUploadingBack ? 'text-surface-400 bg-surface-800' : 'text-primary-400 bg-primary-500/10 hover:text-primary-300'} font-bold uppercase tracking-widest flex items-center gap-1 transition-colors px-2 py-1 rounded cursor-pointer`}>
                                                         {editUploadingBack ? <Loader2 size={12} className="animate-spin" /> : <ImageIcon size={12} />}
                                                         {editUploadingBack ? 'Uploading...' : 'Image'}
                                                         <input type="file" accept="image/*" className="hidden" disabled={editUploadingBack} onChange={(e) => handleImageUpload(e, setEditBackImage, setEditUploadingBack)} />
                                                     </label>
                                                 </div>
-                                                <div className="fc-quill fc-quill-edit bg-slate-950 border border-slate-700 rounded-xl overflow-hidden">
+                                                <div className="fc-quill fc-quill-edit bg-surface-950 border border-surface-700 rounded-xl overflow-hidden">
                                                     <ReactQuill
                                                         theme="snow"
                                                         value={editBack}
@@ -432,23 +432,23 @@ const CardEditor = ({ deckId }) => {
                                                 </div>
                                                 {editBackImage && (
                                                     <div className="relative inline-block mt-2">
-                                                        <img src={editBackImage} alt="Back preview" className="h-16 rounded-lg border border-slate-800" />
+                                                        <img src={editBackImage} alt="Back preview" className="h-16 rounded-lg border border-surface-800" />
                                                         <button type="button" onClick={() => setEditBackImage(null)} className="absolute -top-1.5 -right-1.5 bg-rose-500 text-white p-0.5 rounded-full shadow hover:scale-110 transition-transform"><X size={10} /></button>
                                                     </div>
                                                 )}
                                             </div>
                                         </div>
-                                        <div className="flex justify-end gap-2 pt-2 border-t border-slate-800">
+                                        <div className="flex justify-end gap-2 pt-2 border-t border-surface-800">
                                             <button
                                                 onClick={() => setEditingCardId(null)}
-                                                className="px-4 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors text-xs font-bold flex items-center gap-1.5"
+                                                className="px-4 py-2 rounded-xl text-surface-400 hover:text-white hover:bg-surface-800 transition-colors text-xs font-bold flex items-center gap-1.5"
                                             >
                                                 <X size={14} /> Cancel
                                             </button>
                                             <button
                                                 onClick={() => handleSaveEdit(card.id)}
                                                 disabled={editUploadingFront || editUploadingBack || ((isQuillEmpty(editFront) && !editFrontImage) || (isQuillEmpty(editBack) && !editBackImage))}
-                                                className="px-4 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-500 transition-colors text-xs font-bold disabled:opacity-50 flex items-center gap-1.5 shadow-lg shadow-indigo-600/20"
+                                                className="px-4 py-2 bg-primary-600 text-white rounded-xl hover:bg-primary-500 transition-colors text-xs font-bold disabled:opacity-50 flex items-center gap-1.5 shadow-lg shadow-primary-600/20"
                                             >
                                                 <Save size={14} /> Save Changes
                                             </button>
@@ -458,18 +458,18 @@ const CardEditor = ({ deckId }) => {
                             }
 
                             return (
-                                <div key={card.id} className="bg-slate-950/50 border border-slate-800 hover:border-slate-700 rounded-2xl p-5 flex flex-col gap-4 group transition-colors relative">
-                                    <div className="absolute top-4 right-4 flex opacity-0 group-hover:opacity-100 transition-all z-10 bg-slate-900 rounded-xl overflow-hidden border border-slate-800 shadow-xl">
+                                <div key={card.id} className="bg-surface-950/50 border border-surface-800 hover:border-surface-700 rounded-2xl p-5 flex flex-col gap-4 group transition-colors relative">
+                                    <div className="absolute top-4 right-4 flex opacity-0 group-hover:opacity-100 transition-all z-10 bg-surface-900 rounded-xl overflow-hidden border border-surface-800 shadow-xl">
                                         <button
                                             onClick={() => startEdit(card)}
-                                            className="p-2 text-slate-500 hover:text-white hover:bg-indigo-500/20 transition-all border-r border-slate-800"
+                                            className="p-2 text-surface-500 hover:text-white hover:bg-primary-500/20 transition-all border-r border-surface-800"
                                             title="Edit Card"
                                         >
                                             <Edit3 size={16} />
                                         </button>
                                         <button
                                             onClick={() => handleDeleteCard(card.id)}
-                                            className="p-2 text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-all"
+                                            className="p-2 text-surface-500 hover:text-rose-400 hover:bg-rose-500/10 transition-all"
                                             title="Delete Card"
                                         >
                                             <Trash2 size={16} />
@@ -477,25 +477,25 @@ const CardEditor = ({ deckId }) => {
                                     </div>
 
                                     <div className="flex-1 pr-16 space-y-2">
-                                        <p className="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">Front</p>
+                                        <p className="text-xs font-black text-surface-500 uppercase tracking-widest mb-1.5">Front</p>
                                         <div className="card-rich-display" dangerouslySetInnerHTML={{ __html: extractImage(card.front_content).text }} />
                                         {extractImage(card.front_content).image && (
-                                            <img src={extractImage(card.front_content).image} alt="Front" className="h-16 rounded-lg border border-slate-800" />
+                                            <img src={extractImage(card.front_content).image} alt="Front" className="h-16 rounded-lg border border-surface-800" />
                                         )}
                                     </div>
-                                    <div className="w-full h-px bg-slate-800/50 block"></div>
+                                    <div className="w-full h-px bg-surface-800/50 block"></div>
                                     <div className="flex-1 space-y-2">
-                                        <p className="text-xs font-black text-indigo-500 uppercase tracking-widest mb-1.5">Back</p>
-                                        <div className="card-rich-display text-slate-300" dangerouslySetInnerHTML={{ __html: extractImage(card.back_content).text }} />
+                                        <p className="text-xs font-black text-primary-500 uppercase tracking-widest mb-1.5">Back</p>
+                                        <div className="card-rich-display text-surface-400" dangerouslySetInnerHTML={{ __html: extractImage(card.back_content).text }} />
                                         {extractImage(card.back_content).image && (
-                                            <img src={extractImage(card.back_content).image} alt="Back" className="h-16 rounded-lg border border-slate-800" />
+                                            <img src={extractImage(card.back_content).image} alt="Back" className="h-16 rounded-lg border border-surface-800" />
                                         )}
                                     </div>
 
-                                    <div className="pt-2 flex items-center justify-between text-[10px] font-black text-slate-600 uppercase tracking-[0.2em]">
+                                    <div className="pt-2 flex items-center justify-between text-[10px] font-black text-surface-600 uppercase tracking-[0.2em]">
                                         <span>Rep: {card.repetition}</span>
                                         <span>Int: {card.interval_days}d</span>
-                                        <span className="text-indigo-400/50">Due: {nextReview}</span>
+                                        <span className="text-primary-400/50">Due: {nextReview}</span>
                                     </div>
                                 </div>
                             );

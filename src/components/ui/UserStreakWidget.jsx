@@ -3,7 +3,7 @@ import { Flame, Calendar, CheckCircle2 } from 'lucide-react';
 
 // Predefined tool colors for visual distinction
 const TOOL_COLORS = [
-    'bg-indigo-500', 'bg-emerald-500', 'bg-amber-500', 'bg-rose-500',
+    'bg-primary-500', 'bg-emerald-500', 'bg-amber-500', 'bg-rose-500',
     'bg-cyan-500', 'bg-violet-500', 'bg-orange-500', 'bg-teal-500'
 ];
 
@@ -59,26 +59,26 @@ const UserStreakWidget = ({ currentStreak = 0, activeDays = [], toolsByDay = {},
     const dayLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
     return (
-        <div className="bg-slate-900/60 backdrop-blur-xl border border-white/5 rounded-[2rem] p-6 space-y-5">
+        <div className="bg-surface-900/60 backdrop-blur-xl border border-white/5 rounded-[2rem] p-6 space-y-5">
             {/* Streak Header */}
             <div className="flex items-center gap-4">
-                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${currentStreak > 0 ? 'bg-orange-500/15 border border-orange-500/20' : 'bg-slate-800 border border-slate-700'}`}>
+                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${currentStreak > 0 ? 'bg-orange-500/15 border border-orange-500/20' : 'bg-surface-800 border border-surface-700'}`}>
                     <Flame
                         size={28}
-                        className={currentStreak > 0 ? 'text-orange-400' : 'text-slate-600'}
+                        className={currentStreak > 0 ? 'text-orange-400' : 'text-surface-600'}
                         fill={currentStreak > 0 ? 'currentColor' : 'none'}
                     />
                 </div>
                 <div>
                     <div className="flex items-baseline gap-2">
-                        <span className={`text-3xl font-black tracking-tighter ${currentStreak > 0 ? 'text-orange-400' : 'text-slate-600'}`}>
+                        <span className={`text-3xl font-black tracking-tighter ${currentStreak > 0 ? 'text-orange-400' : 'text-surface-600'}`}>
                             {currentStreak}
                         </span>
-                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                        <span className="text-[10px] font-black text-surface-500 uppercase tracking-widest">
                             Day{currentStreak !== 1 ? 's' : ''} Streak
                         </span>
                     </div>
-                    <p className="text-[10px] text-slate-600 font-bold uppercase tracking-widest mt-0.5">
+                    <p className="text-[10px] text-surface-600 font-bold uppercase tracking-widest mt-0.5">
                         {currentStreak > 0 ? "Keep it going!" : "Log activity to start"}
                     </p>
                 </div>
@@ -87,8 +87,8 @@ const UserStreakWidget = ({ currentStreak = 0, activeDays = [], toolsByDay = {},
             {/* 4-Week Heatmap */}
             <div>
                 <div className="flex justify-between items-center mb-2">
-                    <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Last 4 Weeks</span>
-                    <span className="text-[9px] font-black text-slate-700 uppercase tracking-widest">
+                    <span className="text-[9px] font-black text-surface-600 uppercase tracking-widest">Last 4 Weeks</span>
+                    <span className="text-[9px] font-black text-surface-700 uppercase tracking-widest">
                         {activeDays.filter(d => {
                             const dayDate = new Date(d + 'T12:00:00');
                             const diff = Math.round((today - dayDate) / (1000 * 60 * 60 * 24));
@@ -100,7 +100,7 @@ const UserStreakWidget = ({ currentStreak = 0, activeDays = [], toolsByDay = {},
                 {/* Day labels */}
                 <div className="grid grid-cols-7 gap-1 mb-1">
                     {dayLabels.map((d, i) => (
-                        <div key={i} className="text-[8px] font-black text-slate-700 text-center">{d}</div>
+                        <div key={i} className="text-[8px] font-black text-surface-700 text-center">{d}</div>
                     ))}
                 </div>
 
@@ -113,7 +113,7 @@ const UserStreakWidget = ({ currentStreak = 0, activeDays = [], toolsByDay = {},
 
                                 if (day.isFuture) {
                                     return (
-                                        <div key={day.dateStr} className="relative h-7 rounded-lg flex items-center justify-center bg-slate-800/10" />
+                                        <div key={day.dateStr} className="relative h-7 rounded-lg flex items-center justify-center bg-surface-800/10" />
                                     );
                                 }
 
@@ -126,9 +126,9 @@ const UserStreakWidget = ({ currentStreak = 0, activeDays = [], toolsByDay = {},
                                                 ? numTools > 1
                                                     ? 'bg-amber-500/30 ring-1 ring-amber-500/20'
                                                     : 'bg-amber-500/20'
-                                                : 'bg-slate-800/40'
+                                                : 'bg-surface-800/40'
                                             }
-                                            ${day.isToday ? 'ring-2 ring-indigo-500/40' : ''}
+                                            ${day.isToday ? 'ring-2 ring-primary-500/40' : ''}
                                         `}
                                         title={day.isActive
                                             ? `${day.date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}: ${day.toolsActive.map(t => t.name).join(', ')}`
@@ -145,11 +145,11 @@ const UserStreakWidget = ({ currentStreak = 0, activeDays = [], toolsByDay = {},
                                                     />
                                                 ))}
                                                 {numTools > 3 && (
-                                                    <span className="text-[7px] text-slate-400 font-bold">+{numTools - 3}</span>
+                                                    <span className="text-[7px] text-surface-400 font-bold">+{numTools - 3}</span>
                                                 )}
                                             </div>
                                         ) : (
-                                            <div className="w-1.5 h-1.5 rounded-full bg-slate-800" />
+                                            <div className="w-1.5 h-1.5 rounded-full bg-surface-800" />
                                         )}
                                     </div>
                                 );
@@ -165,7 +165,7 @@ const UserStreakWidget = ({ currentStreak = 0, activeDays = [], toolsByDay = {},
                     {tools.map((tool, i) => (
                         <div key={tool.id} className="flex items-center gap-1.5">
                             <div className={`w-2 h-2 rounded-full ${TOOL_COLORS[i % TOOL_COLORS.length]}`} />
-                            <span className="text-[9px] font-bold text-slate-500 truncate max-w-[80px]">{tool.name}</span>
+                            <span className="text-[9px] font-bold text-surface-500 truncate max-w-[80px]">{tool.name}</span>
                         </div>
                     ))}
                 </div>

@@ -40,15 +40,15 @@ const FlashcardDashboard = ({ tool }) => {
             {view === 'manage_cards' && activeDeck && (
                 <div className="animate-in slide-in-from-right-8 duration-300 flex flex-col">
                     <div className="flex items-center gap-4 mb-6">
-                        <button onClick={goBackToDecks} className="w-10 h-10 flex items-center justify-center bg-slate-900 border border-slate-800 rounded-xl text-slate-400 hover:text-white hover:border-slate-600 transition-colors">
+                        <button onClick={goBackToDecks} className="w-10 h-10 flex items-center justify-center bg-surface-900 border border-surface-800 rounded-xl text-surface-400 hover:text-white hover:border-slate-600 transition-colors">
                             <ArrowLeft size={18} />
                         </button>
                         <div>
                             <h2 className="text-2xl font-black text-white uppercase tracking-tighter">{activeDeck.name}</h2>
-                            <p className="text-xs text-slate-500 font-medium">Deck Details & Cards</p>
+                            <p className="text-xs text-surface-500 font-medium">Deck Details & Cards</p>
                         </div>
                     </div>
-                    <div className="bg-slate-900/60 backdrop-blur-xl border border-white/5 rounded-[2rem] overflow-hidden">
+                    <div className="bg-surface-900/60 backdrop-blur-xl border border-white/5 rounded-[2rem] overflow-hidden">
                         <CardEditor deckId={activeDeck.id} />
                     </div>
                 </div>

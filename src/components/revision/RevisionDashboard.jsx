@@ -86,7 +86,7 @@ const RevisionDashboard = ({ tool }) => {
                     <h1 className="text-3xl font-black text-white uppercase tracking-tighter flex items-center gap-3">
                         <ClipboardCheck className="text-amber-400" size={32} /> Revision Tests
                     </h1>
-                    <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Generate • Review • Test • Improve</p>
+                    <p className="text-xs text-surface-500 font-bold uppercase tracking-widest mt-1">Generate • Review • Test • Improve</p>
                 </div>
                 <button
                     onClick={() => setView('create')}
@@ -98,22 +98,22 @@ const RevisionDashboard = ({ tool }) => {
 
             {loading ? (
                 <div className="flex items-center justify-center py-20">
-                    <Loader2 className="animate-spin text-slate-500" size={32} />
+                    <Loader2 className="animate-spin text-surface-500" size={32} />
                 </div>
             ) : sets.length === 0 ? (
                 <div className="text-center py-20 opacity-50">
-                    <ClipboardCheck size={64} className="mx-auto text-slate-600 mb-4" />
+                    <ClipboardCheck size={64} className="mx-auto text-surface-600 mb-4" />
                     <h3 className="text-xl font-black text-white mb-2">No Revision Sets Yet</h3>
-                    <p className="text-sm text-slate-400 max-w-md mx-auto">Create your first revision set by entering topics and pasting AI-generated questions.</p>
+                    <p className="text-sm text-surface-400 max-w-md mx-auto">Create your first revision set by entering topics and pasting AI-generated questions.</p>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {sets.map(set => (
-                        <div key={set.id} className="bg-slate-900/60 backdrop-blur-xl border border-white/5 rounded-[2rem] p-6 hover:border-amber-500/20 transition-all group relative">
+                        <div key={set.id} className="bg-surface-900/60 backdrop-blur-xl border border-white/5 rounded-[2rem] p-6 hover:border-amber-500/20 transition-all group relative">
                             {/* Delete button */}
                             <button
                                 onClick={(e) => { e.stopPropagation(); handleDeleteSet(set.id); }}
-                                className="absolute top-4 right-4 p-2 text-slate-600 hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-all"
+                                className="absolute top-4 right-4 p-2 text-surface-600 hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-all"
                                 title="Delete Set"
                             >
                                 <Trash2 size={16} />
@@ -132,7 +132,7 @@ const RevisionDashboard = ({ tool }) => {
                                 </div>
 
                                 {/* Stats row */}
-                                <div className="flex items-center gap-4 text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                                <div className="flex items-center gap-4 text-[10px] font-black text-surface-500 uppercase tracking-widest">
                                     <span className="flex items-center gap-1"><BookOpen size={12} /> {set.actual_question_count || 0} Qs</span>
                                     <span className="flex items-center gap-1"><Play size={12} /> {set.attempt_count || 0} Attempts</span>
                                     {set.best_score !== null && set.best_max_score && (

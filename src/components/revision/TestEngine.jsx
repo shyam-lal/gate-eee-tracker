@@ -240,30 +240,30 @@ const TestEngine = ({ set, attempt, mode = 'exam', toolId, onComplete, onExit })
         return `${m}:${String(s).padStart(2, '0')}`;
     };
 
-    if (loading) return <div className="flex items-center justify-center h-full"><Loader2 className="animate-spin text-slate-500" size={32} /></div>;
+    if (loading) return <div className="flex items-center justify-center h-full"><Loader2 className="animate-spin text-surface-500" size={32} /></div>;
 
     const timerPct = (timer / timePerQ) * 100;
     const isLastQuestion = currentIdx === questions.length - 1;
 
     return (
-        <div ref={containerRef} className="fixed inset-0 z-[100] bg-[#020617] flex flex-col">
+        <div ref={containerRef} className="fixed inset-0 z-[100] bg-base flex flex-col">
             {/* Top Bar */}
-            <div className="bg-slate-900 border-b border-slate-800 px-4 py-3 flex items-center justify-between shrink-0">
+            <div className="bg-surface-900 border-b border-surface-800 px-4 py-3 flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-3">
-                    <button onClick={handlePause} className="p-2 bg-slate-800 rounded-xl text-slate-400 hover:text-white transition-colors" title="Pause">
+                    <button onClick={handlePause} className="p-2 bg-surface-800 rounded-xl text-surface-400 hover:text-white transition-colors" title="Pause">
                         <Pause size={18} />
                     </button>
                     <div className="hidden sm:block">
                         <p className="text-xs font-black text-white uppercase tracking-tight">{set.title}</p>
-                        <p className="text-[10px] text-slate-500 font-bold">Q {currentIdx + 1} of {questions.length}</p>
+                        <p className="text-[10px] text-surface-500 font-bold">Q {currentIdx + 1} of {questions.length}</p>
                     </div>
                 </div>
 
                 {/* Timer */}
                 <div className="flex items-center gap-3">
                     {mode === 'exam' ? (
-                        <div className="flex items-center gap-2 bg-slate-800 rounded-xl px-3 py-2">
-                            <Clock size={14} className={timerPct > 80 ? 'text-red-400' : 'text-slate-400'} />
+                        <div className="flex items-center gap-2 bg-surface-800 rounded-xl px-3 py-2">
+                            <Clock size={14} className={timerPct > 80 ? 'text-red-400' : 'text-surface-400'} />
                             <span className={`text-sm font-mono font-black ${timerPct > 80 ? 'text-red-400' : 'text-white'}`}>{formatTime(timePerQ - timer)}</span>
                         </div>
                     ) : (
@@ -272,9 +272,9 @@ const TestEngine = ({ set, attempt, mode = 'exam', toolId, onComplete, onExit })
                             <span className="text-[10px] font-black text-amber-400 uppercase tracking-widest">Study Mode</span>
                         </div>
                     )}
-                    <div className="hidden sm:flex items-center gap-2 bg-slate-800/50 rounded-xl px-3 py-2">
-                        <span className="text-[10px] text-slate-500 font-bold">Total:</span>
-                        <span className="text-xs font-mono font-bold text-slate-400">{formatTime(totalTime)}</span>
+                    <div className="hidden sm:flex items-center gap-2 bg-surface-800/50 rounded-xl px-3 py-2">
+                        <span className="text-[10px] text-surface-500 font-bold">Total:</span>
+                        <span className="text-xs font-mono font-bold text-surface-400">{formatTime(totalTime)}</span>
                     </div>
                 </div>
 
@@ -288,7 +288,7 @@ const TestEngine = ({ set, attempt, mode = 'exam', toolId, onComplete, onExit })
             </div>
 
             {/* Timer progress bar */}
-            <div className="w-full h-1 bg-slate-900 shrink-0">
+            <div className="w-full h-1 bg-surface-900 shrink-0">
                 <div
                     className={`h-full transition-all duration-1000 linear ${timerPct > 80 ? 'bg-red-500' : timerPct > 50 ? 'bg-amber-500' : 'bg-emerald-500'}`}
                     style={{ width: `${100 - timerPct}%` }}
@@ -296,7 +296,7 @@ const TestEngine = ({ set, attempt, mode = 'exam', toolId, onComplete, onExit })
             </div>
 
             {/* Question dots (horizontal scroll) */}
-            <div className="bg-slate-900/50 border-b border-slate-800/50 px-4 py-2 overflow-x-auto no-scrollbar shrink-0">
+            <div className="bg-surface-900/50 border-b border-surface-800/50 px-4 py-2 overflow-x-auto no-scrollbar shrink-0">
                 <div className="flex items-center gap-1.5 min-w-max">
                     {questions.map((qId, idx) => {
                         const isAnswered = answers[qId] !== undefined && answers[qId] !== null;
@@ -309,7 +309,7 @@ const TestEngine = ({ set, attempt, mode = 'exam', toolId, onComplete, onExit })
                                 className={`w-8 h-8 rounded-lg text-[10px] font-black transition-all border ${isCurrent ? 'bg-amber-500 text-black border-amber-400 scale-110' :
                                     isMarked ? 'bg-purple-500/20 text-purple-400 border-purple-500/30' :
                                         isAnswered ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' :
-                                            'bg-slate-800 text-slate-500 border-slate-700 hover:border-slate-600'
+                                            'bg-surface-800 text-surface-500 border-surface-700 hover:border-slate-600'
                                     }`}
                             >
                                 {idx + 1}
@@ -325,16 +325,16 @@ const TestEngine = ({ set, attempt, mode = 'exam', toolId, onComplete, onExit })
                     <div className="max-w-3xl mx-auto">
                         {/* Question type badge + marks */}
                         <div className="flex items-center gap-2 mb-4">
-                            <span className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border ${currentQ.question_type === 'mcq' ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' :
+                            <span className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border ${currentQ.question_type === 'mcq' ? 'bg-primary-500/10 text-primary-400 border-primary-500/20' :
                                 currentQ.question_type === 'msq' ? 'bg-purple-500/10 text-purple-400 border-purple-500/20' :
                                     'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
                                 }`}>
                                 {currentQ.question_type?.toUpperCase()}
                             </span>
-                            <span className="text-[10px] font-bold text-slate-500">{currentQ.marks} mark{currentQ.marks > 1 ? 's' : ''}{currentQ.negative_marks > 0 ? ` | -${currentQ.negative_marks} negative` : ''}</span>
+                            <span className="text-[10px] font-bold text-surface-500">{currentQ.marks} mark{currentQ.marks > 1 ? 's' : ''}{currentQ.negative_marks > 0 ? ` | -${currentQ.negative_marks} negative` : ''}</span>
                             <button
                                 onClick={toggleMark}
-                                className={`ml-auto flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors ${marked[currentQId] ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30' : 'bg-slate-800 text-slate-500 hover:text-slate-300'
+                                className={`ml-auto flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors ${marked[currentQId] ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30' : 'bg-surface-800 text-surface-500 hover:text-surface-400'
                                     }`}
                             >
                                 <Flag size={10} /> {marked[currentQId] ? 'Marked' : 'Mark'}
@@ -347,7 +347,7 @@ const TestEngine = ({ set, attempt, mode = 'exam', toolId, onComplete, onExit })
                         {/* Answer area */}
                         {currentQ.question_type === 'nat' ? (
                             <div className="space-y-4">
-                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Your Answer (Numerical)</label>
+                                <label className="text-[10px] font-black text-surface-500 uppercase tracking-widest">Your Answer (Numerical)</label>
                                 <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
                                     <input
                                         type="number"
@@ -356,12 +356,12 @@ const TestEngine = ({ set, attempt, mode = 'exam', toolId, onComplete, onExit })
                                         value={answers[currentQId]?.value ?? ''}
                                         onChange={e => handleNATInput(e.target.value)}
                                         placeholder="Enter your answer"
-                                        className={`w-full max-w-sm bg-slate-900 border rounded-2xl px-5 py-4 text-white text-lg font-mono font-bold outline-none transition-all ${checked[currentQId]?.isCorrect ? 'border-emerald-500/50 bg-emerald-500/5' : 'border-slate-700 focus:border-amber-500'
+                                        className={`w-full max-w-sm bg-surface-900 border rounded-2xl px-5 py-4 text-white text-lg font-mono font-bold outline-none transition-all ${checked[currentQId]?.isCorrect ? 'border-emerald-500/50 bg-emerald-500/5' : 'border-surface-700 focus:border-amber-500'
                                             }`}
                                         autoFocus
                                     />
                                     {mode === 'study' && !checked[currentQId]?.isCorrect && (
-                                        <button onClick={handleCheckAnswer} className="px-6 py-4 bg-indigo-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-indigo-500 transition-all">Check</button>
+                                        <button onClick={handleCheckAnswer} className="px-6 py-4 bg-primary-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-primary-500 transition-all">Check</button>
                                     )}
                                 </div>
                             </div>
@@ -379,7 +379,7 @@ const TestEngine = ({ set, attempt, mode = 'exam', toolId, onComplete, onExit })
                                     const isRevealed = checked[currentQId]?.revealed;
                                     const isVerified = checked[currentQId]?.isCorrect;
 
-                                    let borderClass = 'border-slate-800 bg-slate-900/50 hover:border-slate-700';
+                                    let borderClass = 'border-surface-800 bg-surface-900/50 hover:border-surface-700';
                                     if (selected) borderClass = 'border-amber-500 bg-amber-500/10';
                                     if (mode === 'study' && (isRevealed || (selected && isVerified))) {
                                         if (isCorrect) borderClass = 'border-emerald-500 bg-emerald-500/10 shadow-[0_0_15px_rgba(16,185,129,0.1)]';
@@ -395,17 +395,17 @@ const TestEngine = ({ set, attempt, mode = 'exam', toolId, onComplete, onExit })
                                         >
                                             <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-black text-xs shrink-0 transition-all ${selected ? 'bg-amber-500 text-black' :
                                                 (mode === 'study' && (isRevealed || isVerified) && isCorrect) ? 'bg-emerald-500 text-white' :
-                                                    'bg-slate-800 text-slate-400 group-hover:bg-slate-700'
+                                                    'bg-surface-800 text-surface-400 group-hover:bg-surface-700'
                                                 }`}>
                                                 {String.fromCharCode(65 + optIdx)}
                                             </div>
-                                            <span className={`text-sm font-medium flex-1 ${selected ? 'text-white' : 'text-slate-300'}`}>{healLatexContent(opt)}</span>
+                                            <span className={`text-sm font-medium flex-1 ${selected ? 'text-white' : 'text-surface-400'}`}>{healLatexContent(opt)}</span>
                                             {mode === 'study' && (isRevealed || isVerified) && isCorrect && <CheckCircle2 size={18} className="text-emerald-500 animate-in zoom-in" />}
                                         </button>
                                     );
                                 })}
                                 {mode === 'study' && !checked[currentQId]?.isCorrect && !checked[currentQId]?.revealed && (
-                                    <button onClick={handleCheckAnswer} className="w-full py-4 mt-2 bg-indigo-600/20 text-indigo-400 border border-indigo-600/30 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-indigo-600/30 transition-all">Check Selected Answer</button>
+                                    <button onClick={handleCheckAnswer} className="w-full py-4 mt-2 bg-primary-600/20 text-primary-400 border border-primary-600/30 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-primary-600/30 transition-all">Check Selected Answer</button>
                                 )}
                             </div>
                         )}
@@ -423,13 +423,13 @@ const TestEngine = ({ set, attempt, mode = 'exam', toolId, onComplete, onExit })
                                             <p className="text-sm font-medium">{feedback.message}</p>
                                         </div>
                                         {!feedback.isCorrect && !checked[currentQId]?.revealed && (
-                                            <button onClick={handleRevealAnswer} className="px-4 py-2 bg-slate-800 text-white rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-slate-700 transition-colors">Reveal Answer</button>
+                                            <button onClick={handleRevealAnswer} className="px-4 py-2 bg-surface-800 text-white rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-surface-700 transition-colors">Reveal Answer</button>
                                         )}
                                     </div>
                                 )}
 
                                 {checked[currentQId]?.revealed && (
-                                    <div className="mt-6 bg-slate-900/80 border border-slate-800 rounded-[2rem] p-6 animate-in fade-in duration-500">
+                                    <div className="mt-6 bg-surface-900/80 border border-surface-800 rounded-[2rem] p-6 animate-in fade-in duration-500">
                                         <div className="flex items-center gap-2 mb-4 text-amber-400">
                                             <BookOpen size={16} />
                                             <span className="text-xs font-black uppercase tracking-widest">Explanation & Answer</span>
@@ -443,7 +443,7 @@ const TestEngine = ({ set, attempt, mode = 'exam', toolId, onComplete, onExit })
                                                         : currentQ.correct_answer.map(idx => String.fromCharCode(65 + idx)).join(', ')}
                                                 </p>
                                             </div>
-                                            <div className="text-sm text-slate-300 leading-relaxed study-explanation" dangerouslySetInnerHTML={{ __html: healLatexContent(currentQ.explanation) }} />
+                                            <div className="text-sm text-surface-400 leading-relaxed study-explanation" dangerouslySetInnerHTML={{ __html: healLatexContent(currentQ.explanation) }} />
                                         </div>
                                     </div>
                                 )}
@@ -454,15 +454,15 @@ const TestEngine = ({ set, attempt, mode = 'exam', toolId, onComplete, onExit })
             )}
 
             {/* Bottom Navigation */}
-            <div className="bg-slate-900 border-t border-slate-800 px-4 py-3 flex items-center justify-between shrink-0">
+            <div className="bg-surface-900 border-t border-surface-800 px-4 py-3 flex items-center justify-between shrink-0">
                 <button
                     onClick={handlePrev}
                     disabled={currentIdx === 0}
-                    className="flex items-center gap-2 px-4 py-2.5 bg-slate-800 text-slate-300 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-slate-700 transition-all disabled:opacity-30"
+                    className="flex items-center gap-2 px-4 py-2.5 bg-surface-800 text-surface-400 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-surface-700 transition-all disabled:opacity-30"
                 >
                     <ChevronLeft size={16} /> Prev
                 </button>
-                <span className="text-xs font-black text-slate-500">{currentIdx + 1} / {questions.length}</span>
+                <span className="text-xs font-black text-surface-500">{currentIdx + 1} / {questions.length}</span>
                 <button
                     onClick={() => handleNext()}
                     className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-black text-xs uppercase tracking-widest transition-all ${isLastQuestion
@@ -477,15 +477,15 @@ const TestEngine = ({ set, attempt, mode = 'exam', toolId, onComplete, onExit })
             {/* Pause Menu Overlay */}
             {showPauseMenu && (
                 <div className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200">
-                    <div className="bg-slate-900 border border-slate-700 rounded-[2rem] p-8 max-w-sm w-full text-center animate-in zoom-in-95 duration-300">
+                    <div className="bg-surface-900 border border-surface-700 rounded-[2rem] p-8 max-w-sm w-full text-center animate-in zoom-in-95 duration-300">
                         <Pause size={48} className="text-amber-400 mx-auto mb-4" />
                         <h3 className="text-2xl font-black text-white uppercase tracking-tighter mb-2">Test Paused</h3>
-                        <p className="text-sm text-slate-400 mb-6">Your progress has been saved.</p>
+                        <p className="text-sm text-surface-400 mb-6">Your progress has been saved.</p>
                         <div className="space-y-3">
                             <button onClick={handleResume} className="w-full py-3.5 bg-amber-500 text-black rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-amber-400 transition-all flex items-center justify-center gap-2">
                                 <Play size={16} /> Resume
                             </button>
-                            <button onClick={handleExitSave} className="w-full py-3.5 bg-slate-800 text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-slate-700 transition-all">
+                            <button onClick={handleExitSave} className="w-full py-3.5 bg-surface-800 text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-surface-700 transition-all">
                                 Save & Exit
                             </button>
                             <button onClick={handleSubmitTest} className="w-full py-3.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-emerald-500/30 transition-all">

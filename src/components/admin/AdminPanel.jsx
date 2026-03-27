@@ -284,20 +284,20 @@ const AdminPanel = ({ user, onBack }) => {
     // ═══════════════════════════════════════════════════
 
     return (
-        <div className="min-h-screen bg-[#020617] text-slate-200 font-sans">
+        <div className="min-h-screen bg-base text-surface-400 font-sans">
             {/* Header */}
-            <div className="border-b border-slate-800">
+            <div className="border-b border-surface-800">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <button onClick={onBack} className="p-2 hover:bg-slate-800 rounded-xl text-slate-400 hover:text-white transition-colors">
+                        <button onClick={onBack} className="p-2 hover:bg-surface-800 rounded-xl text-surface-400 hover:text-white transition-colors">
                             <ArrowLeft size={20} />
                         </button>
                         <div>
                             <div className="flex items-center gap-2">
-                                <Settings size={18} className="text-indigo-400" />
+                                <Settings size={18} className="text-primary-400" />
                                 <h1 className="text-xl font-black uppercase tracking-tighter text-white">Admin Panel</h1>
                             </div>
-                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Manage Exams, Syllabi & Materials</p>
+                            <p className="text-[10px] font-bold text-surface-500 uppercase tracking-widest">Manage Exams, Syllabi & Materials</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-2 bg-emerald-500/10 px-4 py-2 rounded-xl border border-emerald-500/20">
@@ -312,17 +312,17 @@ const AdminPanel = ({ user, onBack }) => {
                     {/* ─── Sidebar: Exam List ──────────────── */}
                     <div className="lg:w-80 shrink-0 space-y-4">
                         <div className="flex items-center justify-between">
-                            <h2 className="text-sm font-black text-slate-400 uppercase tracking-widest">Exams</h2>
+                            <h2 className="text-sm font-black text-surface-400 uppercase tracking-widest">Exams</h2>
                             <button
                                 onClick={() => openExamForm()}
-                                className="text-xs bg-indigo-500/10 text-indigo-400 font-bold px-3 py-1.5 rounded-lg hover:bg-indigo-500 hover:text-white transition-all flex items-center gap-1"
+                                className="text-xs bg-primary-500/10 text-primary-400 font-bold px-3 py-1.5 rounded-lg hover:bg-primary-500 hover:text-white transition-all flex items-center gap-1"
                             >
                                 <Plus size={14} /> New
                             </button>
                         </div>
 
                         {loading ? (
-                            <div className="text-center py-8 text-slate-500">Loading...</div>
+                            <div className="text-center py-8 text-surface-500">Loading...</div>
                         ) : (
                             <div className="space-y-2">
                                 {examsList.map(exam => (
@@ -331,8 +331,8 @@ const AdminPanel = ({ user, onBack }) => {
                                         onClick={() => selectExam(exam)}
                                         className={`p-4 rounded-2xl border cursor-pointer transition-all group ${
                                             selectedExam?.id === exam.id
-                                                ? 'border-indigo-500 bg-indigo-500/10'
-                                                : 'border-slate-800 bg-slate-900/50 hover:border-slate-700'
+                                                ? 'border-primary-500 bg-primary-500/10'
+                                                : 'border-surface-800 bg-surface-900/50 hover:border-surface-700'
                                         }`}
                                     >
                                         <div className="flex items-center justify-between">
@@ -340,19 +340,19 @@ const AdminPanel = ({ user, onBack }) => {
                                                 <div className="w-3 h-3 rounded-full" style={{ backgroundColor: exam.primary_color }} />
                                                 <div>
                                                     <h3 className="font-bold text-white text-sm">{exam.name}</h3>
-                                                    <p className="text-[10px] text-slate-500 font-medium">{exam.category_name}</p>
+                                                    <p className="text-[10px] text-surface-500 font-medium">{exam.category_name}</p>
                                                 </div>
                                             </div>
                                             <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                                 <button
                                                     onClick={(e) => { e.stopPropagation(); openExamForm(exam); }}
-                                                    className="p-1.5 text-slate-500 hover:text-indigo-400 rounded-lg hover:bg-slate-800"
+                                                    className="p-1.5 text-surface-500 hover:text-primary-400 rounded-lg hover:bg-surface-800"
                                                 >
                                                     <Edit3 size={14} />
                                                 </button>
                                                 <button
                                                     onClick={(e) => { e.stopPropagation(); deleteExam(exam.id); }}
-                                                    className="p-1.5 text-slate-500 hover:text-rose-400 rounded-lg hover:bg-slate-800"
+                                                    className="p-1.5 text-surface-500 hover:text-rose-400 rounded-lg hover:bg-surface-800"
                                                 >
                                                     <Trash2 size={14} />
                                                 </button>
@@ -369,17 +369,17 @@ const AdminPanel = ({ user, onBack }) => {
                         {selectedExam ? (
                             <>
                                 {/* Exam Header */}
-                                <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 mb-6">
+                                <div className="bg-surface-900/50 border border-surface-800 rounded-2xl p-6 mb-6">
                                     <div className="flex items-center gap-4 mb-3">
                                         <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: selectedExam.primary_color + '20' }}>
                                             <GraduationCap size={20} style={{ color: selectedExam.primary_color }} />
                                         </div>
                                         <div>
                                             <h2 className="text-xl font-black text-white uppercase tracking-tighter">{selectedExam.name}</h2>
-                                            <p className="text-xs text-slate-500">{selectedExam.full_name}</p>
+                                            <p className="text-xs text-surface-500">{selectedExam.full_name}</p>
                                         </div>
                                     </div>
-                                    <p className="text-sm text-slate-400">{selectedExam.description}</p>
+                                    <p className="text-sm text-surface-400">{selectedExam.description}</p>
                                 </div>
 
                                 {/* Tabs */}
@@ -390,8 +390,8 @@ const AdminPanel = ({ user, onBack }) => {
                                             onClick={() => setTab(t)}
                                             className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${
                                                 tab === t
-                                                    ? 'bg-indigo-500 text-white'
-                                                    : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+                                                    ? 'bg-primary-500 text-white'
+                                                    : 'bg-surface-900 text-surface-400 hover:text-white border border-surface-800'
                                             }`}
                                         >
                                             {t === 'syllabus' ? <BookOpen size={14} className="inline mr-2" /> : <FileText size={14} className="inline mr-2" />}
@@ -404,7 +404,7 @@ const AdminPanel = ({ user, onBack }) => {
                                 {tab === 'syllabus' && (
                                     <div className="space-y-4">
                                         <div className="flex items-center justify-between">
-                                            <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest">
+                                            <h3 className="text-sm font-black text-surface-400 uppercase tracking-widest">
                                                 Subjects ({syllabus.length})
                                             </h3>
                                             <div className="flex gap-2">
@@ -416,7 +416,7 @@ const AdminPanel = ({ user, onBack }) => {
                                                 </button>
                                                 <button
                                                     onClick={() => setShowSubjectForm(true)}
-                                                    className="text-xs bg-indigo-500/10 text-indigo-400 font-bold px-3 py-1.5 rounded-lg hover:bg-indigo-500 hover:text-white transition-all flex items-center gap-1"
+                                                    className="text-xs bg-primary-500/10 text-primary-400 font-bold px-3 py-1.5 rounded-lg hover:bg-primary-500 hover:text-white transition-all flex items-center gap-1"
                                                 >
                                                     <Plus size={14} /> Add Subject
                                                 </button>
@@ -425,11 +425,11 @@ const AdminPanel = ({ user, onBack }) => {
 
                                         {/* Add Subject Form */}
                                         {showSubjectForm && (
-                                            <div className="bg-slate-900/80 border border-indigo-500/30 rounded-2xl p-5 space-y-3 animate-in slide-in-from-top-2">
+                                            <div className="bg-surface-900/80 border border-primary-500/30 rounded-2xl p-5 space-y-3 animate-in slide-in-from-top-2">
                                                 <input
                                                     autoFocus
                                                     placeholder="Subject name (e.g. Engineering Mathematics)"
-                                                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:border-indigo-500 outline-none"
+                                                    className="w-full bg-surface-950 border border-surface-800 rounded-xl p-3 text-sm text-white focus:border-primary-500 outline-none"
                                                     value={subjectForm.name}
                                                     onChange={e => setSubjectForm({ ...subjectForm, name: e.target.value })}
                                                 />
@@ -437,37 +437,37 @@ const AdminPanel = ({ user, onBack }) => {
                                                     <input
                                                         placeholder="Weightage %"
                                                         type="number"
-                                                        className="w-28 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:border-indigo-500 outline-none"
+                                                        className="w-28 bg-surface-950 border border-surface-800 rounded-xl p-3 text-sm text-white focus:border-primary-500 outline-none"
                                                         value={subjectForm.weightage}
                                                         onChange={e => setSubjectForm({ ...subjectForm, weightage: e.target.value })}
                                                     />
                                                     <input
                                                         placeholder="Sort order"
                                                         type="number"
-                                                        className="w-28 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:border-indigo-500 outline-none"
+                                                        className="w-28 bg-surface-950 border border-surface-800 rounded-xl p-3 text-sm text-white focus:border-primary-500 outline-none"
                                                         value={subjectForm.sort_order}
                                                         onChange={e => setSubjectForm({ ...subjectForm, sort_order: parseInt(e.target.value) || 0 })}
                                                     />
                                                 </div>
                                                 <div className="flex gap-2">
-                                                    <button onClick={() => setShowSubjectForm(false)} className="px-4 py-2 bg-slate-800 text-white rounded-xl text-xs font-bold">Cancel</button>
-                                                    <button onClick={saveSubject} className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold">Save Subject</button>
+                                                    <button onClick={() => setShowSubjectForm(false)} className="px-4 py-2 bg-surface-800 text-white rounded-xl text-xs font-bold">Cancel</button>
+                                                    <button onClick={saveSubject} className="px-4 py-2 bg-primary-600 text-white rounded-xl text-xs font-bold">Save Subject</button>
                                                 </div>
                                             </div>
                                         )}
 
                                         {/* Subject List */}
                                         {syllabus.map(subject => (
-                                            <div key={subject.id} className="bg-slate-900/50 border border-slate-800 rounded-2xl overflow-hidden">
+                                            <div key={subject.id} className="bg-surface-900/50 border border-surface-800 rounded-2xl overflow-hidden">
                                                 <div
                                                     onClick={() => setExpandedSubjects(p => ({ ...p, [subject.id]: !p[subject.id] }))}
-                                                    className="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-800/30 transition-colors"
+                                                    className="p-4 flex items-center justify-between cursor-pointer hover:bg-surface-800/30 transition-colors"
                                                 >
                                                     <div className="flex items-center gap-3">
-                                                        {expandedSubjects[subject.id] ? <ChevronDown size={16} className="text-indigo-400" /> : <ChevronRight size={16} className="text-slate-500" />}
+                                                        {expandedSubjects[subject.id] ? <ChevronDown size={16} className="text-primary-400" /> : <ChevronRight size={16} className="text-surface-500" />}
                                                         <div>
                                                             <h4 className="font-bold text-white text-sm">{subject.name}</h4>
-                                                            <p className="text-[10px] text-slate-500">
+                                                            <p className="text-[10px] text-surface-500">
                                                                 {subject.topics?.length || 0} topics
                                                                 {subject.weightage ? ` • ${subject.weightage}% weight` : ''}
                                                             </p>
@@ -476,13 +476,13 @@ const AdminPanel = ({ user, onBack }) => {
                                                     <div className="flex gap-1">
                                                         <button
                                                             onClick={(e) => { e.stopPropagation(); setShowTopicForm(showTopicForm === subject.id ? null : subject.id); }}
-                                                            className="p-1.5 text-slate-500 hover:text-indigo-400 rounded-lg hover:bg-slate-800"
+                                                            className="p-1.5 text-surface-500 hover:text-primary-400 rounded-lg hover:bg-surface-800"
                                                         >
                                                             <Plus size={14} />
                                                         </button>
                                                         <button
                                                             onClick={(e) => { e.stopPropagation(); deleteSubject(subject.id); }}
-                                                            className="p-1.5 text-slate-500 hover:text-rose-400 rounded-lg hover:bg-slate-800"
+                                                            className="p-1.5 text-surface-500 hover:text-rose-400 rounded-lg hover:bg-surface-800"
                                                         >
                                                             <Trash2 size={14} />
                                                         </button>
@@ -490,14 +490,14 @@ const AdminPanel = ({ user, onBack }) => {
                                                 </div>
 
                                                 {expandedSubjects[subject.id] && (
-                                                    <div className="border-t border-slate-800">
+                                                    <div className="border-t border-surface-800">
                                                         {/* Add Topic Form */}
                                                         {showTopicForm === subject.id && (
-                                                            <div className="p-4 bg-slate-950/50 border-b border-slate-800 space-y-3 animate-in slide-in-from-top-2">
+                                                            <div className="p-4 bg-surface-950/50 border-b border-surface-800 space-y-3 animate-in slide-in-from-top-2">
                                                                 <input
                                                                     autoFocus
                                                                     placeholder="Topic name"
-                                                                    className="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-sm text-white focus:border-indigo-500 outline-none"
+                                                                    className="w-full bg-surface-900 border border-surface-800 rounded-xl p-3 text-sm text-white focus:border-primary-500 outline-none"
                                                                     value={topicForm.name}
                                                                     onChange={e => setTopicForm({ ...topicForm, name: e.target.value })}
                                                                 />
@@ -505,12 +505,12 @@ const AdminPanel = ({ user, onBack }) => {
                                                                     <input
                                                                         placeholder="Est. hours"
                                                                         type="number"
-                                                                        className="w-28 bg-slate-900 border border-slate-800 rounded-xl p-3 text-sm text-white focus:border-indigo-500 outline-none"
+                                                                        className="w-28 bg-surface-900 border border-surface-800 rounded-xl p-3 text-sm text-white focus:border-primary-500 outline-none"
                                                                         value={topicForm.estimated_hours}
                                                                         onChange={e => setTopicForm({ ...topicForm, estimated_hours: parseFloat(e.target.value) || 12 })}
                                                                     />
                                                                     <select
-                                                                        className="bg-slate-900 border border-slate-800 rounded-xl p-3 text-sm text-white focus:border-indigo-500 outline-none"
+                                                                        className="bg-surface-900 border border-surface-800 rounded-xl p-3 text-sm text-white focus:border-primary-500 outline-none"
                                                                         value={topicForm.difficulty}
                                                                         onChange={e => setTopicForm({ ...topicForm, difficulty: e.target.value })}
                                                                     >
@@ -520,8 +520,8 @@ const AdminPanel = ({ user, onBack }) => {
                                                                     </select>
                                                                 </div>
                                                                 <div className="flex gap-2">
-                                                                    <button onClick={() => setShowTopicForm(null)} className="px-4 py-2 bg-slate-800 text-white rounded-xl text-xs font-bold">Cancel</button>
-                                                                    <button onClick={() => saveTopic(subject.id)} className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold">Add Topic</button>
+                                                                    <button onClick={() => setShowTopicForm(null)} className="px-4 py-2 bg-surface-800 text-white rounded-xl text-xs font-bold">Cancel</button>
+                                                                    <button onClick={() => saveTopic(subject.id)} className="px-4 py-2 bg-primary-600 text-white rounded-xl text-xs font-bold">Add Topic</button>
                                                                 </div>
                                                             </div>
                                                         )}
@@ -529,24 +529,24 @@ const AdminPanel = ({ user, onBack }) => {
                                                         {/* Topic List */}
                                                         <div className="divide-y divide-slate-800/50">
                                                             {(subject.topics || []).map(topic => (
-                                                                <div key={topic.id} className="px-4 py-3 flex items-center justify-between hover:bg-slate-800/20 transition-colors">
+                                                                <div key={topic.id} className="px-4 py-3 flex items-center justify-between hover:bg-surface-800/20 transition-colors">
                                                                     <div className="flex items-center gap-3">
                                                                         <div className="w-1.5 h-1.5 rounded-full bg-slate-600" />
                                                                         <div>
-                                                                            <p className="text-sm text-slate-300">{topic.name}</p>
-                                                                            <p className="text-[10px] text-slate-600">{topic.estimated_hours}h • {topic.difficulty}</p>
+                                                                            <p className="text-sm text-surface-400">{topic.name}</p>
+                                                                            <p className="text-[10px] text-surface-600">{topic.estimated_hours}h • {topic.difficulty}</p>
                                                                         </div>
                                                                     </div>
                                                                     <button
                                                                         onClick={() => deleteTopic(topic.id)}
-                                                                        className="p-1.5 text-slate-600 hover:text-rose-400 rounded-lg hover:bg-slate-800 opacity-0 hover:opacity-100 transition-all"
+                                                                        className="p-1.5 text-surface-600 hover:text-rose-400 rounded-lg hover:bg-surface-800 opacity-0 hover:opacity-100 transition-all"
                                                                     >
                                                                         <Trash2 size={12} />
                                                                     </button>
                                                                 </div>
                                                             ))}
                                                             {(!subject.topics || subject.topics.length === 0) && (
-                                                                <div className="px-4 py-6 text-center text-slate-600 text-xs">No topics yet</div>
+                                                                <div className="px-4 py-6 text-center text-surface-600 text-xs">No topics yet</div>
                                                             )}
                                                         </div>
                                                     </div>
@@ -555,7 +555,7 @@ const AdminPanel = ({ user, onBack }) => {
                                         ))}
 
                                         {syllabus.length === 0 && (
-                                            <div className="text-center py-12 text-slate-600">
+                                            <div className="text-center py-12 text-surface-600">
                                                 <BookOpen size={32} className="mx-auto mb-3 opacity-30" />
                                                 <p className="text-sm font-bold">No subjects yet</p>
                                                 <p className="text-xs">Add subjects and topics to define this exam's syllabus</p>
@@ -568,7 +568,7 @@ const AdminPanel = ({ user, onBack }) => {
                                 {tab === 'materials' && (
                                     <div className="space-y-4">
                                         <div className="flex items-center justify-between">
-                                            <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest">
+                                            <h3 className="text-sm font-black text-surface-400 uppercase tracking-widest">
                                                 Study Materials ({materials.length})
                                             </h3>
                                             <div className="flex gap-2">
@@ -580,7 +580,7 @@ const AdminPanel = ({ user, onBack }) => {
                                                 </button>
                                                 <button
                                                     onClick={() => setShowMaterialForm(true)}
-                                                    className="text-xs bg-indigo-500/10 text-indigo-400 font-bold px-3 py-1.5 rounded-lg hover:bg-indigo-500 hover:text-white transition-all flex items-center gap-1"
+                                                    className="text-xs bg-primary-500/10 text-primary-400 font-bold px-3 py-1.5 rounded-lg hover:bg-primary-500 hover:text-white transition-all flex items-center gap-1"
                                                 >
                                                     <Plus size={14} /> Add Material
                                                 </button>
@@ -589,17 +589,17 @@ const AdminPanel = ({ user, onBack }) => {
 
                                         {/* Add Material Form */}
                                         {showMaterialForm && (
-                                            <div className="bg-slate-900/80 border border-indigo-500/30 rounded-2xl p-5 space-y-3 animate-in slide-in-from-top-2">
+                                            <div className="bg-surface-900/80 border border-primary-500/30 rounded-2xl p-5 space-y-3 animate-in slide-in-from-top-2">
                                                 <input
                                                     autoFocus
                                                     placeholder="Material title"
-                                                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:border-indigo-500 outline-none"
+                                                    className="w-full bg-surface-950 border border-surface-800 rounded-xl p-3 text-sm text-white focus:border-primary-500 outline-none"
                                                     value={materialForm.title}
                                                     onChange={e => setMaterialForm({ ...materialForm, title: e.target.value })}
                                                 />
                                                 <div className="flex gap-3">
                                                     <select
-                                                        className="bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:border-indigo-500 outline-none"
+                                                        className="bg-surface-950 border border-surface-800 rounded-xl p-3 text-sm text-white focus:border-primary-500 outline-none"
                                                         value={materialForm.content_type}
                                                         onChange={e => setMaterialForm({ ...materialForm, content_type: e.target.value })}
                                                     >
@@ -610,7 +610,7 @@ const AdminPanel = ({ user, onBack }) => {
                                                         <option value="formula_sheet">Formula Sheet</option>
                                                     </select>
                                                     <select
-                                                        className="flex-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:border-indigo-500 outline-none"
+                                                        className="flex-1 bg-surface-950 border border-surface-800 rounded-xl p-3 text-sm text-white focus:border-primary-500 outline-none"
                                                         value={materialForm.subject_id}
                                                         onChange={e => setMaterialForm({ ...materialForm, subject_id: e.target.value, topic_id: '' })}
                                                     >
@@ -620,9 +620,9 @@ const AdminPanel = ({ user, onBack }) => {
                                                 </div>
                                                 
                                                 {materialForm.content_type === 'pdf' ? (
-                                                    <div className="border-2 border-dashed border-slate-700/50 hover:border-indigo-500/50 rounded-xl p-6 flex flex-col items-center justify-center transition-colors">
-                                                        <Upload className="text-slate-500 mb-2" size={24} />
-                                                        <label className="cursor-pointer text-sm font-bold text-indigo-400 hover:text-indigo-300">
+                                                    <div className="border-2 border-dashed border-surface-700/50 hover:border-primary-500/50 rounded-xl p-6 flex flex-col items-center justify-center transition-colors">
+                                                        <Upload className="text-surface-500 mb-2" size={24} />
+                                                        <label className="cursor-pointer text-sm font-bold text-primary-400 hover:text-primary-300">
                                                             {materialForm.file ? materialForm.file.name : "Select PDF File"}
                                                             <input 
                                                                 type="file" 
@@ -631,12 +631,12 @@ const AdminPanel = ({ user, onBack }) => {
                                                                 onChange={(e) => setMaterialForm({ ...materialForm, file: e.target.files[0] })}
                                                             />
                                                         </label>
-                                                        <p className="text-[10px] text-slate-500 mt-1">Up to 50MB</p>
+                                                        <p className="text-[10px] text-surface-500 mt-1">Up to 50MB</p>
                                                     </div>
                                                 ) : materialForm.content_type === 'drive_link' || materialForm.content_type === 'video_link' ? (
                                                     <input
                                                         placeholder="Paste the URL here"
-                                                        className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:border-indigo-500 outline-none"
+                                                        className="w-full bg-surface-950 border border-surface-800 rounded-xl p-3 text-sm text-white focus:border-primary-500 outline-none"
                                                         value={materialForm.file_url || ''}
                                                         onChange={e => setMaterialForm({ ...materialForm, file_url: e.target.value })}
                                                     />
@@ -644,18 +644,18 @@ const AdminPanel = ({ user, onBack }) => {
                                                     <textarea
                                                         placeholder="Content (markdown supported for notes)"
                                                         rows={4}
-                                                        className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:border-indigo-500 outline-none resize-y"
+                                                        className="w-full bg-surface-950 border border-surface-800 rounded-xl p-3 text-sm text-white focus:border-primary-500 outline-none resize-y"
                                                         value={materialForm.content}
                                                         onChange={e => setMaterialForm({ ...materialForm, content: e.target.value })}
                                                     />
                                                 )}
 
                                                 <div className="flex gap-2">
-                                                    <button onClick={() => setShowMaterialForm(false)} className="px-4 py-2 bg-slate-800 text-white rounded-xl text-xs font-bold">Cancel</button>
+                                                    <button onClick={() => setShowMaterialForm(false)} className="px-4 py-2 bg-surface-800 text-white rounded-xl text-xs font-bold">Cancel</button>
                                                     <button 
                                                         onClick={saveMaterial} 
                                                         disabled={loading}
-                                                        className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold disabled:opacity-50"
+                                                        className="px-4 py-2 bg-primary-600 text-white rounded-xl text-xs font-bold disabled:opacity-50"
                                                     >
                                                         {loading ? 'Uploading...' : 'Save Material'}
                                                     </button>
@@ -665,19 +665,19 @@ const AdminPanel = ({ user, onBack }) => {
 
                                         {/* Materials List */}
                                         {materials.map(mat => (
-                                            <div key={mat.id} className="bg-slate-900/50 border border-slate-800 rounded-2xl p-4 flex items-center justify-between group">
+                                            <div key={mat.id} className="bg-surface-900/50 border border-surface-800 rounded-2xl p-4 flex items-center justify-between group">
                                                 <div className="flex items-center gap-3">
                                                     <div className={`p-2 rounded-lg ${
                                                         mat.content_type === 'pdf' ? 'bg-rose-500/10 text-rose-400' :
                                                         mat.content_type === 'video_link' ? 'bg-purple-500/10 text-purple-400' :
                                                         mat.content_type === 'formula_sheet' ? 'bg-amber-500/10 text-amber-400' :
-                                                        'bg-indigo-500/10 text-indigo-400'
+                                                        'bg-primary-500/10 text-primary-400'
                                                     }`}>
                                                         <FileText size={16} />
                                                     </div>
                                                     <div>
                                                         <h4 className="text-sm font-bold text-white">{mat.title}</h4>
-                                                        <p className="text-[10px] text-slate-500">
+                                                        <p className="text-[10px] text-surface-500">
                                                             {mat.content_type.replace('_', ' ')}
                                                             {mat.subject_name ? ` • ${mat.subject_name}` : ''}
                                                         </p>
@@ -685,7 +685,7 @@ const AdminPanel = ({ user, onBack }) => {
                                                 </div>
                                                 <button
                                                     onClick={() => deleteMaterial(mat.id)}
-                                                    className="p-1.5 text-slate-600 hover:text-rose-400 rounded-lg hover:bg-slate-800 opacity-0 group-hover:opacity-100 transition-all"
+                                                    className="p-1.5 text-surface-600 hover:text-rose-400 rounded-lg hover:bg-surface-800 opacity-0 group-hover:opacity-100 transition-all"
                                                 >
                                                     <Trash2 size={14} />
                                                 </button>
@@ -693,7 +693,7 @@ const AdminPanel = ({ user, onBack }) => {
                                         ))}
 
                                         {materials.length === 0 && (
-                                            <div className="text-center py-12 text-slate-600">
+                                            <div className="text-center py-12 text-surface-600">
                                                 <FileText size={32} className="mx-auto mb-3 opacity-30" />
                                                 <p className="text-sm font-bold">No materials yet</p>
                                                 <p className="text-xs">Upload study materials for students to access</p>
@@ -703,7 +703,7 @@ const AdminPanel = ({ user, onBack }) => {
                                 )}
                             </>
                         ) : (
-                            <div className="text-center py-20 text-slate-600">
+                            <div className="text-center py-20 text-surface-600">
                                 <Layers size={48} className="mx-auto mb-4 opacity-20" />
                                 <p className="text-lg font-bold mb-1">Select an Exam</p>
                                 <p className="text-sm">Choose an exam from the sidebar to manage its syllabus and materials</p>
@@ -716,57 +716,57 @@ const AdminPanel = ({ user, onBack }) => {
             {/* ─── Exam Form Modal ──────────────────── */}
             {showExamForm && (
                 <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4" onClick={() => setShowExamForm(false)}>
-                    <div className="bg-[#0b1121] border border-slate-700 w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95" onClick={e => e.stopPropagation()}>
-                        <div className="bg-slate-900 px-6 py-4 border-b border-slate-800 flex justify-between items-center">
+                    <div className="bg-surface-950 border border-surface-700 w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95" onClick={e => e.stopPropagation()}>
+                        <div className="bg-surface-900 px-6 py-4 border-b border-surface-800 flex justify-between items-center">
                             <h3 className="text-white font-black uppercase tracking-tighter text-lg">
                                 {editingExam ? 'Edit Exam' : 'New Exam'}
                             </h3>
-                            <button onClick={() => setShowExamForm(false)} className="p-2 hover:bg-slate-800 rounded-full text-slate-500 hover:text-white"><X size={20} /></button>
+                            <button onClick={() => setShowExamForm(false)} className="p-2 hover:bg-surface-800 rounded-full text-surface-500 hover:text-white"><X size={20} /></button>
                         </div>
                         <div className="p-6 space-y-4 max-h-[80vh] overflow-y-auto no-scrollbar">
                             <div>
-                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-1">Name</label>
-                                <input className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:border-indigo-500 outline-none"
+                                <label className="text-[10px] font-black text-surface-500 uppercase tracking-widest block mb-1">Name</label>
+                                <input className="w-full bg-surface-950 border border-surface-800 rounded-xl p-3 text-sm text-white focus:border-primary-500 outline-none"
                                     value={examForm.name} onChange={e => setExamForm({ ...examForm, name: e.target.value })} placeholder="e.g. GATE ME" />
                             </div>
                             <div>
-                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-1">Full Name</label>
-                                <input className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:border-indigo-500 outline-none"
+                                <label className="text-[10px] font-black text-surface-500 uppercase tracking-widest block mb-1">Full Name</label>
+                                <input className="w-full bg-surface-950 border border-surface-800 rounded-xl p-3 text-sm text-white focus:border-primary-500 outline-none"
                                     value={examForm.full_name} onChange={e => setExamForm({ ...examForm, full_name: e.target.value })} placeholder="Full descriptive name" />
                             </div>
                             <div>
-                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-1">Category</label>
-                                <select className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:border-indigo-500 outline-none"
+                                <label className="text-[10px] font-black text-surface-500 uppercase tracking-widest block mb-1">Category</label>
+                                <select className="w-full bg-surface-950 border border-surface-800 rounded-xl p-3 text-sm text-white focus:border-primary-500 outline-none"
                                     value={examForm.category_id} onChange={e => setExamForm({ ...examForm, category_id: parseInt(e.target.value) })}>
                                     <option value="">Select category</option>
                                     {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                                 </select>
                             </div>
                             <div>
-                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-1">Description</label>
-                                <textarea className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:border-indigo-500 outline-none resize-y" rows={2}
+                                <label className="text-[10px] font-black text-surface-500 uppercase tracking-widest block mb-1">Description</label>
+                                <textarea className="w-full bg-surface-950 border border-surface-800 rounded-xl p-3 text-sm text-white focus:border-primary-500 outline-none resize-y" rows={2}
                                     value={examForm.description} onChange={e => setExamForm({ ...examForm, description: e.target.value })} />
                             </div>
                             <div className="grid grid-cols-2 gap-3">
                                 <div>
-                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-1">Primary Color</label>
+                                    <label className="text-[10px] font-black text-surface-500 uppercase tracking-widest block mb-1">Primary Color</label>
                                     <div className="flex items-center gap-2">
                                         <input type="color" value={examForm.primary_color} onChange={e => setExamForm({ ...examForm, primary_color: e.target.value })} className="w-10 h-10 rounded-lg border-0 cursor-pointer" />
-                                        <input className="flex-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white font-mono focus:border-indigo-500 outline-none"
+                                        <input className="flex-1 bg-surface-950 border border-surface-800 rounded-xl p-3 text-sm text-white font-mono focus:border-primary-500 outline-none"
                                             value={examForm.primary_color} onChange={e => setExamForm({ ...examForm, primary_color: e.target.value })} />
                                     </div>
                                 </div>
                                 <div>
-                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-1">Accent Color</label>
+                                    <label className="text-[10px] font-black text-surface-500 uppercase tracking-widest block mb-1">Accent Color</label>
                                     <div className="flex items-center gap-2">
                                         <input type="color" value={examForm.accent_color} onChange={e => setExamForm({ ...examForm, accent_color: e.target.value })} className="w-10 h-10 rounded-lg border-0 cursor-pointer" />
-                                        <input className="flex-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white font-mono focus:border-indigo-500 outline-none"
+                                        <input className="flex-1 bg-surface-950 border border-surface-800 rounded-xl p-3 text-sm text-white font-mono focus:border-primary-500 outline-none"
                                             value={examForm.accent_color} onChange={e => setExamForm({ ...examForm, accent_color: e.target.value })} />
                                     </div>
                                 </div>
                             </div>
                             <div>
-                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-2">Available Tools</label>
+                                <label className="text-[10px] font-black text-surface-500 uppercase tracking-widest block mb-2">Available Tools</label>
                                 <div className="flex flex-wrap gap-2">
                                     {toolOptions.map(tool => (
                                         <button
@@ -774,8 +774,8 @@ const AdminPanel = ({ user, onBack }) => {
                                             onClick={() => toggleTool(tool)}
                                             className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wide transition-all ${
                                                 (examForm.available_tools || []).includes(tool)
-                                                    ? 'bg-indigo-500 text-white'
-                                                    : 'bg-slate-800 text-slate-500 hover:text-white'
+                                                    ? 'bg-primary-500 text-white'
+                                                    : 'bg-surface-800 text-surface-500 hover:text-white'
                                             }`}
                                         >
                                             {tool}
@@ -784,8 +784,8 @@ const AdminPanel = ({ user, onBack }) => {
                                 </div>
                             </div>
                             <div className="flex gap-2 pt-2">
-                                <button onClick={() => setShowExamForm(false)} className="flex-1 bg-slate-800 text-white py-3 rounded-xl font-bold text-sm">Cancel</button>
-                                <button onClick={saveExam} className="flex-[2] bg-indigo-600 text-white py-3 rounded-xl font-bold text-sm hover:bg-indigo-500 transition-colors">
+                                <button onClick={() => setShowExamForm(false)} className="flex-1 bg-surface-800 text-white py-3 rounded-xl font-bold text-sm">Cancel</button>
+                                <button onClick={saveExam} className="flex-[2] bg-primary-600 text-white py-3 rounded-xl font-bold text-sm hover:bg-primary-500 transition-colors">
                                     {editingExam ? 'Update Exam' : 'Create Exam'}
                                 </button>
                             </div>
@@ -797,21 +797,21 @@ const AdminPanel = ({ user, onBack }) => {
             {/* ─── Import JSON Modal ─────────────────── */}
             {showImportModal && (
                 <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4" onClick={() => setShowImportModal(false)}>
-                    <div className="bg-[#0b1121] border border-slate-700 w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95" onClick={e => e.stopPropagation()}>
-                        <div className="bg-slate-900 px-6 py-4 border-b border-slate-800 flex justify-between items-center">
+                    <div className="bg-surface-950 border border-surface-700 w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95" onClick={e => e.stopPropagation()}>
+                        <div className="bg-surface-900 px-6 py-4 border-b border-surface-800 flex justify-between items-center">
                             <div>
                                 <h3 className="text-white font-black uppercase tracking-tighter text-lg">
                                     Import {importType === 'syllabus' ? 'Syllabus' : 'Questions'} from JSON
                                 </h3>
-                                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Paste JSON generated from ChatGPT / Gemini</p>
+                                <p className="text-[10px] text-surface-500 font-bold uppercase tracking-widest">Paste JSON generated from ChatGPT / Gemini</p>
                             </div>
-                            <button onClick={() => setShowImportModal(false)} className="p-2 hover:bg-slate-800 rounded-full text-slate-500 hover:text-white"><X size={20} /></button>
+                            <button onClick={() => setShowImportModal(false)} className="p-2 hover:bg-surface-800 rounded-full text-surface-500 hover:text-white"><X size={20} /></button>
                         </div>
                         <div className="p-6 space-y-4 max-h-[75vh] overflow-y-auto no-scrollbar">
                             {/* Instructions */}
-                            <div className="bg-indigo-500/5 border border-indigo-500/20 rounded-xl p-4 text-xs text-slate-400 space-y-1">
-                                <p className="text-indigo-400 font-bold uppercase tracking-widest text-[10px] mb-2">Expected Format:</p>
-                                <pre className="text-[11px] text-slate-500 font-mono overflow-x-auto">
+                            <div className="bg-primary-500/5 border border-primary-500/20 rounded-xl p-4 text-xs text-surface-400 space-y-1">
+                                <p className="text-primary-400 font-bold uppercase tracking-widest text-[10px] mb-2">Expected Format:</p>
+                                <pre className="text-[11px] text-surface-500 font-mono overflow-x-auto">
 {importType === 'syllabus' ? `{
   "subjects": [
     {
@@ -846,7 +846,7 @@ const AdminPanel = ({ user, onBack }) => {
                                 autoFocus
                                 rows={10}
                                 placeholder='Paste your JSON here...'
-                                className="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs text-white font-mono focus:border-indigo-500 outline-none resize-y"
+                                className="w-full bg-surface-950 border border-surface-800 rounded-xl p-4 text-xs text-white font-mono focus:border-primary-500 outline-none resize-y"
                                 value={importJson}
                                 onChange={e => handleImportJsonChange(e.target.value)}
                             />
@@ -874,7 +874,7 @@ const AdminPanel = ({ user, onBack }) => {
                                     {importPreview.type === 'syllabus' && (
                                         <div className="flex flex-wrap gap-2">
                                             {importPreview.payload.map((s, i) => (
-                                                <span key={i} className="bg-slate-800 text-slate-300 px-2 py-1 rounded-lg text-[10px] font-bold">
+                                                <span key={i} className="bg-surface-800 text-surface-400 px-2 py-1 rounded-lg text-[10px] font-bold">
                                                     {s.name} ({s.topics?.length || 0})
                                                 </span>
                                             ))}
@@ -884,7 +884,7 @@ const AdminPanel = ({ user, onBack }) => {
                             )}
 
                             {/* Options */}
-                            <label className="flex items-center gap-3 cursor-pointer p-3 bg-slate-900/50 rounded-xl border border-slate-800">
+                            <label className="flex items-center gap-3 cursor-pointer p-3 bg-surface-900/50 rounded-xl border border-surface-800">
                                 <input
                                     type="checkbox"
                                     checked={importClear}
@@ -895,7 +895,7 @@ const AdminPanel = ({ user, onBack }) => {
                                     <span className="text-sm text-white font-bold">
                                         {importType === 'syllabus' ? 'Replace existing syllabus' : 'Replace existing questions'}
                                     </span>
-                                    <p className="text-[10px] text-slate-500">
+                                    <p className="text-[10px] text-surface-500">
                                         {importType === 'syllabus' 
                                             ? 'Deletes all current subjects and topics before importing'
                                             : 'Deletes all existing questions for this exam before importing'}
@@ -905,7 +905,7 @@ const AdminPanel = ({ user, onBack }) => {
 
                             {/* Actions */}
                             <div className="flex gap-2 pt-2">
-                                <button onClick={() => setShowImportModal(false)} className="flex-1 bg-slate-800 text-white py-3 rounded-xl font-bold text-sm">Cancel</button>
+                                <button onClick={() => setShowImportModal(false)} className="flex-1 bg-surface-800 text-white py-3 rounded-xl font-bold text-sm">Cancel</button>
                                 <button
                                     onClick={handleImport}
                                     disabled={!importPreview || importLoading}

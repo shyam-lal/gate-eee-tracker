@@ -66,58 +66,58 @@ const SetCreator = ({ onCreated, onBack }) => {
         <div className="w-full max-w-3xl mx-auto animate-in fade-in slide-in-from-right-8 duration-300 p-2">
             {/* Header */}
             <div className="flex items-center gap-4 mb-8">
-                <button onClick={onBack} className="w-10 h-10 flex items-center justify-center bg-slate-900 border border-slate-800 rounded-xl text-slate-400 hover:text-white hover:border-slate-600 transition-colors">
+                <button onClick={onBack} className="w-10 h-10 flex items-center justify-center bg-surface-900 border border-surface-800 rounded-xl text-surface-400 hover:text-white hover:border-slate-600 transition-colors">
                     <ArrowLeft size={18} />
                 </button>
                 <div>
                     <h2 className="text-2xl font-black text-white uppercase tracking-tighter">Create Revision Set</h2>
-                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Step {step} of 3</p>
+                    <p className="text-[10px] text-surface-500 font-bold uppercase tracking-widest">Step {step} of 3</p>
                 </div>
             </div>
 
             {/* Step indicator */}
             <div className="flex items-center gap-2 mb-8">
                 {[1, 2, 3].map(s => (
-                    <div key={s} className={`flex-1 h-1.5 rounded-full transition-all ${s <= step ? 'bg-amber-500' : 'bg-slate-800'}`} />
+                    <div key={s} className={`flex-1 h-1.5 rounded-full transition-all ${s <= step ? 'bg-amber-500' : 'bg-surface-800'}`} />
                 ))}
             </div>
 
             {/* Step 1: Set Details */}
             {step === 1 && (
                 <div className="space-y-6 animate-in fade-in duration-300">
-                    <div className="bg-slate-900/60 border border-white/5 rounded-[2rem] p-6 md:p-8 space-y-6">
+                    <div className="bg-surface-900/60 border border-white/5 rounded-[2rem] p-6 md:p-8 space-y-6">
                         <div>
-                            <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Set Title</label>
+                            <label className="block text-[10px] font-black text-surface-500 uppercase tracking-widest mb-2">Set Title</label>
                             <input
                                 type="text" autoFocus
                                 value={title} onChange={e => setTitle(e.target.value)}
                                 placeholder="e.g. Control Systems Week 3 Revision"
-                                className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-5 py-4 text-white text-sm font-bold focus:border-amber-500 outline-none transition-colors"
+                                className="w-full bg-surface-950 border border-surface-800 rounded-2xl px-5 py-4 text-white text-sm font-bold focus:border-amber-500 outline-none transition-colors"
                             />
                         </div>
                         <div>
-                            <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Topics (comma-separated)</label>
+                            <label className="block text-[10px] font-black text-surface-500 uppercase tracking-widest mb-2">Topics (comma-separated)</label>
                             <textarea
                                 value={topics} onChange={e => setTopics(e.target.value)}
                                 placeholder="e.g. Bode Plot, Nyquist Criterion, Root Locus, Routh-Hurwitz"
-                                className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-5 py-4 text-white text-sm font-bold focus:border-amber-500 outline-none resize-none h-24 transition-colors"
+                                className="w-full bg-surface-950 border border-surface-800 rounded-2xl px-5 py-4 text-white text-sm font-bold focus:border-amber-500 outline-none resize-none h-24 transition-colors"
                             />
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Number of Questions</label>
+                                <label className="block text-[10px] font-black text-surface-500 uppercase tracking-widest mb-2">Number of Questions</label>
                                 <input
                                     type="number" min="1" max="50"
                                     value={questionCount} onChange={e => setQuestionCount(parseInt(e.target.value) || 10)}
-                                    className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-5 py-4 text-white text-sm font-bold focus:border-amber-500 outline-none transition-colors"
+                                    className="w-full bg-surface-950 border border-surface-800 rounded-2xl px-5 py-4 text-white text-sm font-bold focus:border-amber-500 outline-none transition-colors"
                                 />
                             </div>
                             <div>
-                                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Time Per Question (sec)</label>
+                                <label className="block text-[10px] font-black text-surface-500 uppercase tracking-widest mb-2">Time Per Question (sec)</label>
                                 <input
                                     type="number" min="30" step="30"
                                     value={timePerQuestion} onChange={e => setTimePerQuestion(parseInt(e.target.value) || 180)}
-                                    className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-5 py-4 text-white text-sm font-bold focus:border-amber-500 outline-none transition-colors"
+                                    className="w-full bg-surface-950 border border-surface-800 rounded-2xl px-5 py-4 text-white text-sm font-bold focus:border-amber-500 outline-none transition-colors"
                                 />
                             </div>
                         </div>
@@ -126,7 +126,7 @@ const SetCreator = ({ onCreated, onBack }) => {
                     <button
                         onClick={handleGeneratePrompt}
                         disabled={!title.trim() || !topics.trim()}
-                        className="w-full py-4 bg-amber-500 disabled:bg-slate-800 text-black disabled:text-slate-500 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-amber-400 transition-all shadow-lg shadow-amber-500/20 disabled:shadow-none flex items-center justify-center gap-2"
+                        className="w-full py-4 bg-amber-500 disabled:bg-surface-800 text-black disabled:text-surface-500 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-amber-400 transition-all shadow-lg shadow-amber-500/20 disabled:shadow-none flex items-center justify-center gap-2"
                     >
                         <Sparkles size={18} /> Generate AI Prompt
                     </button>
@@ -136,7 +136,7 @@ const SetCreator = ({ onCreated, onBack }) => {
             {/* Step 2: Copy Prompt */}
             {step === 2 && (
                 <div className="space-y-6 animate-in fade-in duration-300">
-                    <div className="bg-slate-900/60 border border-white/5 rounded-[2rem] p-6 md:p-8">
+                    <div className="bg-surface-900/60 border border-white/5 rounded-[2rem] p-6 md:p-8">
                         <div className="flex items-center justify-between mb-4">
                             <label className="text-[10px] font-black text-amber-400 uppercase tracking-widest">Generated Prompt</label>
                             <button
@@ -146,10 +146,10 @@ const SetCreator = ({ onCreated, onBack }) => {
                                 {copied ? <><Check size={12} /> Copied!</> : <><Copy size={12} /> Copy</>}
                             </button>
                         </div>
-                        <pre className="bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs text-slate-300 font-mono whitespace-pre-wrap max-h-64 overflow-y-auto no-scrollbar">
+                        <pre className="bg-surface-950 border border-surface-800 rounded-xl p-4 text-xs text-surface-400 font-mono whitespace-pre-wrap max-h-64 overflow-y-auto no-scrollbar">
                             {prompt}
                         </pre>
-                        <p className="text-xs text-slate-500 mt-4 font-medium leading-relaxed">
+                        <p className="text-xs text-surface-500 mt-4 font-medium leading-relaxed">
                             Copy this prompt and paste it into <strong className="text-white">Gemini</strong>, <strong className="text-white">ChatGPT</strong>, or <strong className="text-white">Claude</strong>. Then copy the JSON response for the next step.
                         </p>
                     </div>
@@ -166,12 +166,12 @@ const SetCreator = ({ onCreated, onBack }) => {
             {/* Step 3: Paste JSON */}
             {step === 3 && (
                 <div className="space-y-6 animate-in fade-in duration-300">
-                    <div className="bg-slate-900/60 border border-white/5 rounded-[2rem] p-6 md:p-8 space-y-4">
+                    <div className="bg-surface-900/60 border border-white/5 rounded-[2rem] p-6 md:p-8 space-y-4">
                         <label className="block text-[10px] font-black text-amber-400 uppercase tracking-widest">Paste AI Response (JSON)</label>
                         <textarea
                             value={jsonInput} onChange={e => setJsonInput(e.target.value)}
                             placeholder={'Paste the JSON output from the AI here...\n\n{\n  "questions": [\n    {\n      "type": "mcq",\n      "question": "...",\n      ...\n    }\n  ]\n}'}
-                            className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-5 py-4 text-white text-xs font-mono focus:border-amber-500 outline-none resize-none h-48 transition-colors"
+                            className="w-full bg-surface-950 border border-surface-800 rounded-2xl px-5 py-4 text-white text-xs font-mono focus:border-amber-500 outline-none resize-none h-48 transition-colors"
                             autoFocus
                         />
                     </div>
@@ -185,7 +185,7 @@ const SetCreator = ({ onCreated, onBack }) => {
                     <button
                         onClick={handleImportJSON}
                         disabled={!jsonInput.trim() || importing}
-                        className="w-full py-4 bg-emerald-500 disabled:bg-slate-800 text-black disabled:text-slate-500 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/20 disabled:shadow-none flex items-center justify-center gap-2"
+                        className="w-full py-4 bg-emerald-500 disabled:bg-surface-800 text-black disabled:text-surface-500 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/20 disabled:shadow-none flex items-center justify-center gap-2"
                     >
                         {importing ? <><Loader2 size={18} className="animate-spin" /> Importing...</> : <><Check size={18} /> Import Questions</>}
                     </button>

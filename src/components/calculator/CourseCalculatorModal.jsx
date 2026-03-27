@@ -130,39 +130,39 @@ const CourseCalculatorModal = ({ onClose }) => {
     };
 
     return (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-[#020617]/90 backdrop-blur-xl p-4 animate-in fade-in duration-300" onClick={handleBackdropClick}>
-            <div className="bg-[#0b1121] border border-slate-700 w-full max-w-2xl rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 flex flex-col max-h-[90vh]">
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-base/90 backdrop-blur-xl p-4 animate-in fade-in duration-300" onClick={handleBackdropClick}>
+            <div className="bg-surface-950 border border-surface-700 w-full max-w-2xl rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 flex flex-col max-h-[90vh]">
 
                 {/* Header */}
-                <div className="flex justify-between items-center p-6 md:p-8 border-b border-slate-800/50 bg-slate-900/40 shrink-0">
+                <div className="flex justify-between items-center p-6 md:p-8 border-b border-surface-800/50 bg-surface-900/40 shrink-0">
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-indigo-500/20 rounded-2xl flex items-center justify-center text-indigo-400 border border-indigo-500/30">
+                        <div className="w-12 h-12 bg-primary-500/20 rounded-2xl flex items-center justify-center text-primary-400 border border-primary-500/30">
                             <Calculator size={24} />
                         </div>
                         <div>
                             <h3 className="font-black text-white text-xl uppercase tracking-tighter">Course Estimator</h3>
-                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">Calculate your study timeline</p>
+                            <p className="text-[10px] text-surface-500 font-bold uppercase tracking-widest mt-1">Calculate your study timeline</p>
                         </div>
                     </div>
-                    <button onClick={onClose} className="p-3 bg-slate-800/50 hover:bg-slate-700/80 rounded-2xl text-slate-400 hover:text-white transition-all border border-transparent hover:border-slate-600">
+                    <button onClick={onClose} className="p-3 bg-surface-800/50 hover:bg-surface-700/80 rounded-2xl text-surface-400 hover:text-white transition-all border border-transparent hover:border-slate-600">
                         <X size={20} />
                     </button>
                 </div>
 
                 {/* Content */}
-                <div className="p-6 md:p-8 overflow-y-auto no-scrollbar flex-1 bg-slate-950/50 flex flex-col gap-8">
+                <div className="p-6 md:p-8 overflow-y-auto no-scrollbar flex-1 bg-surface-950/50 flex flex-col gap-8">
 
                     {/* Mode Toggle */}
-                    <div className="flex bg-slate-900/50 p-1.5 rounded-2xl border border-white/5 shadow-inner">
+                    <div className="flex bg-surface-900/50 p-1.5 rounded-2xl border border-white/5 shadow-inner">
                         <button
                             onClick={() => setMode('daysToComplete')}
-                            className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${mode === 'daysToComplete' ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/20' : 'text-slate-500 hover:text-slate-300'}`}
+                            className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${mode === 'daysToComplete' ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20' : 'text-surface-500 hover:text-surface-400'}`}
                         >
                             <Calendar size={16} /> Compute Days Needed
                         </button>
                         <button
                             onClick={() => setMode('hoursPerDay')}
-                            className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${mode === 'hoursPerDay' ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' : 'text-slate-500 hover:text-slate-300'}`}
+                            className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${mode === 'hoursPerDay' ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' : 'text-surface-500 hover:text-surface-400'}`}
                         >
                             <Clock size={16} /> Compute Daily Hours
                         </button>
@@ -171,30 +171,30 @@ const CourseCalculatorModal = ({ onClose }) => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         {/* Course Size */}
                         <div>
-                            <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Total Course Length (Hours)</label>
+                            <label className="block text-[10px] font-black text-surface-500 uppercase tracking-widest mb-2">Total Course Length (Hours)</label>
                             <div className="relative">
-                                <Clock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600" />
+                                <Clock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-surface-600" />
                                 <input
                                     type="number"
                                     min="1"
                                     value={totalHours}
                                     onChange={(e) => setTotalHours(e.target.value)}
                                     placeholder="e.g. 150"
-                                    className="w-full bg-slate-900/50 border border-slate-700 rounded-xl py-3 pl-11 pr-4 text-white text-sm font-bold focus:outline-none focus:border-indigo-500 transition-colors"
+                                    className="w-full bg-surface-900/50 border border-surface-700 rounded-xl py-3 pl-11 pr-4 text-white text-sm font-bold focus:outline-none focus:border-primary-500 transition-colors"
                                 />
                             </div>
                         </div>
 
                         {/* Start Date */}
                         <div>
-                            <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Start Date</label>
+                            <label className="block text-[10px] font-black text-surface-500 uppercase tracking-widest mb-2">Start Date</label>
                             <div className="relative">
-                                <CalendarDays size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600" />
+                                <CalendarDays size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-surface-600" />
                                 <input
                                     type="date"
                                     value={startDate}
                                     onChange={(e) => setStartDate(e.target.value)}
-                                    className="w-full bg-slate-900/50 border border-slate-700 rounded-xl py-3 pl-11 pr-4 text-white text-sm font-bold focus:outline-none focus:border-indigo-500 transition-colors [color-scheme:dark]"
+                                    className="w-full bg-surface-900/50 border border-surface-700 rounded-xl py-3 pl-11 pr-4 text-white text-sm font-bold focus:outline-none focus:border-primary-500 transition-colors [color-scheme:dark]"
                                 />
                             </div>
                         </div>
@@ -202,9 +202,9 @@ const CourseCalculatorModal = ({ onClose }) => {
                         {/* Mode Specific Inputs */}
                         {mode === 'daysToComplete' ? (
                             <div>
-                                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Planned Daily Study Hours</label>
+                                <label className="block text-[10px] font-black text-surface-500 uppercase tracking-widest mb-2">Planned Daily Study Hours</label>
                                 <div className="relative">
-                                    <Clock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600" />
+                                    <Clock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-surface-600" />
                                     <input
                                         type="number"
                                         min="0.1"
@@ -212,20 +212,20 @@ const CourseCalculatorModal = ({ onClose }) => {
                                         value={dailyStudyHours}
                                         onChange={(e) => setDailyStudyHours(e.target.value)}
                                         placeholder="e.g. 2.5"
-                                        className="w-full bg-slate-900/50 border border-slate-700 rounded-xl py-3 pl-11 pr-4 text-white text-sm font-bold focus:outline-none focus:border-indigo-500 transition-colors"
+                                        className="w-full bg-surface-900/50 border border-surface-700 rounded-xl py-3 pl-11 pr-4 text-white text-sm font-bold focus:outline-none focus:border-primary-500 transition-colors"
                                     />
                                 </div>
                             </div>
                         ) : (
                             <div>
-                                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Target Completion Date</label>
+                                <label className="block text-[10px] font-black text-surface-500 uppercase tracking-widest mb-2">Target Completion Date</label>
                                 <div className="relative">
-                                    <CalendarDays size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600" />
+                                    <CalendarDays size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-surface-600" />
                                     <input
                                         type="date"
                                         value={targetDate}
                                         onChange={(e) => setTargetDate(e.target.value)}
-                                        className="w-full bg-slate-900/50 border border-slate-700 rounded-xl py-3 pl-11 pr-4 text-white text-sm font-bold focus:outline-none focus:border-emerald-500 transition-colors [color-scheme:dark]"
+                                        className="w-full bg-surface-900/50 border border-surface-700 rounded-xl py-3 pl-11 pr-4 text-white text-sm font-bold focus:outline-none focus:border-emerald-500 transition-colors [color-scheme:dark]"
                                     />
                                 </div>
                             </div>
@@ -233,16 +233,16 @@ const CourseCalculatorModal = ({ onClose }) => {
                     </div>
 
                     {/* Active Days Selection */}
-                    <div className="bg-slate-900/30 p-5 rounded-2xl border border-white/5">
+                    <div className="bg-surface-900/30 p-5 rounded-2xl border border-white/5">
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
                             <div>
-                                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest">Active Study Days</label>
-                                <p className="text-xs text-slate-500 font-medium">Which days of the week will you study?</p>
+                                <label className="block text-[10px] font-black text-surface-400 uppercase tracking-widest">Active Study Days</label>
+                                <p className="text-xs text-surface-500 font-medium">Which days of the week will you study?</p>
                             </div>
                             <div className="flex items-center gap-2">
-                                <button onClick={toggleWeekdays} className="px-3 py-1.5 bg-slate-800 text-slate-300 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-slate-700 transition-colors">Weekdays</button>
-                                <button onClick={toggleWeekends} className="px-3 py-1.5 bg-slate-800 text-slate-300 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-slate-700 transition-colors">Weekends</button>
-                                <button onClick={toggleAllDays} className="px-3 py-1.5 bg-slate-800 text-slate-300 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-slate-700 transition-colors">All</button>
+                                <button onClick={toggleWeekdays} className="px-3 py-1.5 bg-surface-800 text-surface-400 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-surface-700 transition-colors">Weekdays</button>
+                                <button onClick={toggleWeekends} className="px-3 py-1.5 bg-surface-800 text-surface-400 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-surface-700 transition-colors">Weekends</button>
+                                <button onClick={toggleAllDays} className="px-3 py-1.5 bg-surface-800 text-surface-400 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-surface-700 transition-colors">All</button>
                             </div>
                         </div>
 
@@ -252,8 +252,8 @@ const CourseCalculatorModal = ({ onClose }) => {
                                     key={day.value}
                                     onClick={() => toggleDay(day.value)}
                                     className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center font-black transition-all ${activeDays[day.value]
-                                            ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/25 scale-110'
-                                            : 'bg-slate-800 text-slate-500 border border-slate-700 hover:bg-slate-700 hover:text-slate-300'
+                                            ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/25 scale-110'
+                                            : 'bg-surface-800 text-surface-500 border border-surface-700 hover:bg-surface-700 hover:text-surface-400'
                                         }`}
                                     title={day.name}
                                 >
@@ -265,26 +265,26 @@ const CourseCalculatorModal = ({ onClose }) => {
 
                     {/* Results Section */}
                     {result && !result.error && (
-                        <div className={`p-6 sm:p-8 rounded-[2rem] border animate-in slide-in-from-bottom-4 duration-500 mt-2 ${mode === 'daysToComplete' ? 'bg-indigo-500/10 border-indigo-500/20' : 'bg-emerald-500/10 border-emerald-500/20'}`}>
+                        <div className={`p-6 sm:p-8 rounded-[2rem] border animate-in slide-in-from-bottom-4 duration-500 mt-2 ${mode === 'daysToComplete' ? 'bg-primary-500/10 border-primary-500/20' : 'bg-emerald-500/10 border-emerald-500/20'}`}>
                             {result.type === 'daysToComplete' ? (
                                 <div className="text-center">
-                                    <p className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.3em] mb-3">Estimated Completion Date</p>
+                                    <p className="text-[10px] font-black text-primary-400 uppercase tracking-[0.3em] mb-3">Estimated Completion Date</p>
                                     <h2 className="text-3xl sm:text-4xl font-black text-white uppercase tracking-tighter mb-6">{new Date(result.endDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</h2>
 
-                                    <div className="flex justify-center gap-6 sm:gap-12 text-center border-t border-indigo-500/20 pt-6">
+                                    <div className="flex justify-center gap-6 sm:gap-12 text-center border-t border-primary-500/20 pt-6">
                                         <div>
                                             <p className="text-2xl font-black text-white">{result.activeDaysCount}</p>
-                                            <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mt-1">Study Days Needed</p>
+                                            <p className="text-[9px] font-black text-surface-500 uppercase tracking-widest mt-1">Study Days Needed</p>
                                         </div>
-                                        <div className="w-px bg-indigo-500/20"></div>
+                                        <div className="w-px bg-primary-500/20"></div>
                                         <div>
                                             <p className="text-2xl font-black text-white">{result.totalDaysCount}</p>
-                                            <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mt-1">Total Calendar Days</p>
+                                            <p className="text-[9px] font-black text-surface-500 uppercase tracking-widest mt-1">Total Calendar Days</p>
                                         </div>
-                                        <div className="w-px bg-indigo-500/20 hidden sm:block"></div>
+                                        <div className="w-px bg-primary-500/20 hidden sm:block"></div>
                                         <div className="hidden sm:block">
                                             <p className="text-2xl font-black text-white">{(result.totalDaysCount / 7).toFixed(1)}</p>
-                                            <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mt-1">Total Weeks</p>
+                                            <p className="text-[9px] font-black text-surface-500 uppercase tracking-widest mt-1">Total Weeks</p>
                                         </div>
                                     </div>
                                 </div>
@@ -293,18 +293,18 @@ const CourseCalculatorModal = ({ onClose }) => {
                                     <p className="text-[10px] font-black text-emerald-400 uppercase tracking-[0.3em] mb-3">Required Study Pace</p>
                                     <div className="flex items-baseline justify-center gap-2 mb-6">
                                         <h2 className="text-4xl sm:text-5xl font-black text-white uppercase tracking-tighter">{result.requiredDaily}</h2>
-                                        <span className="text-lg font-bold text-slate-400 uppercase tracking-widest">hours / day</span>
+                                        <span className="text-lg font-bold text-surface-400 uppercase tracking-widest">hours / day</span>
                                     </div>
 
                                     <div className="flex justify-center gap-6 sm:gap-12 text-center border-t border-emerald-500/20 pt-6">
                                         <div>
                                             <p className="text-2xl font-black text-white">{result.activeDaysCount}</p>
-                                            <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mt-1">Available Study Days</p>
+                                            <p className="text-[9px] font-black text-surface-500 uppercase tracking-widest mt-1">Available Study Days</p>
                                         </div>
                                         <div className="w-px bg-emerald-500/20"></div>
                                         <div>
                                             <p className="text-2xl font-black text-white">{result.totalDaysCount}</p>
-                                            <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mt-1">Total Calendar Days</p>
+                                            <p className="text-[9px] font-black text-surface-500 uppercase tracking-widest mt-1">Total Calendar Days</p>
                                         </div>
                                     </div>
                                 </div>

@@ -96,28 +96,28 @@ const StreakCalendar = ({ toolId, currentStreak = 0, activeDays = [], dayDetails
     }
 
     return (
-        <div className="bg-slate-900/80 backdrop-blur border border-slate-800 rounded-3xl overflow-hidden shadow-inner h-full flex flex-col">
+        <div className="bg-surface-900/80 backdrop-blur border border-surface-800 rounded-3xl overflow-hidden shadow-inner h-full flex flex-col">
             {/* Header with streak badge */}
             <div className="px-5 pt-5 pb-3 flex justify-between items-center">
                 <div className="flex items-center gap-3">
                     <div className="flex items-center gap-1.5">
-                        <Flame size={16} className={`${currentStreak > 0 ? 'text-orange-400' : 'text-slate-700'}`} fill={currentStreak > 0 ? 'currentColor' : 'none'} />
-                        <span className={`text-sm font-black tracking-tight ${currentStreak > 0 ? 'text-orange-400' : 'text-slate-700'}`}>
+                        <Flame size={16} className={`${currentStreak > 0 ? 'text-orange-400' : 'text-surface-700'}`} fill={currentStreak > 0 ? 'currentColor' : 'none'} />
+                        <span className={`text-sm font-black tracking-tight ${currentStreak > 0 ? 'text-orange-400' : 'text-surface-700'}`}>
                             {currentStreak}
                         </span>
                     </div>
                     {currentStreak > 0 && (
-                        <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Day Streak</span>
+                        <span className="text-[9px] font-black text-surface-600 uppercase tracking-widest">Day Streak</span>
                     )}
                 </div>
                 <div className="flex items-center gap-1">
-                    <button onClick={() => changeMonth(-1)} className="p-1.5 text-slate-500 hover:text-white hover:bg-slate-800 rounded-lg transition-colors">
+                    <button onClick={() => changeMonth(-1)} className="p-1.5 text-surface-500 hover:text-white hover:bg-surface-800 rounded-lg transition-colors">
                         <ChevronLeft size={14} />
                     </button>
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest w-28 text-center">
+                    <span className="text-[10px] font-black text-surface-400 uppercase tracking-widest w-28 text-center">
                         {MONTHS[month].substring(0, 3)} {year}
                     </span>
-                    <button onClick={() => changeMonth(1)} className="p-1.5 text-slate-500 hover:text-white hover:bg-slate-800 rounded-lg transition-colors">
+                    <button onClick={() => changeMonth(1)} className="p-1.5 text-surface-500 hover:text-white hover:bg-surface-800 rounded-lg transition-colors">
                         <ChevronRight size={14} />
                     </button>
                 </div>
@@ -126,7 +126,7 @@ const StreakCalendar = ({ toolId, currentStreak = 0, activeDays = [], dayDetails
             {/* Day headers */}
             <div className="grid grid-cols-7 px-4">
                 {DAYS.map((d, i) => (
-                    <div key={`${d}-${i}`} className="text-[10px] font-black text-slate-600/50 text-center py-1">{d}</div>
+                    <div key={`${d}-${i}`} className="text-[10px] font-black text-surface-600/50 text-center py-1">{d}</div>
                 ))}
             </div>
 
@@ -176,8 +176,8 @@ const StreakCalendar = ({ toolId, currentStreak = 0, activeDays = [], dayDetails
                                             ? 'bg-amber-500 text-white font-black shadow-lg shadow-amber-500/30'
                                             : 'bg-amber-500/60 text-white font-black'
                                         : isT
-                                            ? 'bg-indigo-600 text-white font-black ring-2 ring-indigo-400/30'
-                                            : 'text-slate-500'
+                                            ? 'bg-primary-600 text-white font-black ring-2 ring-indigo-400/30'
+                                            : 'text-surface-500'
                                     }
                                 `}
                             >
@@ -198,7 +198,7 @@ const StreakCalendar = ({ toolId, currentStreak = 0, activeDays = [], dayDetails
                         transform: 'translate(-50%, -100%)'
                     }}
                 >
-                    <div className="bg-slate-900 border border-slate-700 rounded-xl shadow-2xl shadow-black/50 p-3 min-w-[180px] max-w-[240px]">
+                    <div className="bg-surface-900 border border-surface-700 rounded-xl shadow-2xl shadow-black/50 p-3 min-w-[180px] max-w-[240px]">
                         <div className="text-[10px] font-black text-amber-400 uppercase tracking-widest mb-2">
                             {new Date(tooltip.dateStr + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
                         </div>
@@ -207,7 +207,7 @@ const StreakCalendar = ({ toolId, currentStreak = 0, activeDays = [], dayDetails
                                 <div key={i} className="flex items-start gap-2">
                                     <div className="w-1 h-1 rounded-full bg-amber-500 mt-1.5 shrink-0" />
                                     <div className="flex-1 min-w-0">
-                                        <span className="text-[10px] text-slate-400 font-bold block truncate">{d.subject} › {d.topic}</span>
+                                        <span className="text-[10px] text-surface-400 font-bold block truncate">{d.subject} › {d.topic}</span>
                                         <span className="text-[10px] font-mono text-white font-bold">
                                             {d.minutes > 0 && formatTime ? formatTime(d.minutes) : ''}
                                             {d.modules > 0 ? `${d.minutes > 0 ? ' · ' : ''}${d.modules} mod` : ''}
@@ -219,7 +219,7 @@ const StreakCalendar = ({ toolId, currentStreak = 0, activeDays = [], dayDetails
                     </div>
                     {/* Arrow */}
                     <div className="flex justify-center">
-                        <div className="w-2 h-2 bg-slate-900 border-r border-b border-slate-700 transform rotate-45 -mt-1" />
+                        <div className="w-2 h-2 bg-surface-900 border-r border-b border-surface-700 transform rotate-45 -mt-1" />
                     </div>
                 </div>,
                 document.body

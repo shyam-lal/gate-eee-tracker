@@ -88,24 +88,24 @@ const StudySession = ({ deck, onComplete, mode = 'srs' }) => {
         }
     };
 
-    if (loading) return <div className="p-8 text-center text-slate-500 animate-pulse font-black uppercase tracking-widest flex items-center justify-center h-full">Loading Session...</div>;
+    if (loading) return <div className="p-8 text-center text-surface-500 animate-pulse font-black uppercase tracking-widest flex items-center justify-center h-full">Loading Session...</div>;
 
     if (completed) {
         return (
             <div className="h-full flex flex-col items-center justify-center p-6 animate-in zoom-in-95 duration-500">
-                <div className="w-24 h-24 bg-indigo-500/20 rounded-full flex items-center justify-center text-indigo-400 mb-6 relative">
-                    <div className="absolute inset-0 bg-indigo-500 blur-3xl opacity-20 rounded-full"></div>
+                <div className="w-24 h-24 bg-primary-500/20 rounded-full flex items-center justify-center text-primary-400 mb-6 relative">
+                    <div className="absolute inset-0 bg-primary-500 blur-3xl opacity-20 rounded-full"></div>
                     <CheckCircle2 size={48} />
                 </div>
                 <h2 className="text-4xl font-black text-white uppercase tracking-tighter mb-4 text-center">Session Complete!</h2>
-                <p className="text-slate-400 text-center max-w-sm mb-8 font-medium">
+                <p className="text-surface-400 text-center max-w-sm mb-8 font-medium">
                     {mode === 'cram'
                         ? `You've reviewed all ${cards.length} cards in ${deck.name}. Ready for more?`
                         : `Great job! You've reviewed all due flashcards in ${deck.name} for today. Come back tomorrow!`}
                 </p>
                 <button
                     onClick={onComplete}
-                    className="px-8 py-4 bg-slate-800 text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-slate-700 transition-colors shadow-lg flex items-center gap-3"
+                    className="px-8 py-4 bg-surface-800 text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-surface-700 transition-colors shadow-lg flex items-center gap-3"
                 >
                     <ArrowLeft size={16} /> Back to Decks
                 </button>
@@ -195,12 +195,12 @@ const StudySession = ({ deck, onComplete, mode = 'srs' }) => {
             `}</style>
             {/* Header */}
             <div className="flex items-center justify-between mb-8 flex-shrink-0">
-                <button onClick={onComplete} className="text-slate-500 hover:text-white transition-colors flex items-center gap-2 text-xs font-black uppercase tracking-widest">
+                <button onClick={onComplete} className="text-surface-500 hover:text-white transition-colors flex items-center gap-2 text-xs font-black uppercase tracking-widest">
                     <ArrowLeft size={16} /> Exit
                 </button>
                 <div className="text-center">
                     <h2 className="text-white font-black uppercase tracking-tighter text-lg">{deck.name} {mode === 'cram' && <span className="text-amber-500 ml-2">CRAM</span>}</h2>
-                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em]">{currentIndex + 1} / {cards.length} {mode === 'cram' ? 'Cards' : 'Due'}</p>
+                    <p className="text-[10px] text-surface-500 font-bold uppercase tracking-[0.2em]">{currentIndex + 1} / {cards.length} {mode === 'cram' ? 'Cards' : 'Due'}</p>
                 </div>
                 <div className="w-20"></div> {/* Spacer for centering */}
             </div>
@@ -210,33 +210,33 @@ const StudySession = ({ deck, onComplete, mode = 'srs' }) => {
                 <div className="w-full h-full relative transition-all duration-500 transform-style-3d group">
 
                     {/* Front of Card */}
-                    <div className={`absolute inset-0 w-full h-full backface-hidden flex flex-col bg-slate-900 border-2 border-slate-800 rounded-[2.5rem] shadow-2xl p-6 sm:p-10 transition-all duration-500 ${showBack ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100 scale-100 z-10'}`}>
-                        <div className="w-12 h-12 bg-indigo-500/10 rounded-2xl flex items-center justify-center text-indigo-400 mb-6 mx-auto self-start flex-shrink-0">
+                    <div className={`absolute inset-0 w-full h-full backface-hidden flex flex-col bg-surface-900 border-2 border-surface-800 rounded-[2.5rem] shadow-2xl p-6 sm:p-10 transition-all duration-500 ${showBack ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100 scale-100 z-10'}`}>
+                        <div className="w-12 h-12 bg-primary-500/10 rounded-2xl flex items-center justify-center text-primary-400 mb-6 mx-auto self-start flex-shrink-0">
                             <Brain size={24} />
                         </div>
                         <div ref={!showBack ? cardContentRef : null} className="flex-1 overflow-y-auto no-scrollbar w-full flex flex-col fade-edge-y pb-2">
                             <div className="m-auto flex flex-col items-center space-y-8 w-full">
                                 <div className={`study-card-content font-bold text-white leading-relaxed ${getFontSizeClass(frontData.text)}`} dangerouslySetInnerHTML={{ __html: frontData.text }} />
                                 {frontData.image && (
-                                    <img src={frontData.image} alt="Front illustration" className="max-h-[40vh] rounded-2xl object-contain border border-slate-700 shadow-xl shadow-black/50" />
+                                    <img src={frontData.image} alt="Front illustration" className="max-h-[40vh] rounded-2xl object-contain border border-surface-700 shadow-xl shadow-black/50" />
                                 )}
                             </div>
                         </div>
                     </div>
 
                     {/* Back of Card */}
-                    <div className={`absolute inset-0 w-full h-full backface-hidden flex flex-col bg-slate-800 border-2 border-indigo-500/50 rounded-[2.5rem] shadow-2xl shadow-indigo-500/10 p-6 sm:p-10 transition-all duration-500 ${!showBack ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100 scale-100 z-10'}`}>
-                        <div className="flex items-center justify-between mb-6 opacity-50 pb-4 border-b border-slate-700 flex-shrink-0">
+                    <div className={`absolute inset-0 w-full h-full backface-hidden flex flex-col bg-surface-800 border-2 border-primary-500/50 rounded-[2.5rem] shadow-2xl shadow-primary-500/10 p-6 sm:p-10 transition-all duration-500 ${!showBack ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100 scale-100 z-10'}`}>
+                        <div className="flex items-center justify-between mb-6 opacity-50 pb-4 border-b border-surface-700 flex-shrink-0">
                             <div className="flex-1 text-center px-4 w-full overflow-hidden">
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 w-full">Question</p>
+                                <p className="text-[10px] font-black text-surface-400 uppercase tracking-widest mb-1.5 w-full">Question</p>
                                 <div className="text-xs text-white font-medium line-clamp-2 break-words w-full" style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }} dangerouslySetInnerHTML={{ __html: frontData.text }} />
                             </div>
                         </div>
                         <div ref={showBack ? cardContentRef : null} className="flex-1 overflow-y-auto no-scrollbar w-full flex flex-col fade-edge-y pb-2">
                             <div className="m-auto flex flex-col items-center space-y-10 w-full">
-                                <div className={`study-card-content font-bold text-indigo-100 leading-relaxed ${getFontSizeClass(backData.text)}`} dangerouslySetInnerHTML={{ __html: backData.text }} />
+                                <div className={`study-card-content font-bold text-primary-100 leading-relaxed ${getFontSizeClass(backData.text)}`} dangerouslySetInnerHTML={{ __html: backData.text }} />
                                 {backData.image && (
-                                    <img src={backData.image} alt="Back illustration" className="max-h-[50vh] mx-auto rounded-2xl object-contain border border-slate-700 shadow-xl shadow-black/50" />
+                                    <img src={backData.image} alt="Back illustration" className="max-h-[50vh] mx-auto rounded-2xl object-contain border border-surface-700 shadow-xl shadow-black/50" />
                                 )}
                             </div>
                         </div>
@@ -250,7 +250,7 @@ const StudySession = ({ deck, onComplete, mode = 'srs' }) => {
                 {!showBack ? (
                     <button
                         onClick={handleFlip}
-                        className="w-full max-w-sm h-16 bg-indigo-600 text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-indigo-500 hover:scale-105 active:scale-95 transition-all shadow-xl shadow-indigo-600/30 flex items-center justify-center gap-3 animate-in fade-in slide-in-from-bottom-4"
+                        className="w-full max-w-sm h-16 bg-primary-600 text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-primary-500 hover:scale-105 active:scale-95 transition-all shadow-xl shadow-primary-600/30 flex items-center justify-center gap-3 animate-in fade-in slide-in-from-bottom-4"
                     >
                         <RefreshCcw size={18} /> Reveal Answer
                     </button>

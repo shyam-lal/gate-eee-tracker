@@ -71,53 +71,53 @@ const AIGenerator = ({ deckId, onImportComplete, onCancel }) => {
     };
 
     return (
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl relative animate-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-4 mb-6">
+        <div className="bg-surface-900 border border-surface-800 rounded-2xl p-6 shadow-xl relative animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between border-b border-surface-800 pb-4 mb-6">
                 <div className="flex items-center gap-3">
-                    <div className="p-2 bg-indigo-500/10 rounded-xl text-indigo-400">
+                    <div className="p-2 bg-primary-500/10 rounded-xl text-primary-400">
                         <Bot size={20} />
                     </div>
                     <div>
                         <h3 className="text-xl font-black text-white">AI Card Generator</h3>
-                        <p className="text-xs text-slate-400 font-medium">Use AI to generate flashcards from a topic</p>
+                        <p className="text-xs text-surface-400 font-medium">Use AI to generate flashcards from a topic</p>
                     </div>
                 </div>
-                <button onClick={onCancel} className="text-sm font-bold text-slate-500 hover:text-white transition-colors">Close</button>
+                <button onClick={onCancel} className="text-sm font-bold text-surface-500 hover:text-white transition-colors">Close</button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Step 1: Generate Prompt */}
                 <div className="space-y-4">
-                    <h4 className="flex items-center gap-2 text-sm font-black text-indigo-400 uppercase tracking-widest"><span className="bg-indigo-500/20 text-indigo-300 w-5 h-5 rounded-full flex items-center justify-center text-[10px]">1</span> Get Prompt</h4>
+                    <h4 className="flex items-center gap-2 text-sm font-black text-primary-400 uppercase tracking-widest"><span className="bg-primary-500/20 text-primary-300 w-5 h-5 rounded-full flex items-center justify-center text-[10px]">1</span> Get Prompt</h4>
                     <form onSubmit={handleGeneratePrompt} className="space-y-3">
                         <div>
-                            <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Topic / Syllabus Link</label>
+                            <label className="block text-[10px] font-black text-surface-500 uppercase tracking-widest mb-1.5 ml-1">Topic / Syllabus Link</label>
                             <input
                                 type="text"
                                 value={topic}
                                 onChange={(e) => setTopic(e.target.value)}
                                 placeholder="e.g. Nyquist Stability Criterion"
-                                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white font-medium text-sm focus:border-indigo-500 outline-none"
+                                className="w-full bg-surface-950 border border-surface-800 rounded-xl px-4 py-3 text-white font-medium text-sm focus:border-primary-500 outline-none"
                                 required
                             />
                         </div>
                         <div className="flex gap-3">
                             <div className="flex-1">
-                                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Card Count</label>
+                                <label className="block text-[10px] font-black text-surface-500 uppercase tracking-widest mb-1.5 ml-1">Card Count</label>
                                 <input
                                     type="number"
                                     min="1"
                                     max="50"
                                     value={count}
                                     onChange={(e) => setCount(parseInt(e.target.value))}
-                                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white font-medium text-sm focus:border-indigo-500 outline-none"
+                                    className="w-full bg-surface-950 border border-surface-800 rounded-xl px-4 py-3 text-white font-medium text-sm focus:border-primary-500 outline-none"
                                 />
                             </div>
                             <div className="flex items-end">
                                 <button
                                     type="submit"
                                     disabled={loadingPrompt || !topic.trim()}
-                                    className="h-[46px] px-6 bg-indigo-600 disabled:bg-slate-800 text-white disabled:text-slate-500 rounded-xl font-bold text-sm tracking-wide hover:bg-indigo-500 transition-colors shadow-lg shadow-indigo-600/20 disabled:shadow-none flex items-center gap-2"
+                                    className="h-[46px] px-6 bg-primary-600 disabled:bg-surface-800 text-white disabled:text-surface-500 rounded-xl font-bold text-sm tracking-wide hover:bg-primary-500 transition-colors shadow-lg shadow-primary-600/20 disabled:shadow-none flex items-center gap-2"
                                 >
                                     {loadingPrompt ? <Loader2 size={16} className="animate-spin" /> : 'Generate'}
                                 </button>
@@ -126,17 +126,17 @@ const AIGenerator = ({ deckId, onImportComplete, onCancel }) => {
                     </form>
 
                     {prompt && (
-                        <div className="mt-4 bg-slate-950 border border-slate-800 rounded-xl overflow-hidden relative group animate-in slide-in-from-top-2">
+                        <div className="mt-4 bg-surface-950 border border-surface-800 rounded-xl overflow-hidden relative group animate-in slide-in-from-top-2">
                             <div className="absolute top-2 right-2">
                                 <button
                                     onClick={handleCopy}
-                                    className="p-2 bg-slate-800/80 hover:bg-indigo-600 text-slate-300 hover:text-white rounded-lg transition-colors backdrop-blur flex items-center justify-center"
+                                    className="p-2 bg-surface-800/80 hover:bg-primary-600 text-surface-400 hover:text-white rounded-lg transition-colors backdrop-blur flex items-center justify-center"
                                     title="Copy Prompt"
                                 >
                                     {copied ? <CheckCircle2 size={16} className="text-emerald-400" /> : <Copy size={16} />}
                                 </button>
                             </div>
-                            <div className="p-4 overflow-y-auto max-h-48 text-xs text-slate-400 font-mono leading-relaxed whitespace-pre-wrap">
+                            <div className="p-4 overflow-y-auto max-h-48 text-xs text-surface-400 font-mono leading-relaxed whitespace-pre-wrap">
                                 {prompt}
                             </div>
                         </div>
@@ -144,16 +144,16 @@ const AIGenerator = ({ deckId, onImportComplete, onCancel }) => {
                 </div>
 
                 {/* Step 2: Paste JSON */}
-                <div className="space-y-4 border-t md:border-t-0 md:border-l border-slate-800 pt-6 md:pt-0 md:pl-8">
+                <div className="space-y-4 border-t md:border-t-0 md:border-l border-surface-800 pt-6 md:pt-0 md:pl-8">
                     <h4 className="flex items-center gap-2 text-sm font-black text-emerald-400 uppercase tracking-widest"><span className="bg-emerald-500/20 text-emerald-300 w-5 h-5 rounded-full flex items-center justify-center text-[10px]">2</span> Paste Response</h4>
-                    <p className="text-xs text-slate-500 font-medium">Copy the generated prompt, paste it into ChatGPT or Gemini, and paste the returned JSON below.</p>
+                    <p className="text-xs text-surface-500 font-medium">Copy the generated prompt, paste it into ChatGPT or Gemini, and paste the returned JSON below.</p>
 
                     <div>
                         <textarea
                             value={jsonInput}
                             onChange={handleJsonChange}
                             placeholder='{"flashcards": [...]}'
-                            className="w-full h-40 bg-slate-950 border border-slate-800 rounded-xl p-4 text-emerald-400 font-mono text-xs focus:border-emerald-500 outline-none resize-none"
+                            className="w-full h-40 bg-surface-950 border border-surface-800 rounded-xl p-4 text-emerald-400 font-mono text-xs focus:border-emerald-500 outline-none resize-none"
                         />
                     </div>
 

@@ -249,7 +249,7 @@ const PlannerDashboard = ({ onBack }) => {
 
     // Color-coded columns
     const columns = [
-        { id: 'todo', title: 'To Do', icon: <Circle size={16} className="text-slate-400" />, bg: 'bg-slate-900/40', border: 'border-white/5' },
+        { id: 'todo', title: 'To Do', icon: <Circle size={16} className="text-surface-400" />, bg: 'bg-surface-900/40', border: 'border-white/5' },
         { id: 'in_progress', title: 'Doing', icon: <Clock size={16} className="text-amber-500" />, bg: 'bg-amber-900/10', border: 'border-amber-500/10' },
         { id: 'completed', title: 'Done', icon: <CheckCircle2 size={16} className="text-emerald-500" />, bg: 'bg-emerald-900/10', border: 'border-emerald-500/10' }
     ];
@@ -425,7 +425,7 @@ const PlannerDashboard = ({ onBack }) => {
     }
 
     return (
-        <div className="min-h-screen bg-[#020617] text-slate-200 font-sans p-4 md:p-8 selection:bg-indigo-500/30">
+        <div className="min-h-screen bg-base text-surface-400 font-sans p-4 md:p-8 selection:bg-primary-500/30">
             {/* Custom Styles */}
             <style>{`
                 .quill { display: flex; flex-direction: column; height: 100%; }
@@ -482,12 +482,12 @@ const PlannerDashboard = ({ onBack }) => {
             {/* Header */}
             <header className="max-w-[1600px] mx-auto flex items-center justify-between mb-8 pb-4 border-b border-white/5">
                 <div className="flex items-center gap-4">
-                    <button onClick={onBack} className="p-2 bg-slate-900 border border-slate-700 rounded-xl hover:bg-slate-800 transition-colors">
+                    <button onClick={onBack} className="p-2 bg-surface-900 border border-surface-700 rounded-xl hover:bg-surface-800 transition-colors">
                         <ChevronLeft size={20} />
                     </button>
                     <div>
                         <h1 className="text-2xl font-black text-white uppercase tracking-tighter cursor-pointer select-none">Command Center</h1>
-                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest cursor-default select-none">Hybrid Study Planner</p>
+                        <p className="text-[10px] text-surface-500 font-bold uppercase tracking-widest cursor-default select-none">Hybrid Study Planner</p>
                     </div>
                 </div>
             </header>
@@ -496,30 +496,30 @@ const PlannerDashboard = ({ onBack }) => {
             <div className="max-w-[1600px] mx-auto mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
 
                 {/* View Toggles */}
-                <div className="flex items-center bg-slate-900/50 p-1.5 rounded-2xl border border-white/5 shadow-inner">
+                <div className="flex items-center bg-surface-900/50 p-1.5 rounded-2xl border border-white/5 shadow-inner">
                     <button
                         onClick={() => changeViewMode('week')}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${viewMode === 'week' ? 'bg-indigo-500 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${viewMode === 'week' ? 'bg-primary-500 text-white shadow-lg' : 'text-surface-500 hover:text-surface-400'}`}
                     >
                         <LayoutGrid size={14} /> Weekly
                     </button>
                     <button
                         onClick={() => changeViewMode('month')}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${viewMode === 'month' ? 'bg-emerald-500 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${viewMode === 'month' ? 'bg-emerald-500 text-white shadow-lg' : 'text-surface-500 hover:text-surface-400'}`}
                     >
                         <CalendarDays size={14} /> Monthly
                     </button>
                     <button
                         onClick={() => changeViewMode('half_year')}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${viewMode === 'half_year' ? 'bg-amber-500 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${viewMode === 'half_year' ? 'bg-amber-500 text-white shadow-lg' : 'text-surface-500 hover:text-surface-400'}`}
                     >
                         <Columns size={14} /> H-Yearly
                     </button>
                 </div >
 
                 {/* Horizontal Scroll Strip */}
-                <div className="flex items-center gap-2 bg-slate-900/40 backdrop-blur-md px-2 py-4 rounded-[2.5rem] border border-white/5 flex-1 max-w-3xl justify-center">
-                    <button onClick={() => changeTimelineScope(-1)} className="p-2 text-slate-400 hover:text-white shrink-0"><ChevronLeft size={16} /></button>
+                <div className="flex items-center gap-2 bg-surface-900/40 backdrop-blur-md px-2 py-4 rounded-[2.5rem] border border-white/5 flex-1 max-w-3xl justify-center">
+                    <button onClick={() => changeTimelineScope(-1)} className="p-2 text-surface-400 hover:text-white shrink-0"><ChevronLeft size={16} /></button>
 
                     <div className="flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth px-2">
                         {scrollItems.map((item, idx) => (
@@ -528,21 +528,21 @@ const PlannerDashboard = ({ onBack }) => {
                                 onClick={() => handleItemClick(item)}
                                 className={`relative flex flex-col items-center justify-center min-w-[2.8rem] p-1.5 pb-3 rounded-2xl transition-all cursor-pointer select-none shrink-0 ${item.isActive
                                     ? 'bg-gradient-to-br from-slate-700 to-slate-800 shadow-xl border border-white/10 scale-105 z-10'
-                                    : 'hover:bg-slate-800 border border-transparent'
+                                    : 'hover:bg-surface-800 border border-transparent'
                                     }`}
                             >
-                                <span className={`text-[8px] font-black uppercase tracking-widest ${item.isActive ? 'text-indigo-400' : 'text-slate-500'}`}>{item.label}</span>
-                                <span className={`text-base font-black tracking-tighter ${item.isActive ? 'text-white' : 'text-slate-400'}`}>{item.subLabel}</span>
+                                <span className={`text-[8px] font-black uppercase tracking-widest ${item.isActive ? 'text-primary-400' : 'text-surface-500'}`}>{item.label}</span>
+                                <span className={`text-base font-black tracking-tighter ${item.isActive ? 'text-white' : 'text-surface-400'}`}>{item.subLabel}</span>
 
                                 {/* Diary Data Indicator */}
                                 {item.hasData && (
-                                    <div className="absolute bottom-1 w-1.5 h-1.5 rounded-full bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.8)]"></div>
+                                    <div className="absolute bottom-1 w-1.5 h-1.5 rounded-full bg-primary-500 shadow-[0_0_8px_rgba(99,102,241,0.8)]"></div>
                                 )}
                             </button>
                         ))}
                     </div>
 
-                    <button onClick={() => changeTimelineScope(1)} className="p-2 text-slate-400 hover:text-white shrink-0"><ChevronRight size={16} /></button>
+                    <button onClick={() => changeTimelineScope(1)} className="p-2 text-surface-400 hover:text-white shrink-0"><ChevronRight size={16} /></button>
                 </div>
             </div>
 
@@ -550,41 +550,41 @@ const PlannerDashboard = ({ onBack }) => {
 
                 {/* EXTREME LEFT PANE: TASK LIST */}
                 {!isTaskListCollapsed ? (
-                    <div className={`${taskListCols} transition-all duration-300 flex flex-col backdrop-blur-xl border border-white/5 rounded-[2.5rem] overflow-hidden bg-slate-900/20`}>
-                        <div className="p-6 border-b border-white/5 bg-slate-900/60 shadow-md z-10 flex justify-between items-center group">
+                    <div className={`${taskListCols} transition-all duration-300 flex flex-col backdrop-blur-xl border border-white/5 rounded-[2.5rem] overflow-hidden bg-surface-900/20`}>
+                        <div className="p-6 border-b border-white/5 bg-surface-900/60 shadow-md z-10 flex justify-between items-center group">
                             <div>
                                 <h2 className="font-black text-white uppercase tracking-widest text-sm flex items-center gap-2">Tasks</h2>
-                                <p className="text-[10px] text-slate-500 font-bold mt-1">ALL GOALS</p>
+                                <p className="text-[10px] text-surface-500 font-bold mt-1">ALL GOALS</p>
                             </div>
-                            <button onClick={toggleTaskListCollapse} className="text-slate-500 hover:text-white p-2 bg-slate-800/50 hover:bg-slate-700 rounded-xl transition-all" title="Minimize Task List">
+                            <button onClick={toggleTaskListCollapse} className="text-surface-500 hover:text-white p-2 bg-surface-800/50 hover:bg-surface-700 rounded-xl transition-all" title="Minimize Task List">
                                 <Minimize2 size={16} />
                             </button>
                         </div>
                         <div className="flex-1 overflow-y-auto planner-scroll p-4 space-y-2">
                             {goals.length > 0 ? goals.map(goal => (
-                                <div key={goal.id} className="flex items-start gap-2 bg-slate-800/40 p-3 rounded-2xl border border-white/5">
+                                <div key={goal.id} className="flex items-start gap-2 bg-surface-800/40 p-3 rounded-2xl border border-white/5">
                                     {goal.status === 'completed' ? (
                                         <CheckCircle2 size={16} className="text-emerald-500 shrink-0 mt-0.5" />
                                     ) : goal.status === 'in_progress' ? (
                                         <Clock size={16} className="text-amber-500 shrink-0 mt-0.5" />
                                     ) : (
-                                        <Circle size={16} className="text-slate-500 shrink-0 mt-0.5" />
+                                        <Circle size={16} className="text-surface-500 shrink-0 mt-0.5" />
                                     )}
-                                    <span className={`text-xs font-medium leading-snug break-words ${goal.status === 'completed' ? 'line-through text-slate-500' : 'text-slate-300'}`}>
+                                    <span className={`text-xs font-medium leading-snug break-words ${goal.status === 'completed' ? 'line-through text-surface-500' : 'text-surface-400'}`}>
                                         {goal.title}
                                     </span>
                                 </div>
                             )) : (
-                                <div className="text-center text-slate-500 text-xs py-4 font-bold uppercase tracking-widest">No goals</div>
+                                <div className="text-center text-surface-500 text-xs py-4 font-bold uppercase tracking-widest">No goals</div>
                             )}
                         </div>
                     </div>
                 ) : (
-                    <div onClick={toggleTaskListCollapse} className={`${taskListCols} transition-all duration-300 flex xl:flex-col items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xl border border-white/5 rounded-[2.5rem] cursor-pointer hover:bg-slate-800/60 h-16 xl:h-auto`}>
-                        <div className="bg-slate-800 p-2 md:p-3 rounded-2xl text-slate-400 mr-4 xl:mr-0">
+                    <div onClick={toggleTaskListCollapse} className={`${taskListCols} transition-all duration-300 flex xl:flex-col items-center justify-center p-4 bg-surface-900/40 backdrop-blur-xl border border-white/5 rounded-[2.5rem] cursor-pointer hover:bg-surface-800/60 h-16 xl:h-auto`}>
+                        <div className="bg-surface-800 p-2 md:p-3 rounded-2xl text-surface-400 mr-4 xl:mr-0">
                             <Maximize2 size={18} />
                         </div>
-                        <span className="xl:mt-4 xl:rotate-180 text-[10px] font-black tracking-widest uppercase text-slate-500" style={{ writingMode: 'vertical-rl' }}>
+                        <span className="xl:mt-4 xl:rotate-180 text-[10px] font-black tracking-widest uppercase text-surface-500" style={{ writingMode: 'vertical-rl' }}>
                             Task List
                         </span>
                     </div>
@@ -592,20 +592,20 @@ const PlannerDashboard = ({ onBack }) => {
 
                 {/* MIDDLE PANE: WEEKLY/MONTHLY KANBAN */}
                 {!isKanbanCollapsed ? (
-                    <div className={`${kanbanCols} transition-all duration-300 flex flex-col backdrop-blur-xl border border-white/5 rounded-[2.5rem] overflow-hidden bg-slate-900/20`}>
-                        <div className="p-6 border-b border-white/5 bg-slate-900/60 shadow-md z-10 flex justify-between items-center group">
+                    <div className={`${kanbanCols} transition-all duration-300 flex flex-col backdrop-blur-xl border border-white/5 rounded-[2.5rem] overflow-hidden bg-surface-900/20`}>
+                        <div className="p-6 border-b border-white/5 bg-surface-900/60 shadow-md z-10 flex justify-between items-center group">
                             <div>
                                 <h2 className="font-black text-white uppercase tracking-widest text-sm flex items-center gap-2">
                                     {viewMode === 'week' ? 'Weekly Objectives' : (viewMode === 'month' ? 'Monthly Board' : 'Half-Yearly Board')}
                                 </h2>
-                                <p className="text-[10px] text-slate-500 font-bold mt-1">
+                                <p className="text-[10px] text-surface-500 font-bold mt-1">
                                     {viewMode === 'week' ? `Week of ${getMonday(timelineDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}`
                                         : viewMode === 'month' ? `${timelineDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`
                                             : `${timelineDate.getFullYear()} - ${timelineDate.getMonth() < 6 ? 'First Half (H1)' : 'Second Half (H2)'}`
                                     }
                                 </p>
                             </div>
-                            <button onClick={toggleKanbanCollapse} className="text-slate-500 hover:text-white p-2 bg-slate-800/50 hover:bg-slate-700 rounded-xl transition-all" title="Minimize Kanban">
+                            <button onClick={toggleKanbanCollapse} className="text-surface-500 hover:text-white p-2 bg-surface-800/50 hover:bg-surface-700 rounded-xl transition-all" title="Minimize Kanban">
                                 <Minimize2 size={16} />
                             </button>
                         </div>
@@ -614,14 +614,14 @@ const PlannerDashboard = ({ onBack }) => {
                             {columns.map(col => (
                                 <div
                                     key={col.id}
-                                    className={`flex-1 rounded-3xl p-4 transition-colors border min-w-[260px] xl:min-w-0 flex flex-col ${isDragging ? 'border-dashed border-indigo-500/30 bg-indigo-500/5' : col.bg + ' ' + col.border}`}
+                                    className={`flex-1 rounded-3xl p-4 transition-colors border min-w-[260px] xl:min-w-0 flex flex-col ${isDragging ? 'border-dashed border-primary-500/30 bg-primary-500/5' : col.bg + ' ' + col.border}`}
                                     onDragOver={handleDragOver}
                                     onDrop={(e) => handleDrop(e, col.id)}
                                 >
                                     <div className="flex items-center gap-2 mb-4">
                                         {col.icon}
-                                        <h3 className="font-black text-slate-400 uppercase tracking-widest text-[10px]">{col.title}</h3>
-                                        <span className="ml-auto text-[10px] font-bold text-slate-500 bg-slate-800/50 px-2 py-0.5 rounded-full">
+                                        <h3 className="font-black text-surface-400 uppercase tracking-widest text-[10px]">{col.title}</h3>
+                                        <span className="ml-auto text-[10px] font-bold text-surface-500 bg-surface-800/50 px-2 py-0.5 rounded-full">
                                             {goals.filter(g => g.status === col.id).length}
                                         </span>
                                     </div>
@@ -633,22 +633,22 @@ const PlannerDashboard = ({ onBack }) => {
                                                 draggable
                                                 onDragStart={(e) => handleDragStart(e, goal.id)}
                                                 onDragEnd={() => setIsDragging(false)}
-                                                className="group bg-slate-800/80 border border-slate-700/50 p-4 rounded-2xl cursor-grab active:cursor-grabbing hover:border-indigo-500/50 transition-colors shadow-lg flex flex-col gap-2"
+                                                className="group bg-surface-800/80 border border-surface-700/50 p-4 rounded-2xl cursor-grab active:cursor-grabbing hover:border-primary-500/50 transition-colors shadow-lg flex flex-col gap-2"
                                             >
                                                 <div className="flex items-start gap-2">
-                                                    <GripVertical size={14} className="text-slate-600 shrink-0 mt-0.5" />
-                                                    <span className="text-sm font-medium text-slate-200 leading-snug break-words">
+                                                    <GripVertical size={14} className="text-surface-600 shrink-0 mt-0.5" />
+                                                    <span className="text-sm font-medium text-surface-400 leading-snug break-words">
                                                         {goal.title}
                                                     </span>
                                                     <button
                                                         onClick={() => handleDeleteGoal(goal.id)}
-                                                        className="ml-auto text-slate-600 opacity-0 group-hover:opacity-100 hover:text-red-400 transition-all shrink-0"
+                                                        className="ml-auto text-surface-600 opacity-0 group-hover:opacity-100 hover:text-red-400 transition-all shrink-0"
                                                     >
                                                         <Trash2 size={14} />
                                                     </button>
                                                 </div>
                                                 {viewMode !== 'week' && goal.week_start_date && (
-                                                    <div className="ml-5 mt-1 text-[9px] font-bold uppercase tracking-widest text-slate-500">
+                                                    <div className="ml-5 mt-1 text-[9px] font-bold uppercase tracking-widest text-surface-500">
                                                         Week of {new Date(goal.week_start_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                                                     </div>
                                                 )}
@@ -658,14 +658,14 @@ const PlannerDashboard = ({ onBack }) => {
                                         {/* Add Quick Goal in To Do column */}
                                         {col.id === 'todo' && (
                                             <form onSubmit={handleAddGoal} className="mt-2 shrink-0">
-                                                <div className="relative flex items-center bg-slate-950/30 border border-slate-700/50 rounded-2xl focus-within:border-indigo-500/50 transition-colors overflow-hidden">
-                                                    <div className="pl-3 text-slate-500"><Plus size={14} /></div>
+                                                <div className="relative flex items-center bg-surface-950/30 border border-surface-700/50 rounded-2xl focus-within:border-primary-500/50 transition-colors overflow-hidden">
+                                                    <div className="pl-3 text-surface-500"><Plus size={14} /></div>
                                                     <input
                                                         type="text"
                                                         value={newGoalTitle}
                                                         onChange={e => setNewGoalTitle(e.target.value)}
                                                         placeholder={viewMode === 'week' ? "Add to this week..." : "Add to period start..."}
-                                                        className="w-full bg-transparent border-none text-sm text-slate-200 p-3 focus:outline-none placeholder:text-slate-600 font-medium"
+                                                        className="w-full bg-transparent border-none text-sm text-surface-400 p-3 focus:outline-none placeholder:text-surface-600 font-medium"
                                                     />
                                                 </div>
                                             </form>
@@ -676,11 +676,11 @@ const PlannerDashboard = ({ onBack }) => {
                         </div>
                     </div>
                 ) : (
-                    <div onClick={toggleKanbanCollapse} className={`${kanbanCols} transition-all duration-300 flex xl:flex-col items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xl border border-white/5 rounded-[2.5rem] cursor-pointer hover:bg-slate-800/60 h-16 xl:h-auto`}>
-                        <div className="bg-slate-800 p-2 md:p-3 rounded-2xl text-slate-400 mr-4 xl:mr-0">
+                    <div onClick={toggleKanbanCollapse} className={`${kanbanCols} transition-all duration-300 flex xl:flex-col items-center justify-center p-4 bg-surface-900/40 backdrop-blur-xl border border-white/5 rounded-[2.5rem] cursor-pointer hover:bg-surface-800/60 h-16 xl:h-auto`}>
+                        <div className="bg-surface-800 p-2 md:p-3 rounded-2xl text-surface-400 mr-4 xl:mr-0">
                             <Maximize2 size={18} />
                         </div>
-                        <span className="xl:mt-4 xl:rotate-180 text-[10px] font-black tracking-widest uppercase text-slate-500" style={{ writingMode: 'vertical-rl' }}>
+                        <span className="xl:mt-4 xl:rotate-180 text-[10px] font-black tracking-widest uppercase text-surface-500" style={{ writingMode: 'vertical-rl' }}>
                             {viewMode === 'week' ? 'Weekly Kanban' : (viewMode === 'month' ? 'Monthly Kanban' : 'Half-Yearly Kanban')}
                         </span>
                     </div>
@@ -688,13 +688,13 @@ const PlannerDashboard = ({ onBack }) => {
 
                 {/* RIGHT PANE: DAILY/MONTHLY/H-YEARLY DIARY (WYSIWYG) */}
                 {!isDiaryCollapsed ? (
-                    <div className={`${diaryCols} flex flex-col bg-slate-900/40 backdrop-blur-xl border border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl transition-all duration-300 h-[600px] xl:h-auto`}>
-                        <div className="p-6 border-b border-white/5 bg-slate-900/60 flex justify-between items-center z-10 transition-all">
+                    <div className={`${diaryCols} flex flex-col bg-surface-900/40 backdrop-blur-xl border border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl transition-all duration-300 h-[600px] xl:h-auto`}>
+                        <div className="p-6 border-b border-white/5 bg-surface-900/60 flex justify-between items-center z-10 transition-all">
                             <div>
-                                <h2 className="font-black text-white uppercase tracking-widest text-sm text-indigo-400">
+                                <h2 className="font-black text-white uppercase tracking-widest text-sm text-primary-400">
                                     {viewMode === 'week' ? 'Daily Diary' : (viewMode === 'month' ? 'Monthly Diary' : 'H-Yearly Diary')}
                                 </h2>
-                                <p className="text-[10px] text-slate-500 font-bold mt-1">
+                                <p className="text-[10px] text-surface-500 font-bold mt-1">
                                     {viewMode === 'week' ? selectedDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
                                         : viewMode === 'month' ? `${timelineDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`
                                             : `${timelineDate.getFullYear()} - ${timelineDate.getMonth() < 6 ? 'First Half (H1)' : 'Second Half (H2)'}`
@@ -702,7 +702,7 @@ const PlannerDashboard = ({ onBack }) => {
                                 </p>
                             </div>
                             <div className="flex items-center gap-3">
-                                <div className="px-3 py-1 rounded-full bg-slate-800/50 border border-slate-700 flex items-center gap-2 shadow-inner">
+                                <div className="px-3 py-1 rounded-full bg-surface-800/50 border border-surface-700 flex items-center gap-2 shadow-inner">
                                     {isSaving ? (
                                         <>
                                             <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></div>
@@ -715,7 +715,7 @@ const PlannerDashboard = ({ onBack }) => {
                                         </>
                                     )}
                                 </div>
-                                <button onClick={toggleDiaryCollapse} className="text-slate-500 hover:text-white p-2 bg-slate-800/50 hover:bg-slate-700 rounded-xl transition-all" title="Minimize Diary">
+                                <button onClick={toggleDiaryCollapse} className="text-surface-500 hover:text-white p-2 bg-surface-800/50 hover:bg-surface-700 rounded-xl transition-all" title="Minimize Diary">
                                     <Minimize2 size={16} />
                                 </button>
                             </div>
@@ -733,12 +733,12 @@ const PlannerDashboard = ({ onBack }) => {
                         </div>
                     </div>
                 ) : (
-                    <div onClick={toggleDiaryCollapse} className={`${diaryCols} transition-all duration-300 flex xl:flex-col items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xl border border-white/5 rounded-[2.5rem] cursor-pointer hover:bg-slate-800/60 h-16 xl:h-auto`}>
-                        <div className="bg-slate-800 p-2 md:p-3 rounded-2xl text-slate-400 mr-4 xl:mr-0">
+                    <div onClick={toggleDiaryCollapse} className={`${diaryCols} transition-all duration-300 flex xl:flex-col items-center justify-center p-4 bg-surface-900/40 backdrop-blur-xl border border-white/5 rounded-[2.5rem] cursor-pointer hover:bg-surface-800/60 h-16 xl:h-auto`}>
+                        <div className="bg-surface-800 p-2 md:p-3 rounded-2xl text-surface-400 mr-4 xl:mr-0">
                             <Maximize2 size={18} />
                         </div>
-                        <span className="xl:mt-4 xl:rotate-180 text-[10px] font-black tracking-widest uppercase text-slate-500 flex items-center justify-center gap-2" style={{ writingMode: 'vertical-rl' }}>
-                            <span className="text-indigo-400 hidden xl:inline">•</span>
+                        <span className="xl:mt-4 xl:rotate-180 text-[10px] font-black tracking-widest uppercase text-surface-500 flex items-center justify-center gap-2" style={{ writingMode: 'vertical-rl' }}>
+                            <span className="text-primary-400 hidden xl:inline">•</span>
                             {viewMode === 'week' ? 'Daily Diary' : (viewMode === 'month' ? 'Monthly Diary' : 'H-Yearly Diary')}
                         </span>
                     </div>

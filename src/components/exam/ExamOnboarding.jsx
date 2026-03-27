@@ -46,15 +46,15 @@ const ExamOnboarding = ({ onComplete, onBack }) => {
     };
 
     return (
-        <div className="min-h-screen bg-[#020617] text-slate-200 flex items-center justify-center p-4 relative overflow-hidden">
+        <div className="min-h-screen bg-base text-surface-400 flex items-center justify-center p-4 relative overflow-hidden">
             {/* Background effects */}
-            <div className="absolute top-[-30%] left-[-20%] w-[800px] h-[800px] bg-indigo-600/10 rounded-full blur-[160px] pointer-events-none" />
+            <div className="absolute top-[-30%] left-[-20%] w-[800px] h-[800px] bg-primary-600/10 rounded-full blur-[160px] pointer-events-none" />
             <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-purple-600/10 rounded-full blur-[140px] pointer-events-none" />
 
             <div className="w-full max-w-2xl relative z-10">
                 {/* Header */}
                 <div className="text-center mb-8">
-                    <div className="inline-flex items-center gap-2 text-indigo-400 text-[10px] font-black uppercase tracking-[0.3em] mb-4">
+                    <div className="inline-flex items-center gap-2 text-primary-400 text-[10px] font-black uppercase tracking-[0.3em] mb-4">
                         <Sparkles size={12} /> Getting Started
                     </div>
                     <h1 className="text-3xl sm:text-4xl font-black text-white uppercase tracking-tighter mb-2">
@@ -62,7 +62,7 @@ const ExamOnboarding = ({ onComplete, onBack }) => {
                         {step === 2 && 'Select Your Exam'}
                         {step === 3 && 'Almost There!'}
                     </h1>
-                    <p className="text-slate-500 text-sm font-medium">
+                    <p className="text-surface-500 text-sm font-medium">
                         {step === 1 && 'What kind of exam are you preparing for?'}
                         {step === 2 && `Pick the specific exam from ${selectedCategory?.name || 'available options'}`}
                         {step === 3 && 'Set your target date and start your journey'}
@@ -73,8 +73,8 @@ const ExamOnboarding = ({ onComplete, onBack }) => {
                 <div className="flex justify-center gap-2 mb-10">
                     {[1, 2, 3].map(s => (
                         <div key={s} className={`h-1.5 rounded-full transition-all duration-500 ${
-                            s === step ? 'w-10 bg-indigo-500' :
-                            s < step ? 'w-6 bg-indigo-500/50' : 'w-6 bg-slate-800'
+                            s === step ? 'w-10 bg-primary-500' :
+                            s < step ? 'w-6 bg-primary-500/50' : 'w-6 bg-surface-800'
                         }`} />
                     ))}
                 </div>
@@ -86,16 +86,16 @@ const ExamOnboarding = ({ onComplete, onBack }) => {
                             <button
                                 key={cat.id}
                                 onClick={() => { setSelectedCategory(cat); setStep(2); }}
-                                className="bg-slate-900/50 border border-slate-800 p-6 rounded-2xl text-left hover:border-indigo-500/50 hover:bg-indigo-500/5 transition-all group"
+                                className="bg-surface-900/50 border border-surface-800 p-6 rounded-2xl text-left hover:border-primary-500/50 hover:bg-primary-500/5 transition-all group"
                             >
                                 <div className="text-3xl mb-3">{categoryIcons[cat.slug] || '📚'}</div>
-                                <h3 className="text-white font-black uppercase tracking-tighter text-lg group-hover:text-indigo-400 transition-colors">
+                                <h3 className="text-white font-black uppercase tracking-tighter text-lg group-hover:text-primary-400 transition-colors">
                                     {cat.name}
                                 </h3>
                                 {cat.description && (
-                                    <p className="text-xs text-slate-500 mt-1 line-clamp-2">{cat.description}</p>
+                                    <p className="text-xs text-surface-500 mt-1 line-clamp-2">{cat.description}</p>
                                 )}
-                                <div className="flex items-center gap-1 text-[10px] text-slate-600 font-bold uppercase tracking-widest mt-3">
+                                <div className="flex items-center gap-1 text-[10px] text-surface-600 font-bold uppercase tracking-widest mt-3">
                                     <span>{availableExams.filter(e => e.category_id === cat.id).length} exams</span>
                                     <ChevronRight size={12} />
                                 </div>
@@ -112,10 +112,10 @@ const ExamOnboarding = ({ onComplete, onBack }) => {
                                 <button
                                     key={exam.id}
                                     onClick={() => { setSelectedExam(exam); setStep(3); }}
-                                    className={`bg-slate-900/50 border p-6 rounded-2xl text-left transition-all group ${
+                                    className={`bg-surface-900/50 border p-6 rounded-2xl text-left transition-all group ${
                                         selectedExam?.id === exam.id
-                                            ? 'border-indigo-500 bg-indigo-500/10'
-                                            : 'border-slate-800 hover:border-indigo-500/50'
+                                            ? 'border-primary-500 bg-primary-500/10'
+                                            : 'border-surface-800 hover:border-primary-500/50'
                                     }`}
                                 >
                                     <div className="flex items-center gap-3 mb-3">
@@ -123,14 +123,14 @@ const ExamOnboarding = ({ onComplete, onBack }) => {
                                             <GraduationCap size={20} style={{ color: exam.primary_color }} />
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <h3 className="text-white font-black uppercase tracking-tighter group-hover:text-indigo-400 transition-colors">
+                                            <h3 className="text-white font-black uppercase tracking-tighter group-hover:text-primary-400 transition-colors">
                                                 {exam.name}
                                             </h3>
-                                            <p className="text-[10px] text-slate-500 truncate">{exam.full_name}</p>
+                                            <p className="text-[10px] text-surface-500 truncate">{exam.full_name}</p>
                                         </div>
                                     </div>
                                     {exam.description && (
-                                        <p className="text-xs text-slate-500 line-clamp-2">{exam.description}</p>
+                                        <p className="text-xs text-surface-500 line-clamp-2">{exam.description}</p>
                                     )}
                                 </button>
                             ))}
@@ -139,7 +139,7 @@ const ExamOnboarding = ({ onComplete, onBack }) => {
                         <div className="flex justify-between items-center pt-4">
                             <button
                                 onClick={() => { setStep(1); setSelectedCategory(null); }}
-                                className="flex items-center gap-2 text-slate-500 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors"
+                                className="flex items-center gap-2 text-surface-500 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors"
                             >
                                 <ChevronLeft size={14} /> Back
                             </button>
@@ -151,31 +151,31 @@ const ExamOnboarding = ({ onComplete, onBack }) => {
                 {step === 3 && selectedExam && (
                     <div className="max-w-md mx-auto space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
                         {/* Selected exam card */}
-                        <div className="bg-slate-900/50 border border-indigo-500/30 p-6 rounded-2xl">
+                        <div className="bg-surface-900/50 border border-primary-500/30 p-6 rounded-2xl">
                             <div className="flex items-center gap-4">
                                 <div className="w-14 h-14 rounded-2xl flex items-center justify-center" style={{ backgroundColor: selectedExam.primary_color + '20' }}>
                                     <GraduationCap size={28} style={{ color: selectedExam.primary_color }} />
                                 </div>
                                 <div>
                                     <h3 className="text-white font-black uppercase tracking-tighter text-xl">{selectedExam.name}</h3>
-                                    <p className="text-xs text-slate-500">{selectedExam.full_name}</p>
+                                    <p className="text-xs text-surface-500">{selectedExam.full_name}</p>
                                 </div>
                             </div>
                         </div>
 
                         {/* Target date */}
-                        <div className="bg-slate-900/50 border border-slate-800 p-6 rounded-2xl space-y-3">
+                        <div className="bg-surface-900/50 border border-surface-800 p-6 rounded-2xl space-y-3">
                             <div className="flex items-center gap-3 mb-2">
-                                <Calendar size={18} className="text-indigo-400" />
-                                <label className="text-sm font-bold text-white">Target Exam Date <span className="text-slate-600 font-normal">(optional)</span></label>
+                                <Calendar size={18} className="text-primary-400" />
+                                <label className="text-sm font-bold text-white">Target Exam Date <span className="text-surface-600 font-normal">(optional)</span></label>
                             </div>
                             <input
                                 type="date"
                                 value={targetDate}
                                 onChange={e => setTargetDate(e.target.value)}
-                                className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3.5 text-sm text-white focus:border-indigo-500 outline-none [color-scheme:dark]"
+                                className="w-full bg-surface-950 border border-surface-800 rounded-xl p-3.5 text-sm text-white focus:border-primary-500 outline-none [color-scheme:dark]"
                             />
-                            <p className="text-[10px] text-slate-600 font-medium">This helps us calculate daily study goals. You can change this later.</p>
+                            <p className="text-[10px] text-surface-600 font-medium">This helps us calculate daily study goals. You can change this later.</p>
                         </div>
 
                         {/* Actions */}
@@ -183,7 +183,7 @@ const ExamOnboarding = ({ onComplete, onBack }) => {
                             <button
                                 onClick={handleFinish}
                                 disabled={loading}
-                                className="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-sm flex items-center justify-center gap-3 transition-all shadow-lg shadow-indigo-500/25 disabled:opacity-50"
+                                className="w-full bg-primary-600 hover:bg-primary-500 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-sm flex items-center justify-center gap-3 transition-all shadow-lg shadow-primary-500/25 disabled:opacity-50"
                             >
                                 {loading ? 'Setting up...' : (
                                     <>
@@ -194,14 +194,14 @@ const ExamOnboarding = ({ onComplete, onBack }) => {
                             <div className="flex justify-between">
                                 <button
                                     onClick={() => setStep(2)}
-                                    className="flex items-center gap-2 text-slate-500 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors"
+                                    className="flex items-center gap-2 text-surface-500 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors"
                                 >
                                     <ChevronLeft size={14} /> Back
                                 </button>
                                 {onBack && (
                                     <button
                                         onClick={onBack}
-                                        className="text-slate-600 hover:text-slate-400 text-xs font-bold uppercase tracking-widest transition-colors"
+                                        className="text-surface-600 hover:text-surface-400 text-xs font-bold uppercase tracking-widest transition-colors"
                                     >
                                         Skip for now
                                     </button>

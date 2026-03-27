@@ -24,17 +24,17 @@ const ExamSwitcher = () => {
         <div className="relative" ref={ref}>
             <button
                 onClick={() => setOpen(!open)}
-                className="flex items-center gap-2 px-3 py-2 bg-slate-900/60 border border-slate-800 rounded-xl hover:border-indigo-500/50 transition-all"
+                className="flex items-center gap-2 px-3 py-2 bg-surface-900/60 border border-surface-800 rounded-xl hover:border-primary-500/50 transition-all"
             >
                 <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: activeExam.primary_color }} />
                 <span className="text-xs font-bold text-white uppercase tracking-wide max-w-[100px] truncate">{activeExam.name}</span>
-                <ChevronDown size={14} className={`text-slate-500 transition-transform ${open ? 'rotate-180' : ''}`} />
+                <ChevronDown size={14} className={`text-surface-500 transition-transform ${open ? 'rotate-180' : ''}`} />
             </button>
 
             {open && (
-                <div className="absolute top-12 right-0 w-56 bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 z-50">
-                    <div className="px-4 py-3 border-b border-slate-800">
-                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Switch Exam</p>
+                <div className="absolute top-12 right-0 w-56 bg-surface-900 border border-surface-700 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 z-50">
+                    <div className="px-4 py-3 border-b border-surface-800">
+                        <p className="text-[10px] font-black text-surface-500 uppercase tracking-widest">Switch Exam</p>
                     </div>
                     {enrollments.map(e => (
                         <button
@@ -42,16 +42,16 @@ const ExamSwitcher = () => {
                             onClick={async () => { await switchExam(e.exam_id); setOpen(false); }}
                             className={`w-full text-left px-4 py-3 flex items-center gap-3 transition-colors ${
                                 activeExam.id === e.exam_id
-                                    ? 'bg-indigo-500/10 text-indigo-400'
-                                    : 'text-slate-300 hover:bg-slate-800'
+                                    ? 'bg-primary-500/10 text-primary-400'
+                                    : 'text-surface-400 hover:bg-surface-800'
                             }`}
                         >
                             <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: e.primary_color }} />
                             <div className="flex-1 min-w-0">
                                 <p className="text-xs font-bold truncate">{e.name}</p>
-                                <p className="text-[10px] text-slate-600">{e.category_name}</p>
+                                <p className="text-[10px] text-surface-600">{e.category_name}</p>
                             </div>
-                            {activeExam.id === e.exam_id && <Check size={14} className="text-indigo-400 shrink-0" />}
+                            {activeExam.id === e.exam_id && <Check size={14} className="text-primary-400 shrink-0" />}
                         </button>
                     ))}
                 </div>
