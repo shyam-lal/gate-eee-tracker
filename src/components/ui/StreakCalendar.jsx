@@ -111,13 +111,13 @@ const StreakCalendar = ({ toolId, currentStreak = 0, activeDays = [], dayDetails
                     )}
                 </div>
                 <div className="flex items-center gap-1">
-                    <button onClick={() => changeMonth(-1)} className="p-1.5 text-surface-500 hover:text-white hover:bg-surface-800 rounded-lg transition-colors">
+                    <button onClick={() => changeMonth(-1)} className="p-1.5 text-surface-500 hover:text-heading hover:bg-surface-800 rounded-lg transition-colors">
                         <ChevronLeft size={14} />
                     </button>
                     <span className="text-[10px] font-black text-surface-400 uppercase tracking-widest w-28 text-center">
                         {MONTHS[month].substring(0, 3)} {year}
                     </span>
-                    <button onClick={() => changeMonth(1)} className="p-1.5 text-surface-500 hover:text-white hover:bg-surface-800 rounded-lg transition-colors">
+                    <button onClick={() => changeMonth(1)} className="p-1.5 text-surface-500 hover:text-heading hover:bg-surface-800 rounded-lg transition-colors">
                         <ChevronRight size={14} />
                     </button>
                 </div>
@@ -208,7 +208,7 @@ const StreakCalendar = ({ toolId, currentStreak = 0, activeDays = [], dayDetails
                                     <div className="w-1 h-1 rounded-full bg-amber-500 mt-1.5 shrink-0" />
                                     <div className="flex-1 min-w-0">
                                         <span className="text-[10px] text-surface-400 font-bold block truncate">{d.subject} › {d.topic}</span>
-                                        <span className="text-[10px] font-mono text-white font-bold">
+                                        <span className="text-[10px] font-mono text-heading font-bold">
                                             {d.minutes > 0 && formatTime ? formatTime(d.minutes) : ''}
                                             {d.modules > 0 ? `${d.minutes > 0 ? ' · ' : ''}${d.modules} mod` : ''}
                                         </span>

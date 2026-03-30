@@ -72,11 +72,11 @@ const TestResults = ({ attemptId, set, onBack, onRetry }) => {
         <div className="w-full max-w-4xl mx-auto animate-in fade-in zoom-in-95 duration-500 p-2">
             {/* Header */}
             <div className="flex items-center gap-4 mb-8">
-                <button onClick={onBack} className="w-10 h-10 flex items-center justify-center bg-surface-900 border border-surface-800 rounded-xl text-surface-400 hover:text-white hover:border-slate-600 transition-colors">
+                <button onClick={onBack} className="w-10 h-10 flex items-center justify-center bg-surface-900 border border-surface-800 rounded-xl text-surface-400 hover:text-heading hover:border-slate-600 transition-colors">
                     <ArrowLeft size={18} />
                 </button>
                 <div>
-                    <h2 className="text-2xl font-black text-white uppercase tracking-tighter">Test Results</h2>
+                    <h2 className="text-2xl font-black text-heading uppercase tracking-tighter">Test Results</h2>
                     <p className="text-[10px] text-surface-500 font-bold uppercase tracking-widest">{set?.title || 'Revision Set'}</p>
                 </div>
             </div>
@@ -87,7 +87,7 @@ const TestResults = ({ attemptId, set, onBack, onRetry }) => {
                         'bg-rose-500/10 border-rose-500/20'
                 }`}>
                 <div className="flex items-baseline justify-center gap-2 mb-2">
-                    <h1 className="text-6xl font-black text-white">{score}</h1>
+                    <h1 className="text-6xl font-black text-heading">{score}</h1>
                     <span className="text-2xl font-bold text-surface-400">/ {maxScore}</span>
                 </div>
                 <p className={`text-lg font-black uppercase tracking-widest ${pct >= 70 ? 'text-emerald-400' : pct >= 40 ? 'text-amber-400' : 'text-rose-400'
@@ -97,28 +97,28 @@ const TestResults = ({ attemptId, set, onBack, onRetry }) => {
                     <div className="text-center">
                         <div className="flex items-center justify-center gap-1.5 mb-1">
                             <CheckCircle2 size={16} className="text-emerald-400" />
-                            <span className="text-2xl font-black text-white">{correct}</span>
+                            <span className="text-2xl font-black text-heading">{correct}</span>
                         </div>
                         <p className="text-[9px] font-black text-surface-500 uppercase tracking-widest">Correct</p>
                     </div>
                     <div className="text-center">
                         <div className="flex items-center justify-center gap-1.5 mb-1">
                             <XCircle size={16} className="text-rose-400" />
-                            <span className="text-2xl font-black text-white">{wrong}</span>
+                            <span className="text-2xl font-black text-heading">{wrong}</span>
                         </div>
                         <p className="text-[9px] font-black text-surface-500 uppercase tracking-widest">Wrong</p>
                     </div>
                     <div className="text-center">
                         <div className="flex items-center justify-center gap-1.5 mb-1">
                             <Minus size={16} className="text-surface-400" />
-                            <span className="text-2xl font-black text-white">{unanswered}</span>
+                            <span className="text-2xl font-black text-heading">{unanswered}</span>
                         </div>
                         <p className="text-[9px] font-black text-surface-500 uppercase tracking-widest">Skipped</p>
                     </div>
                     <div className="text-center">
                         <div className="flex items-center justify-center gap-1.5 mb-1">
                             <Clock size={16} className="text-primary-400" />
-                            <span className="text-2xl font-black text-white">{formatTime(totalTime)}</span>
+                            <span className="text-2xl font-black text-heading">{formatTime(totalTime)}</span>
                         </div>
                         <p className="text-[9px] font-black text-surface-500 uppercase tracking-widest">Time</p>
                     </div>
@@ -130,7 +130,7 @@ const TestResults = ({ attemptId, set, onBack, onRetry }) => {
                 <button onClick={onRetry} className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-amber-500 text-black rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-amber-400 transition-all shadow-lg shadow-amber-500/20">
                     <RefreshCcw size={16} /> Retry Test
                 </button>
-                <button onClick={onBack} className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-surface-800 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-surface-700 transition-all">
+                <button onClick={onBack} className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-surface-800 text-heading rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-surface-700 transition-all">
                     <ArrowLeft size={16} /> Back to Set
                 </button>
             </div>
@@ -157,7 +157,7 @@ const TestResults = ({ attemptId, set, onBack, onRetry }) => {
                                 ) : (
                                     <Minus size={18} className="text-surface-500 shrink-0" />
                                 )}
-                                <p className="text-sm text-white font-medium flex-1 line-clamp-1">
+                                <p className="text-sm text-heading font-medium flex-1 line-clamp-1">
                                     {q.question_text}
                                 </p>
                                 {ans && (
@@ -193,7 +193,7 @@ const TestResults = ({ attemptId, set, onBack, onRetry }) => {
 
                                     {q.question_type === 'nat' && (
                                         <div className="flex gap-4 mb-4 text-xs">
-                                            <div><span className="text-surface-500 font-bold">Your answer: </span><span className="text-white font-bold">{getAnswerLabel(q, ans?.user_answer)}</span></div>
+                                            <div><span className="text-surface-500 font-bold">Your answer: </span><span className="text-heading font-bold">{getAnswerLabel(q, ans?.user_answer)}</span></div>
                                             <div><span className="text-surface-500 font-bold">Correct: </span><span className="text-emerald-400 font-bold">{getCorrectLabel(q)}</span></div>
                                         </div>
                                     )}

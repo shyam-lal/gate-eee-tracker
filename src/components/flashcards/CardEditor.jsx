@@ -262,7 +262,7 @@ const CardEditor = ({ deckId }) => {
             {/* Deck Analytics Summary */}
             <div className="bg-surface-900 border-b border-surface-800 p-6 flex-shrink-0 flex flex-col gap-4 z-20 shadow-md">
                 <div className="flex items-center justify-between">
-                    <h3 className="text-xl font-black text-white px-2">Deck Details</h3>
+                    <h3 className="text-xl font-black text-heading px-2">Deck Details</h3>
                     <button
                         onClick={() => setShowAIGenerator(!showAIGenerator)}
                         className={`px-4 py-2 rounded-xl font-bold text-xs uppercase tracking-widest flex items-center gap-2 transition-all shadow-lg ${showAIGenerator ? 'bg-surface-800 text-surface-400 hover:text-white' : 'bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500 hover:text-white hover:border-emerald-500'}`}
@@ -285,7 +285,7 @@ const CardEditor = ({ deckId }) => {
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-2">
                     <div className="bg-surface-800/50 rounded-xl p-4 border border-surface-700/50">
                         <p className="text-[10px] font-black text-surface-400 uppercase tracking-widest mb-1">Total Cards</p>
-                        <p className="text-2xl font-black text-white">{cards.length}</p>
+                        <p className="text-2xl font-black text-heading">{cards.length}</p>
                     </div>
                     <div className="bg-amber-500/10 rounded-xl p-4 border border-amber-500/20">
                         <p className="text-[10px] font-black text-amber-500 uppercase tracking-widest mb-1">Due Today</p>
@@ -374,7 +374,7 @@ const CardEditor = ({ deckId }) => {
                 {cards.length === 0 ? (
                     <div className="h-full flex flex-col items-center justify-center text-center opacity-50">
                         <BrainCircuit size={48} className="text-surface-600 mb-4" />
-                        <h3 className="text-xl font-black text-white mb-2">Deck is Empty</h3>
+                        <h3 className="text-xl font-black text-heading mb-2">Deck is Empty</h3>
                         <p className="text-surface-400 text-sm max-w-sm">Use the form above to add your first flashcard to this deck.</p>
                     </div>
                 ) : (
@@ -441,7 +441,7 @@ const CardEditor = ({ deckId }) => {
                                         <div className="flex justify-end gap-2 pt-2 border-t border-surface-800">
                                             <button
                                                 onClick={() => setEditingCardId(null)}
-                                                className="px-4 py-2 rounded-xl text-surface-400 hover:text-white hover:bg-surface-800 transition-colors text-xs font-bold flex items-center gap-1.5"
+                                                className="px-4 py-2 rounded-xl text-surface-400 hover:text-heading hover:bg-surface-800 transition-colors text-xs font-bold flex items-center gap-1.5"
                                             >
                                                 <X size={14} /> Cancel
                                             </button>

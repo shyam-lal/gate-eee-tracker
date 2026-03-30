@@ -2,6 +2,43 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  /* Animated gradient mesh background — applied to the body */
+  body {
+    background-color: var(--color-base, #030712);
+    background-image:
+      radial-gradient(ellipse 80% 50% at 20% 40%, var(--color-glow1) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 40% at 80% 20%, var(--color-glow2) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 60% at 50% 90%, var(--color-glow1) 0%, transparent 70%);
+    background-attachment: fixed;
+    color: var(--color-body);
+  }
+
+  /* Subtle noise texture overlay — dark mode only */
+  [data-mode="dark"] body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 256px 256px;
+  }
+
+  /* Light mode: softer shadow style */
+  [data-mode="light"] {
+    color-scheme: light;
+  }
+
+  /* Light mode: white border-t, border-b adjustments */
+  [data-mode="light"] .border-white\/5,
+  [data-mode="light"] .border-white\/\[0\.04\] {
+    border-color: rgba(0, 0, 0, 0.06);
+  }
+}
+
 @layer utilities {
   .expand-container {
     display: grid;
@@ -15,6 +52,73 @@
 
   .expand-content {
     overflow: hidden;
+  }
+
+  /* Glass card utility — adapts to mode */
+  .glass-card {
+    backdrop-filter: blur(var(--glass-blur, 16px));
+    -webkit-backdrop-filter: blur(var(--glass-blur, 16px));
+  }
+
+  [data-mode="dark"] .glass-card {
+    background: rgba(17, 19, 24, var(--glass-bg-opacity, 0.6));
+    border: 1px solid rgba(255, 255, 255, var(--glass-border-opacity, 0.06));
+  }
+
+  [data-mode="light"] .glass-card {
+    background: rgba(255, 255, 255, var(--glass-bg-opacity, 0.6));
+    border: 1px solid rgba(0, 0, 0, var(--glass-border-opacity, 0.06));
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  }
+
+  /* Glow border on hover */
+  .glow-border {
+    position: relative;
+  }
+  .glow-border::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      135deg,
+      var(--color-primary-500, #3D6652) 0%,
+      transparent 50%,
+      var(--color-secondary-400, #A3B8AE) 100%
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+  .glow-border:hover::before {
+    opacity: 1;
+  }
+
+  /* Shimmer effect for accent elements */
+  @keyframes shimmer {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+
+  .shimmer-text {
+    background: linear-gradient(
+      90deg,
+      var(--color-primary-400) 0%,
+      var(--color-primary-100) 25%,
+      var(--color-primary-400) 50%,
+      var(--color-secondary-400) 75%,
+      var(--color-primary-400) 100%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 6s linear infinite;
   }
 }
 

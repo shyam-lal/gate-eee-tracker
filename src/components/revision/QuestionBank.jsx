@@ -92,11 +92,11 @@ const QuestionBank = ({ set, onStartTest, onBack }) => {
         <div className="w-full max-w-4xl mx-auto animate-in fade-in slide-in-from-right-8 duration-300 p-2">
             {/* Header */}
             <div className="flex items-center gap-4 mb-6">
-                <button onClick={onBack} className="w-10 h-10 flex items-center justify-center bg-surface-900 border border-surface-800 rounded-xl text-surface-400 hover:text-white hover:border-slate-600 transition-colors">
+                <button onClick={onBack} className="w-10 h-10 flex items-center justify-center bg-surface-900 border border-surface-800 rounded-xl text-surface-400 hover:text-heading hover:border-slate-600 transition-colors">
                     <ArrowLeft size={18} />
                 </button>
                 <div className="flex-1">
-                    <h2 className="text-2xl font-black text-white uppercase tracking-tighter">{setData.title}</h2>
+                    <h2 className="text-2xl font-black text-heading uppercase tracking-tighter">{setData.title}</h2>
                     <div className="flex flex-wrap gap-1.5 mt-1">
                         {setData.topics.split(',').map((t, i) => (
                             <span key={i} className="px-2 py-0.5 bg-amber-500/10 text-amber-400 rounded text-[9px] font-black uppercase tracking-widest">{t.trim()}</span>
@@ -147,7 +147,7 @@ const QuestionBank = ({ set, onStartTest, onBack }) => {
                             <div key={a.id} className="flex items-center justify-between bg-surface-950/50 rounded-xl p-3 border border-surface-800">
                                 <div className="flex items-center gap-3">
                                     <span className="text-xs font-black text-surface-500">#{history.filter(h => h.status === 'completed').length - i}</span>
-                                    <span className="text-sm font-bold text-white">{a.score}/{a.max_score}</span>
+                                    <span className="text-sm font-bold text-heading">{a.score}/{a.max_score}</span>
                                     <span className="text-xs text-surface-500">({a.max_score > 0 ? Math.round((a.score / a.max_score) * 100) : 0}%)</span>
                                 </div>
                                 <div className="flex items-center gap-3 text-[10px] text-surface-500 font-bold">
@@ -182,7 +182,7 @@ const QuestionBank = ({ set, onStartTest, onBack }) => {
                                         <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest border ${badge.class}`}>{badge.label}</span>
                                         <span className="text-[10px] font-bold text-surface-500">{q.marks} mark{q.marks > 1 ? 's' : ''}{q.negative_marks > 0 ? ` / -${q.negative_marks}` : ''}</span>
                                     </div>
-                                    <p className="text-sm text-white font-medium line-clamp-2">{q.question_text}</p>
+                                    <p className="text-sm text-heading font-medium line-clamp-2">{q.question_text}</p>
                                 </div>
                                 <button
                                     onClick={() => handleDeleteQuestion(q.id)}

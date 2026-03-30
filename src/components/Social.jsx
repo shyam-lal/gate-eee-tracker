@@ -87,7 +87,7 @@ const Social = ({ currentUser, onBack }) => {
     if (selectedUserProfile) {
         return (
             <div className="min-h-screen bg-base text-surface-400 p-6 animate-in fade-in zoom-in-95 duration-300">
-                <button onClick={() => setSelectedUserProfile(null)} className="mb-8 flex items-center gap-2 text-surface-500 hover:text-white transition-colors uppercase font-black text-[10px] tracking-widest">
+                <button onClick={() => setSelectedUserProfile(null)} className="mb-8 flex items-center gap-2 text-surface-500 hover:text-heading transition-colors uppercase font-black text-[10px] tracking-widest">
                     <ArrowLeft size={14} /> Back to Hub
                 </button>
 
@@ -97,7 +97,7 @@ const Social = ({ currentUser, onBack }) => {
                             {selectedUserProfile.username[0].toUpperCase()}
                         </div>
                         <div className="text-center md:text-left flex-1">
-                            <h2 className="text-4xl font-black text-white uppercase tracking-tighter mb-2">{selectedUserProfile.username}</h2>
+                            <h2 className="text-4xl font-black text-heading uppercase tracking-tighter mb-2">{selectedUserProfile.username}</h2>
                             <p className="text-surface-500 font-bold uppercase tracking-widest text-xs mb-6">Vault Protocol Engineer</p>
                             <div className="flex flex-wrap gap-4 justify-center md:justify-start">
                                 <div className="flex items-center gap-2 bg-orange-500/10 text-orange-400 px-4 py-2 rounded-xl border border-orange-500/20">
@@ -116,7 +116,7 @@ const Social = ({ currentUser, onBack }) => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div className="bg-surface-900/30 border border-surface-800 rounded-[2.5rem] p-8">
-                            <h3 className="text-lg font-black text-white uppercase tracking-tighter mb-6 flex items-center gap-3">
+                            <h3 className="text-lg font-black text-heading uppercase tracking-tighter mb-6 flex items-center gap-3">
                                 <Medal className="text-primary-400" /> Vault Achievements
                             </h3>
                             <div className="grid grid-cols-3 gap-4">
@@ -134,7 +134,7 @@ const Social = ({ currentUser, onBack }) => {
                         </div>
 
                         <div className="bg-surface-900/30 border border-surface-800 rounded-[2.5rem] p-8">
-                            <h3 className="text-lg font-black text-white uppercase tracking-tighter mb-6 flex items-center gap-3">
+                            <h3 className="text-lg font-black text-heading uppercase tracking-tighter mb-6 flex items-center gap-3">
                                 <Globe className="text-primary-400" /> Engineer Bio
                             </h3>
                             <p className="text-surface-400 text-sm leading-relaxed font-medium italic">
@@ -150,7 +150,7 @@ const Social = ({ currentUser, onBack }) => {
     return (
         <div className="min-h-screen bg-base text-surface-400 flex flex-col pt-12">
             <nav className="max-w-6xl mx-auto w-full px-6 flex justify-between items-center mb-12">
-                <button onClick={onBack} className="flex items-center gap-2 text-surface-500 hover:text-white transition-colors uppercase font-black text-[10px] tracking-widest">
+                <button onClick={onBack} className="flex items-center gap-2 text-surface-500 hover:text-heading transition-colors uppercase font-black text-[10px] tracking-widest">
                     <ArrowLeft size={14} /> Back to Hub
                 </button>
                 <div className="flex items-center gap-3">
@@ -201,11 +201,11 @@ const Social = ({ currentUser, onBack }) => {
                                         <div className="flex items-center gap-3 cursor-pointer" onClick={() => viewProfile(user.id)}>
                                             <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center text-white font-black text-xs">{user.username[0].toUpperCase()}</div>
                                             <div>
-                                                <p className="text-xs font-black text-white uppercase">{user.username}</p>
+                                                <p className="text-xs font-black text-heading uppercase">{user.username}</p>
                                                 <p className="text-[9px] text-orange-500 font-bold flex items-center gap-1"><Flame size={10} fill="currentColor" /> {user.current_streak}</p>
                                             </div>
                                         </div>
-                                        <button onClick={() => toggleFollow(user.id, following.some(f => f.id === user.id))} className="text-primary-400 hover:text-white transition-colors">
+                                        <button onClick={() => toggleFollow(user.id, following.some(f => f.id === user.id))} className="text-primary-400 hover:text-heading transition-colors">
                                             {following.some(f => f.id === user.id) ? <UserMinus size={18} /> : <UserPlus size={18} />}
                                         </button>
                                     </div>
@@ -219,14 +219,14 @@ const Social = ({ currentUser, onBack }) => {
                 <section className="flex-1 bg-surface-900/20 border border-surface-800/50 rounded-[3rem] p-8 md:p-12">
                     {activeTab === 'friends' && (
                         <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
-                            <h2 className="text-2xl font-black text-white uppercase tracking-tighter">Command Fleet <span className="text-primary-500 italic ml-2">(Following)</span></h2>
+                            <h2 className="text-2xl font-black text-heading uppercase tracking-tighter">Command Fleet <span className="text-primary-500 italic ml-2">(Following)</span></h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {following.length > 0 ? following.map(user => (
                                     <div key={user.id} onClick={() => viewProfile(user.id)} className="flex items-center justify-between bg-surface-900/40 p-5 rounded-3xl border border-surface-800 hover:border-primary-500/30 transition-all cursor-pointer group">
                                         <div className="flex items-center gap-4">
                                             <div className="w-12 h-12 bg-surface-800 rounded-2xl flex items-center justify-center text-white font-black text-lg group-hover:bg-primary-600 transition-colors">{user.username[0].toUpperCase()}</div>
                                             <div>
-                                                <h4 className="font-black text-white uppercase tracking-tight">{user.username}</h4>
+                                                <h4 className="font-black text-heading uppercase tracking-tight">{user.username}</h4>
                                                 <div className="flex items-center gap-3 text-[9px] font-black uppercase tracking-widest text-surface-500">
                                                     <span className="flex items-center gap-1 text-orange-400"><Flame size={12} fill="currentColor" /> {user.current_streak} Streak</span>
                                                     <span>Sync Active</span>
@@ -247,7 +247,7 @@ const Social = ({ currentUser, onBack }) => {
 
                     {activeTab === 'achievements' && (
                         <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500 text-center md:text-left">
-                            <h2 className="text-2xl font-black text-white uppercase tracking-tighter">My Service Medals</h2>
+                            <h2 className="text-2xl font-black text-heading uppercase tracking-tighter">My Service Medals</h2>
                             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
                                 {achievements.length > 0 ? achievements.map((ach, idx) => (
                                     <div key={idx} className="flex flex-col items-center gap-4 p-8 bg-surface-900/60 rounded-[2rem] border border-surface-800 shadow-xl shadow-black/20 group hover:scale-105 transition-all">
@@ -255,7 +255,7 @@ const Social = ({ currentUser, onBack }) => {
                                             {renderMedal(ach.icon_name)}
                                         </div>
                                         <div className="text-center">
-                                            <h4 className="font-black text-white uppercase tracking-tighter text-sm mb-1">{ach.name}</h4>
+                                            <h4 className="font-black text-heading uppercase tracking-tighter text-sm mb-1">{ach.name}</h4>
                                             <p className="text-[9px] text-surface-500 font-bold uppercase tracking-widest">{new Date(ach.earned_at).toLocaleDateString()}</p>
                                         </div>
                                         <p className="text-[10px] text-surface-400 font-medium leading-tight opacity-0 group-hover:opacity-100 transition-opacity">{ach.description}</p>

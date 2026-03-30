@@ -486,12 +486,12 @@ function App() {
     if (view === 'planner') return <PlannerDashboard onBack={() => setView('dashboard')} />;
 
     return (
-      <div className="min-h-screen bg-base text-surface-400 font-sans p-4 md:p-8 pb-32 selection:bg-primary-500/30">
+      <div className="min-h-screen bg-transparent text-surface-400 font-sans p-4 md:p-8 pb-32 selection:bg-primary-500/30">
 
         {(editingLog) && (
           <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200" onClick={() => setEditingLog(null)}>
             <div className="bg-surface-950 border border-surface-700 p-6 md:p-8 rounded-3xl shadow-2xl w-full max-w-sm" onClick={e => e.stopPropagation()}>
-              <h3 className="font-black text-white text-xl mb-6 uppercase tracking-tight flex items-center gap-2"><Edit3 size={20} className="text-primary-400" /> Edit Total</h3>
+              <h3 className="font-black text-heading text-xl mb-6 uppercase tracking-tight flex items-center gap-2"><Edit3 size={20} className="text-primary-400" /> Edit Total</h3>
               <div className="mb-6">
                 <p className="text-primary-400 font-black text-lg leading-tight uppercase tracking-tighter">{editingLog.topicName}</p>
                 <p className="text-[10px] text-surface-500 font-bold uppercase tracking-widest">Adjust total {trackingMode === 'module' ? 'modules completed' : 'time logged'}</p>
@@ -502,7 +502,7 @@ function App() {
                     type="number"
                     min="0"
                     id="edit-log-input"
-                    className="w-full bg-surface-900 border border-surface-800 rounded-2xl p-4 text-white text-lg font-mono text-center focus:border-primary-500 outline-none"
+                    className="w-full bg-surface-900 border border-surface-800 rounded-2xl p-4 text-heading text-lg font-mono text-center focus:border-primary-500 outline-none"
                     defaultValue={editingLog.modules || 0}
                     autoFocus
                   />
@@ -514,7 +514,7 @@ function App() {
                   />
                 )}
                 <div className="flex gap-2">
-                  <button onClick={() => setEditingLog(null)} className="flex-1 bg-surface-800 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs">Cancel</button>
+                  <button onClick={() => setEditingLog(null)} className="flex-1 bg-surface-800 text-heading py-4 rounded-2xl font-black uppercase tracking-widest text-xs">Cancel</button>
                   <button
                     onClick={() => {
                       if (trackingMode === 'module') {
@@ -547,9 +547,9 @@ function App() {
               <div className="bg-surface-900 px-6 py-4 border-b border-surface-800 flex justify-between items-center">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-primary-500/10 rounded-lg text-primary-400"><TrendingUp size={20} /></div>
-                  <h3 className="text-white font-black uppercase tracking-tighter text-lg sm:text-xl">{activeTool?.tool_type === 'flashcard' ? 'Flashcard Analytics' : 'Vault Analytics'}</h3>
+                  <h3 className="text-heading font-black uppercase tracking-tighter text-lg sm:text-xl">{activeTool?.tool_type === 'flashcard' ? 'Flashcard Analytics' : 'Vault Analytics'}</h3>
                 </div>
-                <button onClick={() => setShowAnalytics(false)} className="p-2 hover:bg-surface-800 rounded-full text-surface-500 hover:text-white transition-colors"><X size={20} /></button>
+                <button onClick={() => setShowAnalytics(false)} className="p-2 hover:bg-surface-800 rounded-full text-surface-500 hover:text-heading transition-colors"><X size={20} /></button>
               </div>
 
               <div className="p-6 md:p-8 space-y-8 overflow-y-auto max-h-[80vh] no-scrollbar">
@@ -568,7 +568,7 @@ function App() {
                       </div>
                     </div>
                     <div className="bg-primary-700/20 p-6 rounded-3xl border border-primary-500/30">
-                      <h4 className="text-sm font-black text-white uppercase tracking-widest mb-2 flex items-center gap-2"><Sparkles size={16} className="text-primary-400" /> AI Content Integration</h4>
+                      <h4 className="text-sm font-black text-heading uppercase tracking-widest mb-2 flex items-center gap-2"><Sparkles size={16} className="text-primary-400" /> AI Content Integration</h4>
                       <p className="text-sm text-primary-100">Our upcoming AI engine will automatically scan your Vault documents and suggest high-yield flashcards to add to your decks. The more you use your Vault, the smarter your study sessions will become.</p>
                     </div>
                   </div>
@@ -592,7 +592,7 @@ function App() {
                           <circle cx="96" cy="96" r="88" stroke="currentColor" strokeWidth="12" fill="transparent" strokeDasharray={552.9} strokeDashoffset={552.9 - (552.9 * progressPercentage) / 100} className="text-primary-500 transition-all duration-1000 ease-out" strokeLinecap="round" />
                         </svg>
                         <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                          <span className="text-4xl font-black text-white leading-none">{progressPercentage}%</span>
+                          <span className="text-4xl font-black text-heading leading-none">{progressPercentage}%</span>
                           <span className="text-[10px] font-black text-surface-500 uppercase tracking-widest mt-1">Cleared</span>
                         </div>
                       </div>
@@ -610,7 +610,7 @@ function App() {
                             <div className="bg-surface-900/30 p-4 rounded-2xl border border-surface-800/30 col-span-2 flex items-center justify-between">
                               <div>
                                 <p className="text-[9px] font-black text-surface-500 uppercase tracking-widest mb-1">Total Modules</p>
-                                <p className="text-2xl font-black text-white tracking-tighter">{syllabus.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + (t.totalModules || 0), 0), 0)} <span className="text-xs text-surface-500 font-bold">UNITS</span></p>
+                                <p className="text-2xl font-black text-heading tracking-tighter">{syllabus.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + (t.totalModules || 0), 0), 0)} <span className="text-xs text-surface-500 font-bold">UNITS</span></p>
                               </div>
                               <Zap size={24} className="text-yellow-400 opacity-50" />
                             </div>
@@ -628,7 +628,7 @@ function App() {
                             <div className="bg-surface-900/30 p-4 rounded-2xl border border-surface-800/30 col-span-2 flex items-center justify-between">
                               <div>
                                 <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Required Daily</p>
-                                <p className="text-2xl font-black text-white tracking-tighter">{formatTime(dailyGoalMins)} <span className="text-xs text-surface-500 font-bold">/ day</span></p>
+                                <p className="text-2xl font-black text-heading tracking-tighter">{formatTime(dailyGoalMins)} <span className="text-xs text-surface-500 font-bold">/ day</span></p>
                               </div>
                               <Zap size={24} className="text-yellow-400 opacity-50" />
                             </div>
@@ -676,11 +676,11 @@ function App() {
                   <div className="p-2 bg-primary-500/10 rounded-lg text-primary-400">
                     {editingId === 'new' ? <Plus size={20} /> : <Edit3 size={20} />}
                   </div>
-                  <h3 className="text-white font-black uppercase tracking-tighter text-lg sm:text-xl">
+                  <h3 className="text-heading font-black uppercase tracking-tighter text-lg sm:text-xl">
                     {editingId === 'new' ? "New Subject Pack" : "Syllabus Hub Editor"}
                   </h3>
                 </div>
-                <button onClick={() => setEditingId(null)} className="p-2 hover:bg-surface-800 rounded-full text-surface-500 hover:text-white transition-colors"><X size={20} /></button>
+                <button onClick={() => setEditingId(null)} className="p-2 hover:bg-surface-800 rounded-full text-surface-500 hover:text-heading transition-colors"><X size={20} /></button>
               </div>
 
               <form onSubmit={saveSubject} className="p-6 md:p-8 space-y-8 max-h-[85vh] overflow-y-auto no-scrollbar">
@@ -695,7 +695,7 @@ function App() {
                     type="text"
                     autoFocus
                     placeholder="e.g. Electrical Machines"
-                    className="w-full bg-surface-900/50 border border-surface-800 rounded-2xl p-4 md:p-5 text-lg md:text-xl font-bold text-white placeholder-surface-700 focus:border-primary-500 outline-none transition-all shadow-inner"
+                    className="w-full bg-surface-900/50 border border-surface-800 rounded-2xl p-4 md:p-5 text-lg md:text-xl font-bold text-heading placeholder-surface-700 focus:border-primary-500 outline-none transition-all shadow-inner"
                     value={editorData.name}
                     onChange={e => setEditorData({ ...editorData, name: e.target.value })}
                     required
@@ -720,7 +720,7 @@ function App() {
                           <input
                             type="text"
                             placeholder="Topic name"
-                            className="flex-1 bg-surface-900/50 border border-surface-800 rounded-xl p-3 text-sm text-white focus:border-primary-500 outline-none"
+                            className="flex-1 bg-surface-900/50 border border-surface-800 rounded-xl p-3 text-sm text-heading focus:border-primary-500 outline-none"
                             value={topic.name}
                             onChange={e => {
                               const updated = [...editorData.topics];
@@ -801,7 +801,7 @@ function App() {
                                     min="0"
                                     id={`log-hub-${topic.id}`}
                                     placeholder="+ Mod"
-                                    className="w-20 bg-surface-950 border border-surface-800 rounded-lg p-2 text-xs text-center text-white focus:border-primary-500 outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                    className="w-20 bg-surface-950 border border-surface-800 rounded-lg p-2 text-xs text-center text-heading focus:border-primary-500 outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                   />
                                 ) : (
                                   <TimeInput
@@ -855,7 +855,7 @@ function App() {
         <div className="max-w-7xl mx-auto space-y-8 md:space-y-12">
           <header className="flex flex-col md:flex-row justify-between items-center md:items-end gap-6 border-b border-surface-900 pb-8">
             <div className="space-y-1 text-center md:text-left">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tighter uppercase leading-none">{activeTool?.name || 'VAULT'}</h1>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-heading tracking-tighter uppercase leading-none">{activeTool?.name || 'VAULT'}</h1>
               <p className="text-surface-500 font-bold tracking-widest text-[9px] sm:text-[10px] uppercase italic">
                 Engineer: {user.username} • {activeTool?.tool_type === 'module' ? 'MODULE' : 'COURSE'} MODE • {activeTool?.selected_exam || 'GATE'}
               </p>
@@ -863,7 +863,7 @@ function App() {
             <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
               <button
                 onClick={() => { setActiveTool(null); setSyllabus([]); loadTools(); loadUserStreak(); setView('dashboard'); }}
-                className="flex items-center justify-center gap-2 text-surface-400 hover:text-white transition-colors font-black uppercase tracking-widest text-[10px] border border-surface-800 px-6 py-4 sm:py-2 rounded-xl"
+                className="flex items-center justify-center gap-2 text-surface-400 hover:text-heading transition-colors font-black uppercase tracking-widest text-[10px] border border-surface-800 px-6 py-4 sm:py-2 rounded-xl"
               >
                 <ArrowLeft size={16} /> HUB
               </button>
@@ -889,7 +889,7 @@ function App() {
               <div className="bg-surface-900/50 border border-surface-800/50 p-6 rounded-3xl flex items-center gap-6 relative overflow-hidden group">
                 <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none transition-opacity"><Flame size={120} /></div>
                 <div className="p-4 bg-orange-500/10 rounded-2xl text-orange-500"><Flame size={32} fill="currentColor" /></div>
-                <div><p className="text-[10px] font-black text-surface-500 uppercase tracking-widest leading-none mb-1">Efficiency</p><h2 className="text-3xl sm:text-4xl font-black text-white leading-none tracking-tighter">PREMIUM</h2></div>
+                <div><p className="text-[10px] font-black text-surface-500 uppercase tracking-widest leading-none mb-1">Efficiency</p><h2 className="text-3xl sm:text-4xl font-black text-heading leading-none tracking-tighter">PREMIUM</h2></div>
               </div>
               <div onClick={() => setShowAnalytics(true)} className="bg-surface-900/50 border border-surface-800 border-primary-500/20 p-6 rounded-3xl flex items-center gap-6 relative overflow-hidden group cursor-pointer hover:border-primary-500/50 transition-all active:scale-[0.98]">
                 <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none transition-opacity group-hover:opacity-10"><BarChart3 size={120} /></div>
@@ -898,7 +898,7 @@ function App() {
                   {trackingMode === 'module' ? (
                     <>
                       <p className="text-[10px] font-black text-surface-500 uppercase tracking-widest leading-none mb-1 flex justify-between">Modules <span className="text-primary-400">{progressPercentage}%</span></p>
-                      <h2 className="text-3xl sm:text-4xl font-black text-white leading-none tracking-tighter">
+                      <h2 className="text-3xl sm:text-4xl font-black text-heading leading-none tracking-tighter">
                         {syllabus.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + (t.completedModules || 0), 0), 0)}
                         <span className="text-[10px] text-surface-600 align-middle"> / {syllabus.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + (t.totalModules || 0), 0), 0)} DONE</span>
                       </h2>
@@ -913,7 +913,7 @@ function App() {
                   ) : (
                     <>
                       <p className="text-[10px] font-black text-surface-500 uppercase tracking-widest leading-none mb-1 flex justify-between">Study Hours <span className="text-primary-400">{progressPercentage}%</span></p>
-                      <h2 className="text-3xl sm:text-4xl font-black text-white leading-none tracking-tighter">{formatTime(totalStudyMins)} <span className="text-[10px] text-surface-600 align-middle"> DONE</span></h2>
+                      <h2 className="text-3xl sm:text-4xl font-black text-heading leading-none tracking-tighter">{formatTime(totalStudyMins)} <span className="text-[10px] text-surface-600 align-middle"> DONE</span></h2>
                       <div className="mt-3 space-y-1">
                         <div className="h-1.5 w-full bg-surface-800 rounded-full overflow-hidden shrink-0"><div className="h-full bg-primary-500 transition-all duration-1000" style={{ width: `${progressPercentage}%` }} /></div>
                         <div className="flex justify-between items-center text-[9px] font-black text-surface-500 uppercase tracking-widest">
@@ -959,7 +959,7 @@ function App() {
                           <h3 className="font-black uppercase text-sm sm:text-base leading-tight tracking-tighter group-hover:text-primary-400 transition-colors">{sub.name}</h3>
                         </div>
                         <div className="flex gap-2">
-                          <button onClick={() => openEditor(sub)} className="p-1.5 text-surface-700 hover:text-white transition-colors"><Edit3 size={16} /></button>
+                          <button onClick={() => openEditor(sub)} className="p-1.5 text-surface-700 hover:text-heading transition-colors"><Edit3 size={16} /></button>
                         </div>
                       </div>
 
@@ -1033,7 +1033,7 @@ function App() {
         {loggingTopic && (
           <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200" onClick={() => setLoggingTopic(null)}>
             <div className="bg-surface-950 border border-surface-700 p-6 md:p-8 rounded-3xl shadow-2xl w-full max-w-sm animate-in zoom-in-95" onClick={e => e.stopPropagation()}>
-              <h3 className="font-black text-white text-xl mb-6 uppercase tracking-tight flex items-center gap-2"><Clock size={20} className="text-primary-400" /> {trackingMode === 'module' ? 'Check Unit' : 'Log Time'}</h3>
+              <h3 className="font-black text-heading text-xl mb-6 uppercase tracking-tight flex items-center gap-2"><Clock size={20} className="text-primary-400" /> {trackingMode === 'module' ? 'Check Unit' : 'Log Time'}</h3>
               <div className="mb-6 space-y-1 text-center sm:text-left">
                 <p className="text-primary-400 font-black text-lg leading-tight uppercase tracking-tighter">{loggingTopic.topicName}</p>
                 <p className="text-[10px] text-surface-500 font-bold uppercase tracking-widest">Currently: {trackingMode === 'module' ? `${loggingTopic.currentSpent} Done` : formatTime(loggingTopic.currentSpent)}</p>
@@ -1048,7 +1048,7 @@ function App() {
                         type="number"
                         min="0"
                         id="quick-log-input"
-                        className="bg-surface-900 border border-surface-800 rounded-2xl p-4 text-white text-lg font-mono text-center focus:border-primary-500 outline-none transition-all shadow-inner [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        className="bg-surface-900 border border-surface-800 rounded-2xl p-4 text-heading text-lg font-mono text-center focus:border-primary-500 outline-none transition-all shadow-inner [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         placeholder="0"
                         autoFocus
                       />

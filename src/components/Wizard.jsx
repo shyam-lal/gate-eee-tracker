@@ -31,7 +31,7 @@ const Wizard = ({ onComplete, onBack }) => {
                             type="text"
                             autoFocus
                             placeholder="e.g. GATE EE Course Tracker"
-                            className="w-full bg-surface-950 border border-surface-800 rounded-2xl p-5 text-xl font-bold text-white placeholder-surface-700 focus:border-primary-500 outline-none transition-all shadow-inner"
+                            className="w-full bg-surface-950 border border-surface-800 rounded-2xl p-5 text-xl font-bold text-heading placeholder-surface-700 focus:border-primary-500 outline-none transition-all shadow-inner"
                             value={data.name}
                             onChange={e => setData({ ...data, name: e.target.value })}
                         />
@@ -145,7 +145,7 @@ const Wizard = ({ onComplete, onBack }) => {
 
                 <div className="space-y-2 mb-8 text-center sm:text-left">
                     <span className="text-[10px] font-black text-primary-500 uppercase tracking-[0.4em]">{currentStep.label}</span>
-                    <h2 className="text-3xl sm:text-4xl font-black text-white uppercase tracking-tighter">{currentStep.title}</h2>
+                    <h2 className="text-3xl sm:text-4xl font-black text-heading uppercase tracking-tighter">{currentStep.title}</h2>
                 </div>
 
                 <div className="mb-12 animate-in fade-in slide-in-from-right-4 duration-500">
@@ -155,7 +155,7 @@ const Wizard = ({ onComplete, onBack }) => {
                 <div className="flex gap-3">
                     <button
                         onClick={prevStep}
-                        className="flex items-center justify-center gap-2 px-6 py-5 border border-surface-800 text-surface-400 rounded-2xl font-black uppercase tracking-widest text-xs hover:border-slate-600 hover:text-white transition-all"
+                        className="flex items-center justify-center gap-2 px-6 py-5 border border-surface-800 text-surface-400 rounded-2xl font-black uppercase tracking-widest text-xs hover:border-slate-600 hover:text-heading transition-all"
                     >
                         <ArrowLeft size={16} /> Back
                     </button>

@@ -98,11 +98,11 @@ const GlobalFocusOverlay = ({
                     <div className="w-10 h-10 bg-primary-600 rounded-full flex items-center justify-center text-white">
                         <Timer size={20} className={isRunning ? 'animate-pulse' : ''} />
                     </div>
-                    <div className="font-mono text-lg font-black text-white px-2 tabular-nums">
+                    <div className="font-mono text-lg font-black text-heading px-2 tabular-nums">
                         {formatTimeHHMMSS(seconds)}
                     </div>
                     <div className="flex gap-1 pr-2">
-                        <button onClick={handleStartPause} className="p-2 text-surface-400 hover:text-white rounded-full hover:bg-surface-800 transition-colors">
+                        <button onClick={handleStartPause} className="p-2 text-surface-400 hover:text-heading rounded-full hover:bg-surface-800 transition-colors">
                             {isRunning ? <Pause size={18} className="fill-current" /> : <Play size={18} className="fill-current" />}
                         </button>
                         <button onClick={onToggleMinimize} className="p-2 text-surface-400 hover:text-primary-400 rounded-full hover:bg-surface-800 transition-colors">
@@ -128,7 +128,7 @@ const GlobalFocusOverlay = ({
                             <Timer size={18} /> Focus Mode
                         </div>
                         <div className="flex gap-2">
-                            <button onClick={onToggleMinimize} className="p-3 text-surface-500 hover:text-white hover:bg-surface-800 rounded-full transition-all">
+                            <button onClick={onToggleMinimize} className="p-3 text-surface-500 hover:text-heading hover:bg-surface-800 rounded-full transition-all">
                                 <Minimize2 size={20} />
                             </button>
                             <button onClick={onClose} className="p-3 text-surface-500 hover:text-rose-400 hover:bg-surface-800 rounded-full transition-all">
@@ -138,7 +138,7 @@ const GlobalFocusOverlay = ({
                     </div>
 
                     <div className="mt-8 mb-16">
-                        <h1 className="text-8xl md:text-9xl font-black text-white tracking-tighter font-mono tabular-nums drop-shadow-2xl z-10 text-center">
+                        <h1 className="text-8xl md:text-9xl font-black text-heading tracking-tighter font-mono tabular-nums drop-shadow-2xl z-10 text-center">
                             {formatTimeHHMMSS(seconds)}
                         </h1>
                     </div>
@@ -167,7 +167,7 @@ const GlobalFocusOverlay = ({
                         {!isRunning && seconds > 0 && (
                             <button
                                 onClick={handleReset}
-                                className="w-16 h-16 md:w-20 md:h-20 bg-surface-800/50 hover:bg-surface-700 text-surface-400 hover:text-white rounded-full flex items-center justify-center transition-all border border-surface-700"
+                                className="w-16 h-16 md:w-20 md:h-20 bg-surface-800/50 hover:bg-surface-700 text-surface-400 hover:text-heading rounded-full flex items-center justify-center transition-all border border-surface-700"
                             >
                                 <RotateCcw size={22} />
                             </button>
@@ -180,10 +180,10 @@ const GlobalFocusOverlay = ({
             {showSaveModal && (
                 <div className="bg-surface-950 border border-surface-700 w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
                     <div className="bg-surface-900 px-6 py-4 border-b border-surface-800 flex justify-between items-center">
-                        <h3 className="text-white font-black uppercase tracking-tighter text-lg flex items-center gap-2">
+                        <h3 className="text-heading font-black uppercase tracking-tighter text-lg flex items-center gap-2">
                             <Save size={18} className="text-primary-400" /> Save Focus Session
                         </h3>
-                        <button onClick={() => setShowSaveModal(false)} className="p-2 hover:bg-surface-800 rounded-full text-surface-500 hover:text-white transition-colors">
+                        <button onClick={() => setShowSaveModal(false)} className="p-2 hover:bg-surface-800 rounded-full text-surface-500 hover:text-heading transition-colors">
                             <X size={20} />
                         </button>
                     </div>
@@ -200,7 +200,7 @@ const GlobalFocusOverlay = ({
                                         type="number"
                                         value={saveData.durationMinutes}
                                         onChange={e => setSaveData({ ...saveData, durationMinutes: parseInt(e.target.value) || 0 })}
-                                        className="bg-transparent border-b-2 border-primary-500 text-3xl font-black text-white w-20 outline-none text-center"
+                                        className="bg-transparent border-b-2 border-primary-500 text-3xl font-black text-heading w-20 outline-none text-center"
                                     />
                                     <span className="text-surface-400 font-bold uppercase tracking-widest">Minutes</span>
                                 </div>
@@ -215,7 +215,7 @@ const GlobalFocusOverlay = ({
 
                             <div className="space-y-3">
                                 <select
-                                    className="w-full bg-surface-950 border border-surface-800 rounded-xl p-4 text-sm font-bold text-white outline-none focus:border-primary-500"
+                                    className="w-full bg-surface-950 border border-surface-800 rounded-xl p-4 text-sm font-bold text-heading outline-none focus:border-primary-500"
                                     value={saveData.subjectId}
                                     onChange={e => setSaveData({ ...saveData, subjectId: e.target.value, topicId: "" })}
                                 >
@@ -227,7 +227,7 @@ const GlobalFocusOverlay = ({
 
                                 {saveData.subjectId && (
                                     <select
-                                        className="w-full bg-surface-950 border border-surface-800 rounded-xl p-4 text-sm font-bold text-white outline-none focus:border-primary-500"
+                                        className="w-full bg-surface-950 border border-surface-800 rounded-xl p-4 text-sm font-bold text-heading outline-none focus:border-primary-500"
                                         value={saveData.topicId}
                                         onChange={e => setSaveData({ ...saveData, topicId: e.target.value })}
                                     >
@@ -246,7 +246,7 @@ const GlobalFocusOverlay = ({
                         <div className="space-y-2">
                             <label className="text-[10px] font-black text-surface-500 uppercase tracking-widest block">Quick Notes (Optional)</label>
                             <textarea
-                                className="w-full bg-surface-950 border border-surface-800 rounded-xl p-4 text-sm text-white outline-none focus:border-primary-500 resize-none h-24"
+                                className="w-full bg-surface-950 border border-surface-800 rounded-xl p-4 text-sm text-heading outline-none focus:border-primary-500 resize-none h-24"
                                 placeholder="What did you focus on?"
                                 value={saveData.notes}
                                 onChange={e => setSaveData({ ...saveData, notes: e.target.value })}

@@ -78,11 +78,11 @@ const AIGenerator = ({ deckId, onImportComplete, onCancel }) => {
                         <Bot size={20} />
                     </div>
                     <div>
-                        <h3 className="text-xl font-black text-white">AI Card Generator</h3>
+                        <h3 className="text-xl font-black text-heading">AI Card Generator</h3>
                         <p className="text-xs text-surface-400 font-medium">Use AI to generate flashcards from a topic</p>
                     </div>
                 </div>
-                <button onClick={onCancel} className="text-sm font-bold text-surface-500 hover:text-white transition-colors">Close</button>
+                <button onClick={onCancel} className="text-sm font-bold text-surface-500 hover:text-heading transition-colors">Close</button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -97,7 +97,7 @@ const AIGenerator = ({ deckId, onImportComplete, onCancel }) => {
                                 value={topic}
                                 onChange={(e) => setTopic(e.target.value)}
                                 placeholder="e.g. Nyquist Stability Criterion"
-                                className="w-full bg-surface-950 border border-surface-800 rounded-xl px-4 py-3 text-white font-medium text-sm focus:border-primary-500 outline-none"
+                                className="w-full bg-surface-950 border border-surface-800 rounded-xl px-4 py-3 text-heading font-medium text-sm focus:border-primary-500 outline-none"
                                 required
                             />
                         </div>
@@ -110,7 +110,7 @@ const AIGenerator = ({ deckId, onImportComplete, onCancel }) => {
                                     max="50"
                                     value={count}
                                     onChange={(e) => setCount(parseInt(e.target.value))}
-                                    className="w-full bg-surface-950 border border-surface-800 rounded-xl px-4 py-3 text-white font-medium text-sm focus:border-primary-500 outline-none"
+                                    className="w-full bg-surface-950 border border-surface-800 rounded-xl px-4 py-3 text-heading font-medium text-sm focus:border-primary-500 outline-none"
                                 />
                             </div>
                             <div className="flex items-end">

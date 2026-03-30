@@ -64,7 +64,7 @@ const GlobalAnalytics = () => {
                 <div className="p-2 bg-primary-500/10 rounded-xl text-primary-400">
                     <Activity size={20} />
                 </div>
-                <h3 className="font-black text-white text-xl uppercase tracking-tighter">Global Insights</h3>
+                <h3 className="font-black text-heading text-xl uppercase tracking-tighter">Global Insights</h3>
             </div>
 
             {/* Top Level Metric Cards */}
@@ -72,7 +72,7 @@ const GlobalAnalytics = () => {
                 <div className="bg-surface-900/40 backdrop-blur-xl border border-white/5 p-6 rounded-3xl relative overflow-hidden group hover:border-primary-500/30 transition-all">
                     <div className="absolute -right-4 -top-4 opacity-5 text-primary-500 group-hover:scale-110 transition-transform"><Clock size={100} /></div>
                     <p className="text-[10px] font-black text-surface-500 uppercase tracking-widest mb-2 relative z-10">Last 7 Days</p>
-                    <p className="text-3xl font-black text-white tracking-tighter relative z-10">
+                    <p className="text-3xl font-black text-heading tracking-tighter relative z-10">
                         {formatTime(data.weeklyRecap?.currentWeekMins)}
                     </p>
                     <div className="flex items-center gap-1 mt-2 relative z-10">
@@ -115,7 +115,7 @@ const GlobalAnalytics = () => {
                 <div className="lg:col-span-2 bg-surface-900/40 backdrop-blur-xl border border-white/5 p-6 md:p-8 rounded-[2.5rem] relative">
                     <div className="flex justify-between items-start mb-8">
                         <div>
-                            <h4 className="text-white font-black uppercase tracking-tighter text-lg mb-1">30-Day Velocity</h4>
+                            <h4 className="text-heading font-black uppercase tracking-tighter text-lg mb-1">30-Day Velocity</h4>
                             <p className="text-[10px] text-surface-500 font-bold uppercase tracking-widest">Daily Minutes & 3-Day Trend</p>
                         </div>
                         <div className="p-2 bg-surface-800 rounded-xl text-surface-400"><TrendingUp size={16} /></div>
@@ -166,7 +166,7 @@ const GlobalAnalytics = () => {
                 <div className="bg-surface-900/40 backdrop-blur-xl border border-white/5 p-6 md:p-8 rounded-[2.5rem] relative flex flex-col">
                     <div className="flex justify-between items-start mb-4">
                         <div>
-                            <h4 className="text-white font-black uppercase tracking-tighter text-lg mb-1">Allocation</h4>
+                            <h4 className="text-heading font-black uppercase tracking-tighter text-lg mb-1">Allocation</h4>
                             <p className="text-[10px] text-surface-500 font-bold uppercase tracking-widest">Time by Subject/Tool</p>
                         </div>
                         <div className="p-2 bg-surface-800 rounded-xl text-surface-400"><PieChartIcon size={16} /></div>
@@ -202,7 +202,7 @@ const GlobalAnalytics = () => {
                                                 <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[idx % COLORS.length] }} />
                                                 <span className="text-surface-400 font-bold truncate max-w-[120px]">{entry.name}</span>
                                             </div>
-                                            <span className="text-white font-black">{formatTime(entry.value)}</span>
+                                            <span className="text-heading font-black">{formatTime(entry.value)}</span>
                                         </div>
                                     ))}
                                 </div>

@@ -27,7 +27,7 @@ const ExamSwitcher = () => {
                 className="flex items-center gap-2 px-3 py-2 bg-surface-900/60 border border-surface-800 rounded-xl hover:border-primary-500/50 transition-all"
             >
                 <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: activeExam.primary_color }} />
-                <span className="text-xs font-bold text-white uppercase tracking-wide max-w-[100px] truncate">{activeExam.name}</span>
+                <span className="text-xs font-bold text-heading uppercase tracking-wide max-w-[100px] truncate">{activeExam.name}</span>
                 <ChevronDown size={14} className={`text-surface-500 transition-transform ${open ? 'rotate-180' : ''}`} />
             </button>
 

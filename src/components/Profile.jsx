@@ -2,14 +2,19 @@ import React, { useState } from 'react';
 import {
     User, Settings, Box, Trash2, Github,
     ChevronRight, Mail, Calendar, Shield,
-    ArrowLeft, ExternalLink, Activity, Flame
+    ArrowLeft, ExternalLink, Activity, Flame, Sun, Moon, Palette
 } from 'lucide-react';
+import { useTheme } from '../contexts/ThemeContext';
+import { MODES } from '../theme/colors';
 
 const Profile = ({ user, onBack, onResetProgress, onLogout }) => {
     const [activeTab, setActiveTab] = useState('overview');
+    const { mode, toggleMode } = useTheme();
+    const isDark = mode === MODES.DARK;
 
     const tabs = [
         { id: 'overview', label: 'Overview', icon: <User size={18} /> },
+        { id: 'appearance', label: 'Appearance', icon: <Palette size={18} /> },
         { id: 'tools', label: 'Authorized Tools', icon: <Box size={18} /> },
         { id: 'settings', label: 'Privacy & Security', icon: <Shield size={18} /> },
     ];
@@ -19,7 +24,7 @@ const Profile = ({ user, onBack, onResetProgress, onLogout }) => {
             {/* Header */}
             <nav className="border-b border-surface-800 bg-surface-900/50 backdrop-blur-md sticky top-0 z-50">
                 <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-                    <button onClick={onBack} className="flex items-center gap-2 text-surface-400 hover:text-white transition-colors font-bold uppercase tracking-tighter text-xs">
+                    <button onClick={onBack} className="flex items-center gap-2 text-surface-400 hover:text-heading transition-colors font-bold uppercase tracking-tighter text-xs">
                         <ArrowLeft size={16} /> Back to Vault
                     </button>
                     <div className="flex items-center gap-3">
@@ -39,7 +44,7 @@ const Profile = ({ user, onBack, onResetProgress, onLogout }) => {
                                 {user.username[0].toUpperCase()}
                             </div>
                             <div>
-                                <h1 className="text-2xl font-black text-white tracking-tighter uppercase">{user.username}</h1>
+                                <h1 className="text-2xl font-black text-heading tracking-tighter uppercase">{user.username}</h1>
                                 <p className="text-surface-500 font-bold text-xs uppercase tracking-widest">{user.email}</p>
                             </div>
                         </div>
@@ -68,20 +73,20 @@ const Profile = ({ user, onBack, onResetProgress, onLogout }) => {
                         {activeTab === 'overview' && (
                             <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                                 <div className="bg-surface-900/30 border border-surface-800 rounded-[2.5rem] p-8">
-                                    <h2 className="text-xl font-black text-white uppercase tracking-tighter mb-6">Profile Snapshot</h2>
+                                    <h2 className="text-xl font-black text-heading uppercase tracking-tighter mb-6">Profile Snapshot</h2>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div className="flex items-center gap-4 bg-surface-950/50 p-6 rounded-3xl border border-surface-800/50">
                                             <div className="p-3 bg-primary-500/10 rounded-xl text-primary-400"><Activity size={20} /></div>
                                             <div>
                                                 <p className="text-[10px] font-black text-surface-500 uppercase tracking-widest">Tracking Protocol</p>
-                                                <p className="font-bold text-white uppercase tracking-tight">{user.tracking_mode || 'Not Set'}</p>
+                                                <p className="font-bold text-heading uppercase tracking-tight">{user.tracking_mode || 'Not Set'}</p>
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-4 bg-surface-950/50 p-6 rounded-3xl border border-surface-800/50">
                                             <div className="p-3 bg-orange-500/10 rounded-xl text-orange-400"><Flame size={20} fill="currentColor" /></div>
                                             <div>
                                                 <p className="text-[10px] font-black text-surface-500 uppercase tracking-widest">Global Streak</p>
-                                                <p className="font-bold text-white uppercase tracking-tight">{user.current_streak || 0} Days</p>
+                                                <p className="font-bold text-heading uppercase tracking-tight">{user.current_streak || 0} Days</p>
                                             </div>
                                         </div>
                                     </div>
@@ -89,9 +94,77 @@ const Profile = ({ user, onBack, onResetProgress, onLogout }) => {
                                 </div>
 
                                 <div className="bg-surface-900/30 border border-surface-800 rounded-[2.5rem] p-8">
-                                    <h2 className="text-xl font-black text-white uppercase tracking-tighter mb-4">Contribution Graph</h2>
+                                    <h2 className="text-xl font-black text-heading uppercase tracking-tighter mb-4">Contribution Graph</h2>
                                     <div className="h-32 bg-surface-950/50 border border-surface-800/50 rounded-2xl flex items-center justify-center">
                                         <span className="text-surface-700 font-black text-[10px] uppercase tracking-[0.3em]">Temporal sync in progress...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'appearance' && (
+                            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                <div className="bg-surface-900/30 border border-surface-800 rounded-[2.5rem] p-8">
+                                    <h2 className="text-xl font-black text-heading uppercase tracking-tighter mb-8">Appearance</h2>
+                                    <div className="space-y-6">
+                                        {/* Dark/Light Mode Toggle */}
+                                        <div className="flex items-center justify-between p-5 bg-surface-950/50 border border-surface-800/50 rounded-2xl">
+                                            <div className="flex items-center gap-4">
+                                                <div className={`p-3 rounded-xl ${isDark ? 'bg-surface-800 text-surface-400' : 'bg-amber-500/10 text-amber-500'}`}>
+                                                    {isDark ? <Moon size={20} /> : <Sun size={20} />}
+                                                </div>
+                                                <div>
+                                                    <p className="font-bold text-heading text-sm">Theme Mode</p>
+                                                    <p className="text-xs text-surface-500 font-medium">
+                                                        {isDark ? 'Dark mode is active — easy on the eyes during late-night studying.' : 'Light mode is active — clean and bright for daytime focus.'}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <button
+                                                onClick={toggleMode}
+                                                className={`relative w-14 h-7 rounded-full transition-all duration-300 ${isDark ? 'bg-surface-700' : 'bg-primary-500'}`}
+                                            >
+                                                <div className={`absolute top-0.5 w-6 h-6 rounded-full bg-white shadow-md transition-all duration-300 flex items-center justify-center ${isDark ? 'left-0.5' : 'left-[calc(100%-1.625rem)]'}`}>
+                                                    {isDark ? <Moon size={12} className="text-surface-600" /> : <Sun size={12} className="text-amber-500" />}
+                                                </div>
+                                            </button>
+                                        </div>
+
+                                        {/* Preview */}
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <button
+                                                onClick={() => !isDark && toggleMode()}
+                                                className={`p-5 rounded-2xl border-2 transition-all text-left ${
+                                                    isDark
+                                                        ? 'border-primary-500 bg-surface-950/80'
+                                                        : 'border-surface-800/30 bg-surface-950/30 opacity-60 hover:opacity-80'
+                                                }`}
+                                            >
+                                                <div className="w-full h-16 bg-[#030712] rounded-xl mb-3 flex items-end p-2 gap-1">
+                                                    <div className="w-6 h-3 bg-[#2E4D3D] rounded"></div>
+                                                    <div className="w-4 h-2 bg-[#1c1e24] rounded"></div>
+                                                    <div className="w-5 h-4 bg-[#111318] rounded"></div>
+                                                </div>
+                                                <p className="text-xs font-black text-heading uppercase tracking-widest">Dark</p>
+                                                <p className="text-[10px] text-surface-500 font-bold mt-0.5">Midnight palette</p>
+                                            </button>
+                                            <button
+                                                onClick={() => isDark && toggleMode()}
+                                                className={`p-5 rounded-2xl border-2 transition-all text-left ${
+                                                    !isDark
+                                                        ? 'border-primary-500 bg-surface-950/80'
+                                                        : 'border-surface-800/30 bg-surface-950/30 opacity-60 hover:opacity-80'
+                                                }`}
+                                            >
+                                                <div className="w-full h-16 bg-[#f7f9f8] rounded-xl mb-3 flex items-end p-2 gap-1">
+                                                    <div className="w-6 h-3 bg-[#2E4D3D] rounded"></div>
+                                                    <div className="w-4 h-2 bg-[#e0e7e3] rounded"></div>
+                                                    <div className="w-5 h-4 bg-[#eff3f1] rounded"></div>
+                                                </div>
+                                                <p className="text-xs font-black text-heading uppercase tracking-widest">Light</p>
+                                                <p className="text-[10px] text-surface-500 font-bold mt-0.5">Daylight palette</p>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -100,7 +173,7 @@ const Profile = ({ user, onBack, onResetProgress, onLogout }) => {
                         {activeTab === 'tools' && (
                             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
                                 <div className="flex justify-between items-center px-2">
-                                    <h2 className="text-xl font-black text-white uppercase tracking-tighter">My Active Tools</h2>
+                                    <h2 className="text-xl font-black text-heading uppercase tracking-tighter">My Active Tools</h2>
                                     <span className="text-[10px] bg-surface-800 text-surface-400 px-3 py-1 rounded-full font-black uppercase tracking-widest">1 Active</span>
                                 </div>
 
@@ -111,7 +184,7 @@ const Profile = ({ user, onBack, onResetProgress, onLogout }) => {
                                                 <Box size={28} />
                                             </div>
                                             <div>
-                                                <h3 className="font-black text-white uppercase tracking-tight">GATE Syllabus Tracker</h3>
+                                                <h3 className="font-black text-heading uppercase tracking-tight">GATE Syllabus Tracker</h3>
                                                 <p className="text-xs text-surface-500 font-semibold uppercase tracking-widest">Curriculum & Time Sync Tool</p>
                                             </div>
                                         </div>
@@ -137,18 +210,18 @@ const Profile = ({ user, onBack, onResetProgress, onLogout }) => {
 
                         {activeTab === 'settings' && (
                             <div className="bg-surface-900/30 border border-surface-800 rounded-[2.5rem] p-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                                <h2 className="text-xl font-black text-white uppercase tracking-tighter mb-8">Security Configuration</h2>
+                                <h2 className="text-xl font-black text-heading uppercase tracking-tighter mb-8">Security Configuration</h2>
                                 <div className="space-y-6">
                                     <div className="flex items-center justify-between p-4 border-b border-surface-800/50">
                                         <div>
-                                            <p className="font-bold text-white text-sm">Two-Factor Authentication</p>
+                                            <p className="font-bold text-heading text-sm">Two-Factor Authentication</p>
                                             <p className="text-xs text-surface-500 font-medium">Add an extra layer of security to your account.</p>
                                         </div>
                                         <div className="w-12 h-6 bg-surface-800 rounded-full flex items-center px-1"><div className="w-4 h-4 bg-slate-600 rounded-full"></div></div>
                                     </div>
                                     <div className="flex items-center justify-between p-4 border-b border-surface-800/50">
                                         <div>
-                                            <p className="font-bold text-white text-sm">Email Notifications</p>
+                                            <p className="font-bold text-heading text-sm">Email Notifications</p>
                                             <p className="text-xs text-surface-500 font-medium">Receive weekly progress reports and deadline alerts.</p>
                                         </div>
                                         <div className="w-12 h-6 bg-primary-600 rounded-full flex items-center justify-end px-1"><div className="w-4 h-4 bg-white rounded-full shadow-md"></div></div>

@@ -73,13 +73,13 @@ const StudyMaterials = ({ examId, examName, syllabus, onBack }) => {
             <div className="border-b border-surface-800">
                 <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <button onClick={onBack} className="p-2 hover:bg-surface-800 rounded-xl text-surface-400 hover:text-white transition-colors">
+                        <button onClick={onBack} className="p-2 hover:bg-surface-800 rounded-xl text-surface-400 hover:text-heading transition-colors">
                             <ArrowLeft size={20} />
                         </button>
                         <div>
                             <div className="flex items-center gap-2">
                                 <BookOpen size={18} className="text-primary-400" />
-                                <h1 className="text-xl font-black uppercase tracking-tighter text-white">Study Materials</h1>
+                                <h1 className="text-xl font-black uppercase tracking-tighter text-heading">Study Materials</h1>
                             </div>
                             <p className="text-[10px] font-bold text-surface-500 uppercase tracking-widest">{examName || 'All Materials'}</p>
                         </div>
@@ -99,12 +99,12 @@ const StudyMaterials = ({ examId, examName, syllabus, onBack }) => {
                             <Search size={16} className="text-surface-500 shrink-0" />
                             <input
                                 placeholder="Search materials..."
-                                className="flex-1 bg-transparent text-sm text-white outline-none placeholder:text-surface-600"
+                                className="flex-1 bg-transparent text-sm text-heading outline-none placeholder:text-surface-600"
                                 value={search}
                                 onChange={e => setSearch(e.target.value)}
                             />
                             {search && (
-                                <button onClick={() => setSearch('')} className="text-surface-600 hover:text-white">
+                                <button onClick={() => setSearch('')} className="text-surface-600 hover:text-heading">
                                     <X size={14} />
                                 </button>
                             )}
@@ -124,7 +124,7 @@ const StudyMaterials = ({ examId, examName, syllabus, onBack }) => {
                     {showFilters && (
                         <div className="flex flex-wrap gap-3 animate-in fade-in slide-in-from-top-2">
                             <select
-                                className="bg-surface-900 border border-surface-800 rounded-xl px-4 py-2.5 text-xs text-white font-bold focus:border-primary-500 outline-none"
+                                className="bg-surface-900 border border-surface-800 rounded-xl px-4 py-2.5 text-xs text-heading font-bold focus:border-primary-500 outline-none"
                                 value={filterSubject}
                                 onChange={e => setFilterSubject(e.target.value)}
                             >
@@ -134,7 +134,7 @@ const StudyMaterials = ({ examId, examName, syllabus, onBack }) => {
                                 ))}
                             </select>
                             <select
-                                className="bg-surface-900 border border-surface-800 rounded-xl px-4 py-2.5 text-xs text-white font-bold focus:border-primary-500 outline-none"
+                                className="bg-surface-900 border border-surface-800 rounded-xl px-4 py-2.5 text-xs text-heading font-bold focus:border-primary-500 outline-none"
                                 value={filterType}
                                 onChange={e => setFilterType(e.target.value)}
                             >
@@ -217,7 +217,7 @@ const StudyMaterials = ({ examId, examName, syllabus, onBack }) => {
                                                         </span>
                                                     </div>
 
-                                                    <h4 className="text-lg font-black text-white mb-2 leading-tight group-hover:text-primary-300 transition-colors line-clamp-2">
+                                                    <h4 className="text-lg font-black text-heading mb-2 leading-tight group-hover:text-primary-300 transition-colors line-clamp-2">
                                                         {mat.title}
                                                     </h4>
                                                     
@@ -266,9 +266,9 @@ const StudyMaterials = ({ examId, examName, syllabus, onBack }) => {
                                         </span>
                                     )}
                                 </div>
-                                <h3 className="text-xl font-black text-white leading-tight">{selectedMaterial.title}</h3>
+                                <h3 className="text-xl font-black text-heading leading-tight">{selectedMaterial.title}</h3>
                             </div>
-                            <button onClick={() => setSelectedMaterial(null)} className="p-2 bg-surface-800 hover:bg-surface-700 rounded-full text-surface-400 hover:text-white transition-colors">
+                            <button onClick={() => setSelectedMaterial(null)} className="p-2 bg-surface-800 hover:bg-surface-700 rounded-full text-surface-400 hover:text-heading transition-colors">
                                 <X size={20} />
                             </button>
                         </div>

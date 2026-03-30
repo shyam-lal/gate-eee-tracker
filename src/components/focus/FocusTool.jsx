@@ -39,7 +39,7 @@ const FocusTool = ({ tool }) => {
             {/* Header Area */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-surface-800 pb-8">
                 <div>
-                    <h2 className="text-3xl font-black text-white uppercase tracking-tighter flex items-center gap-3">
+                    <h2 className="text-3xl font-black text-heading uppercase tracking-tighter flex items-center gap-3">
                         <BarChart3 className="text-primary-400" /> Focus Analytics
                     </h2>
                     <p className="text-surface-400 mt-2 font-medium">Tracking all your intense study periods.</p>
@@ -57,7 +57,7 @@ const FocusTool = ({ tool }) => {
                     </div>
                     <div className="relative z-10">
                         <p className="text-[10px] font-black text-surface-500 uppercase tracking-widest mb-2">Time Today</p>
-                        <p className="text-5xl font-black text-white">{formatMinsToHours(stats.timeToday)}</p>
+                        <p className="text-5xl font-black text-heading">{formatMinsToHours(stats.timeToday)}</p>
                     </div>
                 </div>
 
@@ -74,7 +74,7 @@ const FocusTool = ({ tool }) => {
 
             {/* Recent Sessions List */}
             <div>
-                <h3 className="text-white font-black uppercase tracking-tighter text-xl mb-6">Recent Sessions</h3>
+                <h3 className="text-heading font-black uppercase tracking-tighter text-xl mb-6">Recent Sessions</h3>
                 {recentSessions.length === 0 ? (
                     <div className="bg-surface-900/50 border border-surface-800 border-dashed rounded-[3rem] p-16 text-center">
                         <Timer size={64} className="mx-auto text-surface-700 mb-6" />
@@ -87,7 +87,7 @@ const FocusTool = ({ tool }) => {
                             <div key={session.id} className="bg-surface-900/50 border border-surface-800 rounded-3xl p-6 flex flex-col justify-between hover:border-primary-500/30 transition-colors">
                                 <div className="flex justify-between items-start mb-6">
                                     <div>
-                                        <h4 className="text-white font-black text-2xl tracking-tighter mb-1">{session.duration_minutes}m</h4>
+                                        <h4 className="text-heading font-black text-2xl tracking-tighter mb-1">{session.duration_minutes}m</h4>
                                         <p className="text-[10px] text-surface-500 uppercase tracking-widest font-bold">
                                             {new Date(session.completed_at).toLocaleDateString()} at {new Date(session.completed_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                         </p>

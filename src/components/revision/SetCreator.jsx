@@ -66,11 +66,11 @@ const SetCreator = ({ onCreated, onBack }) => {
         <div className="w-full max-w-3xl mx-auto animate-in fade-in slide-in-from-right-8 duration-300 p-2">
             {/* Header */}
             <div className="flex items-center gap-4 mb-8">
-                <button onClick={onBack} className="w-10 h-10 flex items-center justify-center bg-surface-900 border border-surface-800 rounded-xl text-surface-400 hover:text-white hover:border-slate-600 transition-colors">
+                <button onClick={onBack} className="w-10 h-10 flex items-center justify-center bg-surface-900 border border-surface-800 rounded-xl text-surface-400 hover:text-heading hover:border-slate-600 transition-colors">
                     <ArrowLeft size={18} />
                 </button>
                 <div>
-                    <h2 className="text-2xl font-black text-white uppercase tracking-tighter">Create Revision Set</h2>
+                    <h2 className="text-2xl font-black text-heading uppercase tracking-tighter">Create Revision Set</h2>
                     <p className="text-[10px] text-surface-500 font-bold uppercase tracking-widest">Step {step} of 3</p>
                 </div>
             </div>
@@ -92,7 +92,7 @@ const SetCreator = ({ onCreated, onBack }) => {
                                 type="text" autoFocus
                                 value={title} onChange={e => setTitle(e.target.value)}
                                 placeholder="e.g. Control Systems Week 3 Revision"
-                                className="w-full bg-surface-950 border border-surface-800 rounded-2xl px-5 py-4 text-white text-sm font-bold focus:border-amber-500 outline-none transition-colors"
+                                className="w-full bg-surface-950 border border-surface-800 rounded-2xl px-5 py-4 text-heading text-sm font-bold focus:border-amber-500 outline-none transition-colors"
                             />
                         </div>
                         <div>
@@ -100,7 +100,7 @@ const SetCreator = ({ onCreated, onBack }) => {
                             <textarea
                                 value={topics} onChange={e => setTopics(e.target.value)}
                                 placeholder="e.g. Bode Plot, Nyquist Criterion, Root Locus, Routh-Hurwitz"
-                                className="w-full bg-surface-950 border border-surface-800 rounded-2xl px-5 py-4 text-white text-sm font-bold focus:border-amber-500 outline-none resize-none h-24 transition-colors"
+                                className="w-full bg-surface-950 border border-surface-800 rounded-2xl px-5 py-4 text-heading text-sm font-bold focus:border-amber-500 outline-none resize-none h-24 transition-colors"
                             />
                         </div>
                         <div className="grid grid-cols-2 gap-4">
@@ -109,7 +109,7 @@ const SetCreator = ({ onCreated, onBack }) => {
                                 <input
                                     type="number" min="1" max="50"
                                     value={questionCount} onChange={e => setQuestionCount(parseInt(e.target.value) || 10)}
-                                    className="w-full bg-surface-950 border border-surface-800 rounded-2xl px-5 py-4 text-white text-sm font-bold focus:border-amber-500 outline-none transition-colors"
+                                    className="w-full bg-surface-950 border border-surface-800 rounded-2xl px-5 py-4 text-heading text-sm font-bold focus:border-amber-500 outline-none transition-colors"
                                 />
                             </div>
                             <div>
@@ -117,7 +117,7 @@ const SetCreator = ({ onCreated, onBack }) => {
                                 <input
                                     type="number" min="30" step="30"
                                     value={timePerQuestion} onChange={e => setTimePerQuestion(parseInt(e.target.value) || 180)}
-                                    className="w-full bg-surface-950 border border-surface-800 rounded-2xl px-5 py-4 text-white text-sm font-bold focus:border-amber-500 outline-none transition-colors"
+                                    className="w-full bg-surface-950 border border-surface-800 rounded-2xl px-5 py-4 text-heading text-sm font-bold focus:border-amber-500 outline-none transition-colors"
                                 />
                             </div>
                         </div>
@@ -150,7 +150,7 @@ const SetCreator = ({ onCreated, onBack }) => {
                             {prompt}
                         </pre>
                         <p className="text-xs text-surface-500 mt-4 font-medium leading-relaxed">
-                            Copy this prompt and paste it into <strong className="text-white">Gemini</strong>, <strong className="text-white">ChatGPT</strong>, or <strong className="text-white">Claude</strong>. Then copy the JSON response for the next step.
+                            Copy this prompt and paste it into <strong className="text-heading">Gemini</strong>, <strong className="text-heading">ChatGPT</strong>, or <strong className="text-heading">Claude</strong>. Then copy the JSON response for the next step.
                         </p>
                     </div>
 
@@ -171,7 +171,7 @@ const SetCreator = ({ onCreated, onBack }) => {
                         <textarea
                             value={jsonInput} onChange={e => setJsonInput(e.target.value)}
                             placeholder={'Paste the JSON output from the AI here...\n\n{\n  "questions": [\n    {\n      "type": "mcq",\n      "question": "...",\n      ...\n    }\n  ]\n}'}
-                            className="w-full bg-surface-950 border border-surface-800 rounded-2xl px-5 py-4 text-white text-xs font-mono focus:border-amber-500 outline-none resize-none h-48 transition-colors"
+                            className="w-full bg-surface-950 border border-surface-800 rounded-2xl px-5 py-4 text-heading text-xs font-mono focus:border-amber-500 outline-none resize-none h-48 transition-colors"
                             autoFocus
                         />
                     </div>

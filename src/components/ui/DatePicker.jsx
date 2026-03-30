@@ -98,7 +98,7 @@ const DatePicker = ({ value, onChange, label, placeholder = 'Select date', minDa
                     </div>
                     {value ? (
                         <div className="min-w-0">
-                            <span className="text-white font-bold text-sm block truncate">{formatDisplay()}</span>
+                            <span className="text-heading font-bold text-sm block truncate">{formatDisplay()}</span>
                             <span className={`text-[10px] font-black uppercase tracking-widest ${getDaysRemaining() === 'Overdue' ? 'text-rose-400' : 'text-primary-400'}`}>
                                 {getDaysRemaining()}
                             </span>
@@ -126,17 +126,17 @@ const DatePicker = ({ value, onChange, label, placeholder = 'Select date', minDa
                         <button
                             type="button"
                             onClick={prevMonth}
-                            className="p-1.5 text-surface-500 hover:text-white hover:bg-surface-800 rounded-lg transition-colors"
+                            className="p-1.5 text-surface-500 hover:text-heading hover:bg-surface-800 rounded-lg transition-colors"
                         >
                             <ChevronLeft size={16} />
                         </button>
-                        <span className="text-sm font-black text-white uppercase tracking-wider">
+                        <span className="text-sm font-black text-heading uppercase tracking-wider">
                             {MONTHS[month]} {year}
                         </span>
                         <button
                             type="button"
                             onClick={nextMonth}
-                            className="p-1.5 text-surface-500 hover:text-white hover:bg-surface-800 rounded-lg transition-colors"
+                            className="p-1.5 text-surface-500 hover:text-heading hover:bg-surface-800 rounded-lg transition-colors"
                         >
                             <ChevronRight size={16} />
                         </button>

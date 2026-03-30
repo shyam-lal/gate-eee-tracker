@@ -33,7 +33,7 @@ export default function Auth({ onLogin }) {
         <div className="min-h-screen bg-base flex items-center justify-center p-4">
             <div className="bg-surface-900 border border-surface-800 p-8 rounded-3xl w-full max-w-md shadow-2xl">
                 <div className="text-center mb-8">
-                    <h1 className="text-3xl font-black text-white tracking-tighter uppercase mb-2">GATE <span className="text-primary-500">VAULT</span></h1>
+                    <h1 className="text-3xl font-black text-heading tracking-tighter uppercase mb-2">GATE <span className="text-primary-500">VAULT</span></h1>
                     <p className="text-surface-500 text-sm">Sign in to sync your progress across devices.</p>
                 </div>
 
@@ -49,7 +49,7 @@ export default function Auth({ onLogin }) {
                             <User size={18} className="text-surface-500" />
                             <input
                                 type="text" placeholder="Username" required
-                                className="bg-transparent w-full outline-none text-white placeholder-surface-600 text-sm font-medium"
+                                className="bg-transparent w-full outline-none text-heading placeholder-surface-600 text-sm font-medium"
                                 value={formData.username} onChange={e => setFormData({ ...formData, username: e.target.value })}
                             />
                         </div>
@@ -58,7 +58,7 @@ export default function Auth({ onLogin }) {
                         <Mail size={18} className="text-surface-500" />
                         <input
                             type="email" placeholder="Email Address" required
-                            className="bg-transparent w-full outline-none text-white placeholder-surface-600 text-sm font-medium"
+                            className="bg-transparent w-full outline-none text-heading placeholder-surface-600 text-sm font-medium"
                             value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })}
                         />
                     </div>
@@ -66,7 +66,7 @@ export default function Auth({ onLogin }) {
                         <Lock size={18} className="text-surface-500" />
                         <input
                             type="password" placeholder="Password" required
-                            className="bg-transparent w-full outline-none text-white placeholder-surface-600 text-sm font-medium"
+                            className="bg-transparent w-full outline-none text-heading placeholder-surface-600 text-sm font-medium"
                             value={formData.password} onChange={e => setFormData({ ...formData, password: e.target.value })}
                         />
                     </div>

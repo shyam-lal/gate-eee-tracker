@@ -57,7 +57,7 @@ const ExamOnboarding = ({ onComplete, onBack }) => {
                     <div className="inline-flex items-center gap-2 text-primary-400 text-[10px] font-black uppercase tracking-[0.3em] mb-4">
                         <Sparkles size={12} /> Getting Started
                     </div>
-                    <h1 className="text-3xl sm:text-4xl font-black text-white uppercase tracking-tighter mb-2">
+                    <h1 className="text-3xl sm:text-4xl font-black text-heading uppercase tracking-tighter mb-2">
                         {step === 1 && 'Choose Your Path'}
                         {step === 2 && 'Select Your Exam'}
                         {step === 3 && 'Almost There!'}
@@ -89,7 +89,7 @@ const ExamOnboarding = ({ onComplete, onBack }) => {
                                 className="bg-surface-900/50 border border-surface-800 p-6 rounded-2xl text-left hover:border-primary-500/50 hover:bg-primary-500/5 transition-all group"
                             >
                                 <div className="text-3xl mb-3">{categoryIcons[cat.slug] || '📚'}</div>
-                                <h3 className="text-white font-black uppercase tracking-tighter text-lg group-hover:text-primary-400 transition-colors">
+                                <h3 className="text-heading font-black uppercase tracking-tighter text-lg group-hover:text-primary-400 transition-colors">
                                     {cat.name}
                                 </h3>
                                 {cat.description && (
@@ -123,7 +123,7 @@ const ExamOnboarding = ({ onComplete, onBack }) => {
                                             <GraduationCap size={20} style={{ color: exam.primary_color }} />
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <h3 className="text-white font-black uppercase tracking-tighter group-hover:text-primary-400 transition-colors">
+                                            <h3 className="text-heading font-black uppercase tracking-tighter group-hover:text-primary-400 transition-colors">
                                                 {exam.name}
                                             </h3>
                                             <p className="text-[10px] text-surface-500 truncate">{exam.full_name}</p>
@@ -139,7 +139,7 @@ const ExamOnboarding = ({ onComplete, onBack }) => {
                         <div className="flex justify-between items-center pt-4">
                             <button
                                 onClick={() => { setStep(1); setSelectedCategory(null); }}
-                                className="flex items-center gap-2 text-surface-500 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors"
+                                className="flex items-center gap-2 text-surface-500 hover:text-heading text-xs font-bold uppercase tracking-widest transition-colors"
                             >
                                 <ChevronLeft size={14} /> Back
                             </button>
@@ -157,7 +157,7 @@ const ExamOnboarding = ({ onComplete, onBack }) => {
                                     <GraduationCap size={28} style={{ color: selectedExam.primary_color }} />
                                 </div>
                                 <div>
-                                    <h3 className="text-white font-black uppercase tracking-tighter text-xl">{selectedExam.name}</h3>
+                                    <h3 className="text-heading font-black uppercase tracking-tighter text-xl">{selectedExam.name}</h3>
                                     <p className="text-xs text-surface-500">{selectedExam.full_name}</p>
                                 </div>
                             </div>
@@ -167,13 +167,13 @@ const ExamOnboarding = ({ onComplete, onBack }) => {
                         <div className="bg-surface-900/50 border border-surface-800 p-6 rounded-2xl space-y-3">
                             <div className="flex items-center gap-3 mb-2">
                                 <Calendar size={18} className="text-primary-400" />
-                                <label className="text-sm font-bold text-white">Target Exam Date <span className="text-surface-600 font-normal">(optional)</span></label>
+                                <label className="text-sm font-bold text-heading">Target Exam Date <span className="text-surface-600 font-normal">(optional)</span></label>
                             </div>
                             <input
                                 type="date"
                                 value={targetDate}
                                 onChange={e => setTargetDate(e.target.value)}
-                                className="w-full bg-surface-950 border border-surface-800 rounded-xl p-3.5 text-sm text-white focus:border-primary-500 outline-none [color-scheme:dark]"
+                                className="w-full bg-surface-950 border border-surface-800 rounded-xl p-3.5 text-sm text-heading focus:border-primary-500 outline-none [color-scheme:dark]"
                             />
                             <p className="text-[10px] text-surface-600 font-medium">This helps us calculate daily study goals. You can change this later.</p>
                         </div>
@@ -194,7 +194,7 @@ const ExamOnboarding = ({ onComplete, onBack }) => {
                             <div className="flex justify-between">
                                 <button
                                     onClick={() => setStep(2)}
-                                    className="flex items-center gap-2 text-surface-500 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors"
+                                    className="flex items-center gap-2 text-surface-500 hover:text-heading text-xs font-bold uppercase tracking-widest transition-colors"
                                 >
                                     <ChevronLeft size={14} /> Back
                                 </button>

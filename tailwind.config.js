@@ -8,6 +8,9 @@ export default {
     extend: {
       colors: {
         base: 'var(--color-base)',
+        heading: 'var(--color-heading)',
+        body: 'var(--color-body)',
+        muted: 'var(--color-muted)',
         surface: {
           950: 'var(--color-surface-950)',
           900: 'var(--color-surface-900)',

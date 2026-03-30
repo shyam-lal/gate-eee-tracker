@@ -85,7 +85,7 @@ const DeckManager = ({ toolId, onStudyDeck }) => {
             {/* Header */}
             <div className="flex justify-between items-center">
                 <div>
-                    <h2 className="text-2xl font-black text-white uppercase tracking-tighter">Flashcard Vault</h2>
+                    <h2 className="text-2xl font-black text-heading uppercase tracking-tighter">Flashcard Vault</h2>
                     <p className="text-xs text-surface-500 font-medium">Organize and study your flashcards by subject.</p>
                 </div>
                 <button
@@ -104,9 +104,9 @@ const DeckManager = ({ toolId, onStudyDeck }) => {
                         placeholder="Subject Name (e.g. Electric Circuits, Power Systems)"
                         value={newGroupName}
                         onChange={(e) => setNewGroupName(e.target.value)}
-                        className="flex-1 bg-surface-950 border border-surface-800 rounded-xl px-4 py-2.5 text-white font-bold text-sm focus:border-primary-500 outline-none"
+                        className="flex-1 bg-surface-950 border border-surface-800 rounded-xl px-4 py-2.5 text-heading font-bold text-sm focus:border-primary-500 outline-none"
                     />
-                    <button type="button" onClick={() => setShowCreateGroup(false)} className="px-4 text-surface-500 hover:text-white font-bold text-sm">Cancel</button>
+                    <button type="button" onClick={() => setShowCreateGroup(false)} className="px-4 text-surface-500 hover:text-heading font-bold text-sm">Cancel</button>
                     <button type="submit" className="px-6 bg-primary-600 text-white rounded-xl font-bold text-sm hover:bg-primary-500 transition-colors">Create</button>
                 </form>
             )}
@@ -116,7 +116,7 @@ const DeckManager = ({ toolId, onStudyDeck }) => {
                     <div className="w-16 h-16 bg-surface-800 rounded-full flex items-center justify-center text-surface-500 mx-auto mb-4">
                         <Library size={32} />
                     </div>
-                    <h3 className="text-lg font-black text-white mb-2">Empty Vault</h3>
+                    <h3 className="text-lg font-black text-heading mb-2">Empty Vault</h3>
                     <p className="text-surface-500 text-sm max-w-sm mx-auto">Create a subject (group) to start adding decks and organizing your flashcards.</p>
                 </div>
             ) : (
@@ -129,7 +129,7 @@ const DeckManager = ({ toolId, onStudyDeck }) => {
                                     <div className="p-2 bg-primary-500/10 rounded-lg text-primary-400">
                                         <Library size={18} />
                                     </div>
-                                    <h3 className="text-xl font-black text-white">{group.name}</h3>
+                                    <h3 className="text-xl font-black text-heading">{group.name}</h3>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <button
@@ -156,9 +156,9 @@ const DeckManager = ({ toolId, onStudyDeck }) => {
                                         placeholder="Deck Name (e.g. Chapter 1 Formulas)"
                                         value={newDeckName}
                                         onChange={(e) => setNewDeckName(e.target.value)}
-                                        className="flex-1 bg-surface-950 border border-surface-800 rounded-xl px-4 py-2 text-white font-bold text-sm focus:border-emerald-500 outline-none"
+                                        className="flex-1 bg-surface-950 border border-surface-800 rounded-xl px-4 py-2 text-heading font-bold text-sm focus:border-emerald-500 outline-none"
                                     />
-                                    <button type="button" onClick={() => setShowCreateDeckFor(null)} className="px-4 text-surface-500 hover:text-white font-bold text-sm">Cancel</button>
+                                    <button type="button" onClick={() => setShowCreateDeckFor(null)} className="px-4 text-surface-500 hover:text-heading font-bold text-sm">Cancel</button>
                                     <button type="submit" className="px-6 bg-emerald-600 text-white rounded-xl font-bold text-sm hover:bg-emerald-500 transition-colors">Create Deck</button>
                                 </form>
                             )}
@@ -189,7 +189,7 @@ const DeckManager = ({ toolId, onStudyDeck }) => {
                                                     </button>
                                                 </div>
 
-                                                <h4 className="text-lg font-black text-white mb-1 truncate pr-4">{deck.name}</h4>
+                                                <h4 className="text-lg font-black text-heading mb-1 truncate pr-4">{deck.name}</h4>
                                                 <div className="flex items-center gap-3 text-xs font-bold text-surface-500 uppercase tracking-widest mb-6">
                                                     <span>{totalCount} Cards</span>
                                                     {dueCount > 0 && (
@@ -217,7 +217,7 @@ const DeckManager = ({ toolId, onStudyDeck }) => {
                                                     </button>
                                                     <button
                                                         onClick={() => onStudyDeck(deck, 'manage')}
-                                                        className="py-3 px-3 rounded-xl font-bold text-xs uppercase tracking-widest bg-surface-800 text-surface-400 hover:bg-surface-700 hover:text-white transition-all flex items-center justify-center flex-1"
+                                                        className="py-3 px-3 rounded-xl font-bold text-xs uppercase tracking-widest bg-surface-800 text-surface-400 hover:bg-surface-700 hover:text-heading transition-all flex items-center justify-center flex-1"
                                                         title="Manage Cards"
                                                     >
                                                         Manage

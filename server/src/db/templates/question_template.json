@@ -1,18 +1,30 @@
 {
-  "_instruction": "Use this template to extract previous year questions (PYQs) from a PDF. Follow the structure exactly. Do not add fields. Return ONLY valid JSON.",
-  "prompt_for_chatgpt": "Extract all questions from the provided exam PDF and output them as a JSON array EXACTLY matching this structure. Use 'mcq' (1 correct), 'msq' (multiple correct), 'nat' (numerical), or 'subjective' for question_type. For 'correct', use the 0-indexed position of the correct option(s) for mcq/msq, or {\"value\": X, \"tolerance\": Y} for nat. Ensure subject_id and topic_id are filled if known, otherwise leave null.",
+  "_instruction": "Extract all questions from the provided exam PDF and output them as a JSON array exactly matching this structure. Return ONLY valid JSON.",
+  "prompt_for_ai": "You are an expert exam parser. Read this GATE PDF and extract EVERY question. For equations, use standard LaTeX enclosed in $$ ... $$. If a question has a circuit diagram, graph, or any image, set 'image_url' to 'NEEDS_IMAGE' and do your best to describe the circuit in the question_text if possible. For 'correct', use the 0-indexed position for mcq/msq, or {\"value\": X, \"tolerance\": Y} for nat. Ensure subject_tag and topic_tag are filled. Output MUST match this JSON structure.",
+  "paper": {
+    "year": 2024,
+    "session": "Session 1",
+    "branch": "EE",
+    "title": "GATE EE 2024 — Session 1",
+    "total_marks": 100,
+    "duration_minutes": 180,
+    "pdf_url": null
+  },
   "questions": [
     {
-      "question_text": "The DC gain of the system G(s) = 10 / (s^2 + 3s + 2) is ___",
+      "question_number": 1,
+      "section": "Technical",
+      "question_text": "The DC gain of the system $$G(s) = \frac{10}{s^2 + 3s + 2}$$ is ___",
+      "image_url": null,
       "question_type": "nat",
       "options": null,
       "correct": { "value": 5, "tolerance": 0.1 },
       "explanation": "DC gain is calculated by setting s = 0. G(0) = 10 / 2 = 5.",
-      "year": 2024,
       "marks": 2,
-      "negative": 0,
-      "difficulty": "medium",
-      "tags": ["control-systems", "transfer-function", "dc-gain"]
+      "negative_marks": 0,
+      "subject_tag": "Control Systems",
+      "topic_tag": "Transfer Function",
+      "difficulty": "medium"
     },
     {
       "question_text": "Which of the following are Maxwell's equations? (Select all that apply)",

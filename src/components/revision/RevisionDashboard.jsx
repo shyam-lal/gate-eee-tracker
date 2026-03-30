@@ -83,7 +83,7 @@ const RevisionDashboard = ({ tool }) => {
         <div className="w-full max-w-5xl mx-auto animate-in fade-in duration-300 p-2">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
                 <div>
-                    <h1 className="text-3xl font-black text-white uppercase tracking-tighter flex items-center gap-3">
+                    <h1 className="text-3xl font-black text-heading uppercase tracking-tighter flex items-center gap-3">
                         <ClipboardCheck className="text-amber-400" size={32} /> Revision Tests
                     </h1>
                     <p className="text-xs text-surface-500 font-bold uppercase tracking-widest mt-1">Generate • Review • Test • Improve</p>
@@ -103,7 +103,7 @@ const RevisionDashboard = ({ tool }) => {
             ) : sets.length === 0 ? (
                 <div className="text-center py-20 opacity-50">
                     <ClipboardCheck size={64} className="mx-auto text-surface-600 mb-4" />
-                    <h3 className="text-xl font-black text-white mb-2">No Revision Sets Yet</h3>
+                    <h3 className="text-xl font-black text-heading mb-2">No Revision Sets Yet</h3>
                     <p className="text-sm text-surface-400 max-w-md mx-auto">Create your first revision set by entering topics and pasting AI-generated questions.</p>
                 </div>
             ) : (
@@ -120,7 +120,7 @@ const RevisionDashboard = ({ tool }) => {
                             </button>
 
                             <div className="cursor-pointer" onClick={() => { setActiveSet(set); setView('questions'); }}>
-                                <h3 className="text-lg font-black text-white uppercase tracking-tight mb-2 pr-8">{set.title}</h3>
+                                <h3 className="text-lg font-black text-heading uppercase tracking-tight mb-2 pr-8">{set.title}</h3>
 
                                 {/* Topic tags */}
                                 <div className="flex flex-wrap gap-1.5 mb-4">

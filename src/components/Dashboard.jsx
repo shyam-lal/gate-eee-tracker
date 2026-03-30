@@ -51,7 +51,7 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
     };
 
     return (
-        <div className="min-h-screen bg-base text-surface-400 overflow-hidden relative">
+        <div className="min-h-screen bg-transparent text-surface-400 overflow-hidden relative">
             {/* Background Atmosphere */}
             <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-[var(--color-glow1)] rounded-full blur-[120px] pointer-events-none"></div>
             <div className="absolute bottom-[-10%] right-[-5%] w-[500px] h-[500px] bg-[var(--color-glow2)] rounded-full blur-[120px] pointer-events-none"></div>
@@ -111,7 +111,7 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
                         <span className="inline-flex items-center gap-2 text-primary-400 text-[10px] font-black uppercase tracking-[0.3em]">
                             <Rocket size={12} /> Systems Active
                         </span>
-                        <h2 className="text-4xl sm:text-5xl md:text-6xl font-black text-white uppercase tracking-tighter leading-[0.9]">
+                        <h2 className="text-4xl sm:text-5xl md:text-6xl font-black text-heading uppercase tracking-tighter leading-[0.9]">
                             Welcome back, <br /> <span className="text-surface-500">{user.username}.</span>
                         </h2>
                         <p className="text-surface-400 text-sm font-medium max-w-lg leading-relaxed mb-6">
@@ -129,7 +129,7 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
                             </button>
                             <button
                                 onClick={() => setShowInsights(true)}
-                                className="bg-surface-800 hover:bg-surface-700 text-white px-6 py-3 rounded-full font-black uppercase tracking-widest text-xs flex items-center gap-2 transition-all shadow-lg active:scale-95 w-max border border-surface-700"
+                                className="bg-surface-800 hover:bg-surface-700 text-heading px-6 py-3 rounded-full font-black uppercase tracking-widest text-xs flex items-center gap-2 transition-all shadow-lg active:scale-95 w-max border border-surface-700"
                             >
                                 <Activity size={16} /> View Insights
                             </button>
@@ -165,7 +165,7 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
                                 <div className="absolute top-5 right-5 z-10">
                                     <button
                                         onClick={(e) => { e.stopPropagation(); setMenuOpen(menuOpen === tool.id ? null : tool.id); }}
-                                        className="p-2 text-surface-600 hover:text-white transition-colors rounded-full hover:bg-surface-800"
+                                        className="p-2 text-surface-600 hover:text-heading transition-colors rounded-full hover:bg-surface-800"
                                     >
                                         <MoreVertical size={16} />
                                     </button>
@@ -206,12 +206,12 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
                                                 value={renameValue}
                                                 onChange={e => setRenameValue(e.target.value)}
                                                 onKeyDown={e => { if (e.key === 'Enter') submitRename(); if (e.key === 'Escape') setRenamingTool(null); }}
-                                                className="flex-1 bg-surface-950 border border-primary-500 rounded-xl px-3 py-2 text-white text-sm font-bold outline-none"
+                                                className="flex-1 bg-surface-950 border border-primary-500 rounded-xl px-3 py-2 text-heading text-sm font-bold outline-none"
                                             />
                                             <button onClick={submitRename} className="px-3 py-2 bg-primary-600 text-white text-[10px] font-black uppercase rounded-xl">Save</button>
                                         </div>
                                     ) : (
-                                        <h4 className="text-white font-black uppercase tracking-tighter text-xl mb-1 group-hover:text-primary-400 transition-colors pr-8">
+                                        <h4 className="text-heading font-black uppercase tracking-tighter text-xl mb-1 group-hover:text-primary-400 transition-colors pr-8">
                                             {tool.name}
                                         </h4>
                                     )}
@@ -251,7 +251,7 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
                                 <Plus size={32} />
                             </div>
                             <div className="text-center">
-                                <h4 className="text-surface-400 font-black uppercase tracking-tighter text-lg group-hover:text-white transition-colors mb-1">
+                                <h4 className="text-surface-400 font-black uppercase tracking-tighter text-lg group-hover:text-heading transition-colors mb-1">
                                     Create New Tool
                                 </h4>
                                 <p className="text-[10px] text-surface-600 font-bold uppercase tracking-widest leading-relaxed">
@@ -269,7 +269,7 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
                             <div className="p-2 bg-orange-500/10 rounded-lg text-orange-500 group-hover:scale-110 transition-transform"><Zap size={20} fill="currentColor" /></div>
                             <div>
                                 <h5 className="text-[10px] font-black text-surface-500 uppercase tracking-widest mb-0.5">Streak</h5>
-                                <p className="text-2xl font-black text-white tracking-tighter italic">{user.current_streak || 0} <span className="text-xs text-surface-600 uppercase not-italic">Days</span></p>
+                                <p className="text-2xl font-black text-heading tracking-tighter italic">{user.current_streak || 0} <span className="text-xs text-surface-600 uppercase not-italic">Days</span></p>
                             </div>
                         </div>
                     </div>
@@ -278,7 +278,7 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
                             <div className="p-2 bg-emerald-500/10 rounded-lg text-emerald-500"><Calendar size={20} /></div>
                             <div>
                                 <h5 className="text-[10px] font-black text-surface-500 uppercase tracking-widest mb-0.5">Tools Active</h5>
-                                <p className="text-2xl font-black text-white tracking-tighter italic">{tools?.length || 0} <span className="text-xs text-surface-600 uppercase not-italic">Configured</span></p>
+                                <p className="text-2xl font-black text-heading tracking-tighter italic">{tools?.length || 0} <span className="text-xs text-surface-600 uppercase not-italic">Configured</span></p>
                             </div>
                         </div>
                     </div>
@@ -287,7 +287,7 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
                             <div className="p-2 bg-primary-500/10 rounded-lg text-primary-400"><BarChart3 size={20} /></div>
                             <div>
                                 <h5 className="text-[10px] font-black text-surface-500 uppercase tracking-widest mb-0.5">Exam Target</h5>
-                                <p className="text-xl font-black text-white tracking-tighter italic uppercase">GATE 2027</p>
+                                <p className="text-xl font-black text-heading tracking-tighter italic uppercase">GATE 2027</p>
                             </div>
                         </div>
                     </div>
@@ -323,11 +323,11 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
                                 <Shield size={16} /> Admin
                             </button>
                         )}
-                        <button onClick={onOpenSocial} className="p-3 text-surface-400 hover:text-white transition-colors relative shrink-0">
+                        <button onClick={onOpenSocial} className="p-3 text-surface-400 hover:text-heading transition-colors relative shrink-0">
                             <Users size={20} />
                         </button>
-                        <button className="p-3 text-surface-400 hover:text-white transition-colors shrink-0"><Settings size={20} /></button>
-                        <button className="p-3 text-surface-400 hover:text-white transition-colors relative shrink-0">
+                        <button className="p-3 text-surface-400 hover:text-heading transition-colors shrink-0"><Settings size={20} /></button>
+                        <button className="p-3 text-surface-400 hover:text-heading transition-colors relative shrink-0">
                             <Bell size={20} />
                             <div className="absolute top-2 right-2 w-2 h-2 bg-primary-500 rounded-full border border-surface-900"></div>
                         </button>
@@ -341,12 +341,12 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
                     <div className="bg-surface-950 border border-surface-700 w-full max-w-5xl rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 max-h-[90vh] flex flex-col" onClick={e => e.stopPropagation()}>
                         <div className="flex justify-between items-center p-6 md:p-8 border-b border-surface-800/50">
                             <div>
-                                <h3 className="font-black text-white text-2xl uppercase tracking-tighter flex items-center gap-3">
+                                <h3 className="font-black text-heading text-2xl uppercase tracking-tighter flex items-center gap-3">
                                     <Activity className="text-primary-400" size={24} /> Global Insights
                                 </h3>
                                 <p className="text-[10px] text-surface-500 font-bold uppercase tracking-widest mt-1">Cross-tool productivity analytics</p>
                             </div>
-                            <button onClick={() => setShowInsights(false)} className="p-3 bg-surface-800/50 hover:bg-surface-800 rounded-2xl text-surface-400 hover:text-white transition-all">
+                            <button onClick={() => setShowInsights(false)} className="p-3 bg-surface-800/50 hover:bg-surface-800 rounded-2xl text-surface-400 hover:text-heading transition-all">
                                 <X size={20} />
                             </button>
                         </div>

@@ -97,7 +97,7 @@ const StudySession = ({ deck, onComplete, mode = 'srs' }) => {
                     <div className="absolute inset-0 bg-primary-500 blur-3xl opacity-20 rounded-full"></div>
                     <CheckCircle2 size={48} />
                 </div>
-                <h2 className="text-4xl font-black text-white uppercase tracking-tighter mb-4 text-center">Session Complete!</h2>
+                <h2 className="text-4xl font-black text-heading uppercase tracking-tighter mb-4 text-center">Session Complete!</h2>
                 <p className="text-surface-400 text-center max-w-sm mb-8 font-medium">
                     {mode === 'cram'
                         ? `You've reviewed all ${cards.length} cards in ${deck.name}. Ready for more?`
@@ -105,7 +105,7 @@ const StudySession = ({ deck, onComplete, mode = 'srs' }) => {
                 </p>
                 <button
                     onClick={onComplete}
-                    className="px-8 py-4 bg-surface-800 text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-surface-700 transition-colors shadow-lg flex items-center gap-3"
+                    className="px-8 py-4 bg-surface-800 text-heading rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-surface-700 transition-colors shadow-lg flex items-center gap-3"
                 >
                     <ArrowLeft size={16} /> Back to Decks
                 </button>
@@ -195,11 +195,11 @@ const StudySession = ({ deck, onComplete, mode = 'srs' }) => {
             `}</style>
             {/* Header */}
             <div className="flex items-center justify-between mb-8 flex-shrink-0">
-                <button onClick={onComplete} className="text-surface-500 hover:text-white transition-colors flex items-center gap-2 text-xs font-black uppercase tracking-widest">
+                <button onClick={onComplete} className="text-surface-500 hover:text-heading transition-colors flex items-center gap-2 text-xs font-black uppercase tracking-widest">
                     <ArrowLeft size={16} /> Exit
                 </button>
                 <div className="text-center">
-                    <h2 className="text-white font-black uppercase tracking-tighter text-lg">{deck.name} {mode === 'cram' && <span className="text-amber-500 ml-2">CRAM</span>}</h2>
+                    <h2 className="text-heading font-black uppercase tracking-tighter text-lg">{deck.name} {mode === 'cram' && <span className="text-amber-500 ml-2">CRAM</span>}</h2>
                     <p className="text-[10px] text-surface-500 font-bold uppercase tracking-[0.2em]">{currentIndex + 1} / {cards.length} {mode === 'cram' ? 'Cards' : 'Due'}</p>
                 </div>
                 <div className="w-20"></div> {/* Spacer for centering */}
@@ -216,7 +216,7 @@ const StudySession = ({ deck, onComplete, mode = 'srs' }) => {
                         </div>
                         <div ref={!showBack ? cardContentRef : null} className="flex-1 overflow-y-auto no-scrollbar w-full flex flex-col fade-edge-y pb-2">
                             <div className="m-auto flex flex-col items-center space-y-8 w-full">
-                                <div className={`study-card-content font-bold text-white leading-relaxed ${getFontSizeClass(frontData.text)}`} dangerouslySetInnerHTML={{ __html: frontData.text }} />
+                                <div className={`study-card-content font-bold text-heading leading-relaxed ${getFontSizeClass(frontData.text)}`} dangerouslySetInnerHTML={{ __html: frontData.text }} />
                                 {frontData.image && (
                                     <img src={frontData.image} alt="Front illustration" className="max-h-[40vh] rounded-2xl object-contain border border-surface-700 shadow-xl shadow-black/50" />
                                 )}
@@ -229,7 +229,7 @@ const StudySession = ({ deck, onComplete, mode = 'srs' }) => {
                         <div className="flex items-center justify-between mb-6 opacity-50 pb-4 border-b border-surface-700 flex-shrink-0">
                             <div className="flex-1 text-center px-4 w-full overflow-hidden">
                                 <p className="text-[10px] font-black text-surface-400 uppercase tracking-widest mb-1.5 w-full">Question</p>
-                                <div className="text-xs text-white font-medium line-clamp-2 break-words w-full" style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }} dangerouslySetInnerHTML={{ __html: frontData.text }} />
+                                <div className="text-xs text-heading font-medium line-clamp-2 break-words w-full" style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }} dangerouslySetInnerHTML={{ __html: frontData.text }} />
                             </div>
                         </div>
                         <div ref={showBack ? cardContentRef : null} className="flex-1 overflow-y-auto no-scrollbar w-full flex flex-col fade-edge-y pb-2">
@@ -292,7 +292,7 @@ const StudySession = ({ deck, onComplete, mode = 'srs' }) => {
                                 <button
                                     onClick={() => handleReview(5)} // Easy
                                     disabled={submitting}
-                                    className="bg-sky-500/10 border border-sky-500/20 hover:border-sky-500 hover:bg-sky-500 text-sky-500 hover:text-white rounded-2xl h-16 sm:h-20 flex flex-col items-center justify-center gap-1 transition-all disabled:opacity-50"
+                                    className="bg-sky-500/10 border border-sky-500/20 hover:border-sky-500 hover:bg-sky-500 text-sky-500 hover:text-heading rounded-2xl h-16 sm:h-20 flex flex-col items-center justify-center gap-1 transition-all disabled:opacity-50"
                                 >
                                     <span className="font-black uppercase tracking-widest text-xs">Easy</span>
                                     <span className="text-[10px] opacity-70 font-semibold">{lblEasy}</span>

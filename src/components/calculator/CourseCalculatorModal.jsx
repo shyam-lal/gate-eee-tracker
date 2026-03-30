@@ -140,11 +140,11 @@ const CourseCalculatorModal = ({ onClose }) => {
                             <Calculator size={24} />
                         </div>
                         <div>
-                            <h3 className="font-black text-white text-xl uppercase tracking-tighter">Course Estimator</h3>
+                            <h3 className="font-black text-heading text-xl uppercase tracking-tighter">Course Estimator</h3>
                             <p className="text-[10px] text-surface-500 font-bold uppercase tracking-widest mt-1">Calculate your study timeline</p>
                         </div>
                     </div>
-                    <button onClick={onClose} className="p-3 bg-surface-800/50 hover:bg-surface-700/80 rounded-2xl text-surface-400 hover:text-white transition-all border border-transparent hover:border-slate-600">
+                    <button onClick={onClose} className="p-3 bg-surface-800/50 hover:bg-surface-700/80 rounded-2xl text-surface-400 hover:text-heading transition-all border border-transparent hover:border-slate-600">
                         <X size={20} />
                     </button>
                 </div>
@@ -180,7 +180,7 @@ const CourseCalculatorModal = ({ onClose }) => {
                                     value={totalHours}
                                     onChange={(e) => setTotalHours(e.target.value)}
                                     placeholder="e.g. 150"
-                                    className="w-full bg-surface-900/50 border border-surface-700 rounded-xl py-3 pl-11 pr-4 text-white text-sm font-bold focus:outline-none focus:border-primary-500 transition-colors"
+                                    className="w-full bg-surface-900/50 border border-surface-700 rounded-xl py-3 pl-11 pr-4 text-heading text-sm font-bold focus:outline-none focus:border-primary-500 transition-colors"
                                 />
                             </div>
                         </div>
@@ -194,7 +194,7 @@ const CourseCalculatorModal = ({ onClose }) => {
                                     type="date"
                                     value={startDate}
                                     onChange={(e) => setStartDate(e.target.value)}
-                                    className="w-full bg-surface-900/50 border border-surface-700 rounded-xl py-3 pl-11 pr-4 text-white text-sm font-bold focus:outline-none focus:border-primary-500 transition-colors [color-scheme:dark]"
+                                    className="w-full bg-surface-900/50 border border-surface-700 rounded-xl py-3 pl-11 pr-4 text-heading text-sm font-bold focus:outline-none focus:border-primary-500 transition-colors [color-scheme:dark]"
                                 />
                             </div>
                         </div>
@@ -212,7 +212,7 @@ const CourseCalculatorModal = ({ onClose }) => {
                                         value={dailyStudyHours}
                                         onChange={(e) => setDailyStudyHours(e.target.value)}
                                         placeholder="e.g. 2.5"
-                                        className="w-full bg-surface-900/50 border border-surface-700 rounded-xl py-3 pl-11 pr-4 text-white text-sm font-bold focus:outline-none focus:border-primary-500 transition-colors"
+                                        className="w-full bg-surface-900/50 border border-surface-700 rounded-xl py-3 pl-11 pr-4 text-heading text-sm font-bold focus:outline-none focus:border-primary-500 transition-colors"
                                     />
                                 </div>
                             </div>
@@ -225,7 +225,7 @@ const CourseCalculatorModal = ({ onClose }) => {
                                         type="date"
                                         value={targetDate}
                                         onChange={(e) => setTargetDate(e.target.value)}
-                                        className="w-full bg-surface-900/50 border border-surface-700 rounded-xl py-3 pl-11 pr-4 text-white text-sm font-bold focus:outline-none focus:border-emerald-500 transition-colors [color-scheme:dark]"
+                                        className="w-full bg-surface-900/50 border border-surface-700 rounded-xl py-3 pl-11 pr-4 text-heading text-sm font-bold focus:outline-none focus:border-emerald-500 transition-colors [color-scheme:dark]"
                                     />
                                 </div>
                             </div>
@@ -269,21 +269,21 @@ const CourseCalculatorModal = ({ onClose }) => {
                             {result.type === 'daysToComplete' ? (
                                 <div className="text-center">
                                     <p className="text-[10px] font-black text-primary-400 uppercase tracking-[0.3em] mb-3">Estimated Completion Date</p>
-                                    <h2 className="text-3xl sm:text-4xl font-black text-white uppercase tracking-tighter mb-6">{new Date(result.endDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</h2>
+                                    <h2 className="text-3xl sm:text-4xl font-black text-heading uppercase tracking-tighter mb-6">{new Date(result.endDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</h2>
 
                                     <div className="flex justify-center gap-6 sm:gap-12 text-center border-t border-primary-500/20 pt-6">
                                         <div>
-                                            <p className="text-2xl font-black text-white">{result.activeDaysCount}</p>
+                                            <p className="text-2xl font-black text-heading">{result.activeDaysCount}</p>
                                             <p className="text-[9px] font-black text-surface-500 uppercase tracking-widest mt-1">Study Days Needed</p>
                                         </div>
                                         <div className="w-px bg-primary-500/20"></div>
                                         <div>
-                                            <p className="text-2xl font-black text-white">{result.totalDaysCount}</p>
+                                            <p className="text-2xl font-black text-heading">{result.totalDaysCount}</p>
                                             <p className="text-[9px] font-black text-surface-500 uppercase tracking-widest mt-1">Total Calendar Days</p>
                                         </div>
                                         <div className="w-px bg-primary-500/20 hidden sm:block"></div>
                                         <div className="hidden sm:block">
-                                            <p className="text-2xl font-black text-white">{(result.totalDaysCount / 7).toFixed(1)}</p>
+                                            <p className="text-2xl font-black text-heading">{(result.totalDaysCount / 7).toFixed(1)}</p>
                                             <p className="text-[9px] font-black text-surface-500 uppercase tracking-widest mt-1">Total Weeks</p>
                                         </div>
                                     </div>
@@ -292,18 +292,18 @@ const CourseCalculatorModal = ({ onClose }) => {
                                 <div className="text-center">
                                     <p className="text-[10px] font-black text-emerald-400 uppercase tracking-[0.3em] mb-3">Required Study Pace</p>
                                     <div className="flex items-baseline justify-center gap-2 mb-6">
-                                        <h2 className="text-4xl sm:text-5xl font-black text-white uppercase tracking-tighter">{result.requiredDaily}</h2>
+                                        <h2 className="text-4xl sm:text-5xl font-black text-heading uppercase tracking-tighter">{result.requiredDaily}</h2>
                                         <span className="text-lg font-bold text-surface-400 uppercase tracking-widest">hours / day</span>
                                     </div>
 
                                     <div className="flex justify-center gap-6 sm:gap-12 text-center border-t border-emerald-500/20 pt-6">
                                         <div>
-                                            <p className="text-2xl font-black text-white">{result.activeDaysCount}</p>
+                                            <p className="text-2xl font-black text-heading">{result.activeDaysCount}</p>
                                             <p className="text-[9px] font-black text-surface-500 uppercase tracking-widest mt-1">Available Study Days</p>
                                         </div>
                                         <div className="w-px bg-emerald-500/20"></div>
                                         <div>
-                                            <p className="text-2xl font-black text-white">{result.totalDaysCount}</p>
+                                            <p className="text-2xl font-black text-heading">{result.totalDaysCount}</p>
                                             <p className="text-[9px] font-black text-surface-500 uppercase tracking-widest mt-1">Total Calendar Days</p>
                                         </div>
                                     </div>
