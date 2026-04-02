@@ -3,11 +3,13 @@ import { exams as examsApi } from '../../services/api';
 import {
     ArrowLeft, Plus, Trash2, Edit3, Save, X, ChevronDown, ChevronRight,
     BookOpen, GraduationCap, FileText, Layers, Settings, Palette,
-    Upload, Eye, EyeOff, AlertTriangle, FileUp, CheckCircle, Loader2
+    Upload, Eye, EyeOff, AlertTriangle, FileUp, CheckCircle, Loader2, Users
 } from 'lucide-react';
+import AdminUsers from './AdminUsers';
 
 const AdminPanel = ({ user, onBack }) => {
-    const [tab, setTab] = useState('exams'); // 'exams', 'materials'
+    const [mainTab, setMainTab] = useState('exams'); // 'exams', 'users'
+    const [tab, setTab] = useState('exams'); // 'syllabus', 'materials'
     const [categories, setCategories] = useState([]);
     const [examsList, setExamsList] = useState([]);
     const [selectedExam, setSelectedExam] = useState(null);
@@ -286,28 +288,58 @@ const AdminPanel = ({ user, onBack }) => {
     return (
         <div className="min-h-screen bg-base text-surface-400 font-sans">
             {/* Header */}
-            <div className="border-b border-surface-800">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <button onClick={onBack} className="p-2 hover:bg-surface-800 rounded-xl text-surface-400 hover:text-heading transition-colors">
-                            <ArrowLeft size={20} />
-                        </button>
-                        <div>
-                            <div className="flex items-center gap-2">
-                                <Settings size={18} className="text-primary-400" />
-                                <h1 className="text-xl font-black uppercase tracking-tighter text-heading">Admin Panel</h1>
+            <div className="border-b border-surface-800 bg-surface-950/50 backdrop-blur-sm sticky top-0 z-10">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6">
+                    <div className="py-4 flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                            <button onClick={onBack} className="p-2 hover:bg-surface-800 rounded-xl text-surface-400 hover:text-heading transition-colors">
+                                <ArrowLeft size={20} />
+                            </button>
+                            <div>
+                                <div className="flex items-center gap-2">
+                                    <Settings size={18} className="text-primary-400" />
+                                    <h1 className="text-xl font-black uppercase tracking-tighter text-heading">Admin Hub</h1>
+                                </div>
+                                <p className="text-[10px] font-bold text-surface-500 uppercase tracking-widest hidden sm:block">Control Center & User Management</p>
                             </div>
-                            <p className="text-[10px] font-bold text-surface-500 uppercase tracking-widest">Manage Exams, Syllabi & Materials</p>
                         </div>
-                    </div>
-                    <div className="flex items-center gap-2 bg-emerald-500/10 px-4 py-2 rounded-xl border border-emerald-500/20">
-                        <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                        <span className="text-xs font-bold text-emerald-400 uppercase tracking-wide">{user?.role || 'admin'}</span>
+                        
+                        {/* Main Tabs Segmented Control */}
+                        <div className="flex bg-surface-900 p-1 rounded-xl border border-surface-800 shadow-inner">
+                            <button 
+                                onClick={() => setMainTab('exams')}
+                                className={`px-4 py-1.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${
+                                    mainTab === 'exams' 
+                                        ? 'bg-primary-500 text-white shadow-md' 
+                                        : 'text-surface-500 hover:text-heading hover:bg-surface-800'
+                                }`}
+                            >
+                                <GraduationCap size={14} className="inline mr-1.5 mb-0.5" /> Exams
+                            </button>
+                            <button 
+                                onClick={() => setMainTab('users')}
+                                className={`px-4 py-1.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${
+                                    mainTab === 'users' 
+                                        ? 'bg-primary-500 text-white shadow-md' 
+                                        : 'text-surface-500 hover:text-heading hover:bg-surface-800'
+                                }`}
+                            >
+                                <Users size={14} className="inline mr-1.5 mb-0.5" /> Users
+                            </button>
+                        </div>
+
+                        <div className="hidden sm:flex items-center gap-2 bg-emerald-500/10 px-4 py-2 rounded-xl border border-emerald-500/20">
+                            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                            <span className="text-xs font-bold text-emerald-400 uppercase tracking-wide">{user?.role || 'admin'}</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+                {mainTab === 'users' ? (
+                    <AdminUsers />
+                ) : (
                 <div className="flex flex-col lg:flex-row gap-6">
                     {/* ─── Sidebar: Exam List ──────────────── */}
                     <div className="lg:w-80 shrink-0 space-y-4">
@@ -711,6 +743,7 @@ const AdminPanel = ({ user, onBack }) => {
                         )}
                     </div>
                 </div>
+                )}
             </div>
 
             {/* ─── Exam Form Modal ──────────────────── */}

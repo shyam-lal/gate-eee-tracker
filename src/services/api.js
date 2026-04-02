@@ -760,3 +760,72 @@ export const exams = {
         },
     }
 };
+
+// ═══════════════════════════════════════════════════
+// Admin Users & Subscriptions API
+// ═══════════════════════════════════════════════════
+export const adminUsers = {
+    getUsers: async (page = 1, limit = 50, search = '', role = '') => {
+        const params = new URLSearchParams({ page, limit });
+        if (search) params.append('search', search);
+        if (role) params.append('role', role);
+        
+        const res = await fetch(`${API_URL}/admin/users?${params}`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to fetch users');
+        return res.json();
+    },
+    getUserDetails: async (id) => {
+        const res = await fetch(`${API_URL}/admin/users/${id}`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to fetch user details');
+        return res.json();
+    },
+    getPlans: async () => {
+        const res = await fetch(`${API_URL}/admin/plans`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to fetch plans');
+        return res.json();
+    },
+    updateUserSubscription: async (userId, planId, endDate = null) => {
+        const res = await fetch(`${API_URL}/admin/users/${userId}/subscription`, {
+            method: 'PUT',
+            headers: getHeaders(),
+            body: JSON.stringify({ plan_id: planId, end_date: endDate })
+        });
+        if (!res.ok) throw new Error('Failed to update subscription');
+        return res.json();
+    }
+};
+
+// ═══════════════════════════════════════════════════
+// User-Facing Subscriptions & Payments API
+// ═══════════════════════════════════════════════════
+export const subscriptions = {
+    getPlans: async () => {
+        const res = await fetch(`${API_URL}/subscriptions/plans`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to fetch pricing plans');
+        return res.json();
+    },
+    createOrder: async (planId) => {
+        const res = await fetch(`${API_URL}/subscriptions/create-order`, {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify({ plan_id: planId })
+        });
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.error || 'Failed to create payment order');
+        }
+        return res.json();
+    },
+    verifyPayment: async (paymentData) => {
+        const res = await fetch(`${API_URL}/subscriptions/verify-payment`, {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify(paymentData)
+        });
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.error || 'Failed to verify payment');
+        }
+        return res.json();
+    }
+};

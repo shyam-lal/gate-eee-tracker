@@ -4,14 +4,14 @@ import {
     ChevronRight, Play, Clock, Target,
     Zap, Calendar, BarChart3, LayoutGrid,
     BookOpen, Trophy, Sparkles, Users, Plus, Layers,
-    MoreVertical, Edit3, Trash2, X, BrainCircuit, AlertCircle, Timer, RotateCcw, Activity, ClipboardCheck, Shield
+    MoreVertical, Edit3, Trash2, X, BrainCircuit, AlertCircle, Timer, RotateCcw, Activity, ClipboardCheck, Shield, Crown
 } from 'lucide-react';
 import UserStreakWidget from './ui/UserStreakWidget';
 import GlobalAnalytics from './analytics/GlobalAnalytics';
 import CourseCalculatorModal from './calculator/CourseCalculatorModal';
 import ExamSwitcher from './exam/ExamSwitcher';
 
-const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenSocial, onOpenPlanner, onSetupTool, onDeleteTool, onRenameTool, onStartFocus, onClearToolData, onOpenAdmin, onOpenMaterials }) => {
+const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenSocial, onOpenPlanner, onSetupTool, onDeleteTool, onRenameTool, onStartFocus, onClearToolData, onOpenAdmin, onOpenMaterials, onOpenPricing }) => {
 
     const [menuOpen, setMenuOpen] = useState(null); // toolId of open menu
     const [renamingTool, setRenamingTool] = useState(null);
@@ -67,6 +67,11 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
                 </div>
 
                 <div className="flex items-center gap-4 sm:gap-6">
+                    {onOpenPricing && (
+                        <button onClick={onOpenPricing} className="bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-500 border border-amber-500/30 px-3 py-1.5 rounded-xl font-black text-[10px] uppercase tracking-widest hover:from-amber-500/30 hover:to-orange-500/30 transition-all flex items-center gap-1.5 shadow-[0_0_15px_rgba(245,158,11,0.15)]">
+                            <Crown size={12}/> <span className="hidden sm:inline">Upgrade</span>
+                        </button>
+                    )}
                     <div className="hidden md:flex bg-surface-900/50 border border-surface-800 rounded-full px-4 py-2 items-center gap-3">
                         <Search size={14} className="text-surface-500" />
                         <span className="text-[10px] text-surface-500 font-black uppercase tracking-widest">Global Search</span>
