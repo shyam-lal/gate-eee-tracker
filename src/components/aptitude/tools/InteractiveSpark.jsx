@@ -6,10 +6,12 @@ import { lazy, Suspense } from 'react';
  */
 const TOOL_REGISTRY = {
     'mixtures-alligation': lazy(() => import('./MixturesSparkTool')),
+    'seating-circular': lazy(() => import('./SeatingCircularSparkTool')),
+    'seating-linear': lazy(() => import('./SeatingLinearSparkTool')),
+    'blood-relations': lazy(() => import('./BloodRelationsSparkTool')),
     // Future tools:
     // 'ratio-proportion': lazy(() => import('./RatioSparkTool')),
-    // 'time-speed-distance': lazy(() => import('./SpeedDistanceSparkTool')),
-    // 'percentages': lazy(() => import('./PercentagesSparkTool')),
+    // 'clocks': lazy(() => import('./ClocksSparkTool')),
 };
 
 /**

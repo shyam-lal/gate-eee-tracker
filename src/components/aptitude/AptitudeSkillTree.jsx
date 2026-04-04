@@ -467,7 +467,17 @@ export default function AptitudeSkillTree({ onBack }) {
                                                                 Start
                                                             </button>
                                                         )}
-                                                        {stage.done && <CheckCircle size={16} style={{ color: meta.color }} />}
+                                                        {stage.done && (
+                                                            <div className="flex items-center gap-3">
+                                                                <button
+                                                                    onClick={() => launchStage(node, stage.key)}
+                                                                    className="px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all hover:opacity-90 hover:scale-105 active:scale-95 border"
+                                                                    style={{ color: meta.color, borderColor: `${meta.color}50`, background: `${meta.color}10` }}>
+                                                                    Redo
+                                                                </button>
+                                                                <CheckCircle size={16} style={{ color: meta.color }} />
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 );
                                             })}
