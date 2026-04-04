@@ -38,6 +38,17 @@ export default function FamilyTreeTable({
 
     return (
         <div className="family-tree-container" style={{ width: size, height: size, position: 'relative', margin: '0 auto' }} ref={tableRef}>
+            {/* Generational Backgrounds */}
+            <div style={{ position: 'absolute', top: 0, width: '100%', height: getPos(33, size), background: `${color}05`, borderBottom: `1px dashed ${color}20`, borderTopLeftRadius: 16, borderTopRightRadius: 16 }}>
+                <span className="absolute right-2 top-2 text-[8px] font-black uppercase tracking-widest text-surface-500">Gen 1</span>
+            </div>
+            <div style={{ position: 'absolute', top: getPos(33, size), width: '100%', height: getPos(34, size), background: `${color}0A`, borderBottom: `1px dashed ${color}20` }}>
+                <span className="absolute right-2 top-2 text-[8px] font-black uppercase tracking-widest text-surface-500">Gen 2</span>
+            </div>
+            <div style={{ position: 'absolute', top: getPos(67, size), width: '100%', height: getPos(33, size), background: `${color}05`, borderBottomLeftRadius: 16, borderBottomRightRadius: 16 }}>
+                <span className="absolute right-2 top-2 text-[8px] font-black uppercase tracking-widest text-surface-500">Gen 3</span>
+            </div>
+
             {/* SVG Lines */}
             <svg width={size} height={size} style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none' }}>
                 {connections.map(([fromIdx, toIdx], i) => {

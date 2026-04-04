@@ -3,12 +3,6 @@ import FamilyTreeTable from './FamilyTreeTable';
 import DraggableCard from './DraggableCard';
 import { Users, Lightbulb, CheckCircle, AlertCircle } from 'lucide-react';
 
-/**
- * BloodRelationsSparkTool — Node 25: Blood Relations
- *
- * 6 family members. User drags them to the correct node in the Family Tree.
- */
-
 const TOTAL_SEATS = 6;
 const PEOPLE = ['P', 'Q', 'R', 'S', 'T', 'U'];
 
@@ -31,79 +25,48 @@ const CONNECTIONS = [
 
 const SOLUTION = { R: 0, T: 1, Q: 2, S: 3, P: 4, U: 5 };
 
-const CLUES = [
-    { id: 1, text: 'R is the Grandfather of U.', validate: (p) => {
-        if (p.R !== null && p.R !== 0) return false;
-        if (p.U !== null && p.U !== 5) return false;
-        return null; // Don't return true unless both placed, wait, just return true if both correct
-    }},
-    { id: 2, text: 'P is the brother of Q. Q is U\'s father.', validate: (p) => {
-        if (p.P !== null && p.P !== 4) return false;
-        if (p.Q !== null && p.Q !== 2) return false;
-        return null;
-    }},
-    { id: 3, text: 'T is the Grandmother of U.', validate: (p) => {
-        if (p.T !== null && p.T !== 1) return false;
-        return null;
-    }},
-    { id: 4, text: 'S is the wife of Q.', validate: (p) => {
-        if (p.S !== null && p.S !== 3) return false;
-        if (p.Q !== null && p.Q !== 2) return false;
-        return null;
-    }},
+const STEPS = [
+    {
+        id: 0,
+        title: 'Step 1: The Generational Backbone',
+        instruction: '"R is the Grandfather of U." Separate them by 2 generations. Place R at the top left (Grandfather) and U at the bottom (Child).',
+        check: (p) => p.R === 0 && p.U === 5,
+        error: 'Drag R to the Grandfather dot, and U to the Child dot.',
+        allowedCards: ['R', 'U']
+    },
+    {
+        id: 1,
+        title: 'Step 2: The Middle Generation',
+        instruction: '"P is the brother of Q. Q is U\'s father. S is the wife of Q." Place Q (Father), S (Mother), and P (Uncle).',
+        check: (p) => p.Q === 2 && p.S === 3 && p.P === 4,
+        error: 'Place Q as Father, S as Mother, and P as Uncle.',
+        allowedCards: ['P', 'Q', 'S']
+    },
+    {
+        id: 2,
+        title: 'Step 3: Completing the Family',
+        instruction: '"T is the Grandmother of U." The only remaining spot is at Gen 1. Place T.',
+        check: (p) => p.T === 1,
+        error: 'Place T as the Grandmother.',
+        allowedCards: ['T']
+    }
 ];
 
-// Improve validation logic: returns true if all parts of clue are met
-const checkClueProgress = (clue, placements) => {
-    switch (clue.id) {
-        case 1: return (placements.R === 0 && placements.U === 5) ? true : clue.validate(placements) === false ? false : null;
-        case 2: return (placements.P === 4 && placements.Q === 2) ? true : clue.validate(placements) === false ? false : null;
-        case 3: return (placements.T === 1) ? true : clue.validate(placements) === false ? false : null;
-        case 4: return (placements.S === 3 && placements.Q === 2) ? true : clue.validate(placements) === false ? false : null;
-        default: return null;
-    }
-};
-
 export default function BloodRelationsSparkTool({ node, unitMeta, onConceptMastered }) {
-    const [placements, setPlacements] = useState(
-        Object.fromEntries(PEOPLE.map(p => [p, null]))
-    );
-    const [seatOccupants, setSeatOccupants] = useState(
-        Array.from({ length: TOTAL_SEATS }, () => null)
-    );
-    const [cardStates, setCardStates] = useState(
-        Object.fromEntries(PEOPLE.map(p => [p, 'tray']))
-    );
+    const [placements, setPlacements] = useState(Object.fromEntries(PEOPLE.map(p => [p, null])));
+    const [seatOccupants, setSeatOccupants] = useState(Array.from({ length: TOTAL_SEATS }, () => null));
+    const [cardStates, setCardStates] = useState(Object.fromEntries(PEOPLE.map(p => [p, 'tray'])));
+    
+    const [currentStep, setCurrentStep] = useState(0);
     const [completed, setCompleted] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false);
     const [feedback, setFeedback] = useState(null);
     const feedbackTimeout = useRef(null);
 
-    const checkPlacement = useCallback((person, seatIndex, currentPlacements) => {
-        const testPlacements = { ...currentPlacements, [person]: seatIndex };
-
-        for (const clue of CLUES) {
-            const result = clue.validate(testPlacements);
-            if (result === false) return { valid: false, clue };
-        }
-
-        if (SOLUTION[person] !== seatIndex) {
-            return { valid: false, clue: null };
-        }
-
-        return { valid: true };
-    }, []);
-
-    const checkCompletion = useCallback((newPlacements) => {
-        const allPlaced = PEOPLE.every(p => newPlacements[p] !== null);
-        if (!allPlaced) return false;
-        return PEOPLE.every(p => newPlacements[p] === SOLUTION[p]);
-    }, []);
-
     const showFeedbackMessage = (type, message) => {
         clearTimeout(feedbackTimeout.current);
         setFeedback({ type, message });
-        feedbackTimeout.current = setTimeout(() => setFeedback(null), 2500);
+        feedbackTimeout.current = setTimeout(() => setFeedback(null), 3000);
     };
 
     const handleDrop = useCallback((seatIndex, cardId) => {
@@ -119,15 +82,28 @@ export default function BloodRelationsSparkTool({ node, unitMeta, onConceptMaste
         const newOccupants = [...seatOccupants];
         if (oldSeat !== null) newOccupants[oldSeat] = null;
 
-        const newPlacements = { ...placements, [cardId]: seatIndex };
-        const { valid, clue } = checkPlacement(cardId, seatIndex, placements);
+        const currentStepData = STEPS[currentStep];
 
-        if (!valid) {
+        // Ensure user is only placing cards relevant to the current step
+        if (!currentStepData.allowedCards.includes(cardId)) {
             setCardStates(s => ({ ...s, [cardId]: 'shaking' }));
-            showFeedbackMessage('error', clue ? `Violates: "${clue.text}"` : `${cardId} doesn't belong here.`);
+            showFeedbackMessage('error', `Not yet! Focus on the current step first.`);
             setTimeout(() => {
                 setCardStates(s => ({ ...s, [cardId]: 'tray' }));
-                setPlacements(p => ({ ...p, [cardId]: null }));
+                if (oldSeat !== null) {
+                    const restored = [...seatOccupants];
+                    restored[seatIndex] = null;
+                    setSeatOccupants(restored);
+                }
+            }, 600);
+            return;
+        }
+
+        if (SOLUTION[cardId] !== seatIndex) {
+            setCardStates(s => ({ ...s, [cardId]: 'shaking' }));
+            showFeedbackMessage('error', currentStepData.error || 'Incorrect placement.');
+            setTimeout(() => {
+                setCardStates(s => ({ ...s, [cardId]: 'tray' }));
                 if (oldSeat !== null) {
                     const restored = [...seatOccupants];
                     restored[seatIndex] = null;
@@ -138,19 +114,28 @@ export default function BloodRelationsSparkTool({ node, unitMeta, onConceptMaste
         }
 
         newOccupants[seatIndex] = cardId;
+        const newPlacements = { ...placements, [cardId]: seatIndex };
         setSeatOccupants(newOccupants);
         setPlacements(newPlacements);
         setCardStates(s => ({ ...s, [cardId]: 'confirmed' }));
-        showFeedbackMessage('success', `${cardId} is correct!`);
+        showFeedbackMessage('success', `${cardId} placed correctly!`);
 
-        if (checkCompletion(newPlacements)) {
-            setTimeout(() => {
-                setCompleted(true);
-                setShowOverlay(true);
-                onConceptMastered?.(true);
-            }, 500);
+        const step = STEPS[currentStep];
+        if (step.check(newPlacements)) {
+            if (currentStep < STEPS.length - 1) {
+                setTimeout(() => {
+                    setCurrentStep(prev => prev + 1);
+                    showFeedbackMessage('success', 'Step Complete! Moving to next step.');
+                }, 800);
+            } else {
+                setTimeout(() => {
+                    setCompleted(true);
+                    setShowOverlay(true);
+                    onConceptMastered?.(true);
+                }, 800);
+            }
         }
-    }, [placements, seatOccupants, cardStates, checkPlacement, checkCompletion, onConceptMastered]);
+    }, [placements, seatOccupants, cardStates, currentStep, onConceptMastered]);
 
     const seatData = Array.from({ length: TOTAL_SEATS }, (_, i) => ({
         id: i,
@@ -163,29 +148,43 @@ export default function BloodRelationsSparkTool({ node, unitMeta, onConceptMaste
 
     return (
         <div className="seating-spark-tool">
-            <div className="flex items-center gap-2 mb-1">
-                <Users size={16} style={{ color: unitMeta.color }} />
-                <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: unitMeta.color }}>
-                    Structure Lab — Blood Relations
-                </span>
+            <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                    <Users size={16} style={{ color: unitMeta.color }} />
+                    <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: unitMeta.color }}>
+                        Interactive Assistant — Blood Relations
+                    </span>
+                </div>
+                <div className="text-[10px] font-black uppercase tracking-widest text-surface-500">
+                    Step {Math.min(currentStep + 1, STEPS.length)} / {STEPS.length}
+                </div>
             </div>
-            <p className="text-xs text-surface-500 mb-4">
-                Drag family members to the correct position in the Family Tree.
-            </p>
 
-            <div className="sl-clues mb-5">
-                {CLUES.map(clue => {
-                    const result = checkClueProgress(clue, placements);
+            <div className="mb-6 rounded-xl border border-surface-800 bg-surface-900/50 shadow-inner flex flex-col overflow-hidden">
+                {STEPS.map((step, idx) => {
+                    const isActive = idx === currentStep;
+                    const isPast = idx < currentStep;
+                    
                     return (
-                        <div key={clue.id} className={`sl-clue ${result === true ? 'sl-clue--met' : result === false ? 'sl-clue--violated' : ''}`}
-                            style={result === true ? { borderColor: `${unitMeta.color}40`, background: `${unitMeta.color}08` } : {}}>
-                            <span className="sl-clue__num" style={result === true ? { background: unitMeta.color } : {}}>
-                                {result === true ? '✓' : clue.id}
-                            </span>
-                            <span className="sl-clue__text">{clue.text}</span>
+                        <div key={step.id} className={`p-4 border-b border-surface-800/50 last:border-b-0 transition-opacity ${isActive ? 'bg-surface-800/20' : isPast ? 'opacity-50' : 'opacity-30 grayscale'}`}>
+                            <div className="flex items-center gap-2 mb-1">
+                                {isPast ? <CheckCircle size={14} style={{ color: unitMeta.color }} /> : <span className="w-2 h-2 rounded-full" style={{ background: isActive ? unitMeta.color : 'transparent', border: isActive ? 'none' : '1px solid #475569' }} />}
+                                <h3 className={`text-sm font-black ${isActive ? 'text-heading' : 'text-surface-300'}`} style={isActive ? { color: unitMeta.color } : {}}>
+                                    {step.title}
+                                </h3>
+                            </div>
+                            <p className="text-xs text-surface-400 leading-relaxed font-medium pl-6">
+                                {step.instruction}
+                            </p>
                         </div>
                     );
                 })}
+                {completed && (
+                    <div className="p-4 bg-emerald-500/10 border-t border-emerald-500/20 flex items-center gap-2 justify-center">
+                        <CheckCircle size={16} className="text-emerald-400" />
+                        <span className="text-sm font-black text-emerald-400">All Steps Completed!</span>
+                    </div>
+                )}
             </div>
 
             {feedback && (
@@ -231,9 +230,8 @@ export default function BloodRelationsSparkTool({ node, unitMeta, onConceptMaste
                         <h4 className="text-sm font-black mb-3" style={{ color: unitMeta.color }}>The "Generational Anchor"</h4>
                         <div className="text-sm text-surface-400 leading-relaxed space-y-2">
                             <p>Blood relation puzzles are solved by separating people into generations.</p>
-                            <p><strong className="text-heading">Step 1:</strong> Identify the oldest/youngest members. R and T are Grandparents (Gen 1). U is the Son (Gen 3).</p>
-                            <p><strong className="text-heading">Step 2:</strong> Connect the middle generation using siblings and marriages. P is Q's brother, S is Q's wife. They form Gen 2.</p>
-                            <p><strong className="text-heading">Step 3:</strong> Draw the connecting lines. Q and S are U's parents. R and T are Q and P's parents.</p>
+                            <p><strong className="text-heading">Rule 1:</strong> Identify the oldest/youngest members. Draw them at the top/bottom.</p>
+                            <p><strong className="text-heading">Rule 2:</strong> Connect the middle generation using sibling (horizontal) and marriage (double line) notation.</p>
                         </div>
                         <button onClick={() => setShowOverlay(false)}
                             className="mt-5 px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest text-white transition-all hover:opacity-90"

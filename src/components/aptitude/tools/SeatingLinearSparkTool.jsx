@@ -1,90 +1,55 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import LinearTable from './LinearTable';
 import DraggableCard from './DraggableCard';
 import { Users, Lightbulb, CheckCircle, AlertCircle } from 'lucide-react';
 
-/**
- * SeatingLinearSparkTool — Node 30: Linear Seating Arrangements
- *
- * 5 people in a row facing North.
- */
-
 const TOTAL_SEATS = 5;
 const PEOPLE = ['P', 'Q', 'R', 'S', 'T'];
 
-// Solution: S(0), P(1), T(2), Q(3), R(4)
-// Clue 1: T is exactly in the middle → T=2
-// Clue 2: Q is to the immediate right of T → Q=3
-// Clue 3: P is to the immediate left of T → P=1
-// Clue 4: S sits at an extreme end. S is not adjacent to P → Wait, if S is at end, S=0 or S=4. 
-// If S=0, adjacent to P(1). So S cannot be 0. So S=4.
-// Let's change Clue 4: "S and R sit at the extreme ends. S is to the left of P."
-// P=1. "S is to the left of P" means S=0. Then R=4.
-// Solution: S(0), P(1), T(2), Q(3), R(4)
-
 const SOLUTION = { S: 0, P: 1, T: 2, Q: 3, R: 4 };
 
-const CLUES = [
-    { id: 1, text: 'T sits exactly in the middle of the row.', validate: (placements) => {
-        if (placements.T === null) return null;
-        return placements.T === 2;
-    }},
-    { id: 2, text: 'Q is to the immediate right of T.', validate: (placements) => {
-        if (placements.T === null || placements.Q === null) return null;
-        const rel = LinearTable.getRelations(placements.T, TOTAL_SEATS);
-        return rel.right === placements.Q;
-    }},
-    { id: 3, text: 'P is to the immediate left of T.', validate: (placements) => {
-        if (placements.P === null || placements.T === null) return null;
-        const rel = LinearTable.getRelations(placements.T, TOTAL_SEATS);
-        return rel.left === placements.P;
-    }},
-    { id: 4, text: 'S sits at an extreme left end.', validate: (placements) => {
-        if (placements.S === null) return null;
-        return placements.S === 0;
-    }},
+const STEPS = [
+    {
+        id: 0,
+        title: 'Step 1: The Absolute Anchor',
+        instruction: 'Unlike circular tables, linear rows have absolute start and end points. "T sits exactly in the middle". Anchor T at Seat 3.',
+        check: (p) => p.T === 2,
+        error: 'Drag T to the middle seat (Seat 3).',
+        allowedCards: ['T']
+    },
+    {
+        id: 1,
+        title: 'Step 2: Relative Placement',
+        instruction: '"P is to the immediate left of T", and "Q is to the immediate right of T." Place P and Q.',
+        check: (p) => p.P === 1 && p.Q === 3,
+        error: 'Place P to the left of T (Seat 2), and Q to the right of T (Seat 4).',
+        allowedCards: ['P', 'Q']
+    },
+    {
+        id: 2,
+        title: 'Step 3: The Extremes',
+        instruction: '"S sits at the extreme left end." The remaining person R must take the other extreme end. Place S and R.',
+        check: (p) => p.S === 0 && p.R === 4,
+        error: 'Place S at the far left (Seat 1), and R at the far right (Seat 5).',
+        allowedCards: ['S', 'R']
+    }
 ];
 
 export default function SeatingLinearSparkTool({ node, unitMeta, onConceptMastered }) {
-    const [placements, setPlacements] = useState(
-        Object.fromEntries(PEOPLE.map(p => [p, null]))
-    );
-    const [seatOccupants, setSeatOccupants] = useState(
-        Array.from({ length: TOTAL_SEATS }, () => null)
-    );
-    const [cardStates, setCardStates] = useState(
-        Object.fromEntries(PEOPLE.map(p => [p, 'tray']))
-    );
+    const [placements, setPlacements] = useState(Object.fromEntries(PEOPLE.map(p => [p, null])));
+    const [seatOccupants, setSeatOccupants] = useState(Array.from({ length: TOTAL_SEATS }, () => null));
+    const [cardStates, setCardStates] = useState(Object.fromEntries(PEOPLE.map(p => [p, 'tray'])));
+    
+    const [currentStep, setCurrentStep] = useState(0);
     const [completed, setCompleted] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false);
     const [feedback, setFeedback] = useState(null);
     const feedbackTimeout = useRef(null);
 
-    const checkPlacement = useCallback((person, seatIndex, currentPlacements) => {
-        const testPlacements = { ...currentPlacements, [person]: seatIndex };
-
-        for (const clue of CLUES) {
-            const result = clue.validate(testPlacements);
-            if (result === false) return { valid: false, clue };
-        }
-
-        if (SOLUTION[person] !== seatIndex) {
-            return { valid: false, clue: null };
-        }
-
-        return { valid: true };
-    }, []);
-
-    const checkCompletion = useCallback((newPlacements) => {
-        const allPlaced = PEOPLE.every(p => newPlacements[p] !== null);
-        if (!allPlaced) return false;
-        return PEOPLE.every(p => newPlacements[p] === SOLUTION[p]);
-    }, []);
-
     const showFeedbackMessage = (type, message) => {
         clearTimeout(feedbackTimeout.current);
         setFeedback({ type, message });
-        feedbackTimeout.current = setTimeout(() => setFeedback(null), 2500);
+        feedbackTimeout.current = setTimeout(() => setFeedback(null), 3000);
     };
 
     const handleDrop = useCallback((seatIndex, cardId) => {
@@ -100,15 +65,28 @@ export default function SeatingLinearSparkTool({ node, unitMeta, onConceptMaster
         const newOccupants = [...seatOccupants];
         if (oldSeat !== null) newOccupants[oldSeat] = null;
 
-        const newPlacements = { ...placements, [cardId]: seatIndex };
-        const { valid, clue } = checkPlacement(cardId, seatIndex, placements);
+        const currentStepData = STEPS[currentStep];
 
-        if (!valid) {
+        // Ensure user is only placing cards relevant to the current step
+        if (!currentStepData.allowedCards.includes(cardId)) {
             setCardStates(s => ({ ...s, [cardId]: 'shaking' }));
-            showFeedbackMessage('error', clue ? `Violates: "${clue.text}"` : `${cardId} doesn't belong here.`);
+            showFeedbackMessage('error', `Not yet! Focus on the current step first.`);
             setTimeout(() => {
                 setCardStates(s => ({ ...s, [cardId]: 'tray' }));
-                setPlacements(p => ({ ...p, [cardId]: null }));
+                if (oldSeat !== null) {
+                    const restored = [...seatOccupants];
+                    restored[seatIndex] = null;
+                    setSeatOccupants(restored);
+                }
+            }, 600);
+            return;
+        }
+
+        if (SOLUTION[cardId] !== seatIndex) {
+            setCardStates(s => ({ ...s, [cardId]: 'shaking' }));
+            showFeedbackMessage('error', currentStepData.error || 'Incorrect placement.');
+            setTimeout(() => {
+                setCardStates(s => ({ ...s, [cardId]: 'tray' }));
                 if (oldSeat !== null) {
                     const restored = [...seatOccupants];
                     restored[seatIndex] = null;
@@ -119,19 +97,28 @@ export default function SeatingLinearSparkTool({ node, unitMeta, onConceptMaster
         }
 
         newOccupants[seatIndex] = cardId;
+        const newPlacements = { ...placements, [cardId]: seatIndex };
         setSeatOccupants(newOccupants);
         setPlacements(newPlacements);
         setCardStates(s => ({ ...s, [cardId]: 'confirmed' }));
-        showFeedbackMessage('success', `${cardId} locked in seat ${seatIndex + 1}!`);
+        showFeedbackMessage('success', `${cardId} placed correctly!`);
 
-        if (checkCompletion(newPlacements)) {
-            setTimeout(() => {
-                setCompleted(true);
-                setShowOverlay(true);
-                onConceptMastered?.(true);
-            }, 500);
+        const step = STEPS[currentStep];
+        if (step.check(newPlacements)) {
+            if (currentStep < STEPS.length - 1) {
+                setTimeout(() => {
+                    setCurrentStep(prev => prev + 1);
+                    showFeedbackMessage('success', 'Step Complete! Moving to next step.');
+                }, 800);
+            } else {
+                setTimeout(() => {
+                    setCompleted(true);
+                    setShowOverlay(true);
+                    onConceptMastered?.(true);
+                }, 800);
+            }
         }
-    }, [placements, seatOccupants, cardStates, checkPlacement, checkCompletion, onConceptMastered]);
+    }, [placements, seatOccupants, cardStates, currentStep, onConceptMastered]);
 
     const seatData = Array.from({ length: TOTAL_SEATS }, (_, i) => ({
         id: i,
@@ -143,29 +130,43 @@ export default function SeatingLinearSparkTool({ node, unitMeta, onConceptMaster
 
     return (
         <div className="seating-spark-tool">
-            <div className="flex items-center gap-2 mb-1">
-                <Users size={16} style={{ color: unitMeta.color }} />
-                <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: unitMeta.color }}>
-                    Structure Lab — Linear Seating
-                </span>
+            <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                    <Users size={16} style={{ color: unitMeta.color }} />
+                    <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: unitMeta.color }}>
+                        Interactive Assistant — Linear
+                    </span>
+                </div>
+                <div className="text-[10px] font-black uppercase tracking-widest text-surface-500">
+                    Step {Math.min(currentStep + 1, STEPS.length)} / {STEPS.length}
+                </div>
             </div>
-            <p className="text-xs text-surface-500 mb-4">
-                Drag each person to their seat on the bench.
-            </p>
 
-            <div className="sl-clues mb-5">
-                {CLUES.map(clue => {
-                    const result = clue.validate(placements);
+            <div className="mb-6 rounded-xl border border-surface-800 bg-surface-900/50 shadow-inner flex flex-col overflow-hidden">
+                {STEPS.map((step, idx) => {
+                    const isActive = idx === currentStep;
+                    const isPast = idx < currentStep;
+                    
                     return (
-                        <div key={clue.id} className={`sl-clue ${result === true ? 'sl-clue--met' : result === false ? 'sl-clue--violated' : ''}`}
-                            style={result === true ? { borderColor: `${unitMeta.color}40`, background: `${unitMeta.color}08` } : {}}>
-                            <span className="sl-clue__num" style={result === true ? { background: unitMeta.color } : {}}>
-                                {result === true ? '✓' : clue.id}
-                            </span>
-                            <span className="sl-clue__text">{clue.text}</span>
+                        <div key={step.id} className={`p-4 border-b border-surface-800/50 last:border-b-0 transition-opacity ${isActive ? 'bg-surface-800/20' : isPast ? 'opacity-50' : 'opacity-30 grayscale'}`}>
+                            <div className="flex items-center gap-2 mb-1">
+                                {isPast ? <CheckCircle size={14} style={{ color: unitMeta.color }} /> : <span className="w-2 h-2 rounded-full" style={{ background: isActive ? unitMeta.color : 'transparent', border: isActive ? 'none' : '1px solid #475569' }} />}
+                                <h3 className={`text-sm font-black ${isActive ? 'text-heading' : 'text-surface-300'}`} style={isActive ? { color: unitMeta.color } : {}}>
+                                    {step.title}
+                                </h3>
+                            </div>
+                            <p className="text-xs text-surface-400 leading-relaxed font-medium pl-6">
+                                {step.instruction}
+                            </p>
                         </div>
                     );
                 })}
+                {completed && (
+                    <div className="p-4 bg-emerald-500/10 border-t border-emerald-500/20 flex items-center gap-2 justify-center">
+                        <CheckCircle size={16} className="text-emerald-400" />
+                        <span className="text-sm font-black text-emerald-400">All Steps Completed!</span>
+                    </div>
+                )}
             </div>
 
             {feedback && (
@@ -200,16 +201,12 @@ export default function SeatingLinearSparkTool({ node, unitMeta, onConceptMaster
                             style={{ background: `${unitMeta.color}20` }}>
                             <Lightbulb size={28} style={{ color: unitMeta.color }} />
                         </div>
-                        <h3 className="text-xl font-black text-heading mb-2">Linear Logic Summary</h3>
-                        <h4 className="text-sm font-black mb-3" style={{ color: unitMeta.color }}>The "Absolute Anchor"</h4>
-                        <div className="text-sm text-surface-400 leading-relaxed space-y-2">
-                            <p>Unlike circular tables, linear rows have absolute start and end points.</p>
-                            <p><strong className="text-heading">Step 1:</strong> Look for clues giving absolute positions (like "extreme left" or "exactly in the middle"). Here, T is in the middle.</p>
-                            <p><strong className="text-heading">Step 2:</strong> Anchor T at seat 3 (index 2).</p>
-                            <p><strong className="text-heading">Step 3:</strong> Build out around T (Q to the right, P to the left).</p>
-                        </div>
+                        <h3 className="text-xl font-black text-heading mb-2">You did it!</h3>
+                        <p className="text-sm text-surface-400 leading-relaxed mb-4">
+                            You successfully separated the seating into logical steps. By fixing an absolute anchor first, the rest of the puzzle snaps into place.
+                        </p>
                         <button onClick={() => setShowOverlay(false)}
-                            className="mt-5 px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest text-white transition-all hover:opacity-90"
+                            className="mt-2 px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest text-white transition-all hover:opacity-90"
                             style={{ background: unitMeta.color }}>
                             Got it
                         </button>
