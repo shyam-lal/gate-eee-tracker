@@ -1,13 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
 import { aptitude as api } from '../../services/api';
-import { Zap, ArrowLeft, CheckCircle, Clock, Sparkles, ChevronRight, AlertTriangle } from 'lucide-react';
+import { Zap, ArrowLeft, CheckCircle, Clock, Sparkles, ChevronRight, AlertTriangle, Lock } from 'lucide-react';
+import InteractiveSpark from './tools/InteractiveSpark';
 
 export default function SparkView({ node, unitMeta, onComplete, onBack }) {
     const [lesson, setLesson] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [completing, setCompleting] = useState(false);
+    const [conceptMastered, setConceptMastered] = useState(false);
     const startTime = useRef(Date.now());
+    const hasInteractiveTool = InteractiveSpark.hasToolFor(node.slug);
 
     useEffect(() => {
         loadSpark();
@@ -107,7 +110,7 @@ export default function SparkView({ node, unitMeta, onComplete, onBack }) {
                     </div>
                     <div className="flex items-center gap-1 text-surface-500">
                         <Clock size={14} />
-                        <span className="text-[10px] font-bold uppercase tracking-widest">~60s read</span>
+                        <span className="text-[10px] font-bold uppercase tracking-widest">{hasInteractiveTool ? '~45s interact' : '~60s read'}</span>
                     </div>
                 </div>
             </div>
@@ -126,15 +129,28 @@ export default function SparkView({ node, unitMeta, onComplete, onBack }) {
                     <p className="text-sm text-surface-500">{node.name} — Mental Model</p>
                 </div>
 
+                {/* Interactive Tool (if available) */}
+                {hasInteractiveTool && (
+                    <div className="mb-8 p-5 rounded-2xl border border-surface-800/60 bg-surface-900/30">
+                        <InteractiveSpark node={node} unitMeta={unitMeta} onConceptMastered={setConceptMastered} />
+                    </div>
+                )}
+
                 {/* Lesson Body */}
                 <div className="spark-content prose prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: renderMarkdown(lesson.body) }} />
 
                 {/* Complete Button */}
                 <div className="mt-12 pb-8">
+                    {hasInteractiveTool && !conceptMastered && (
+                        <div className="flex items-center justify-center gap-2 mb-3 text-surface-600">
+                            <Lock size={12} />
+                            <span className="text-[10px] font-bold uppercase tracking-widest">Explore the tool above to unlock</span>
+                        </div>
+                    )}
                     <button
                         onClick={handleComplete}
-                        disabled={completing}
-                        className="w-full py-4 rounded-2xl font-black text-white uppercase tracking-widest text-sm flex items-center justify-center gap-3 transition-all hover:opacity-90 active:scale-[0.98] disabled:opacity-50"
+                        disabled={completing || (hasInteractiveTool && !conceptMastered)}
+                        className="w-full py-4 rounded-2xl font-black text-white uppercase tracking-widest text-sm flex items-center justify-center gap-3 transition-all hover:opacity-90 active:scale-[0.98] disabled:opacity-30 disabled:cursor-not-allowed"
                         style={{ background: `linear-gradient(135deg, ${unitMeta.color}, ${unitMeta.color}cc)`, boxShadow: `0 0 30px ${unitMeta.color}30` }}
                     >
                         {completing ? (

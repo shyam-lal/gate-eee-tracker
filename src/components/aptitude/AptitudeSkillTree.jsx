@@ -63,24 +63,12 @@ export default function AptitudeSkillTree({ onBack }) {
     }, [progressData]);
 
     // Determine node status (based on progress + prerequisites)
+    // Note: All nodes are unlocked for exploration. Prerequisites are shown as
+    // recommendations but don't block access — this keeps the tree fully explorable.
     const getNodeStatus = (node) => {
         const progress = progressMap[node.id];
         if (progress) return progress.status;
-
-        // Check prerequisites
-        const prereqs = node.prerequisites || [];
-        if (prereqs.length === 0) return 'unlocked'; // No prerequisites = always unlocked
-
-        // All prerequisites must be at least spark_done
-        const allNodes = treeData.flatMap(u => u.nodes || []);
-        const allMet = prereqs.every(prereqSlug => {
-            const prereqNode = allNodes.find(n => n.slug === prereqSlug);
-            if (!prereqNode) return true;
-            const prereqProgress = progressMap[prereqNode.id];
-            return prereqProgress && ['spark_done', 'forge_done', 'arena_done', 'mastered'].includes(prereqProgress.status);
-        });
-
-        return allMet ? 'unlocked' : 'locked';
+        return 'unlocked';
     };
 
     // Calculate unit-level stats
