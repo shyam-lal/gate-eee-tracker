@@ -4,14 +4,14 @@ import {
     ChevronRight, Play, Clock, Target,
     Zap, Calendar, BarChart3, LayoutGrid,
     BookOpen, Trophy, Sparkles, Users, Plus, Layers,
-    MoreVertical, Edit3, Trash2, X, BrainCircuit, AlertCircle, Timer, RotateCcw, Activity, ClipboardCheck, Shield, Crown
+    MoreVertical, Edit3, Trash2, X, BrainCircuit, AlertCircle, Timer, RotateCcw, Activity, ClipboardCheck, Shield, Crown, Hexagon
 } from 'lucide-react';
 import UserStreakWidget from './ui/UserStreakWidget';
 import GlobalAnalytics from './analytics/GlobalAnalytics';
 import CourseCalculatorModal from './calculator/CourseCalculatorModal';
 import ExamSwitcher from './exam/ExamSwitcher';
 
-const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenSocial, onOpenPlanner, onSetupTool, onDeleteTool, onRenameTool, onStartFocus, onClearToolData, onOpenAdmin, onOpenMaterials, onOpenPricing }) => {
+const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenSocial, onOpenPlanner, onSetupTool, onDeleteTool, onRenameTool, onStartFocus, onClearToolData, onOpenAdmin, onOpenMaterials, onOpenPricing, onOpenAptitude }) => {
 
     const [menuOpen, setMenuOpen] = useState(null); // toolId of open menu
     const [renamingTool, setRenamingTool] = useState(null);
@@ -320,6 +320,11 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
                         {onOpenMaterials && (
                             <button onClick={onOpenMaterials} className="shrink-0 snap-start flex items-center gap-2 px-6 py-3 bg-cyan-600/20 text-cyan-400 border border-cyan-500/30 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-cyan-600/30 hover:text-cyan-300 transition-all">
                                 <BookOpen size={16} /> Materials
+                            </button>
+                        )}
+                        {onOpenAptitude && (
+                            <button onClick={onOpenAptitude} className="shrink-0 snap-start flex items-center gap-2 px-6 py-3 bg-violet-600/20 text-violet-400 border border-violet-500/30 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-violet-600/30 hover:text-violet-300 transition-all shadow-[0_0_15px_rgba(139,92,246,0.1)]">
+                                <Hexagon size={16} /> Skill Tree
                             </button>
                         )}
                         <div className="w-px h-6 bg-white/10 mx-2 shrink-0 hidden sm:block"></div>

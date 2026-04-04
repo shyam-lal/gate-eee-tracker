@@ -1,0 +1,335 @@
+/* ═══════════════════════════════════════════════════
+   Aptitude Skill Tree — Hexagonal Map Styles
+   ═══════════════════════════════════════════════════ */
+
+/* Hex grid layout */
+.hex-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 120px);
+    gap: 8px 4px;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* Hex node container */
+.hex-node {
+    width: 110px;
+    height: 127px;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    text-align: center;
+    padding: 20px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+}
+
+.hex-node:hover {
+    transform: scale(1.08);
+    z-index: 10;
+}
+
+.hex-node:active {
+    transform: scale(0.98);
+}
+
+/* ─── Node States ─────────────────────────── */
+
+/* Locked — dimmed, padlocked */
+.hex-node--locked {
+    background: linear-gradient(135deg, rgba(30, 30, 40, 0.9), rgba(20, 20, 30, 0.95));
+    color: rgba(148, 163, 184, 0.35);
+    cursor: not-allowed;
+}
+.hex-node--locked:hover {
+    transform: scale(1);
+}
+
+/* Unlocked — glowing border effect */
+.hex-node--unlocked {
+    background: linear-gradient(135deg, rgba(30, 32, 45, 0.95), rgba(25, 27, 38, 0.98));
+    color: rgba(226, 232, 240, 0.9);
+    box-shadow: inset 0 0 20px rgba(99, 102, 241, 0.08);
+}
+
+/* In Progress (Spark/Forge done) */
+.hex-node--in-progress {
+    color: #e2e8f0;
+    animation: hex-pulse 3s ease-in-out infinite;
+}
+
+/* Mastered — fully filled */
+.hex-node--mastered {
+    color: #ffffff;
+    box-shadow: 0 0 25px rgba(16, 185, 129, 0.3);
+}
+
+/* ─── Unit Colors ─────────────────────────── */
+
+/* Quant — Indigo */
+.hex-node--quant.hex-node--unlocked,
+.hex-node--quant.hex-node--in-progress {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(67, 56, 202, 0.1));
+    border: none;
+}
+.hex-node--quant.hex-node--in-progress {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(67, 56, 202, 0.2));
+}
+.hex-node--quant.hex-node--mastered {
+    background: linear-gradient(135deg, #6366f1, #4338ca);
+}
+
+/* Reasoning — Emerald */
+.hex-node--reasoning.hex-node--unlocked,
+.hex-node--reasoning.hex-node--in-progress {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.1));
+}
+.hex-node--reasoning.hex-node--in-progress {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(5, 150, 105, 0.2));
+}
+.hex-node--reasoning.hex-node--mastered {
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+
+/* Verbal — Amber */
+.hex-node--verbal.hex-node--unlocked,
+.hex-node--verbal.hex-node--in-progress {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(217, 119, 6, 0.1));
+}
+.hex-node--verbal.hex-node--in-progress {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(217, 119, 6, 0.2));
+}
+.hex-node--verbal.hex-node--mastered {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+/* ─── Hex Wrapper (for outline effect) ──── */
+.hex-outline {
+    width: 114px;
+    height: 131px;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(51, 65, 85, 0.3);
+    transition: all 0.3s ease;
+}
+
+.hex-node--unlocked .hex-outline,
+.hex-outline--unlocked {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.4), rgba(139, 92, 246, 0.3));
+}
+
+.hex-outline--quant.hex-outline--unlocked {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.5), rgba(79, 70, 229, 0.3));
+}
+.hex-outline--reasoning.hex-outline--unlocked {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.5), rgba(5, 150, 105, 0.3));
+}
+.hex-outline--verbal.hex-outline--unlocked {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.5), rgba(217, 119, 6, 0.3));
+}
+
+.hex-outline--mastered {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.6), rgba(5, 150, 105, 0.4));
+}
+.hex-outline--quant.hex-outline--mastered {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.7), rgba(67, 56, 202, 0.5));
+}
+.hex-outline--reasoning.hex-outline--mastered {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.7), rgba(5, 150, 105, 0.5));
+}
+.hex-outline--verbal.hex-outline--mastered {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.7), rgba(217, 119, 6, 0.5));
+}
+
+/* ─── Animations ──────────────────────────── */
+@keyframes hex-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.85; box-shadow: 0 0 30px rgba(99, 102, 241, 0.2); }
+}
+
+@keyframes hex-glow-quant {
+    0%, 100% { box-shadow: 0 0 15px rgba(99, 102, 241, 0.2); }
+    50% { box-shadow: 0 0 30px rgba(99, 102, 241, 0.4); }
+}
+
+@keyframes hex-glow-reasoning {
+    0%, 100% { box-shadow: 0 0 15px rgba(16, 185, 129, 0.2); }
+    50% { box-shadow: 0 0 30px rgba(16, 185, 129, 0.4); }
+}
+
+@keyframes hex-glow-verbal {
+    0%, 100% { box-shadow: 0 0 15px rgba(245, 158, 11, 0.2); }
+    50% { box-shadow: 0 0 30px rgba(245, 158, 11, 0.4); }
+}
+
+.hex-node--quant.hex-node--in-progress { animation: hex-glow-quant 3s ease-in-out infinite; }
+.hex-node--reasoning.hex-node--in-progress { animation: hex-glow-reasoning 3s ease-in-out infinite; }
+.hex-node--verbal.hex-node--in-progress { animation: hex-glow-verbal 3s ease-in-out infinite; }
+
+/* ─── Difficulty Badges ───────────────────── */
+.hex-difficulty {
+    font-size: 8px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 2px 6px;
+    border-radius: 6px;
+    margin-top: 4px;
+}
+.hex-difficulty--easy { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+.hex-difficulty--medium { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+.hex-difficulty--hard { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+
+/* ─── Mastery Bar ─────────────────────────── */
+.hex-mastery-bar {
+    width: 60%;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    margin-top: 6px;
+    overflow: hidden;
+}
+.hex-mastery-bar__fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.6s ease-out;
+}
+.hex-mastery-bar__fill--quant { background: linear-gradient(90deg, #6366f1, #818cf8); }
+.hex-mastery-bar__fill--reasoning { background: linear-gradient(90deg, #10b981, #34d399); }
+.hex-mastery-bar__fill--verbal { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+
+/* ─── Node Detail Panel ──────────────────── */
+.node-detail-panel {
+    animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Stage Progress Dots ─────────────────── */
+.stage-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+.stage-dot--completed {
+    transform: scale(1.1);
+}
+.stage-dot--active {
+    animation: dotPulse 1.5s ease-in-out infinite;
+}
+@keyframes dotPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+}
+
+/* ─── Unit Progress Ring ──────────────────── */
+.unit-ring {
+    transition: stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─── Responsive ──────────────────────────── */
+@media (max-width: 640px) {
+    .hex-node {
+        width: 88px;
+        height: 102px;
+        font-size: 9px;
+        padding: 16px 8px;
+    }
+    .hex-outline {
+        width: 92px;
+        height: 106px;
+    }
+    .hex-grid {
+        grid-template-columns: repeat(auto-fill, 96px);
+        gap: 6px 2px;
+        padding: 12px;
+    }
+}
+
+/* ═══════════════════════════════════════════════════
+   Spark Lesson Content Styles
+   ═══════════════════════════════════════════════════ */
+.spark-content {
+    color: rgba(203, 213, 225, 0.9);
+    line-height: 1.8;
+    font-size: 15px;
+}
+.spark-content strong {
+    color: #e2e8f0;
+    font-weight: 800;
+}
+.spark-h2 {
+    font-size: 1.25rem;
+    font-weight: 900;
+    color: #f1f5f9;
+    margin: 2rem 0 0.75rem;
+    letter-spacing: -0.02em;
+}
+.spark-h3 {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #e2e8f0;
+    margin: 1.5rem 0 0.5rem;
+}
+.spark-quote {
+    border-left: 3px solid rgba(99, 102, 241, 0.5);
+    padding: 0.5rem 1rem;
+    margin: 0.75rem 0;
+    background: rgba(99, 102, 241, 0.06);
+    border-radius: 0 12px 12px 0;
+    color: rgba(203, 213, 225, 0.85);
+    font-size: 14px;
+}
+.spark-tip {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.08));
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: 16px;
+    padding: 1rem 1.25rem;
+    margin: 1.5rem 0;
+    font-weight: 700;
+    color: rgba(165, 180, 252, 0.9);
+    font-size: 14px;
+}
+.spark-code {
+    background: rgba(99, 102, 241, 0.12);
+    color: #a5b4fc;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+}
+.spark-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 13px;
+}
+.spark-table td {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid rgba(51, 65, 85, 0.5);
+    color: rgba(203, 213, 225, 0.8);
+}
+.spark-table tr:first-child td {
+    font-weight: 800;
+    color: #e2e8f0;
+    background: rgba(30, 41, 59, 0.6);
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+}
+.spark-table tr:nth-child(even) td {
+    background: rgba(30, 41, 59, 0.3);
+}

@@ -23,6 +23,7 @@ import ExamOnboarding from './components/exam/ExamOnboarding';
 import ExamSwitcher from './components/exam/ExamSwitcher';
 import StudyMaterials from './components/materials/StudyMaterials';
 import Pricing from './components/pricing/Pricing';
+import AptitudeSkillTree from './components/aptitude/AptitudeSkillTree';
 import {
   Calendar as CalendarIcon, Trash2, Plus, X,
   ChevronDown, ChevronRight, Clock, Edit3,
@@ -478,6 +479,7 @@ function App() {
         onOpenAdmin={user?.role === 'admin' || user?.role === 'super_admin' ? () => setView('admin') : undefined}
         onOpenMaterials={user?.active_exam_id ? () => setView('materials') : undefined}
         onOpenPricing={() => setView('pricing')}
+        onOpenAptitude={() => setView('aptitude')}
       />
     );
     if (view === 'pricing') return <Pricing user={user} onBack={() => setView('dashboard')} onUpgradeSuccess={(planName) => {
@@ -492,6 +494,7 @@ function App() {
     if (view === 'materials') return <StudyMaterials examId={user?.active_exam_id} examName={user?.selected_exam || 'Exam'} syllabus={[]} onBack={() => setView('dashboard')} />;
     if (view === 'social_terminal') return <Social currentUser={user} onBack={() => setView('dashboard')} />;
     if (view === 'planner') return <PlannerDashboard onBack={() => setView('dashboard')} />;
+    if (view === 'aptitude') return <AptitudeSkillTree onBack={() => setView('dashboard')} />;
 
     return (
       <div className="min-h-screen bg-transparent text-surface-400 font-sans p-4 md:p-8 pb-32 selection:bg-primary-500/30">

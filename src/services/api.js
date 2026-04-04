@@ -829,3 +829,58 @@ export const subscriptions = {
         return res.json();
     }
 };
+
+// ═══════════════════════════════════════════════════
+// Aptitude Skill Tree API
+// ═══════════════════════════════════════════════════
+export const aptitude = {
+    getTree: async () => {
+        const res = await fetch(`${API_URL}/aptitude`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to fetch skill tree');
+        return res.json();
+    },
+    getProgress: async () => {
+        const res = await fetch(`${API_URL}/aptitude/progress`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to fetch aptitude progress');
+        return res.json();
+    },
+    updateProgress: async (nodeId, data) => {
+        const res = await fetch(`${API_URL}/aptitude/progress/${nodeId}`, {
+            method: 'POST', headers: getHeaders(), body: JSON.stringify(data)
+        });
+        if (!res.ok) throw new Error('Failed to update aptitude progress');
+        return res.json();
+    },
+    getSpark: async (nodeId) => {
+        const res = await fetch(`${API_URL}/aptitude/nodes/${nodeId}/spark`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('No Spark content available');
+        return res.json();
+    },
+    getForge: async (nodeId) => {
+        const res = await fetch(`${API_URL}/aptitude/nodes/${nodeId}/forge`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('No Forge content available');
+        return res.json();
+    },
+    getArena: async (nodeId) => {
+        const res = await fetch(`${API_URL}/aptitude/nodes/${nodeId}/arena`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('No Arena content available');
+        return res.json();
+    },
+    completeStage: async (nodeId, data) => {
+        const res = await fetch(`${API_URL}/aptitude/nodes/${nodeId}/complete-stage`, {
+            method: 'POST', headers: getHeaders(), body: JSON.stringify(data)
+        });
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.error || 'Failed to complete stage');
+        }
+        return res.json();
+    },
+    submitAnswers: async (answers) => {
+        const res = await fetch(`${API_URL}/aptitude/answers`, {
+            method: 'POST', headers: getHeaders(), body: JSON.stringify({ answers })
+        });
+        if (!res.ok) throw new Error('Failed to submit answers');
+        return res.json();
+    },
+};

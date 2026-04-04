@@ -35,6 +35,7 @@ app.use('/api/revision', require('./routes/revisionRoutes'));
 app.use('/api/exams', require('./routes/examRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
 app.use('/api/subscriptions', require('./routes/subscriptionRoutes'));
+app.use('/api/aptitude', require('./routes/aptitudeRoutes'));
 
 // Serve Static Files (production only)
 const distPath = path.join(__dirname, '../../dist');
