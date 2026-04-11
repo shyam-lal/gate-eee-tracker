@@ -9,6 +9,7 @@ const TOOL_REGISTRY = {
     'seating-circular': lazy(() => import('./SeatingCircularSparkTool')),
     'seating-linear': lazy(() => import('./SeatingLinearSparkTool')),
     'blood-relations': lazy(() => import('./BloodRelationsSparkTool')),
+    'time-speed-distance': lazy(() => import('./SpeedDistanceSparkTool')),
     // Future tools:
     // 'ratio-proportion': lazy(() => import('./RatioSparkTool')),
     // 'clocks': lazy(() => import('./ClocksSparkTool')),
