@@ -1,0 +1,47 @@
+:root {
+    --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+
+    --color-primary: #173627;
+    --color-primary-container: #2e4d3d;
+    --color-primary-fixed: #c7ebd5;
+    --color-on-primary-fixed: #012113;
+
+    --color-secondary: #4a6459;
+    --color-secondary-container: #cae6d9;
+
+    --color-surface-bright: #f7fafa;
+    --color-surface-container: #eceeed;
+    --color-surface-container-low: #f2f4f3;
+    --color-surface-container-lowest: #ffffff;
+}
+
+/* Custom Tailwind v3 classes based on the design system */
+.bg-surface-bright { background-color: var(--color-surface-bright); }
+.text-primary { color: var(--color-primary); }
+.bg-primary { background-color: var(--color-primary); }
+.text-white { color: #ffffff; }
+.bg-primary-fixed { background-color: var(--color-primary-fixed); }
+.text-on-primary-fixed { color: var(--color-on-primary-fixed); }
+.text-secondary { color: var(--color-secondary); }
+.bg-secondary { background-color: var(--color-secondary); }
+.bg-primary-container { background-color: var(--color-primary-container); }
+.bg-secondary-container { background-color: var(--color-secondary-container); }
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.fox-motif {
+    opacity: 0.03;
+    pointer-events: none;
+    position: absolute;
+    z-index: 0;
+}
+
+/* Ensure font is applied */
+.font-sans {
+    font-family: var(--font-sans);
+}

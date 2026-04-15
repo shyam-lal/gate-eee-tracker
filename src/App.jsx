@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { syllabus as syllabusApi, auth as authApi, user as userApi, tools as toolsApi, streak as streakApi, flashcards as flashcardsApi } from './services/api';
 import Auth from './components/Auth';
-import Landing from './components/Landing';
+import Landing from './components/Landing_new';
 import Wizard from './components/Wizard';
 import Profile from './components/Profile';
 import Dashboard from './components/Dashboard';
