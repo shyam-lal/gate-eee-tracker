@@ -227,6 +227,7 @@ const saveSubjectAssessment = async (userId, { subject_id, confidence }) => {
 /**
  * POST /onboarding/complete
  * Marks onboarding as completed. Also sets global flag on users table.
+ * Auto-generates the user's first Daily Battle Plan.
  */
 const completeOnboarding = async (userId) => {
     const client = await pool.pool.connect();
@@ -252,6 +253,15 @@ const completeOnboarding = async (userId) => {
         );
 
         await client.query('COMMIT');
+
+        // Auto-generate first Daily Battle Plan (non-blocking — don't fail onboarding if this errors)
+        try {
+            const planService = require('./planService');
+            await planService.generateDailyPlan(userId);
+        } catch (planErr) {
+            console.error('Warning: Failed to auto-generate first plan after onboarding:', planErr.message);
+        }
+
         return res.rows[0];
     } catch (err) {
         await client.query('ROLLBACK');

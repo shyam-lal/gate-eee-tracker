@@ -829,3 +829,51 @@ export const subscriptions = {
         return res.json();
     }
 };
+
+// ═══════════════════════════════════════════════════
+// Daily Battle Plan API
+// ═══════════════════════════════════════════════════
+export const battlePlan = {
+    getToday: async () => {
+        const res = await fetch(`${API_URL}/plan/today`, { headers: getHeaders() });
+        if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || 'Failed to fetch today\'s plan');
+        return res.json();
+    },
+    startTask: async (taskId) => {
+        const res = await fetch(`${API_URL}/plan/task/start`, {
+            method: 'POST', headers: getHeaders(),
+            body: JSON.stringify({ task_id: taskId })
+        });
+        if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || 'Failed to start task');
+        return res.json();
+    },
+    completeTask: async (taskId, actualDurationMinutes) => {
+        const res = await fetch(`${API_URL}/plan/task/complete`, {
+            method: 'POST', headers: getHeaders(),
+            body: JSON.stringify({ task_id: taskId, actual_duration_minutes: actualDurationMinutes })
+        });
+        if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || 'Failed to complete task');
+        return res.json();
+    },
+    skipTask: async (taskId) => {
+        const res = await fetch(`${API_URL}/plan/task/skip`, {
+            method: 'POST', headers: getHeaders(),
+            body: JSON.stringify({ task_id: taskId })
+        });
+        if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || 'Failed to skip task');
+        return res.json();
+    },
+    regenerate: async () => {
+        const res = await fetch(`${API_URL}/plan/regenerate`, {
+            method: 'POST', headers: getHeaders()
+        });
+        if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || 'Failed to regenerate plan');
+        return res.json();
+    },
+    getHistory: async (start, end) => {
+        const res = await fetch(`${API_URL}/plan/history?start=${start}&end=${end}`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to fetch plan history');
+        return res.json();
+    }
+};
+

@@ -14,6 +14,7 @@ import StudySession from './components/flashcards/StudySession';
 import DeckManager from './components/flashcards/DeckManager';
 import CardEditor from './components/flashcards/CardEditor';
 import PlannerDashboard from './components/planner/PlannerDashboard';
+import BattlePlan from './components/battleplan/BattlePlan';
 import FocusTool from './components/focus/FocusTool';
 import GlobalFocusOverlay from './components/focus/GlobalFocusOverlay';
 import RevisionDashboard from './components/revision/RevisionDashboard';
@@ -470,6 +471,7 @@ function App() {
         onOpenProfile={() => setView('profile')}
         onOpenSocial={() => setView('social_terminal')}
         onOpenPlanner={() => setView('planner')}
+        onOpenBattlePlan={() => setView('battle_plan')}
         onSetupTool={() => setView('wizard')}
         onDeleteTool={handleDeleteTool}
         onRenameTool={handleRenameTool}
@@ -492,6 +494,7 @@ function App() {
     if (view === 'materials') return <StudyMaterials examId={user?.active_exam_id} examName={user?.selected_exam || 'Exam'} syllabus={[]} onBack={() => setView('dashboard')} />;
     if (view === 'social_terminal') return <Social currentUser={user} onBack={() => setView('dashboard')} />;
     if (view === 'planner') return <PlannerDashboard onBack={() => setView('dashboard')} />;
+    if (view === 'battle_plan') return <BattlePlan onBack={() => setView('dashboard')} />;
 
     return (
       <div className="min-h-screen bg-transparent text-surface-400 font-sans p-4 md:p-8 pb-32 selection:bg-primary-500/30">

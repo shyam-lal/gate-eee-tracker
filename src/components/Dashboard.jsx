@@ -11,7 +11,7 @@ import GlobalAnalytics from './analytics/GlobalAnalytics';
 import CourseCalculatorModal from './calculator/CourseCalculatorModal';
 import ExamSwitcher from './exam/ExamSwitcher';
 
-const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenSocial, onOpenPlanner, onSetupTool, onDeleteTool, onRenameTool, onStartFocus, onClearToolData, onOpenAdmin, onOpenMaterials, onOpenPricing }) => {
+const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenSocial, onOpenPlanner, onOpenBattlePlan, onSetupTool, onDeleteTool, onRenameTool, onStartFocus, onClearToolData, onOpenAdmin, onOpenMaterials, onOpenPricing }) => {
 
     const [menuOpen, setMenuOpen] = useState(null); // toolId of open menu
     const [renamingTool, setRenamingTool] = useState(null);
@@ -127,8 +127,14 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
                         </p>
                         <div className="flex flex-wrap gap-3">
                             <button
-                                onClick={onStartFocus}
+                                onClick={onOpenBattlePlan}
                                 className="bg-primary-600 hover:bg-primary-500 text-white px-6 py-3 rounded-full font-black uppercase tracking-widest text-xs flex items-center gap-2 transition-all shadow-lg hover:shadow-primary-500/25 active:scale-95 w-max"
+                            >
+                                <Target size={16} /> Battle Plan
+                            </button>
+                            <button
+                                onClick={onStartFocus}
+                                className="bg-surface-800 hover:bg-surface-700 text-heading px-6 py-3 rounded-full font-black uppercase tracking-widest text-xs flex items-center gap-2 transition-all shadow-lg active:scale-95 w-max border border-surface-700"
                             >
                                 <Target size={16} /> Start Focus Mode
                             </button>
@@ -303,6 +309,9 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
                     <div className="bg-surface-900/80 backdrop-blur-2xl border border-white/10 p-2 rounded-2xl flex items-center gap-2 shadow-2xl overflow-x-auto w-full max-w-lg md:max-w-none no-scrollbar snap-x relative z-50 pointer-events-auto">
                         <button onClick={onSetupTool} className="shrink-0 snap-start flex items-center gap-2 px-6 py-3 bg-primary-600 text-white rounded-xl font-black text-xs uppercase tracking-widest hover:bg-primary-500 transition-all">
                             <Plus size={16} /> New Tool
+                        </button>
+                        <button onClick={onOpenBattlePlan} className="shrink-0 snap-start flex items-center gap-2 px-6 py-3 bg-primary-600/20 text-primary-400 border border-primary-500/30 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-primary-600/30 hover:text-primary-300 transition-all">
+                            <Target size={16} /> Battle Plan
                         </button>
                         <button onClick={onOpenPlanner} className="shrink-0 snap-start flex items-center gap-2 px-6 py-3 bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-emerald-600/30 hover:text-emerald-300 transition-all">
                             <BookOpen size={16} /> Planner
