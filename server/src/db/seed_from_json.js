@@ -87,42 +87,58 @@ async function main() {
     console.log('\n🚀 Syllabus Import');
     console.log('─'.repeat(50));
     console.log(`  File: ${filePath}`);
-    console.log(`  Subjects: ${data.subjects?.length || 0}`);
-    const totalTopics = (data.subjects || []).reduce((sum, s) => sum + (s.topics?.length || 0), 0);
-    console.log(`  Topics: ${totalTopics}`);
     console.log('─'.repeat(50));
 
     try {
         let result;
 
-        if (examId) {
-            // Import into existing exam
-            console.log(`\n📥 Importing syllabus into exam ID ${examId}...`);
-            if (clearExisting) console.log('  ⚠️  Clearing existing syllabus first');
-            result = await importSyllabus(examId, data, { clearExisting });
-        } else if (categoryId) {
-            // Create new exam + syllabus
-            if (!data.exam) {
-                console.error('❌ JSON must have an "exam" object when creating a new exam.');
+        // Detect if bulk or single
+        const isBulk = Array.isArray(data) || Array.isArray(data.exams);
+        const examsList = Array.isArray(data) ? data : (Array.isArray(data.exams) ? data.exams : [data]);
+
+        let totalSubjects = 0;
+        let totalTopics = 0;
+        const totalErrors = [];
+
+        console.log(`\n📥 Found ${examsList.length} exam(s) to import.`);
+
+        for (const examData of examsList) {
+            if (examId) {
+                // Import into existing exam
+                console.log(`\n📥 Importing syllabus into exam ID ${examId}...`);
+                if (clearExisting) console.log('  ⚠️  Clearing existing syllabus first');
+                result = await importSyllabus(examId, examData, { clearExisting });
+                totalSubjects += result.subjectsCreated;
+                totalTopics += result.topicsCreated;
+                totalErrors.push(...result.errors.map(e => `[Exam ID ${examId}]: ${e}`));
+            } else if (categoryId) {
+                // Create new exam + syllabus
+                if (!examData.exam) {
+                    console.error('❌ JSON must have an "exam" object when creating a new exam. Skipping...');
+                    totalErrors.push('Missing "exam" object');
+                    continue;
+                }
+                console.log(`\n📥 Creating exam "${examData.exam.name}" in category ${categoryId}...`);
+                result = await importFullExam(examData, categoryId);
+                totalSubjects += result.subjectsCreated;
+                totalTopics += result.topicsCreated;
+                totalErrors.push(...result.errors.map(e => `[${examData.exam.name}]: ${e}`));
+            } else {
+                console.error('❌ You must provide either --exam-id or --category-id');
                 process.exit(1);
             }
-            console.log(`\n📥 Creating exam "${data.exam.name}" in category ${categoryId}...`);
-            result = await importFullExam(data, categoryId);
-        } else {
-            console.error('❌ You must provide either --exam-id or --category-id');
-            process.exit(1);
         }
 
         // Report
         console.log('\n✅ Import Complete!');
         console.log('─'.repeat(50));
-        if (result.exam) console.log(`  Exam: ${result.exam.name} (id=${result.exam.id})`);
-        console.log(`  Subjects created: ${result.subjectsCreated}`);
-        console.log(`  Topics created:   ${result.topicsCreated}`);
+        console.log(`  Exams processed:  ${examsList.length}`);
+        console.log(`  Subjects created: ${totalSubjects}`);
+        console.log(`  Topics created:   ${totalTopics}`);
 
-        if (result.errors.length > 0) {
-            console.log(`\n⚠️  ${result.errors.length} warning(s):`);
-            result.errors.forEach(e => console.log(`    - ${e}`));
+        if (totalErrors.length > 0) {
+            console.log(`\n⚠️  ${totalErrors.length} warning(s/error(s)):`);
+            totalErrors.forEach(e => console.log(`    - ${e}`));
         }
 
         console.log('');

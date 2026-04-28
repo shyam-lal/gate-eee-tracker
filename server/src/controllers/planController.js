@@ -14,7 +14,16 @@ const getTodayPlan = async (req, res) => {
     try {
         const userId = req.user.id;
         const plan = await planService.generateDailyPlan(userId);
-        res.json(formatBattlePlanResponse(plan));
+
+        // Fetch enrollment settings for the response
+        const settingsRes = await pool.query(
+            `SELECT daily_available_hours, target_date FROM user_enrollments
+             WHERE user_id = $1 AND is_active = TRUE ORDER BY enrolled_at DESC LIMIT 1`,
+            [userId]
+        );
+        const settings = settingsRes.rows[0] || {};
+
+        res.json(formatBattlePlanResponse(plan, settings));
     } catch (err) {
         console.error('Error generating daily plan:', err);
         if (err.message.includes('No active enrollment') || err.message.includes('No topics')) {
@@ -53,17 +62,18 @@ const startTask = async (req, res) => {
 
 /**
  * POST /plan/task/complete
- * Body: { task_id, actual_duration_minutes }
+ * Body: { task_id, actual_duration_minutes, self_rating }
  */
 const completeTaskHandler = async (req, res) => {
     try {
-        const { task_id, actual_duration_minutes } = req.body;
+        const { task_id, actual_duration_minutes, self_rating } = req.body;
         if (!task_id) return res.status(400).json({ error: 'task_id is required' });
 
         const result = await taskService.completeTask(
             req.user.id,
             task_id,
-            parseInt(actual_duration_minutes) || 0
+            parseInt(actual_duration_minutes) || 0,
+            self_rating != null ? parseInt(self_rating) : null
         );
 
         // Return updated full plan
@@ -192,6 +202,48 @@ const getPlanHistory = async (req, res) => {
     }
 };
 
+/**
+ * GET /plan/roadmap
+ * Returns strategic overview — readiness score, subject progress, weekly trends.
+ */
+const getRoadmap = async (req, res) => {
+    try {
+        const data = await planService.getRoadmapData(req.user.id);
+        res.json(data);
+    } catch (err) {
+        console.error('Error fetching roadmap:', err);
+        if (err.message.includes('No active enrollment')) {
+            return res.status(400).json({ error: err.message });
+        }
+        res.status(500).json({ error: 'Failed to fetch roadmap data' });
+    }
+};
+
+/**
+ * PATCH /plan/settings
+ * Body: { daily_available_hours?, target_date? }
+ * Updates study settings. Changes apply from next plan generation.
+ */
+const updateSettings = async (req, res) => {
+    try {
+        const { daily_available_hours, target_date } = req.body;
+        const result = await planService.updateSettings(req.user.id, {
+            daily_available_hours,
+            target_date,
+        });
+        res.json({
+            ...result,
+            message: 'Settings updated. Changes will apply from your next plan generation.',
+        });
+    } catch (err) {
+        console.error('Error updating settings:', err);
+        if (err.message.includes('must be between') || err.message.includes('must be in the future') || err.message.includes('No settings') || err.message.includes('No active enrollment')) {
+            return res.status(400).json({ error: err.message });
+        }
+        res.status(500).json({ error: 'Failed to update settings' });
+    }
+};
+
 
 // ═══════════════════════════════════════════════════
 // Response Formatter
@@ -201,7 +253,7 @@ const getPlanHistory = async (req, res) => {
  * Transform raw DB plan into the Daily Battle Plan frontend contract.
  * Frontend should NEVER compute anything — this response is final.
  */
-function formatBattlePlanResponse(plan) {
+function formatBattlePlanResponse(plan, settings = {}) {
     const taskData = parseTasks(plan.tasks);
     const tasks = taskData.tasks;
     const metadata = taskData.metadata;
@@ -218,6 +270,21 @@ function formatBattlePlanResponse(plan) {
 
     const completedMinutes = plan.total_completed_minutes || 0;
     const totalMinutes = plan.total_minutes || tasks.reduce((s, t) => s + t.duration_minutes, 0);
+
+    const mapTask = (t) => ({
+        id: t.id,
+        order_index: t.order_index,
+        type: t.type,
+        topic_id: t.topic_id,
+        topic_name: t.topic_name,
+        subject_name: t.subject_name,
+        duration_minutes: t.duration_minutes,
+        status: t.status,
+        difficulty_level: t.difficulty_level,
+        difficulty_stars: Math.min(5, Math.max(1, t.difficulty_level || 3)),
+        carryover: t.carryover || false,
+        reasons: t.reasons || [],
+    });
 
     return {
         date: planDate,
@@ -238,28 +305,9 @@ function formatBattlePlanResponse(plan) {
             streak: plan.streak || 0,
         },
 
-        current_task: activeTask ? {
-            id: activeTask.id,
-            type: activeTask.type,
-            topic_id: activeTask.topic_id,
-            topic_name: activeTask.topic_name,
-            subject_name: activeTask.subject_name,
-            duration_minutes: activeTask.duration_minutes,
-            order_index: activeTask.order_index,
-        } : null,
+        current_task: activeTask ? mapTask(activeTask) : null,
 
-        tasks: tasks.map(t => ({
-            id: t.id,
-            order_index: t.order_index,
-            type: t.type,
-            topic_id: t.topic_id,
-            topic_name: t.topic_name,
-            subject_name: t.subject_name,
-            duration_minutes: t.duration_minutes,
-            status: t.status,
-            difficulty_level: t.difficulty_level,
-            carryover: t.carryover || false,
-        })),
+        tasks: tasks.map(mapTask),
 
         breakdown: {
             learn: {
@@ -276,6 +324,15 @@ function formatBattlePlanResponse(plan) {
 
         adjustments: metadata.adjustments || null,
         safeguards: metadata.safeguards || null,
+
+        settings: {
+            daily_available_hours: parseFloat(settings.daily_available_hours) || 2,
+            target_date: settings.target_date
+                ? (settings.target_date instanceof Date
+                    ? settings.target_date.toISOString().split('T')[0]
+                    : settings.target_date)
+                : null,
+        },
     };
 }
 
@@ -292,4 +349,6 @@ module.exports = {
     regeneratePlan,
     getPlanByDate,
     getPlanHistory,
+    getRoadmap,
+    updateSettings,
 };

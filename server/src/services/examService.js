@@ -181,10 +181,8 @@ const setActiveExam = async (userId, examId) => {
  * Complete onboarding for a user
  */
 const completeOnboarding = async (userId) => {
-    await pool.query(
-        'UPDATE users SET onboarding_completed = TRUE WHERE id = $1',
-        [userId]
-    );
+    const onboardingService = require('./onboardingService');
+    await onboardingService.completeOnboarding(userId);
 };
 
 // ═══════════════════════════════════════════════════
@@ -314,10 +312,15 @@ const deleteSubject = async (id) => {
 
 const createTopic = async (subjectId, data) => {
     const slug = data.slug || data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    
+    // Map difficulty string to difficulty_level integer for planning engine
+    const difficultyMap = { 'easy': 2, 'medium': 3, 'hard': 4 };
+    const difficultyLevel = data.difficulty_level || difficultyMap[data.difficulty] || 3;
+    
     const res = await pool.query(
-        `INSERT INTO exam_topics (subject_id, name, slug, sort_order, estimated_hours, difficulty, metadata)
-         VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
-        [subjectId, data.name, slug, data.sort_order || 0, data.estimated_hours || 12, data.difficulty || 'medium', JSON.stringify(data.metadata || {})]
+        `INSERT INTO exam_topics (subject_id, name, slug, sort_order, estimated_hours, difficulty, difficulty_level, metadata)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+        [subjectId, data.name, slug, data.sort_order || 0, data.estimated_hours || 12, data.difficulty || 'medium', difficultyLevel, JSON.stringify(data.metadata || {})]
     );
     return res.rows[0];
 };

@@ -96,7 +96,8 @@ const generateDailyPlan = async (userId) => {
                 es.weightage as subject_weightage,
                 COALESCE(uts.confidence, 0) as confidence,
                 COALESCE(uts.status, 'NOT_STARTED') as status,
-                COALESCE(uts.total_time_spent_minutes, 0) as time_spent
+                COALESCE(uts.total_time_spent_minutes, 0) as time_spent,
+                uts.last_studied_at
          FROM exam_topics et
          JOIN exam_subjects es ON es.id = et.subject_id
          LEFT JOIN user_topic_states uts ON uts.topic_id = et.id AND uts.user_id = $1
@@ -122,15 +123,19 @@ const generateDailyPlan = async (userId) => {
     // 7. Build carryover set (unfinished + skipped from yesterday)
     const unfinishedTopicIds = new Set(yesterdayData.unfinishedTopicIds);
 
-    // 8. Score all topics
+    // 8. Score all topics (apply time decay for accurate prioritization)
+    const { computeTimeDecay } = require('./taskService');
     const scoredTopics = topics.map(t => {
+        const rawConfidence = parseInt(t.confidence);
+        const effectiveConfidence = computeTimeDecay(rawConfidence, t.last_studied_at);
+
         const weightageNorm = (parseFloat(t.topic_weightage) || 1) / maxWeightage;
         const difficultyNorm = (parseInt(t.difficulty_level) || 3) / maxDifficulty;
-        const confidenceNorm = parseInt(t.confidence) / maxConfidence;
+        const confidenceNorm = effectiveConfidence / maxConfidence;
 
-        const completionRatio = t.status === 'MASTERED' ? 1.0
-            : t.status === 'REVISING' ? 0.7
-            : t.status === 'LEARNING' ? 0.3
+        const completionRatio = effectiveConfidence >= 5 ? 1.0
+            : effectiveConfidence >= 4 ? 0.7
+            : effectiveConfidence >= 1 ? 0.3
             : 0.0;
         const urgencyFactor = Math.min(1.0, (1 - completionRatio) * (90 / daysRemaining));
         const carryoverBoost = unfinishedTopicIds.has(t.topic_id) ? CARRYOVER_BOOST : 0;
@@ -205,6 +210,7 @@ const generateDailyPlan = async (userId) => {
                 learnRemaining
             );
 
+            const reasons = computeTaskReasons(topic);
             rawTasks.push({
                 topic_id: topic.topic_id,
                 topic_name: topic.topic_name,
@@ -214,6 +220,7 @@ const generateDailyPlan = async (userId) => {
                 priority_score: topic.priority_score,
                 carryover: topic.carryover,
                 difficulty_level: topic.difficulty_level_raw,
+                reasons,
             });
 
             learnRemaining -= allocation;
@@ -231,6 +238,7 @@ const generateDailyPlan = async (userId) => {
             reviseRemaining
         );
 
+        const reasons = computeTaskReasons(topic);
         rawTasks.push({
             topic_id: topic.topic_id,
             topic_name: topic.topic_name,
@@ -240,6 +248,7 @@ const generateDailyPlan = async (userId) => {
             priority_score: topic.priority_score,
             carryover: topic.carryover,
             difficulty_level: topic.difficulty_level_raw,
+            reasons,
         });
 
         reviseRemaining -= allocation;
@@ -266,6 +275,7 @@ const generateDailyPlan = async (userId) => {
         priority_score: t.priority_score,
         carryover: t.carryover || false,
         difficulty_level: t.difficulty_level,
+        reasons: t.reasons || [],
         status: idx === 0 ? 'ACTIVE' : 'PENDING', // First task auto-activated
     }));
 
@@ -689,6 +699,404 @@ const getTodayPlanRaw = async (userId) => {
     return res.rows[0] || null;
 };
 
+// ═══════════════════════════════════════════════════
+// Task Reasoning
+// ═══════════════════════════════════════════════════
+
+function computeTaskReasons(topic) {
+    const reasons = [];
+    if (topic.carryover) reasons.push('CARRYOVER');
+    if (topic.weightage_norm > 0.7) reasons.push('HIGH_WEIGHTAGE');
+    if (topic.confidence_norm < 0.3) reasons.push('LOW_CONFIDENCE');
+    if (topic.urgency_factor > 0.5) reasons.push('URGENT');
+    if (topic.difficulty_level_raw <= 2) reasons.push('EASY_WIN');
+    if (topic.difficulty_level_raw >= 4) reasons.push('CHALLENGING');
+    // If none of the above triggered, it's a standard priority pick
+    if (reasons.length === 0) reasons.push('PRIORITY_PICK');
+    return reasons;
+}
+
+
+// ═══════════════════════════════════════════════════
+// Roadmap Data (Strategic Overview)
+// ═══════════════════════════════════════════════════
+
+const getRoadmapData = async (userId) => {
+    // 1. Active enrollment
+    const enrollmentRes = await pool.query(
+        `SELECT ue.*, e.name as exam_name, e.full_name as exam_full_name
+         FROM user_enrollments ue
+         JOIN exams e ON e.id = ue.exam_id
+         WHERE ue.user_id = $1 AND ue.is_active = TRUE
+         ORDER BY ue.enrolled_at DESC LIMIT 1`,
+        [userId]
+    );
+
+    if (!enrollmentRes.rows.length) {
+        throw new Error('No active enrollment found');
+    }
+
+    const enrollment = enrollmentRes.rows[0];
+    const examId = enrollment.exam_id;
+    const today = new Date();
+    const targetDate = enrollment.target_date ? new Date(enrollment.target_date) : null;
+    const daysRemaining = targetDate
+        ? Math.max(0, Math.ceil((targetDate - today) / (1000 * 60 * 60 * 24)))
+        : null;
+
+    // 2. Subject + topic progress
+    const subjectRes = await pool.query(
+        `SELECT es.id as subject_id, es.name as subject_name, es.weightage,
+                et.id as topic_id, et.name as topic_name,
+                et.difficulty_level, et.weightage as topic_weightage,
+                et.estimated_hours,
+                COALESCE(uts.confidence, 0) as confidence,
+                COALESCE(uts.status, 'NOT_STARTED') as status,
+                COALESCE(uts.total_time_spent_minutes, 0) as time_spent,
+                uts.last_studied_at
+         FROM exam_subjects es
+         JOIN exam_topics et ON et.subject_id = es.id
+         LEFT JOIN user_topic_states uts ON uts.topic_id = et.id AND uts.user_id = $1
+         WHERE es.exam_id = $2
+         ORDER BY es.sort_order ASC, et.sort_order ASC`,
+        [userId, examId]
+    );
+
+    // 3. Aggregate by subject
+    const subjectMap = new Map();
+    let totalTopics = 0, totalMastered = 0, totalRevising = 0, totalLearning = 0, totalNotStarted = 0;
+    let weightedConfidenceSum = 0, totalWeightage = 0;
+
+    for (const row of subjectRes.rows) {
+        totalTopics++;
+        const topicWeight = parseFloat(row.topic_weightage) || 1;
+        const rawConfidence = parseInt(row.confidence) || 0;
+
+        // Apply time decay for display (read-only, does not mutate DB)
+        const { computeTimeDecay } = require('./taskService');
+        const effectiveConfidence = computeTimeDecay(rawConfidence, row.last_studied_at);
+
+        weightedConfidenceSum += effectiveConfidence * topicWeight;
+        totalWeightage += topicWeight;
+
+        // Derive effective status from decayed confidence
+        const effectiveStatus = effectiveConfidence <= 0 ? 'NOT_STARTED'
+            : effectiveConfidence <= 3 ? 'LEARNING'
+            : effectiveConfidence === 4 ? 'REVISING'
+            : 'MASTERED';
+
+        if (effectiveStatus === 'MASTERED') totalMastered++;
+        else if (effectiveStatus === 'REVISING') totalRevising++;
+        else if (effectiveStatus === 'LEARNING') totalLearning++;
+        else totalNotStarted++;
+
+        if (!subjectMap.has(row.subject_id)) {
+            subjectMap.set(row.subject_id, {
+                id: row.subject_id,
+                name: row.subject_name,
+                weightage: parseFloat(row.weightage) || 0,
+                total_topics: 0,
+                mastered: 0,
+                revising: 0,
+                learning: 0,
+                not_started: 0,
+                topics: [],
+                total_time_spent_minutes: 0,
+                confidence_sum: 0,
+            });
+        }
+
+        const subj = subjectMap.get(row.subject_id);
+        subj.total_topics++;
+        subj.total_time_spent_minutes += parseInt(row.time_spent) || 0;
+        subj.confidence_sum += effectiveConfidence;
+        if (effectiveStatus === 'MASTERED') subj.mastered++;
+        else if (effectiveStatus === 'REVISING') subj.revising++;
+        else if (effectiveStatus === 'LEARNING') subj.learning++;
+        else subj.not_started++;
+
+        const baseHours = computeEstimatedHours({
+            estimated_hours: row.estimated_hours,
+            difficulty: row.difficulty_level,
+            weightage: topicWeight
+        });
+
+        const personalized = computePersonalizedHours(
+            baseHours,
+            effectiveConfidence,
+            parseInt(row.time_spent) || 0
+        );
+
+        subj.topics.push({
+            id: row.topic_id,
+            name: row.topic_name,
+            difficulty: row.difficulty_level,
+            weightage: topicWeight,
+            confidence: effectiveConfidence,
+            status: effectiveStatus,
+            time_spent: parseInt(row.time_spent) || 0,
+            base_hours: baseHours,
+            estimated_hours: personalized.remaining_hours,
+            multiplier: personalized.multiplier,
+            adaptive_message: personalized.message,
+        });
+    }
+
+    const subjects = Array.from(subjectMap.values()).map(s => ({
+        ...s,
+        avg_confidence: s.total_topics > 0
+            ? Math.round((s.confidence_sum / (s.total_topics * 5)) * 100) / 100
+            : 0,
+        completion_percent: s.total_topics > 0
+            ? Math.round(((s.mastered + s.revising) / s.total_topics) * 100)
+            : 0,
+    }));
+
+    // Remove internal field
+    subjects.forEach(s => delete s.confidence_sum);
+
+    // Overall readiness: weighted confidence as percentage of max (5 * totalWeightage)
+    const maxPossible = totalWeightage * 5;
+    const overallScore = maxPossible > 0
+        ? Math.round((weightedConfidenceSum / maxPossible) * 100)
+        : 0;
+
+    // 4. Weekly summary (this week vs last week)
+    const todayStr = today.toISOString().split('T')[0];
+    const weekAgo = new Date(today);
+    weekAgo.setDate(weekAgo.getDate() - 7);
+    const weekAgoStr = weekAgo.toISOString().split('T')[0];
+    const twoWeeksAgo = new Date(today);
+    twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+    const twoWeeksAgoStr = twoWeeksAgo.toISOString().split('T')[0];
+
+    const [thisWeekRes, lastWeekRes] = await Promise.all([
+        pool.query(
+            `SELECT COUNT(*) as total_tasks,
+                    COUNT(*) FILTER (WHERE completed = TRUE) as completed_tasks,
+                    COUNT(*) FILTER (WHERE skipped = TRUE) as skipped_tasks,
+                    COALESCE(SUM(actual_duration), 0) as total_minutes
+             FROM user_task_logs WHERE user_id = $1 AND plan_date > $2 AND plan_date <= $3`,
+            [userId, weekAgoStr, todayStr]
+        ),
+        pool.query(
+            `SELECT COUNT(*) as total_tasks,
+                    COUNT(*) FILTER (WHERE completed = TRUE) as completed_tasks,
+                    COUNT(*) FILTER (WHERE skipped = TRUE) as skipped_tasks,
+                    COALESCE(SUM(actual_duration), 0) as total_minutes
+             FROM user_task_logs WHERE user_id = $1 AND plan_date > $2 AND plan_date <= $3`,
+            [userId, twoWeeksAgoStr, weekAgoStr]
+        ),
+    ]);
+
+    const thisWeek = thisWeekRes.rows[0];
+    const lastWeek = lastWeekRes.rows[0];
+
+    const thisWeekTotal = parseInt(thisWeek.total_tasks) || 0;
+    const thisWeekCompleted = parseInt(thisWeek.completed_tasks) || 0;
+    const lastWeekTotal = parseInt(lastWeek.total_tasks) || 0;
+    const lastWeekCompleted = parseInt(lastWeek.completed_tasks) || 0;
+
+    const thisWeekRate = thisWeekTotal > 0 ? Math.round((thisWeekCompleted / thisWeekTotal) * 100) / 100 : 0;
+    const lastWeekRate = lastWeekTotal > 0 ? Math.round((lastWeekCompleted / lastWeekTotal) * 100) / 100 : 0;
+
+    let trend = 'stable';
+    if (thisWeekRate > lastWeekRate + 0.05) trend = 'improving';
+    else if (thisWeekRate < lastWeekRate - 0.05) trend = 'declining';
+
+    // 5. Estimated completion
+    const topicsNeedingWork = totalLearning + totalNotStarted;
+    // Average time per topic based on completed topics
+    const completedTopicCount = totalMastered + totalRevising;
+    const totalTimeSpent = subjectRes.rows.reduce((s, r) => s + (parseInt(r.time_spent) || 0), 0);
+    const avgTimePerTopic = completedTopicCount > 0
+        ? totalTimeSpent / completedTopicCount
+        : 60; // default 60 min estimate
+    const dailyMinutes = (parseFloat(enrollment.daily_available_hours) || 2) * 60;
+    const estimatedDaysRemaining = dailyMinutes > 0
+        ? Math.ceil((topicsNeedingWork * avgTimePerTopic) / dailyMinutes)
+        : 999;
+
+    // 6. Streak
+    const streak = await computeStreak(userId, examId);
+
+    return {
+        exam: {
+            name: enrollment.exam_name,
+            full_name: enrollment.exam_full_name,
+            target_date: targetDate ? targetDate.toISOString().split('T')[0] : null,
+            days_remaining: daysRemaining,
+        },
+
+        readiness: {
+            overall_score: overallScore,
+            total_topics: totalTopics,
+            mastered: totalMastered,
+            revising: totalRevising,
+            learning: totalLearning,
+            not_started: totalNotStarted,
+        },
+
+        subjects,
+
+        weekly_summary: {
+            this_week: {
+                total_minutes: parseInt(thisWeek.total_minutes) || 0,
+                completed_tasks: thisWeekCompleted,
+                skipped_tasks: parseInt(thisWeek.skipped_tasks) || 0,
+                completion_rate: thisWeekRate,
+            },
+            last_week: {
+                total_minutes: parseInt(lastWeek.total_minutes) || 0,
+                completed_tasks: lastWeekCompleted,
+                skipped_tasks: parseInt(lastWeek.skipped_tasks) || 0,
+                completion_rate: lastWeekRate,
+            },
+            trend,
+        },
+
+        settings: {
+            daily_available_hours: parseFloat(enrollment.daily_available_hours) || 2,
+            target_date: targetDate ? targetDate.toISOString().split('T')[0] : null,
+        },
+
+        estimated_completion: {
+            at_current_pace_days: estimatedDaysRemaining,
+            on_track: daysRemaining !== null ? estimatedDaysRemaining <= daysRemaining : true,
+        },
+
+        streak,
+    };
+};
+
+
+// ═══════════════════════════════════════════════════
+// Settings Update
+// ═══════════════════════════════════════════════════
+
+const updateSettings = async (userId, { daily_available_hours, target_date }) => {
+    const setClauses = [];
+    const values = [];
+    let idx = 1;
+
+    if (daily_available_hours !== undefined) {
+        const hours = parseFloat(daily_available_hours);
+        if (isNaN(hours) || hours < 0.5 || hours > 12) {
+            throw new Error('daily_available_hours must be between 0.5 and 12');
+        }
+        setClauses.push(`daily_available_hours = $${idx++}`);
+        values.push(hours);
+    }
+
+    if (target_date !== undefined) {
+        if (target_date && new Date(target_date) < new Date()) {
+            throw new Error('target_date must be in the future');
+        }
+        setClauses.push(`target_date = $${idx++}`);
+        values.push(target_date || null);
+    }
+
+    if (setClauses.length === 0) {
+        throw new Error('No settings to update');
+    }
+
+    values.push(userId);
+    const res = await pool.query(
+        `UPDATE user_enrollments SET ${setClauses.join(', ')}
+         WHERE user_id = $${idx} AND is_active = TRUE
+         RETURNING daily_available_hours, target_date`,
+        values
+    );
+
+    if (!res.rows.length) {
+        throw new Error('No active enrollment found');
+    }
+
+    return {
+        daily_available_hours: parseFloat(res.rows[0].daily_available_hours) || 2,
+        target_date: res.rows[0].target_date
+            ? new Date(res.rows[0].target_date).toISOString().split('T')[0]
+            : null,
+    };
+};
+
+
+/**
+ * Smart estimation for topics when database hours are missing.
+ * Factors in difficulty (1-5 scale) and subject weightage.
+ */
+function computeEstimatedHours({ estimated_hours, difficulty, weightage }) {
+    if (estimated_hours && parseFloat(estimated_hours) > 0) {
+        return parseFloat(estimated_hours);
+    }
+
+    // Baseline based on difficulty
+    // 1: 4h, 2: 6h, 3: 10h, 4: 18h, 5: 30h
+    const difficultyLevel = parseInt(difficulty) || 3;
+    const baseHoursMap = {
+        1: 4,
+        2: 6,
+        3: 10,
+        4: 18,
+        5: 30
+    };
+
+    let estimate = baseHoursMap[difficultyLevel] || 10;
+
+    // Weightage adjustment (topics in heavy subjects need more depth)
+    const weight = parseFloat(weightage) || 0;
+    if (weight > 10) estimate *= 1.3;
+    else if (weight > 7) estimate *= 1.1;
+    else if (weight < 5) estimate *= 0.7;
+
+    return Math.round(estimate * 10) / 10;
+}
+
+/**
+ * Compute personalized remaining study hours for a topic.
+ * Adjusts based on user's confidence — weak areas get more time, strong areas less.
+ *
+ * @param {number} baseHours - Static estimated hours from DB/fallback
+ * @param {number} confidence - Effective confidence (0-5, after decay)
+ * @param {number} timeSpentMinutes - Total time already spent (minutes)
+ * @returns {{ remaining_hours: number, multiplier: number, message: string|null }}
+ */
+function computePersonalizedHours(baseHours, confidence, timeSpentMinutes) {
+    const timeSpentHours = timeSpentMinutes / 60;
+    const remaining = Math.max(0, baseHours - timeSpentHours);
+
+    // Confidence-based multiplier
+    const multiplierMap = {
+        0: 1.5,  // No idea → 50% extra time
+        1: 1.3,  // Weak → 30% extra
+        2: 1.1,  // Below average → slight bump
+        3: 1.0,  // On track
+        4: 0.85, // Good → needs less
+        5: 0.5,  // Strong → mostly revision
+    };
+
+    const multiplier = multiplierMap[confidence] ?? 1.0;
+    const adjustedRemaining = Math.round(remaining * multiplier * 10) / 10;
+
+    // Adaptive message for the user
+    let message = null;
+    if (confidence <= 1 && remaining > 0) {
+        message = 'Weak area — extra time allocated';
+    } else if (confidence === 2) {
+        message = 'Needs more practice';
+    } else if (confidence >= 4 && remaining > 0) {
+        message = 'Strong — reduced time';
+    } else if (remaining <= 0) {
+        message = 'Target hours reached';
+    }
+
+    return {
+        remaining_hours: adjustedRemaining,
+        multiplier,
+        message,
+    };
+}
+
 module.exports = {
     generateDailyPlan,
     getPlanByDate,
@@ -696,4 +1104,6 @@ module.exports = {
     regeneratePlan,
     updatePlanTasks,
     getTodayPlanRaw,
+    getRoadmapData,
+    updateSettings,
 };

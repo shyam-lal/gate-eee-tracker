@@ -262,6 +262,27 @@ const completeOnboarding = async (userId) => {
             console.error('Warning: Failed to auto-generate first plan after onboarding:', planErr.message);
         }
 
+        // Ensure user has a flashcard tool by default
+        try {
+            console.log(`[Onboarding] Checking for existing flashcard tool for User ${userId}...`);
+            let toolRes = await pool.query(
+                `SELECT id FROM tools WHERE user_id = $1 AND tool_type = 'flashcard' LIMIT 1`, 
+                [userId]
+            );
+            console.log(`[Onboarding] Existing flashcard tools found: ${toolRes.rows.length}`);
+            
+            if (toolRes.rows.length === 0) {
+                await pool.query(
+                    `INSERT INTO tools (user_id, name, tool_type, is_default) VALUES ($1, $2, $3, TRUE)`,
+                    [userId, 'My Flashcards', 'flashcard']
+                );
+                console.log(`✅ Default Flashcards tool provisioned for User ${userId}.`);
+            }
+        } catch (fcErr) {
+            console.error('Warning: Failed to provision flashcard tool after onboarding:', fcErr.message);
+            console.error('Full error:', fcErr);
+        }
+
         return res.rows[0];
     } catch (err) {
         await client.query('ROLLBACK');

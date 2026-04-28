@@ -98,7 +98,8 @@ const AdminPanel = ({ user, onBack }) => {
                 category_id: exam.category_id || '',
                 primary_color: exam.primary_color || '#6366f1',
                 accent_color: exam.accent_color || '#818cf8',
-                available_tools: exam.available_tools || []
+                available_tools: exam.available_tools || [],
+                is_active: exam.is_active !== false
             });
         } else {
             setEditingExam(null);
@@ -106,7 +107,8 @@ const AdminPanel = ({ user, onBack }) => {
                 name: '', slug: '', full_name: '', description: '',
                 category_id: categories[0]?.id || '',
                 primary_color: '#6366f1', accent_color: '#818cf8',
-                available_tools: ['tracker', 'flashcard', 'revision', 'planner', 'focus', 'analytics']
+                available_tools: ['tracker', 'flashcard', 'revision', 'planner', 'focus', 'analytics'],
+                is_active: true
             });
         }
         setShowExamForm(true);
@@ -133,6 +135,16 @@ const AdminPanel = ({ user, onBack }) => {
         try {
             await examsApi.admin.deleteExam(examId);
             if (selectedExam?.id === examId) { setSelectedExam(null); setSyllabus([]); }
+            await loadData();
+        } catch (err) { alert(err.message); }
+    };
+
+    const toggleExamActive = async () => {
+        if (!selectedExam) return;
+        try {
+            const newVal = !selectedExam.is_active;
+            await examsApi.admin.updateExam(selectedExam.id, { is_active: newVal });
+            setSelectedExam({ ...selectedExam, is_active: newVal });
             await loadData();
         } catch (err) { alert(err.message); }
     };
@@ -285,6 +297,14 @@ const AdminPanel = ({ user, onBack }) => {
     // RENDER
     // ═══════════════════════════════════════════════════
 
+    // Group exams for better UX sidebar
+    const groupedExams = examsList.reduce((acc, exam) => {
+        const cat = exam.category_name || 'Uncategorized';
+        if (!acc[cat]) acc[cat] = [];
+        acc[cat].push(exam);
+        return acc;
+    }, {});
+
     return (
         <div className="min-h-screen bg-base text-surface-400 font-sans">
             {/* Header */}
@@ -356,39 +376,47 @@ const AdminPanel = ({ user, onBack }) => {
                         {loading ? (
                             <div className="text-center py-8 text-surface-500">Loading...</div>
                         ) : (
-                            <div className="space-y-2">
-                                {examsList.map(exam => (
-                                    <div
-                                        key={exam.id}
-                                        onClick={() => selectExam(exam)}
-                                        className={`p-4 rounded-2xl border cursor-pointer transition-all group ${
-                                            selectedExam?.id === exam.id
-                                                ? 'border-primary-500 bg-primary-500/10'
-                                                : 'border-surface-800 bg-surface-900/50 hover:border-surface-700'
-                                        }`}
-                                    >
-                                        <div className="flex items-center justify-between">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: exam.primary_color }} />
-                                                <div>
-                                                    <h3 className="font-bold text-heading text-sm">{exam.name}</h3>
-                                                    <p className="text-[10px] text-surface-500 font-medium">{exam.category_name}</p>
+                            <div className="space-y-6">
+                                {Object.entries(groupedExams).map(([category, exams]) => (
+                                    <div key={category}>
+                                        <h3 className="text-[10px] font-black text-surface-500 uppercase tracking-widest mb-3 pl-2 border-l-2 border-surface-700">
+                                            {category} <span className="text-surface-600 font-bold ml-1">({exams.length})</span>
+                                        </h3>
+                                        <div className="space-y-2">
+                                            {exams.map(exam => (
+                                                <div
+                                                    key={exam.id}
+                                                    onClick={() => selectExam(exam)}
+                                                    className={`p-3 rounded-2xl border cursor-pointer transition-all group ${
+                                                        selectedExam?.id === exam.id
+                                                            ? 'border-primary-500 bg-primary-500/10'
+                                                            : 'border-surface-800 bg-surface-900/50 hover:border-surface-700 hover:bg-surface-800/50'
+                                                    }`}
+                                                >
+                                                    <div className="flex items-center justify-between">
+                                                        <div className="flex items-center gap-3">
+                                                            <div className="w-2 h-8 rounded-full transition-all" style={{ backgroundColor: exam.primary_color }} />
+                                                            <div>
+                                                                <h4 className="font-bold text-heading text-sm flex items-center gap-2">
+                                                                    {exam.name}
+                                                                    {exam.is_active === false && (
+                                                                        <span className="bg-rose-500/10 text-rose-400 text-[8px] px-1.5 py-0.5 rounded font-black uppercase tracking-widest">Off</span>
+                                                                    )}
+                                                                </h4>
+                                                                <p className="text-[10px] text-surface-500 font-medium truncate max-w-[150px]">{exam.full_name || 'No full name provided'}</p>
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                            <button
+                                                                onClick={(e) => { e.stopPropagation(); openExamForm(exam); }}
+                                                                className="p-1.5 text-surface-500 hover:text-primary-400 rounded-lg hover:bg-surface-800"
+                                                            >
+                                                                <Edit3 size={12} />
+                                                            </button>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <button
-                                                    onClick={(e) => { e.stopPropagation(); openExamForm(exam); }}
-                                                    className="p-1.5 text-surface-500 hover:text-primary-400 rounded-lg hover:bg-surface-800"
-                                                >
-                                                    <Edit3 size={14} />
-                                                </button>
-                                                <button
-                                                    onClick={(e) => { e.stopPropagation(); deleteExam(exam.id); }}
-                                                    className="p-1.5 text-surface-500 hover:text-rose-400 rounded-lg hover:bg-surface-800"
-                                                >
-                                                    <Trash2 size={14} />
-                                                </button>
-                                            </div>
+                                            ))}
                                         </div>
                                     </div>
                                 ))}
@@ -407,8 +435,16 @@ const AdminPanel = ({ user, onBack }) => {
                                             <GraduationCap size={20} style={{ color: selectedExam.primary_color }} />
                                         </div>
                                         <div>
-                                            <h2 className="text-xl font-black text-heading uppercase tracking-tighter">{selectedExam.name}</h2>
-                                            <p className="text-xs text-surface-500">{selectedExam.full_name}</p>
+                                            <div className="flex items-center gap-3">
+                                                <h2 className="text-xl font-black text-heading uppercase tracking-tighter">{selectedExam.name}</h2>
+                                                <button 
+                                                    onClick={toggleExamActive}
+                                                    className={`text-[10px] px-2 py-1 rounded font-black uppercase tracking-widest border transition-colors ${selectedExam.is_active !== false ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border-rose-500/20 hover:bg-rose-500/20'}`}
+                                                >
+                                                    {selectedExam.is_active !== false ? 'Active' : 'Disabled'}
+                                                </button>
+                                            </div>
+                                            <p className="text-xs text-surface-500 mt-1">{selectedExam.full_name}</p>
                                         </div>
                                     </div>
                                     <p className="text-sm text-surface-400">{selectedExam.description}</p>
@@ -815,6 +851,17 @@ const AdminPanel = ({ user, onBack }) => {
                                         </button>
                                     ))}
                                 </div>
+                            </div>
+                            <div className="flex items-center gap-3 pt-2">
+                                <label className="text-[10px] font-black text-surface-500 uppercase tracking-widest cursor-pointer">
+                                    <input 
+                                        type="checkbox" 
+                                        checked={examForm.is_active !== false}
+                                        onChange={e => setExamForm({ ...examForm, is_active: e.target.checked })}
+                                        className="mr-2 accent-primary-500 w-3 h-3"
+                                    />
+                                    Enable Exam Visibility
+                                </label>
                             </div>
                             <div className="flex gap-2 pt-2">
                                 <button onClick={() => setShowExamForm(false)} className="flex-1 bg-surface-800 text-heading py-3 rounded-xl font-bold text-sm">Cancel</button>

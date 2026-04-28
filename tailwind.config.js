@@ -19,6 +19,7 @@ export default {
           600: 'var(--color-surface-600)',
           500: 'var(--color-surface-500)',
           400: 'var(--color-surface-400)',
+          300: 'var(--color-surface-300)',
         },
         primary: {
           700: 'var(--color-primary-700)',

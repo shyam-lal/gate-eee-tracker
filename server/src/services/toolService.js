@@ -1,17 +1,28 @@
 const pool = require('../config/db');
 
 const createTool = async (userId, name, toolType = 'time', selectedExam = 'GATE', examId = null) => {
+    // Prevent duplicate flashcard tools
+    if (toolType === 'flashcard') {
+        const existing = await pool.query(
+            `SELECT id FROM tools WHERE user_id = $1 AND tool_type = 'flashcard' LIMIT 1`,
+            [userId]
+        );
+        if (existing.rows.length > 0) {
+            throw { status: 409, message: 'Flashcard tool already exists for this user.' };
+        }
+    }
+
     const res = await pool.query(
         `INSERT INTO tools (user_id, name, tool_type, selected_exam, exam_id) 
          VALUES ($1, $2, $3, $4, $5) 
-         RETURNING id, user_id, name, tool_type, selected_exam, exam_id, TO_CHAR(target_date, 'YYYY-MM-DD') as target_date, created_at`,
+         RETURNING id, user_id, name, tool_type, selected_exam, exam_id, is_default, TO_CHAR(target_date, 'YYYY-MM-DD') as target_date, created_at`,
         [userId, name, toolType, selectedExam, examId]
     );
     return res.rows[0];
 };
 
 const getUserTools = async (userId, examId = null) => {
-    let query = `SELECT t.id, t.user_id, t.name, t.tool_type, t.selected_exam, t.exam_id, TO_CHAR(t.target_date, 'YYYY-MM-DD') as target_date, t.created_at,
+    let query = `SELECT t.id, t.user_id, t.name, t.tool_type, t.selected_exam, t.exam_id, t.is_default, TO_CHAR(t.target_date, 'YYYY-MM-DD') as target_date, t.created_at,
          (
              SELECT COUNT(c.id)
              FROM cards c
@@ -32,7 +43,7 @@ const getUserTools = async (userId, examId = null) => {
 
 const getToolById = async (toolId) => {
     const res = await pool.query(
-        `SELECT id, user_id, name, tool_type, selected_exam, exam_id, TO_CHAR(target_date, 'YYYY-MM-DD') as target_date, created_at 
+        `SELECT id, user_id, name, tool_type, selected_exam, exam_id, is_default, TO_CHAR(target_date, 'YYYY-MM-DD') as target_date, created_at 
          FROM tools WHERE id = $1`,
         [toolId]
     );
@@ -64,6 +75,12 @@ const updateTool = async (toolId, updates) => {
 };
 
 const deleteTool = async (toolId) => {
+    // Guard: prevent deletion of default system tools
+    const check = await pool.query('SELECT is_default FROM tools WHERE id = $1', [toolId]);
+    if (check.rows.length > 0 && check.rows[0].is_default) {
+        throw { status: 403, message: 'Default system tools cannot be deleted.' };
+    }
+
     const res = await pool.query(
         'DELETE FROM tools WHERE id = $1 RETURNING *',
         [toolId]

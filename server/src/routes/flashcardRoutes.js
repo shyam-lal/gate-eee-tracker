@@ -21,6 +21,69 @@ router.get('/prompt', async (req, res) => {
     }
 });
 
+// --- OFFICIAL DECKS ---
+router.get('/official', async (req, res) => {
+    try {
+        const pool = require('../config/db');
+        const materials = await pool.query(
+            `SELECT s.id, s.title, s.content, es.name as subject_name, et.name as topic_name, s.topic_id 
+             FROM study_materials s 
+             JOIN exam_subjects es ON es.id = s.subject_id 
+             JOIN exam_topics et ON et.id = s.topic_id 
+             JOIN users u ON u.active_exam_id = s.exam_id 
+             WHERE u.id = $1 AND s.content_type = 'flashcard_json' AND s.is_published = TRUE
+             ORDER BY es.sort_order ASC, et.sort_order ASC`,
+            [req.user.id]
+        );
+        res.json(materials.rows);
+    } catch (err) {
+        console.error('Error fetching official decks:', err);
+        res.status(500).json({ error: 'Failed to fetch official decks' });
+    }
+});
+
+router.post('/official/:id/import', async (req, res) => {
+    try {
+        const pool = require('../config/db');
+        const materialId = req.params.id;
+        const { toolId } = req.body;
+        
+        if (!toolId) return res.status(400).json({ error: 'Tool ID is required' });
+
+        // Verify the tool belongs to the user
+        const toolCheck = await pool.query('SELECT id FROM tools WHERE id = $1 AND user_id = $2', [toolId, req.user.id]);
+        if (toolCheck.rows.length === 0) return res.status(403).json({ error: 'Tool access denied' });
+
+        // Get the material
+        const materialRes = await pool.query(
+            `SELECT title, content, topic_id FROM study_materials WHERE id = $1 AND content_type = 'flashcard_json'`,
+            [materialId]
+        );
+        
+        if (materialRes.rows.length === 0) return res.status(404).json({ error: 'Deck material not found' });
+        
+        const mat = materialRes.rows[0];
+        const cards = JSON.parse(mat.content);
+
+        // Create the deck
+        const deckRes = await pool.query(`INSERT INTO decks (tool_id, name) VALUES ($1, $2) RETURNING id`, [toolId, mat.title]);
+        const deckId = deckRes.rows[0].id;
+
+        // Insert cards
+        for (const c of cards) {
+            await pool.query(
+                `INSERT INTO cards (deck_id, front_content, back_content, source_topic_id) VALUES ($1, $2, $3, $4)`,
+                [deckId, c.front, c.back, mat.topic_id]
+            );
+        }
+
+        res.status(201).json({ message: 'Deck imported successfully', deckId });
+    } catch (err) {
+        console.error('Error importing official deck:', err);
+        res.status(500).json({ error: 'Failed to import official deck' });
+    }
+});
+
 router.post('/decks/:deckId/import', async (req, res) => {
     try {
         const deckId = req.params.deckId;

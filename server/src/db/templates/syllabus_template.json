@@ -2,7 +2,9 @@
   "_instructions": "Use this template when asking ChatGPT/Gemini to extract a syllabus from a PDF. Copy this entire JSON structure and tell the AI: 'Extract the syllabus from this PDF into the following JSON format. Fill in subjects and topics with real data.'",
   "_chatgpt_prompt": "Extract the syllabus from this PDF into the following JSON structure. Each subject should have a name, optional weightage percentage, and a list of topics. Each topic should have a name, estimated study hours, and difficulty (easy/medium/hard). Return ONLY valid JSON, no markdown.",
 
-  "exam": {
+  "exams": [
+    {
+      "exam": {
     "name": "GATE EE 2027",
     "full_name": "Graduate Aptitude Test in Engineering - Electrical Engineering",
     "category": "Engineering Entrance",
@@ -49,5 +51,7 @@
         { "name": "Power System Stability", "estimated_hours": 15, "difficulty": "hard" }
       ]
     }
+  ]
+  }
   ]
 }

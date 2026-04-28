@@ -21,6 +21,13 @@ const StudySession = ({ deck, onComplete, mode = 'srs' }) => {
     }, [deck.id]);
 
     const loadDueCards = async () => {
+        if (deck.staticCards) {
+            setCards(deck.staticCards);
+            if (deck.staticCards.length === 0) setCompleted(true);
+            setLoading(false);
+            return;
+        }
+
         try {
             setLoading(true);
             const data = mode === 'cram'

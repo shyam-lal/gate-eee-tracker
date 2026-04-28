@@ -32,6 +32,7 @@ export const themeColors = {
       surface600:  '#475569',
       surface500:  '#64748b',
       surface400:  '#94a3b8',
+      surface300:  '#cbd5e1',
 
       // Text
       heading:     '#ffffff',
@@ -70,6 +71,7 @@ export const themeColors = {
       surface600:  '#64748b',
       surface500:  '#475569',
       surface400:  '#334155',
+      surface300:  '#1e293b',
 
       // Text
       heading:     '#0f172a',
@@ -112,6 +114,7 @@ export const themeColors = {
       surface600:  '#44464f',
       surface500:  '#6b6e78',
       surface400:  '#9ca0ab',
+      surface300:  '#d1d5db',
 
       // Text
       heading:     '#ffffff',
@@ -150,6 +153,7 @@ export const themeColors = {
       surface600:  '#6b7e76',
       surface500:  '#4a5c55',
       surface400:  '#2e3834',
+      surface300:  '#1a201d',
 
       // Text
       heading:     '#111318',

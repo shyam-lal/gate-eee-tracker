@@ -61,7 +61,7 @@ const startTask = async (userId, taskId) => {
 /**
  * Complete a task: mark COMPLETED, update topic state, auto-activate next.
  */
-const completeTask = async (userId, taskId, actualDuration) => {
+const completeTask = async (userId, taskId, actualDuration, selfRating = null) => {
     const client = await pool.pool.connect();
     try {
         await client.query('BEGIN');
@@ -102,17 +102,33 @@ const completeTask = async (userId, taskId, actualDuration) => {
             status: planStatus,
         });
 
-        // Update user_topic_states: confidence +1 (cap 5), time_spent, last_studied_at
+        // Fetch current confidence before update
+        const existingState = await client.query(
+            `SELECT confidence FROM user_topic_states WHERE user_id = $1 AND topic_id = $2`,
+            [userId, task.topic_id]
+        );
+        const currentConfidence = existingState.rows.length > 0 ? existingState.rows[0].confidence : 0;
+
+        // Compute new confidence using adaptive engine
+        const newConfidence = computeNewConfidence(
+            currentConfidence,
+            selfRating,
+            task.type,
+            duration,
+            task.duration_minutes
+        );
+
+        // Update user_topic_states with computed confidence
         const stateRes = await client.query(
             `INSERT INTO user_topic_states (user_id, topic_id, confidence, status, last_studied_at, total_time_spent_minutes)
-             VALUES ($1, $2, 1, 'LEARNING', NOW(), $3)
+             VALUES ($1, $2, $3, 'LEARNING', NOW(), $4)
              ON CONFLICT (user_id, topic_id) DO UPDATE SET
-                confidence = LEAST(5, user_topic_states.confidence + 1),
-                total_time_spent_minutes = user_topic_states.total_time_spent_minutes + $3,
+                confidence = $3,
+                total_time_spent_minutes = user_topic_states.total_time_spent_minutes + $4,
                 last_studied_at = NOW(),
                 updated_at = NOW()
              RETURNING *`,
-            [userId, task.topic_id, duration]
+            [userId, task.topic_id, newConfidence, duration]
         );
 
         const topicState = stateRes.rows[0];
@@ -262,10 +278,62 @@ function parsePlanTasks(raw) {
 
 function deriveTopicStatus(confidence) {
     const c = parseInt(confidence);
-    if (c <= 1) return 'NOT_STARTED';
+    if (c <= 0) return 'NOT_STARTED';
     if (c <= 3) return 'LEARNING';
     if (c === 4) return 'REVISING';
     return 'MASTERED';
+}
+
+/**
+ * Adaptive confidence engine.
+ * Uses self-assessment rating, task type, and time quality to compute new confidence.
+ *
+ * @param {number} current - Current confidence (0-5)
+ * @param {number|null} selfRating - User's self-assessment (1-4), null = legacy +1
+ * @param {string} taskType - 'LEARN' or 'REVISE'
+ * @param {number} actualDuration - How long the user actually studied (minutes)
+ * @param {number} plannedDuration - How long was planned (minutes)
+ * @returns {number} New confidence (0-5)
+ */
+function computeNewConfidence(current, selfRating, taskType, actualDuration, plannedDuration) {
+    // Base delta from self-assessment
+    let delta;
+    if (selfRating !== null && selfRating !== undefined) {
+        delta = { 1: -1, 2: 0, 3: 1, 4: 2 }[selfRating] ?? 1;
+    } else {
+        // Legacy fallback: no self-assessment provided
+        delta = 1;
+    }
+
+    // REVISE tasks get capped gain (already learned, just refreshing)
+    if (taskType === 'REVISE' && delta > 1) {
+        delta = 1;
+    }
+
+    // Task quality: penalize rushing (actual < 50% of planned)
+    if (plannedDuration > 0 && actualDuration > 0) {
+        const timeRatio = actualDuration / plannedDuration;
+        if (timeRatio < 0.5 && delta > 0) {
+            delta = Math.max(0, delta - 1);
+        }
+    }
+
+    return Math.max(0, Math.min(5, current + delta));
+}
+
+/**
+ * Compute effective confidence after time decay.
+ * -1 confidence per 14 days of inactivity. Read-only (does not mutate DB).
+ *
+ * @param {number} confidence - Stored confidence (0-5)
+ * @param {Date|string|null} lastStudiedAt - When the topic was last studied
+ * @returns {number} Effective confidence after decay
+ */
+function computeTimeDecay(confidence, lastStudiedAt) {
+    if (!lastStudiedAt) return confidence;
+    const daysSince = (Date.now() - new Date(lastStudiedAt).getTime()) / (1000 * 60 * 60 * 24);
+    const decay = Math.floor(daysSince / 14);
+    return Math.max(0, confidence - decay);
 }
 
 module.exports = {
@@ -274,4 +342,5 @@ module.exports = {
     skipTask,
     getTaskLogsByDate,
     getTaskLogSummary,
+    computeTimeDecay,
 };

@@ -11,6 +11,12 @@ router.get('/date/:date', planController.getPlanByDate);
 router.get('/history', planController.getPlanHistory);
 router.post('/regenerate', planController.regeneratePlan);
 
+// Strategic overview
+router.get('/roadmap', planController.getRoadmap);
+
+// Settings
+router.patch('/settings', planController.updateSettings);
+
 // Task lifecycle
 router.post('/task/start', planController.startTask);
 router.post('/task/complete', planController.completeTask);

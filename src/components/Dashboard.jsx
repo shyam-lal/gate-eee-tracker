@@ -164,7 +164,7 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
                 <div className="mb-8">
                     <div className="flex items-center gap-3 mb-6 px-2">
                         <h3 className="text-[10px] font-black text-surface-500 uppercase tracking-[0.3em]">My Tools</h3>
-                        <span className="text-[10px] font-black text-surface-700 uppercase tracking-widest">{tools?.length || 0} Active</span>
+                        <span className="text-[10px] font-black text-surface-500 uppercase tracking-widest">{tools?.length || 0} Active</span>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -176,25 +176,31 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
                                 <div className="absolute top-5 right-5 z-10">
                                     <button
                                         onClick={(e) => { e.stopPropagation(); setMenuOpen(menuOpen === tool.id ? null : tool.id); }}
-                                        className="p-2 text-surface-600 hover:text-heading transition-colors rounded-full hover:bg-surface-800"
+                                        className="p-2 text-surface-500 hover:text-heading transition-colors rounded-full hover:bg-surface-800"
                                     >
                                         <MoreVertical size={16} />
                                     </button>
 
                                     {menuOpen === tool.id && (
                                         <div className="absolute top-10 right-0 bg-surface-900 border border-surface-700 rounded-2xl shadow-2xl overflow-hidden w-44 animate-in fade-in zoom-in-95 duration-200 z-50">
-                                            <button onClick={() => handleRename(tool)} className="w-full text-left px-4 py-3 text-xs font-bold text-surface-400 hover:bg-primary-500/10 hover:text-primary-400 flex items-center gap-3 uppercase tracking-widest transition-colors">
-                                                <Edit3 size={14} /> Rename
-                                            </button>
+                                            {!tool.is_default && (
+                                                <button onClick={() => handleRename(tool)} className="w-full text-left px-4 py-3 text-xs font-bold text-surface-400 hover:bg-primary-500/10 hover:text-primary-400 flex items-center gap-3 uppercase tracking-widest transition-colors">
+                                                    <Edit3 size={14} /> Rename
+                                                </button>
+                                            )}
 
                                             {tool.tool_type === 'focus' ? (
                                                 <button onClick={() => handleClearData(tool)} className="w-full text-left px-4 py-3 text-xs font-bold text-amber-400/60 hover:bg-amber-500/10 hover:text-amber-400 flex items-center gap-3 uppercase tracking-widest transition-colors">
                                                     <RotateCcw size={14} /> Clear Data
                                                 </button>
-                                            ) : (
+                                            ) : !tool.is_default ? (
                                                 <button onClick={() => handleDelete(tool)} className="w-full text-left px-4 py-3 text-xs font-bold text-rose-400/60 hover:bg-rose-500/10 hover:text-rose-400 flex items-center gap-3 uppercase tracking-widest transition-colors">
                                                     <Trash2 size={14} /> Delete
                                                 </button>
+                                            ) : (
+                                                <div className="px-4 py-3 text-xs font-bold text-surface-500 flex items-center gap-3 uppercase tracking-widest">
+                                                    <Shield size={14} /> System Default
+                                                </div>
                                             )}
                                         </div>
                                     )}
@@ -233,7 +239,7 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
                                                 tool.tool_type === 'flashcard' ? 'SRS' :
                                                     tool.tool_type === 'focus' ? 'Focus' : 'Course'} Based
                                         </span>
-                                        <span className="text-[10px] text-surface-600 font-bold uppercase tracking-widest shrink-0">
+                                        <span className="text-[10px] text-surface-500 font-bold uppercase tracking-widest shrink-0">
                                             {tool.selected_exam || 'GATE'}
                                         </span>
                                         {tool.due_cards_count > 0 && (
@@ -265,7 +271,7 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
                                 <h4 className="text-surface-400 font-black uppercase tracking-tighter text-lg group-hover:text-heading transition-colors mb-1">
                                     Create New Tool
                                 </h4>
-                                <p className="text-[10px] text-surface-600 font-bold uppercase tracking-widest leading-relaxed">
+                                <p className="text-[10px] text-surface-500 font-bold uppercase tracking-widest leading-relaxed">
                                     Course • Module • Focus
                                 </p>
                             </div>
@@ -280,7 +286,7 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
                             <div className="p-2 bg-orange-500/10 rounded-lg text-orange-500 group-hover:scale-110 transition-transform"><Zap size={20} fill="currentColor" /></div>
                             <div>
                                 <h5 className="text-[10px] font-black text-surface-500 uppercase tracking-widest mb-0.5">Streak</h5>
-                                <p className="text-2xl font-black text-heading tracking-tighter italic">{user.current_streak || 0} <span className="text-xs text-surface-600 uppercase not-italic">Days</span></p>
+                                <p className="text-2xl font-black text-heading tracking-tighter italic">{user.current_streak || 0} <span className="text-xs text-surface-500 uppercase not-italic">Days</span></p>
                             </div>
                         </div>
                     </div>
@@ -289,7 +295,7 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
                             <div className="p-2 bg-emerald-500/10 rounded-lg text-emerald-500"><Calendar size={20} /></div>
                             <div>
                                 <h5 className="text-[10px] font-black text-surface-500 uppercase tracking-widest mb-0.5">Tools Active</h5>
-                                <p className="text-2xl font-black text-heading tracking-tighter italic">{tools?.length || 0} <span className="text-xs text-surface-600 uppercase not-italic">Configured</span></p>
+                                <p className="text-2xl font-black text-heading tracking-tighter italic">{tools?.length || 0} <span className="text-xs text-surface-500 uppercase not-italic">Configured</span></p>
                             </div>
                         </div>
                     </div>

@@ -15,6 +15,7 @@ router.post('/', async (req, res) => {
         const tool = await toolService.createTool(req.user.id, name.trim(), toolType, selectedExam, examId || null);
         res.status(201).json(tool);
     } catch (err) {
+        if (err.status) return res.status(err.status).json({ error: err.message });
         console.error(err);
         res.status(500).json({ error: 'Server error' });
     }
@@ -62,6 +63,7 @@ router.delete('/:id', async (req, res) => {
         if (!tool) return res.status(404).json({ error: 'Tool not found' });
         res.json({ message: 'Tool deleted', tool });
     } catch (err) {
+        if (err.status) return res.status(err.status).json({ error: err.message });
         console.error(err);
         res.status(500).json({ error: 'Server error' });
     }

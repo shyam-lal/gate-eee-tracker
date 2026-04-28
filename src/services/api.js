@@ -47,6 +47,18 @@ export const user = {
     }
 };
 
+export const onboarding = {
+    saveGoal: async (target_date, daily_available_hours) => {
+        const res = await fetch(`${API_URL}/onboarding/goal`, {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify({ target_date, daily_available_hours })
+        });
+        if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || 'Failed to save goal');
+        return res.json();
+    },
+};
+
 export const tools = {
     list: async (examId = null) => {
         const url = examId ? `${API_URL}/tools?exam_id=${examId}` : `${API_URL}/tools`;
@@ -228,6 +240,22 @@ export const flashcards = {
             body: JSON.stringify({ cards })
         });
         if (!res.ok) throw new Error('Failed to import cards');
+        return res.json();
+    },
+
+    // OFFICIAL DECKS
+    getOfficialDecks: async () => {
+        const res = await fetch(`${API_URL}/flashcards/official`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to fetch official decks');
+        return res.json();
+    },
+    importOfficialDeck: async (materialId, toolId) => {
+        const res = await fetch(`${API_URL}/flashcards/official/${materialId}/import`, {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify({ toolId })
+        });
+        if (!res.ok) throw new Error('Failed to import official deck');
         return res.json();
     },
 
@@ -847,10 +875,10 @@ export const battlePlan = {
         if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || 'Failed to start task');
         return res.json();
     },
-    completeTask: async (taskId, actualDurationMinutes) => {
+    completeTask: async (taskId, actualDurationMinutes, selfRating = null) => {
         const res = await fetch(`${API_URL}/plan/task/complete`, {
             method: 'POST', headers: getHeaders(),
-            body: JSON.stringify({ task_id: taskId, actual_duration_minutes: actualDurationMinutes })
+            body: JSON.stringify({ task_id: taskId, actual_duration_minutes: actualDurationMinutes, self_rating: selfRating })
         });
         if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || 'Failed to complete task');
         return res.json();
@@ -874,6 +902,20 @@ export const battlePlan = {
         const res = await fetch(`${API_URL}/plan/history?start=${start}&end=${end}`, { headers: getHeaders() });
         if (!res.ok) throw new Error('Failed to fetch plan history');
         return res.json();
-    }
+    },
+    getRoadmap: async () => {
+        const res = await fetch(`${API_URL}/plan/roadmap`, { headers: getHeaders() });
+        if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || 'Failed to fetch roadmap');
+        return res.json();
+    },
+    updateSettings: async ({ daily_available_hours, target_date }) => {
+        const res = await fetch(`${API_URL}/plan/settings`, {
+            method: 'PATCH', headers: getHeaders(),
+            body: JSON.stringify({ daily_available_hours, target_date })
+        });
+        if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || 'Failed to update settings');
+        return res.json();
+    },
 };
+
 

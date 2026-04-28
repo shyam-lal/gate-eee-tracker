@@ -41,3 +41,6 @@ BEGIN
         UPDATE subjects SET tool_id = new_tool_id WHERE user_id = u.user_id AND tool_id IS NULL;
     END LOOP;
 END $$;
+
+-- Add is_default column for system-provisioned tools (flashcard, etc.)
+ALTER TABLE tools ADD COLUMN IF NOT EXISTS is_default BOOLEAN DEFAULT FALSE;

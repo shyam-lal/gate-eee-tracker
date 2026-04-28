@@ -142,5 +142,8 @@ export const healLatexContent = (text) => {
         // to avoid breaking intentional newlines in rich text
         .replace(/\n(u[^a-z]|u$|abla|eq|ot|ewline|i|cap|cup|otin|e\b)/g, '\\n$1')
         // Backspace (0x08) -> was \b (e.g., \beta, \bar, \binom, \boldsymbol)
-        .replace(/\x08/g, '\\b');
+        .replace(/\x08/g, '\\b')
+        // Fix KaTeX inline delimiters escaping. AI prompts output \\( which KaTeX auto-render skips because it thinks it's escaped! We strip 1 backslash.
+        .replace(/\\\\\(/g, '\\(')
+        .replace(/\\\\\)/g, '\\)');
 };
