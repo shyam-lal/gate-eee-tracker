@@ -11,6 +11,7 @@ router.get('/status', onboardingController.getStatus);
 // Onboarding flow
 router.post('/start', onboardingController.start);
 router.post('/goal', onboardingController.saveGoal);
+router.post('/preferences', onboardingController.savePreferences);
 router.post('/assessment', onboardingController.saveAssessment);
 router.post('/complete', onboardingController.complete);
 

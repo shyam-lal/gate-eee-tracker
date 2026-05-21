@@ -56,6 +56,7 @@ const generateDailyPlan = async (userId) => {
 
     const enrollment = enrollmentRes.rows[0];
     const examId = enrollment.exam_id;
+    const preferences = enrollment.learning_preferences || {};
     const today = new Date().toISOString().split('T')[0];
 
     // 2. Check for existing plan (cache)
@@ -123,7 +124,61 @@ const generateDailyPlan = async (userId) => {
     // 7. Build carryover set (unfinished + skipped from yesterday)
     const unfinishedTopicIds = new Set(yesterdayData.unfinishedTopicIds);
 
-    // 8. Score all topics (apply time decay for accurate prioritization)
+    // 8. Filter learnPool candidates based on preferences
+    let allowedSubjectIds = null;
+    if (preferences.mode === 'SUBJECT_BY_SUBJECT' && preferences.subject_order) {
+        // Find the first subject that has NOT_STARTED or LEARNING topics
+        const subjectStatus = new Map();
+        for (const t of topics) {
+            if (!subjectStatus.has(t.subject_id)) subjectStatus.set(t.subject_id, { pending: 0 });
+            if (t.status === 'NOT_STARTED' || t.status === 'LEARNING') {
+                subjectStatus.get(t.subject_id).pending++;
+            }
+        }
+        for (const subjId of preferences.subject_order) {
+            if (subjectStatus.has(subjId) && subjectStatus.get(subjId).pending > 0) {
+                allowedSubjectIds = new Set([subjId]);
+                break;
+            }
+        }
+    } else if (preferences.mode === 'PARALLEL' && preferences.subject_order) {
+        // Find top N subjects that have pending topics
+        const limit = preferences.parallel_limit || 2;
+        allowedSubjectIds = new Set();
+        const subjectStatus = new Map();
+        for (const t of topics) {
+            if (!subjectStatus.has(t.subject_id)) subjectStatus.set(t.subject_id, { pending: 0 });
+            if (t.status === 'NOT_STARTED' || t.status === 'LEARNING') {
+                subjectStatus.get(t.subject_id).pending++;
+            }
+        }
+        for (const subjId of preferences.subject_order) {
+            if (subjectStatus.has(subjId) && subjectStatus.get(subjId).pending > 0) {
+                allowedSubjectIds.add(subjId);
+                if (allowedSubjectIds.size >= limit) break;
+            }
+        }
+    }
+
+    // Identify unmet prerequisites
+    const topicStatusMap = new Map(topics.map(t => [t.topic_id, t.status]));
+    const prerequisiteBoosts = new Map(); // prereq_topic_id -> array of dependent topic names
+
+    for (const t of topics) {
+        t.unmet_prerequisites = [];
+        if (t.prerequisites && t.prerequisites.length > 0) {
+            for (const reqId of t.prerequisites) {
+                const reqStatus = topicStatusMap.get(reqId);
+                if (reqStatus === 'NOT_STARTED' || reqStatus === 'LEARNING') {
+                    t.unmet_prerequisites.push(reqId);
+                    if (!prerequisiteBoosts.has(reqId)) prerequisiteBoosts.set(reqId, []);
+                    prerequisiteBoosts.get(reqId).push(t.topic_name);
+                }
+            }
+        }
+    }
+
+    // 9. Score all topics (apply time decay for accurate prioritization)
     const { computeTimeDecay } = require('./taskService');
     const scoredTopics = topics.map(t => {
         const rawConfidence = parseInt(t.confidence);
@@ -140,12 +195,34 @@ const generateDailyPlan = async (userId) => {
         const urgencyFactor = Math.min(1.0, (1 - completionRatio) * (90 / daysRemaining));
         const carryoverBoost = unfinishedTopicIds.has(t.topic_id) ? CARRYOVER_BOOST : 0;
 
-        const priorityScore =
-            (weightageNorm * 0.4) +
-            (difficultyNorm * 0.2) +
-            ((1 - confidenceNorm) * 0.3) +
-            (urgencyFactor * 0.1) +
-            carryoverBoost;
+        // Prerequisite penalty and boost
+        let priorityScore = 0;
+        let isStrictlyBlocked = false;
+
+        if (t.unmet_prerequisites.length > 0) {
+            isStrictlyBlocked = true; // Blocked until prerequisites are met
+        } else {
+            priorityScore =
+                (weightageNorm * 0.4) +
+                (difficultyNorm * 0.2) +
+                ((1 - confidenceNorm) * 0.3) +
+                (urgencyFactor * 0.1) +
+                carryoverBoost;
+        }
+
+        // Boost if this topic is a prerequisite for something else
+        const dependents = prerequisiteBoosts.get(t.topic_id);
+        if (dependents && dependents.length > 0) {
+            priorityScore += 0.5; // Significant boost
+        }
+
+        // Apply subject preferences (for LEARN pool only)
+        let isSubjectBlocked = false;
+        if (allowedSubjectIds && (t.status === 'NOT_STARTED' || t.status === 'LEARNING')) {
+            if (!allowedSubjectIds.has(t.subject_id)) {
+                isSubjectBlocked = true;
+            }
+        }
 
         return {
             ...t,
@@ -156,15 +233,24 @@ const generateDailyPlan = async (userId) => {
             urgency_factor: urgencyFactor,
             carryover: unfinishedTopicIds.has(t.topic_id),
             priority_score: Math.round(priorityScore * 1000) / 1000,
+            is_strictly_blocked: isStrictlyBlocked,
+            is_subject_blocked: isSubjectBlocked,
+            prerequisite_for: dependents || [],
         };
     });
 
-    // 9. Sort by priority DESC
+    // 10. Sort by priority DESC
     scoredTopics.sort((a, b) => b.priority_score - a.priority_score);
 
-    // 10. Separate pools
-    const learnPool = scoredTopics.filter(t => t.status === 'NOT_STARTED' || t.status === 'LEARNING');
-    const revisePool = scoredTopics.filter(t => t.status === 'REVISING' || t.status === 'MASTERED');
+    // 11. Separate pools
+    const learnPool = scoredTopics.filter(t => 
+        (t.status === 'NOT_STARTED' || t.status === 'LEARNING') && 
+        !t.is_strictly_blocked && 
+        !t.is_subject_blocked
+    );
+    const revisePool = scoredTopics.filter(t => 
+        (t.status === 'REVISING' || t.status === 'MASTERED')
+    );
 
     // 11. Compute daily minutes
     let baseDailyMinutes = (parseFloat(enrollment.daily_available_hours) || 2) * 60;
@@ -337,9 +423,11 @@ function guaranteeEasyTask(tasks, scoredTopics, isBufferDay) {
     const easyCandidate = scoredTopics.find(t =>
         t.difficulty_level_raw <= 2 &&
         !taskTopicIds.has(t.topic_id) &&
+        !t.is_strictly_blocked &&
+        !t.is_subject_blocked &&
         (statusFilter === null || t.status === statusFilter || t.status === 'MASTERED')
     ) || scoredTopics.find(t =>
-        t.difficulty_level_raw <= 2 && !taskTopicIds.has(t.topic_id)
+        t.difficulty_level_raw <= 2 && !taskTopicIds.has(t.topic_id) && !t.is_strictly_blocked && !t.is_subject_blocked
     );
 
     if (!easyCandidate) return tasks;
@@ -705,6 +793,9 @@ const getTodayPlanRaw = async (userId) => {
 
 function computeTaskReasons(topic) {
     const reasons = [];
+    if (topic.prerequisite_for && topic.prerequisite_for.length > 0) {
+        reasons.push('PREREQUISITE');
+    }
     if (topic.carryover) reasons.push('CARRYOVER');
     if (topic.weightage_norm > 0.7) reasons.push('HIGH_WEIGHTAGE');
     if (topic.confidence_norm < 0.3) reasons.push('LOW_CONFIDENCE');

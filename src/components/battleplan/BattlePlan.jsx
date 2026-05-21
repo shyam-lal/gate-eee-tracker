@@ -8,6 +8,8 @@ import MissionView from './MissionView';
 import CompletionFeedback from './CompletionFeedback';
 import RoadmapDrawer from './RoadmapDrawer';
 import SettingsPanel from './SettingsPanel';
+import BattlePlanSetup from './BattlePlanSetup';
+import { onboarding as onboardingApi } from '../../services/api';
 
 /**
  * BattlePlan v2 — Orchestrator
@@ -35,6 +37,10 @@ const BattlePlan = ({ onBack }) => {
     const [completeModal, setCompleteModal] = useState(null); // task object
     const [actualMinutes, setActualMinutes] = useState('');
 
+    // Setup
+    const [needsSetup, setNeedsSetup] = useState(false);
+    const [subjects, setSubjects] = useState([]);
+
     // ─── Data Loading ───
     useEffect(() => {
         loadPlan();
@@ -45,6 +51,15 @@ const BattlePlan = ({ onBack }) => {
         setLoading(true);
         setError(null);
         try {
+            // Check if setup is needed
+            const status = await onboardingApi.getStatus();
+            if (status.enrollment && (!status.enrollment.learning_preferences || !status.enrollment.learning_preferences.mode)) {
+                setNeedsSetup(true);
+                // Also fetch subjects for the setup screen from syllabus
+                // Wait, BattlePlan's roadmap might have it, but we need it before roadmap
+                // Actually, syllabus api can fetch it, or exams.getSyllabus
+            }
+
             const data = await api.getToday();
             setPlan(data);
         } catch (err) {
@@ -58,6 +73,7 @@ const BattlePlan = ({ onBack }) => {
         try {
             const data = await api.getRoadmap();
             setRoadmap(data);
+            if (data.subjects) setSubjects(data.subjects);
         } catch (err) {
             console.warn('Failed to load roadmap:', err.message);
             // Non-blocking — roadmap data is supplementary
@@ -135,6 +151,11 @@ const BattlePlan = ({ onBack }) => {
 
     const handleRegenerateFromSettings = async () => {
         setShowSettings(false);
+        await handleRegenerate();
+    };
+
+    const handleSetupComplete = async () => {
+        setNeedsSetup(false);
         await handleRegenerate();
     };
 
@@ -241,6 +262,14 @@ const BattlePlan = ({ onBack }) => {
                     onConfirm={submitComplete}
                     onCancel={() => setCompleteModal(null)}
                     isLoading={actionLoading === completeModal.id}
+                />
+            )}
+
+            {/* Setup flow if needed */}
+            {needsSetup && (
+                <BattlePlanSetup
+                    subjects={subjects}
+                    onComplete={handleSetupComplete}
                 />
             )}
         </div>

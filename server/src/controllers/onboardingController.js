@@ -62,6 +62,29 @@ const saveGoal = async (req, res) => {
 };
 
 /**
+ * POST /onboarding/preferences
+ * Body: { mode, subject_order, parallel_limit }
+ */
+const savePreferences = async (req, res) => {
+    try {
+        const preferences = req.body;
+
+        if (!preferences.mode) {
+            return res.status(400).json({ error: 'mode is required (e.g. SUBJECT_BY_SUBJECT or PARALLEL)' });
+        }
+
+        const enrollment = await onboardingService.savePreferences(req.user.id, preferences);
+        res.json({ enrollment });
+    } catch (err) {
+        console.error('Error saving preferences:', err);
+        if (err.message.includes('No active enrollment')) {
+            return res.status(400).json({ error: err.message });
+        }
+        res.status(500).json({ error: 'Failed to save preferences' });
+    }
+};
+
+/**
  * POST /onboarding/assessment
  * Body: { subject_id, confidence }
  */
@@ -107,6 +130,7 @@ module.exports = {
     getStatus,
     start,
     saveGoal,
+    savePreferences,
     saveAssessment,
     complete,
 };

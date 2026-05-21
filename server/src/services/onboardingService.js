@@ -165,6 +165,26 @@ const saveGoal = async (userId, { target_date, daily_available_hours }) => {
 };
 
 /**
+ * POST /onboarding/preferences
+ * Saves learning preferences (mode, subject_order) for battle planner.
+ */
+const savePreferences = async (userId, preferences) => {
+    const res = await pool.query(
+        `UPDATE user_enrollments SET
+            learning_preferences = $1
+         WHERE user_id = $2 AND is_active = TRUE
+         RETURNING *`,
+        [JSON.stringify(preferences), userId]
+    );
+
+    if (!res.rows.length) {
+        throw new Error('No active enrollment found. Start onboarding first.');
+    }
+
+    return res.rows[0];
+};
+
+/**
  * POST /onboarding/assessment
  * Maps subject-level confidence → all topics under that subject.
  * Initializes UserTopicState for each topic.
@@ -314,6 +334,7 @@ module.exports = {
     getOnboardingStatus,
     startOnboarding,
     saveGoal,
+    savePreferences,
     saveSubjectAssessment,
     completeOnboarding,
 };

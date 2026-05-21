@@ -48,6 +48,11 @@ export const user = {
 };
 
 export const onboarding = {
+    getStatus: async () => {
+        const res = await fetch(`${API_URL}/onboarding/status`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to fetch onboarding status');
+        return res.json();
+    },
     saveGoal: async (target_date, daily_available_hours) => {
         const res = await fetch(`${API_URL}/onboarding/goal`, {
             method: 'POST',
@@ -55,6 +60,15 @@ export const onboarding = {
             body: JSON.stringify({ target_date, daily_available_hours })
         });
         if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || 'Failed to save goal');
+        return res.json();
+    },
+    savePreferences: async (preferences) => {
+        const res = await fetch(`${API_URL}/onboarding/preferences`, {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify(preferences)
+        });
+        if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || 'Failed to save preferences');
         return res.json();
     },
 };
