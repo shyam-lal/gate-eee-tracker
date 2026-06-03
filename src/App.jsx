@@ -182,6 +182,24 @@ function App() {
   };
 
   useEffect(() => {
+    const fetchFreshUser = async () => {
+      const token = localStorage.getItem('token');
+      if (token && user) {
+        try {
+          const freshUser = await userApi.me();
+          localStorage.setItem('user', JSON.stringify(freshUser));
+          if (JSON.stringify(freshUser) !== JSON.stringify(user)) {
+            setUser(freshUser);
+          }
+        } catch (err) {
+          console.error("Failed to fetch fresh user data", err);
+        }
+      }
+    };
+    fetchFreshUser();
+  }, []);
+
+  useEffect(() => {
     if (user) {
       loadTools();
       loadUserStreak();
@@ -941,11 +959,11 @@ function App() {
 
           {/* MAIN TOOL VIEW */}
           {activeTool?.tool_type === 'flashcard' ? (
-            <FlashcardDashboard tool={activeTool} />
+            <FlashcardDashboard tool={activeTool} user={user} />
           ) : activeTool?.tool_type === 'focus' ? (
             <FocusTool tool={activeTool} />
           ) : activeTool?.tool_type === 'revision' ? (
-            <RevisionDashboard tool={activeTool} />
+            <RevisionDashboard tool={activeTool} user={user} />
           ) : (
             <>
               {/* SYLLABUS GRID */}

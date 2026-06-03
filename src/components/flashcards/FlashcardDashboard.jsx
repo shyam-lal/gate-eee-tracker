@@ -6,7 +6,7 @@ import OfficialDecks from './OfficialDecks';
 import CardEditor from './CardEditor';
 import StudySession from './StudySession';
 
-const FlashcardDashboard = ({ tool }) => {
+const FlashcardDashboard = ({ tool, user }) => {
     // view can be 'decks', 'manage_cards', 'study'
     const [view, setView] = useState('decks');
     const [activeTab, setActiveTab] = useState('official'); // 'official', 'personal'
@@ -72,7 +72,7 @@ const FlashcardDashboard = ({ tool }) => {
                         </div>
                     </div>
                     <div className="bg-surface-900/60 backdrop-blur-xl border border-white/5 rounded-[2rem] overflow-hidden">
-                        <CardEditor deckId={activeDeck.id} />
+                        <CardEditor deckId={activeDeck.id} user={user} />
                     </div>
                 </div>
             )}

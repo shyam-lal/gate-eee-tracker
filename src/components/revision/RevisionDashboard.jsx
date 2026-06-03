@@ -6,7 +6,7 @@ import QuestionBank from './QuestionBank';
 import TestEngine from './TestEngine';
 import TestResults from './TestResults';
 
-const RevisionDashboard = ({ tool }) => {
+const RevisionDashboard = ({ tool, user }) => {
     const [sets, setSets] = useState([]);
     const [loading, setLoading] = useState(true);
     const [view, setView] = useState('list'); // 'list', 'create', 'questions', 'test', 'results'
@@ -88,12 +88,14 @@ const RevisionDashboard = ({ tool }) => {
                     </h1>
                     <p className="text-xs text-surface-500 font-bold uppercase tracking-widest mt-1">Generate • Review • Test • Improve</p>
                 </div>
-                <button
-                    onClick={() => setView('create')}
-                    className="flex items-center gap-2 px-6 py-3 bg-amber-500 text-black rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-amber-400 transition-all shadow-lg shadow-amber-500/20"
-                >
-                    <Plus size={16} /> New Revision Set
-                </button>
+                {user?.effective_ai_mode !== 'disabled' && (
+                    <button
+                        onClick={() => setView('create')}
+                        className="flex items-center gap-2 px-6 py-3 bg-amber-500 text-black rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-amber-400 transition-all shadow-lg shadow-amber-500/20"
+                    >
+                        <Plus size={16} /> New Revision Set
+                    </button>
+                )}
             </div>
 
             {loading ? (

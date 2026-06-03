@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { Bot, Copy, CheckCircle2, AlertTriangle, FileJson, Loader2, ArrowRight } from 'lucide-react';
+import { Bot, Copy, CheckCircle2, AlertTriangle, FileJson, Loader2, ArrowRight, Sparkles } from 'lucide-react';
 import { flashcards as flashcardsApi } from '../../services/api';
 import { parseAIJson } from '../../utils/jsonUtils';
 
-const AIGenerator = ({ deckId, onImportComplete, onCancel }) => {
+const AIGenerator = ({ deckId, mode, onImportComplete, onCancel }) => {
     const [topic, setTopic] = useState('');
     const [count, setCount] = useState(10);
     const [prompt, setPrompt] = useState('');
     const [loadingPrompt, setLoadingPrompt] = useState(false);
+    const [generatingAuto, setGeneratingAuto] = useState(false);
     const [copied, setCopied] = useState(false);
 
     const [jsonInput, setJsonInput] = useState('');
@@ -15,9 +16,26 @@ const AIGenerator = ({ deckId, onImportComplete, onCancel }) => {
     const [importError, setImportError] = useState('');
     const [previewCards, setPreviewCards] = useState([]);
 
+    const isAuto = mode === 'auto';
+
     const handleGeneratePrompt = async (e) => {
         e.preventDefault();
         if (!topic.trim()) return;
+        
+        if (isAuto) {
+            setGeneratingAuto(true);
+            setImportError('');
+            try {
+                await flashcardsApi.generateCards(deckId, topic.trim(), Math.min(count, 10));
+                onImportComplete();
+            } catch (err) {
+                setImportError(err.message || 'Failed to auto-generate cards');
+            } finally {
+                setGeneratingAuto(false);
+            }
+            return;
+        }
+
         setLoadingPrompt(true);
         try {
             const res = await flashcardsApi.getPrompt(topic.trim(), count);
@@ -85,10 +103,14 @@ const AIGenerator = ({ deckId, onImportComplete, onCancel }) => {
                 <button onClick={onCancel} className="text-sm font-bold text-surface-500 hover:text-heading transition-colors">Close</button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* Step 1: Generate Prompt */}
+            <div className={`grid grid-cols-1 ${!isAuto ? 'md:grid-cols-2' : 'max-w-xl mx-auto'} gap-8`}>
+                {/* Step 1: Generate Prompt or Auto Generate */}
                 <div className="space-y-4">
-                    <h4 className="flex items-center gap-2 text-sm font-black text-primary-400 uppercase tracking-widest"><span className="bg-primary-500/20 text-primary-300 w-5 h-5 rounded-full flex items-center justify-center text-[10px]">1</span> Get Prompt</h4>
+                    {!isAuto ? (
+                        <h4 className="flex items-center gap-2 text-sm font-black text-primary-400 uppercase tracking-widest"><span className="bg-primary-500/20 text-primary-300 w-5 h-5 rounded-full flex items-center justify-center text-[10px]">1</span> Get Prompt</h4>
+                    ) : (
+                        <h4 className="flex items-center gap-2 text-sm font-black text-primary-400 uppercase tracking-widest"><Sparkles size={16} /> Auto Generate Cards</h4>
+                    )}
                     <form onSubmit={handleGeneratePrompt} className="space-y-3">
                         <div>
                             <label className="block text-[10px] font-black text-surface-500 uppercase tracking-widest mb-1.5 ml-1">Topic / Syllabus Link</label>
@@ -107,25 +129,43 @@ const AIGenerator = ({ deckId, onImportComplete, onCancel }) => {
                                 <input
                                     type="number"
                                     min="1"
-                                    max="50"
+                                    max={isAuto ? 10 : 50}
                                     value={count}
-                                    onChange={(e) => setCount(parseInt(e.target.value))}
+                                    onChange={(e) => {
+                                        let val = parseInt(e.target.value) || 1;
+                                        if (isAuto && val > 10) val = 10;
+                                        setCount(val);
+                                    }}
                                     className="w-full bg-surface-950 border border-surface-800 rounded-xl px-4 py-3 text-heading font-medium text-sm focus:border-primary-500 outline-none"
                                 />
                             </div>
                             <div className="flex items-end">
                                 <button
                                     type="submit"
-                                    disabled={loadingPrompt || !topic.trim()}
+                                    disabled={loadingPrompt || generatingAuto || !topic.trim()}
                                     className="h-[46px] px-6 bg-primary-600 disabled:bg-surface-800 text-white disabled:text-surface-500 rounded-xl font-bold text-sm tracking-wide hover:bg-primary-500 transition-colors shadow-lg shadow-primary-600/20 disabled:shadow-none flex items-center gap-2"
                                 >
-                                    {loadingPrompt ? <Loader2 size={16} className="animate-spin" /> : 'Generate'}
+                                    {(loadingPrompt || generatingAuto) ? <Loader2 size={16} className="animate-spin" /> : 'Generate'}
                                 </button>
                             </div>
                         </div>
                     </form>
 
-                    {prompt && (
+                    {isAuto && importError && (
+                        <div className="mt-4 flex items-center gap-2 text-xs font-bold text-rose-400 bg-rose-500/10 p-3 rounded-lg border border-rose-500/20">
+                            <AlertTriangle size={14} /> {importError}
+                        </div>
+                    )}
+
+                    {generatingAuto && (
+                        <div className="mt-6 flex flex-col items-center justify-center p-8 bg-surface-950 border border-primary-500/20 rounded-2xl animate-pulse">
+                            <Bot size={40} className="text-primary-400 mb-4 animate-bounce" />
+                            <h4 className="text-sm font-black text-heading mb-1 uppercase tracking-widest">Generating Flashcards</h4>
+                            <p className="text-xs text-surface-400 font-medium text-center">AI is analyzing the topic and creating high-quality questions for you. This might take a few seconds...</p>
+                        </div>
+                    )}
+
+                    {!isAuto && prompt && (
                         <div className="mt-4 bg-surface-950 border border-surface-800 rounded-xl overflow-hidden relative group animate-in slide-in-from-top-2">
                             <div className="absolute top-2 right-2">
                                 <button
@@ -144,44 +184,46 @@ const AIGenerator = ({ deckId, onImportComplete, onCancel }) => {
                 </div>
 
                 {/* Step 2: Paste JSON */}
-                <div className="space-y-4 border-t md:border-t-0 md:border-l border-surface-800 pt-6 md:pt-0 md:pl-8">
-                    <h4 className="flex items-center gap-2 text-sm font-black text-emerald-400 uppercase tracking-widest"><span className="bg-emerald-500/20 text-emerald-300 w-5 h-5 rounded-full flex items-center justify-center text-[10px]">2</span> Paste Response</h4>
-                    <p className="text-xs text-surface-500 font-medium">Copy the generated prompt, paste it into ChatGPT or Gemini, and paste the returned JSON below.</p>
+                {!isAuto && (
+                    <div className="space-y-4 border-t md:border-t-0 md:border-l border-surface-800 pt-6 md:pt-0 md:pl-8">
+                        <h4 className="flex items-center gap-2 text-sm font-black text-emerald-400 uppercase tracking-widest"><span className="bg-emerald-500/20 text-emerald-300 w-5 h-5 rounded-full flex items-center justify-center text-[10px]">2</span> Paste Response</h4>
+                        <p className="text-xs text-surface-500 font-medium">Copy the generated prompt, paste it into ChatGPT or Gemini, and paste the returned JSON below.</p>
 
-                    <div>
-                        <textarea
-                            value={jsonInput}
-                            onChange={handleJsonChange}
-                            placeholder='{"flashcards": [...]}'
-                            className="w-full h-40 bg-surface-950 border border-surface-800 rounded-xl p-4 text-emerald-400 font-mono text-xs focus:border-emerald-500 outline-none resize-none"
-                        />
-                    </div>
-
-                    {importError && (
-                        <div className="flex items-center gap-2 text-xs font-bold text-rose-400 bg-rose-500/10 p-3 rounded-lg border border-rose-500/20">
-                            <AlertTriangle size={14} /> {importError}
+                        <div>
+                            <textarea
+                                value={jsonInput}
+                                onChange={handleJsonChange}
+                                placeholder='{"flashcards": [...]}'
+                                className="w-full h-40 bg-surface-950 border border-surface-800 rounded-xl p-4 text-emerald-400 font-mono text-xs focus:border-emerald-500 outline-none resize-none"
+                            />
                         </div>
-                    )}
 
-                    {previewCards.length > 0 && !importError && (
-                        <div className="flex items-center justify-between bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-xl">
-                            <div className="flex items-center gap-3 text-emerald-400">
-                                <FileJson size={20} />
-                                <div>
-                                    <p className="text-sm font-black">Valid JSON Detected</p>
-                                    <p className="text-xs font-medium opacity-80">{previewCards.length} flashcards ready to import</p>
-                                </div>
+                        {importError && (
+                            <div className="flex items-center gap-2 text-xs font-bold text-rose-400 bg-rose-500/10 p-3 rounded-lg border border-rose-500/20">
+                                <AlertTriangle size={14} /> {importError}
                             </div>
-                            <button
-                                onClick={handleImport}
-                                disabled={importLoading}
-                                className="px-5 py-2.5 bg-emerald-600 text-white rounded-xl font-bold text-sm tracking-wide hover:bg-emerald-500 transition-colors shadow-lg shadow-emerald-600/20 disabled:shadow-none flex items-center gap-2"
-                            >
-                                {importLoading ? <Loader2 size={16} className="animate-spin" /> : 'Import Cards'} <ArrowRight size={16} />
-                            </button>
-                        </div>
-                    )}
-                </div>
+                        )}
+
+                        {previewCards.length > 0 && !importError && (
+                            <div className="flex items-center justify-between bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-xl">
+                                <div className="flex items-center gap-3 text-emerald-400">
+                                    <FileJson size={20} />
+                                    <div>
+                                        <p className="text-sm font-black">Valid JSON Detected</p>
+                                        <p className="text-xs font-medium opacity-80">{previewCards.length} flashcards ready to import</p>
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={handleImport}
+                                    disabled={importLoading}
+                                    className="px-5 py-2.5 bg-emerald-600 text-white rounded-xl font-bold text-sm tracking-wide hover:bg-emerald-500 transition-colors shadow-lg shadow-emerald-600/20 disabled:shadow-none flex items-center gap-2"
+                                >
+                                    {importLoading ? <Loader2 size={16} className="animate-spin" /> : 'Import Cards'} <ArrowRight size={16} />
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     );

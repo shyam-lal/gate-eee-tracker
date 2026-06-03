@@ -57,7 +57,7 @@ const COMPACT_MODULES = {
 
 const FORMATS = ['bold', 'italic', 'underline', 'color', 'list', 'code-block'];
 
-const CardEditor = ({ deckId }) => {
+const CardEditor = ({ deckId, user }) => {
     const [cards, setCards] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showAIGenerator, setShowAIGenerator] = useState(false);
@@ -263,19 +263,22 @@ const CardEditor = ({ deckId }) => {
             <div className="bg-surface-900 border-b border-surface-800 p-6 flex-shrink-0 flex flex-col gap-4 z-20 shadow-md">
                 <div className="flex items-center justify-between">
                     <h3 className="text-xl font-black text-heading px-2">Deck Details</h3>
-                    <button
-                        onClick={() => setShowAIGenerator(!showAIGenerator)}
-                        className={`px-4 py-2 rounded-xl font-bold text-xs uppercase tracking-widest flex items-center gap-2 transition-all shadow-lg ${showAIGenerator ? 'bg-surface-800 text-surface-400 hover:text-white' : 'bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500 hover:text-white hover:border-emerald-500'}`}
-                    >
-                        {showAIGenerator ? <X size={14} /> : <Bot size={14} />}
-                        {showAIGenerator ? 'Close AI' : 'AI Generate'}
-                    </button>
+                    {user?.effective_ai_mode !== 'disabled' && (
+                        <button
+                            onClick={() => setShowAIGenerator(!showAIGenerator)}
+                            className={`px-4 py-2 rounded-xl font-bold text-xs uppercase tracking-widest flex items-center gap-2 transition-all shadow-lg ${showAIGenerator ? 'bg-surface-800 text-surface-400 hover:text-white' : 'bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500 hover:text-white hover:border-emerald-500'}`}
+                        >
+                            {showAIGenerator ? <X size={14} /> : <Bot size={14} />}
+                            {showAIGenerator ? 'Close AI' : 'AI Generate'}
+                        </button>
+                    )}
                 </div>
 
                 {showAIGenerator && (
                     <div className="pt-2">
                         <AIGenerator
                             deckId={deckId}
+                            mode={user?.effective_ai_mode}
                             onImportComplete={handleImportComplete}
                             onCancel={() => setShowAIGenerator(false)}
                         />

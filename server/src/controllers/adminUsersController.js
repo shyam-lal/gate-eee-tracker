@@ -9,7 +9,7 @@ const adminUsersController = {
 
             let query = `
                 SELECT 
-                    u.id, u.username, u.email, u.role, u.created_at,
+                    u.id, u.username, u.email, u.role, u.created_at, u.ai_generation_mode,
                     COALESCE(s.name, 'Free') as subscription_tier,
                     us.status as subscription_status,
                     us.end_date as subscription_end_date
@@ -71,7 +71,7 @@ const adminUsersController = {
 
             // Basic details
             const userRes = await pool.query(
-                `SELECT id, username, email, role, created_at FROM users WHERE id = $1`,
+                `SELECT id, username, email, role, created_at, ai_generation_mode FROM users WHERE id = $1`,
                 [id]
             );
             if (userRes.rowCount === 0) return res.status(404).json({ error: 'User not found' });
@@ -150,6 +150,62 @@ const adminUsersController = {
             res.status(500).json({ error: 'Failed to update user subscription' });
         } finally {
             client.release();
+        }
+    },
+
+    // Get Global Settings
+    getGlobalSettings: async (req, res) => {
+        try {
+            const result = await pool.query('SELECT key, value FROM global_settings');
+            const settings = {};
+            result.rows.forEach(row => {
+                settings[row.key] = row.value;
+            });
+            res.json(settings);
+        } catch (err) {
+            console.error('Error fetching global settings:', err);
+            res.status(500).json({ error: 'Failed to fetch settings' });
+        }
+    },
+
+    // Update a Global Setting
+    updateGlobalSetting: async (req, res) => {
+        try {
+            const { key } = req.params;
+            const { value } = req.body;
+
+            await pool.query(
+                `INSERT INTO global_settings (key, value, updated_at) 
+                 VALUES ($1, $2, CURRENT_TIMESTAMP)
+                 ON CONFLICT (key) DO UPDATE SET value = $2, updated_at = CURRENT_TIMESTAMP`,
+                [key, JSON.stringify(value)]
+            );
+            res.json({ message: 'Setting updated successfully', key, value });
+        } catch (err) {
+            console.error('Error updating global setting:', err);
+            res.status(500).json({ error: 'Failed to update setting' });
+        }
+    },
+
+    // Update User AI Mode
+    updateUserAiMode: async (req, res) => {
+        try {
+            const { id } = req.params;
+            const { mode } = req.body; // 'global', 'disabled', 'manual', 'auto'
+            
+            const validModes = ['global', 'disabled', 'manual', 'auto'];
+            if (!validModes.includes(mode)) {
+                return res.status(400).json({ error: 'Invalid mode' });
+            }
+
+            await pool.query(
+                `UPDATE users SET ai_generation_mode = $1 WHERE id = $2`,
+                [mode, id]
+            );
+            res.json({ message: 'User AI generation mode updated successfully', mode });
+        } catch (err) {
+            console.error('Error updating user ai mode:', err);
+            res.status(500).json({ error: 'Failed to update user ai mode' });
         }
     }
 };

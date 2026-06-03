@@ -1,5 +1,6 @@
 const userService = require('../services/userService');
 const toolService = require('../services/toolService');
+const aiConfigService = require('../services/aiConfigService');
 const jwt = require('jsonwebtoken');
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '../../.env') });
@@ -34,6 +35,8 @@ const register = async (req, res) => {
             { expiresIn: '7d' }
         );
 
+        const effectiveAiMode = await aiConfigService.getEffectiveAiMode(user.id);
+
         res.status(201).json({
             message: 'User registered successfully',
             user: {
@@ -46,6 +49,7 @@ const register = async (req, res) => {
                 role: user.role || 'user',
                 active_exam_id: user.active_exam_id || null,
                 onboarding_completed: user.onboarding_completed || false,
+                effective_ai_mode: effectiveAiMode,
             },
             token
         });
@@ -77,6 +81,9 @@ const login = async (req, res) => {
             process.env.JWT_SECRET,
             { expiresIn: '7d' }
         );
+
+        const effectiveAiMode = await aiConfigService.getEffectiveAiMode(user.id);
+
         res.json({
             message: 'Login successful',
             user: {
@@ -89,6 +96,7 @@ const login = async (req, res) => {
                 role: user.role || 'user',
                 active_exam_id: user.active_exam_id || null,
                 onboarding_completed: user.onboarding_completed || false,
+                effective_ai_mode: effectiveAiMode,
             },
             token
         });

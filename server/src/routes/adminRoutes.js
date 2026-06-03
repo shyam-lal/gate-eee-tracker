@@ -11,8 +11,13 @@ router.use(authenticateToken, adminAuth);
 router.get('/users', adminUsersController.getAllUsers);
 router.get('/users/:id', adminUsersController.getUserDetails);
 router.put('/users/:id/subscription', adminUsersController.updateUserSubscription);
+router.put('/users/:id/ai-mode', adminUsersController.updateUserAiMode);
 
 // Plans Management
 router.get('/plans', adminUsersController.getPlans);
+
+// Global Settings Management
+router.get('/settings', adminUsersController.getGlobalSettings);
+router.put('/settings/:key', adminUsersController.updateGlobalSetting);
 
 module.exports = router;

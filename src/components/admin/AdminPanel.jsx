@@ -6,9 +6,10 @@ import {
     Upload, Eye, EyeOff, AlertTriangle, FileUp, CheckCircle, Loader2, Users
 } from 'lucide-react';
 import AdminUsers from './AdminUsers';
+import AdminSettings from './AdminSettings';
 
 const AdminPanel = ({ user, onBack }) => {
-    const [mainTab, setMainTab] = useState('exams'); // 'exams', 'users'
+    const [mainTab, setMainTab] = useState('exams'); // 'exams', 'users', 'settings'
     const [tab, setTab] = useState('exams'); // 'syllabus', 'materials'
     const [categories, setCategories] = useState([]);
     const [examsList, setExamsList] = useState([]);
@@ -346,6 +347,16 @@ const AdminPanel = ({ user, onBack }) => {
                             >
                                 <Users size={14} className="inline mr-1.5 mb-0.5" /> Users
                             </button>
+                            <button 
+                                onClick={() => setMainTab('settings')}
+                                className={`px-4 py-1.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${
+                                    mainTab === 'settings' 
+                                        ? 'bg-primary-500 text-white shadow-md' 
+                                        : 'text-surface-500 hover:text-heading hover:bg-surface-800'
+                                }`}
+                            >
+                                <Settings size={14} className="inline mr-1.5 mb-0.5" /> Settings
+                            </button>
                         </div>
 
                         <div className="hidden sm:flex items-center gap-2 bg-emerald-500/10 px-4 py-2 rounded-xl border border-emerald-500/20">
@@ -359,6 +370,8 @@ const AdminPanel = ({ user, onBack }) => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
                 {mainTab === 'users' ? (
                     <AdminUsers />
+                ) : mainTab === 'settings' ? (
+                    <AdminSettings />
                 ) : (
                 <div className="flex flex-col lg:flex-row gap-6">
                     {/* ─── Sidebar: Exam List ──────────────── */}

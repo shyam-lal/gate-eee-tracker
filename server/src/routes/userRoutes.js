@@ -2,13 +2,15 @@ const express = require('express');
 const router = express.Router();
 const userService = require('../services/userService');
 const authenticateToken = require('../middleware/authMiddleware');
+const aiConfigService = require('../services/aiConfigService');
 
 router.use(authenticateToken);
 
 router.get('/me', async (req, res) => {
     try {
         const user = await userService.findUserById(req.user.id);
-        res.json(user);
+        const effectiveAiMode = await aiConfigService.getEffectiveAiMode(req.user.id);
+        res.json({ ...user, effective_ai_mode: effectiveAiMode });
     } catch (err) {
         res.status(500).json({ error: 'Server error' });
     }

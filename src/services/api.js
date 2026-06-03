@@ -247,6 +247,18 @@ export const flashcards = {
         if (!res.ok) throw new Error('Failed to fetch prompt');
         return res.json();
     },
+    generateCards: async (deckId, topic, count) => {
+        const res = await fetch(`${API_URL}/flashcards/decks/${deckId}/generate`, {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify({ topic, count })
+        });
+        if (!res.ok) {
+            const errBody = await res.json().catch(() => ({}));
+            throw new Error(errBody.error || 'Failed to auto-generate cards');
+        }
+        return res.json();
+    },
     importCards: async (deckId, cards) => {
         const res = await fetch(`${API_URL}/flashcards/decks/${deckId}/import`, {
             method: 'POST',
@@ -834,6 +846,42 @@ export const adminUsers = {
         });
         if (!res.ok) throw new Error('Failed to update subscription');
         return res.json();
+    },
+    updateAiMode: async (userId, aiGenerationMode) => {
+        const res = await fetch(`${API_URL}/admin/users/${userId}/ai-mode`, {
+            method: 'PUT',
+            headers: getHeaders(),
+            body: JSON.stringify({ mode: aiGenerationMode })
+        });
+        if (!res.ok) throw new Error('Failed to update AI mode');
+        return res.json();
+    }
+};
+
+// ═══════════════════════════════════════════════════
+// Admin Settings API
+// ═══════════════════════════════════════════════════
+export const adminSettings = {
+    getGlobalSettings: async () => {
+        const res = await fetch(`${API_URL}/admin/settings`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to fetch global settings');
+        return res.json();
+    },
+    updateGlobalSettings: async (settings) => {
+        const promises = Object.entries(settings).map(([key, value]) => 
+            fetch(`${API_URL}/admin/settings/${key}`, {
+                method: 'PUT',
+                headers: getHeaders(),
+                body: JSON.stringify({ value })
+            }).then(async res => {
+                if (!res.ok) {
+                    const err = await res.json().catch(() => ({}));
+                    throw new Error(err.error || `Failed to update ${key}`);
+                }
+                return res.json();
+            })
+        );
+        return Promise.all(promises);
     }
 };
 

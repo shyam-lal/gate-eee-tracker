@@ -3,6 +3,8 @@ const router = express.Router();
 const flashcardService = require('../services/flashcardService');
 const flashcardPromptService = require('../services/flashcardPromptService');
 const authMiddleware = require('../middleware/authMiddleware');
+const aiConfigService = require('../services/aiConfigService');
+const llmService = require('../services/llmService');
 
 // Protect all flashcard routes
 router.use(authMiddleware);
@@ -12,12 +14,76 @@ router.get('/prompt', async (req, res) => {
     try {
         const { topic, count } = req.query;
         if (!topic) return res.status(400).json({ error: 'Topic is required' });
+        
+        const mode = await aiConfigService.getEffectiveAiMode(req.user.id);
+        
+        if (mode === 'disabled') {
+            return res.status(403).json({ error: 'AI generation is currently disabled.' });
+        }
+        
         const c = parseInt(count) || 10;
         const prompt = flashcardPromptService.generateFlashcardPrompt(topic, c);
+        
+        if (mode === 'auto') {
+            return res.json({ prompt, auto_mode_placeholder: true, message: 'Auto mode is active.' });
+        }
+        
+        // Manual mode
         res.json({ prompt });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Failed to generate prompt' });
+    }
+});
+
+router.post('/decks/:deckId/generate', async (req, res) => {
+    try {
+        const { topic, count } = req.body;
+        const deckId = req.params.deckId;
+
+        if (!topic) return res.status(400).json({ error: 'Topic is required' });
+        const c = Math.min(parseInt(count) || 10, 10); // Enforce max 10 cards
+
+        const mode = await aiConfigService.getEffectiveAiMode(req.user.id);
+        if (mode !== 'auto') {
+            return res.status(403).json({ error: 'Auto generation is not enabled.' });
+        }
+
+        // Verify deck ownership
+        const isOwner = await flashcardService.verifyDeckOwnership(deckId, req.user.id);
+        if (!isOwner) {
+            return res.status(404).json({ error: 'Deck not found or access denied' });
+        }
+
+        // Generate the prompt
+        const prompt = flashcardPromptService.generateFlashcardPrompt(topic, c);
+
+        // Generate JSON with LLM
+        const jsonResponse = await llmService.generateJSON(prompt);
+        let cards = jsonResponse;
+        
+        // In case the LLM returned { flashcards: [...] }
+        if (jsonResponse && jsonResponse.flashcards && Array.isArray(jsonResponse.flashcards)) {
+            cards = jsonResponse.flashcards;
+        }
+
+        if (!Array.isArray(cards) || cards.length === 0) {
+            return res.status(500).json({ error: 'AI generated invalid data format.' });
+        }
+
+        // Insert all cards
+        let insertedCount = 0;
+        for (const card of cards) {
+            if (card.front && card.back) {
+                await flashcardService.createCard(deckId, card.front, card.back);
+                insertedCount++;
+            }
+        }
+
+        res.status(201).json({ message: `Successfully generated and imported ${insertedCount} cards.`, count: insertedCount });
+    } catch (err) {
+        console.error('Auto Generate Error:', err);
+        res.status(500).json({ error: err.message || 'Server error generating cards' });
     }
 });
 

@@ -1,5 +1,6 @@
 const revisionService = require('../services/revisionService');
 const { generatePrompt } = require('../services/revisionPromptService');
+const aiConfigService = require('../services/aiConfigService');
 
 // ─── SETS ────────────────────────────────────────────────────────────────
 
@@ -76,7 +77,20 @@ exports.getPrompt = async (req, res) => {
     try {
         const { topics, count, examType } = req.query;
         if (!topics) return res.status(400).json({ error: 'Topics are required' });
+        
+        const mode = await aiConfigService.getEffectiveAiMode(req.user.id);
+        
+        if (mode === 'disabled') {
+            return res.status(403).json({ error: 'AI generation is currently disabled.' });
+        }
+
         const prompt = generatePrompt(topics, count || 10, examType || 'GATE');
+        
+        if (mode === 'auto') {
+            // Placeholder for full AI integration
+            return res.json({ prompt, auto_mode_placeholder: true, message: 'Auto mode is under development. Returning prompt for now.' });
+        }
+        
         res.json({ prompt });
     } catch (err) {
         console.error('getPrompt error:', err);

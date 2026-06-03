@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { adminUsers } from '../../services/api';
-import { Users, Search, Filter, Mail, Calendar, Shield, Crown, CustomIcon, ChevronLeft, ChevronRight, CheckCircle, XCircle, ArrowLeft, Activity, Edit3 } from 'lucide-react';
+import { Users, Search, Filter, Mail, Calendar, Shield, Crown, CustomIcon, ChevronLeft, ChevronRight, CheckCircle, XCircle, ArrowLeft, Activity, Edit3, Sparkles } from 'lucide-react';
 
 const AdminUsers = () => {
     const [users, setUsers] = useState([]);
@@ -24,6 +24,10 @@ const AdminUsers = () => {
     const [isEditingSub, setIsEditingSub] = useState(false);
     const [selectedPlanId, setSelectedPlanId] = useState('');
     const [selectedEndDate, setSelectedEndDate] = useState('');
+
+    // Edit AI Mode
+    const [isEditingAi, setIsEditingAi] = useState(false);
+    const [selectedAiMode, setSelectedAiMode] = useState('global');
 
     useEffect(() => {
         const handler = setTimeout(() => {
@@ -65,6 +69,7 @@ const AdminUsers = () => {
         try {
             const data = await adminUsers.getUserDetails(id);
             setUserDetails(data);
+            setSelectedAiMode(data.ai_generation_mode || 'global');
         } catch (err) {
             console.error('Failed to load user details:', err);
         } finally {
@@ -87,6 +92,16 @@ const AdminUsers = () => {
             setIsEditingSub(false);
             loadUserDetails(selectedUser.id);
             loadUsers(); // refresh list
+        } catch (err) {
+            alert(err.message);
+        }
+    };
+
+    const handleUpdateAiMode = async () => {
+        try {
+            await adminUsers.updateAiMode(selectedUser.id, selectedAiMode);
+            setIsEditingAi(false);
+            loadUserDetails(selectedUser.id);
         } catch (err) {
             alert(err.message);
         }
@@ -166,6 +181,47 @@ const AdminUsers = () => {
                                         <p className="text-[10px] uppercase font-bold tracking-widest text-surface-500 mt-1">Total Study Time Logged</p>
                                     </div>
                                 </div>
+                            </div>
+
+                            {/* AI Configuration */}
+                            <div className="bg-surface-900/50 border border-surface-800 rounded-2xl p-6">
+                                <div className="flex justify-between items-center mb-4">
+                                    <h4 className="text-xs font-black text-surface-500 uppercase tracking-widest flex items-center gap-2">
+                                        <Sparkles size={14} className="text-purple-400" /> AI Features
+                                    </h4>
+                                    {!isEditingAi && (
+                                        <button 
+                                            onClick={() => setIsEditingAi(true)}
+                                            className="text-xs font-bold text-primary-400 hover:text-primary-300 flex items-center gap-1 bg-primary-500/10 px-3 py-1.5 rounded-lg transition-colors border border-primary-500/20"
+                                        >
+                                            <Edit3 size={12} /> Edit
+                                        </button>
+                                    )}
+                                </div>
+                                {isEditingAi ? (
+                                    <div className="space-y-4">
+                                        <select 
+                                            className="w-full bg-surface-950 border border-surface-800 rounded-xl p-3 text-sm text-heading focus:border-primary-500 outline-none"
+                                            value={selectedAiMode}
+                                            onChange={(e) => setSelectedAiMode(e.target.value)}
+                                        >
+                                            <option value="global">Use Global Default</option>
+                                            <option value="disabled">Disabled</option>
+                                            <option value="manual">Manual (Prompt Only)</option>
+                                            <option value="auto">Auto (Full Integration)</option>
+                                        </select>
+                                        <div className="flex gap-2">
+                                            <button onClick={() => { setIsEditingAi(false); setSelectedAiMode(userDetails.ai_generation_mode || 'global'); }} className="px-4 py-2 bg-surface-800 text-heading rounded-xl text-xs font-bold">Cancel</button>
+                                            <button onClick={handleUpdateAiMode} className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-xl text-xs font-bold hover:bg-primary-500 transition-colors">Save</button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div>
+                                        <p className="text-sm font-bold text-heading">
+                                            Mode: <span className="text-primary-400 uppercase tracking-wider text-xs ml-1">{userDetails.ai_generation_mode || 'global'}</span>
+                                        </p>
+                                    </div>
+                                )}
                             </div>
                         </div>
 
