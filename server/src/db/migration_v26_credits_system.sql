@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS credit_transactions (
 );
 
 -- 4. Enable pgvector extension and create cached_flashcard_decks table
-CREATE EXTENSION IF NOT EXISTS vector;
+-- CREATE EXTENSION IF NOT EXISTS vector;
 
 CREATE TABLE IF NOT EXISTS cached_flashcard_decks (
     id SERIAL PRIMARY KEY,
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS cached_flashcard_decks (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
-ALTER TABLE cached_flashcard_decks ADD COLUMN IF NOT EXISTS embedding vector(768);
+-- ALTER TABLE cached_flashcard_decks ADD COLUMN IF NOT EXISTS embedding vector(768);
 
 CREATE INDEX IF NOT EXISTS idx_cached_flashcard_decks_topic ON cached_flashcard_decks(normalized_topic);
-CREATE INDEX IF NOT EXISTS idx_cached_flashcard_decks_embedding ON cached_flashcard_decks USING hnsw (embedding vector_cosine_ops);
+-- CREATE INDEX IF NOT EXISTS idx_cached_flashcard_decks_embedding ON cached_flashcard_decks USING hnsw (embedding vector_cosine_ops);
