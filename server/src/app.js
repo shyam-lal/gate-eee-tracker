@@ -34,7 +34,6 @@ app.use('/api/planner', require('./routes/plannerRoutes'));
 app.use('/api/revision', require('./routes/revisionRoutes'));
 app.use('/api/exams', require('./routes/examRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
-app.use('/api/subscriptions', require('./routes/subscriptionRoutes'));
 app.use('/api/study-plan', require('./routes/studyPlanRoutes'));
 app.use('/api/onboarding', require('./routes/onboardingRoutes'));
 app.use('/api/plan', require('./routes/planRoutes'));

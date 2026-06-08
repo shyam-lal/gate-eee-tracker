@@ -57,7 +57,7 @@ const COMPACT_MODULES = {
 
 const FORMATS = ['bold', 'italic', 'underline', 'color', 'list', 'code-block'];
 
-const CardEditor = ({ deckId, user }) => {
+const CardEditor = ({ deckId, user, onTopUp }) => {
     const [cards, setCards] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showAIGenerator, setShowAIGenerator] = useState(false);
@@ -281,6 +281,7 @@ const CardEditor = ({ deckId, user }) => {
                             mode={user?.effective_ai_mode}
                             onImportComplete={handleImportComplete}
                             onCancel={() => setShowAIGenerator(false)}
+                            onTopUp={onTopUp}
                         />
                     </div>
                 )}

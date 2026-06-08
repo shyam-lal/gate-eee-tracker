@@ -44,6 +44,29 @@ export const user = {
             body: JSON.stringify({ selected_exam, tracking_mode })
         });
         return res.json();
+    },
+    buyCreditSession: async (packId, price) => {
+        const res = await fetch(`${API_URL}/user/credits/buy/session`, {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify({ packId, price })
+        });
+        if (!res.ok) throw new Error('Failed to create payment session');
+        return res.json();
+    },
+    verifyCreditPayment: async (data) => {
+        const res = await fetch(`${API_URL}/user/credits/buy/verify`, {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify(data)
+        });
+        if (!res.ok) throw new Error('Failed to verify payment');
+        return res.json();
+    },
+    getTransactions: async () => {
+        const res = await fetch(`${API_URL}/user/transactions`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to fetch transactions');
+        return res.json();
     }
 };
 

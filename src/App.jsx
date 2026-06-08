@@ -24,6 +24,7 @@ import ExamOnboarding from './components/exam/ExamOnboarding';
 import ExamSwitcher from './components/exam/ExamSwitcher';
 import StudyMaterials from './components/materials/StudyMaterials';
 import Pricing from './components/pricing/Pricing';
+import CreditStore from './components/credits/CreditStore';
 import {
   Calendar as CalendarIcon, Trash2, Plus, X,
   ChevronDown, ChevronRight, Clock, Edit3,
@@ -498,6 +499,7 @@ function App() {
         onOpenAdmin={user?.role === 'admin' || user?.role === 'super_admin' ? () => setView('admin') : undefined}
         onOpenMaterials={user?.active_exam_id ? () => setView('materials') : undefined}
         onOpenPricing={() => setView('pricing')}
+        onOpenCreditStore={() => setView('credit_store')}
       />
     );
     if (view === 'pricing') return <Pricing user={user} onBack={() => setView('dashboard')} onUpgradeSuccess={(planName) => {
@@ -506,6 +508,7 @@ function App() {
       // Update local storage or refetch user data here if needed
       setView('dashboard');
     }} />;
+    if (view === 'credit_store') return <CreditStore onBack={() => setView('dashboard')} />;
     if (view === 'admin' && (user?.role === 'admin' || user?.role === 'super_admin')) {
       return <AdminPanel user={user} onBack={() => setView('dashboard')} />;
     }
@@ -959,7 +962,7 @@ function App() {
 
           {/* MAIN TOOL VIEW */}
           {activeTool?.tool_type === 'flashcard' ? (
-            <FlashcardDashboard tool={activeTool} user={user} />
+            <FlashcardDashboard tool={activeTool} user={user} onTopUp={() => setView('credit_store')} />
           ) : activeTool?.tool_type === 'focus' ? (
             <FocusTool tool={activeTool} />
           ) : activeTool?.tool_type === 'revision' ? (

@@ -5,6 +5,8 @@ const flashcardPromptService = require('../services/flashcardPromptService');
 const authMiddleware = require('../middleware/authMiddleware');
 const aiConfigService = require('../services/aiConfigService');
 const llmService = require('../services/llmService');
+const creditService = require('../services/creditService');
+const pool = require('../config/db');
 
 // Protect all flashcard routes
 router.use(authMiddleware);
@@ -40,35 +42,92 @@ router.post('/decks/:deckId/generate', async (req, res) => {
     try {
         const { topic, count } = req.body;
         const deckId = req.params.deckId;
+        const userId = req.user.id;
 
         if (!topic) return res.status(400).json({ error: 'Topic is required' });
         const c = Math.min(parseInt(count) || 10, 10); // Enforce max 10 cards
 
-        const mode = await aiConfigService.getEffectiveAiMode(req.user.id);
+        const mode = await aiConfigService.getEffectiveAiMode(userId);
         if (mode !== 'auto') {
             return res.status(403).json({ error: 'Auto generation is not enabled.' });
         }
 
         // Verify deck ownership
-        const isOwner = await flashcardService.verifyDeckOwnership(deckId, req.user.id);
+        const isOwner = await flashcardService.verifyDeckOwnership(deckId, userId);
         if (!isOwner) {
             return res.status(404).json({ error: 'Deck not found or access denied' });
         }
 
-        // Generate the prompt
-        const prompt = flashcardPromptService.generateFlashcardPrompt(topic, c);
+        // 1. LIGHTWEIGHT CLEANING
+        const cleanTopic = (t) => {
+            let cleaned = t.toLowerCase();
+            cleaned = cleaned.replace(/[^a-z0-9\s]/g, ' '); // Strip special chars/dashes
+            cleaned = cleaned.replace(/\s+/g, ' ').trim(); // Normalize spaces
+            // Naive plural standardization
+            if (cleaned.endsWith('ies')) cleaned = cleaned.slice(0, -3) + 'y';
+            else if (cleaned.endsWith('es') && !cleaned.endsWith('ss')) cleaned = cleaned.slice(0, -2);
+            else if (cleaned.endsWith('s') && !cleaned.endsWith('ss')) cleaned = cleaned.slice(0, -1);
+            return cleaned;
+        };
+        const normalizedTopic = cleanTopic(topic);
 
-        // Generate JSON with LLM
-        const jsonResponse = await llmService.generateJSON(prompt);
-        let cards = jsonResponse;
-        
-        // In case the LLM returned { flashcards: [...] }
-        if (jsonResponse && jsonResponse.flashcards && Array.isArray(jsonResponse.flashcards)) {
-            cards = jsonResponse.flashcards;
-        }
+        // 2. GENERATE TOPIC EMBEDDING
+        const embedding = await llmService.generateEmbedding(normalizedTopic);
+        const embeddingString = `[${embedding.join(',')}]`;
 
-        if (!Array.isArray(cards) || cards.length === 0) {
-            return res.status(500).json({ error: 'AI generated invalid data format.' });
+        // 3. SEMANTIC CACHE QUERY
+        // pgvector <=> is cosine distance. 1 - cosine_distance > 0.92 is <=> < 0.08
+        const cacheRes = await pool.query(
+            `SELECT flashcards_json 
+             FROM cached_flashcard_decks 
+             WHERE card_count = $1 
+               AND (embedding <=> $2::vector) < 0.08
+             ORDER BY embedding <=> $2::vector ASC 
+             LIMIT 1`,
+            [c, embeddingString]
+        );
+
+        let cards;
+
+        if (cacheRes.rowCount > 0) {
+            // CACHE HIT
+            cards = cacheRes.rows[0].flashcards_json;
+        } else {
+            // 4. CACHE MISS PATH
+            try {
+                await creditService.reserveAndDeductCredits(userId, c);
+            } catch (creditErr) {
+                if (creditErr.message === 'INSUFFICIENT_CREDITS') {
+                    return res.status(402).json({ error: 'Insufficient credits for generation.' });
+                }
+                throw creditErr;
+            }
+
+            try {
+                const prompt = flashcardPromptService.generateFlashcardPrompt(topic, c);
+                const jsonResponse = await llmService.generateJSON(prompt);
+                
+                cards = jsonResponse;
+                if (jsonResponse && jsonResponse.flashcards && Array.isArray(jsonResponse.flashcards)) {
+                    cards = jsonResponse.flashcards;
+                }
+
+                if (!Array.isArray(cards) || cards.length === 0) {
+                    throw new Error('AI generated invalid data format.');
+                }
+
+                // 5. SAVE WITH EMBEDDING
+                await pool.query(
+                    `INSERT INTO cached_flashcard_decks (normalized_topic, embedding, card_count, flashcards_json)
+                     VALUES ($1, $2::vector, $3, $4)`,
+                    [normalizedTopic, embeddingString, c, JSON.stringify(cards)]
+                );
+            } catch (llmErr) {
+                // 6. ERROR HANDLING
+                console.error('LLM/Save Error:', llmErr);
+                await creditService.rollbackCredits(userId, c);
+                return res.status(500).json({ error: 'Failed to generate flashcards. Credits refunded.' });
+            }
         }
 
         // Insert all cards

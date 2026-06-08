@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { MODES } from '../theme/colors';
+import CreditHistory from './profile/CreditHistory';
 
 const Profile = ({ user, onBack, onResetProgress, onLogout }) => {
     const [activeTab, setActiveTab] = useState('overview');
@@ -16,6 +17,7 @@ const Profile = ({ user, onBack, onResetProgress, onLogout }) => {
         { id: 'overview', label: 'Overview', icon: <User size={18} /> },
         { id: 'appearance', label: 'Appearance', icon: <Palette size={18} /> },
         { id: 'tools', label: 'Authorized Tools', icon: <Box size={18} /> },
+        { id: 'credits', label: 'Credit History', icon: <Activity size={18} /> },
         { id: 'settings', label: 'Privacy & Security', icon: <Shield size={18} /> },
     ];
 
@@ -206,6 +208,10 @@ const Profile = ({ user, onBack, onResetProgress, onLogout }) => {
                                     </div>
                                 </div>
                             </div>
+                        )}
+
+                        {activeTab === 'credits' && (
+                            <CreditHistory />
                         )}
 
                         {activeTab === 'settings' && (

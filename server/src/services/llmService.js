@@ -27,6 +27,21 @@ const generateJSON = async (prompt) => {
     }
 };
 
+const generateEmbedding = async (text) => {
+    if (!process.env.GEMINI_API_KEY) {
+        throw new Error('Gemini API key is not configured.');
+    }
+    try {
+        const model = genAI.getGenerativeModel({ model: 'text-embedding-004' });
+        const result = await model.embedContent(text);
+        return result.embedding.values;
+    } catch (err) {
+        console.error('Embedding Generation Error:', err);
+        throw new Error('Failed to generate embedding with AI: ' + err.message);
+    }
+};
+
 module.exports = {
-    generateJSON
+    generateJSON,
+    generateEmbedding
 };

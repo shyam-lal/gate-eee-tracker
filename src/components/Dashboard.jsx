@@ -10,8 +10,9 @@ import UserStreakWidget from './ui/UserStreakWidget';
 import GlobalAnalytics from './analytics/GlobalAnalytics';
 import CourseCalculatorModal from './calculator/CourseCalculatorModal';
 import ExamSwitcher from './exam/ExamSwitcher';
+import CreditBadge from './CreditBadge';
 
-const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenSocial, onOpenPlanner, onOpenBattlePlan, onSetupTool, onDeleteTool, onRenameTool, onStartFocus, onClearToolData, onOpenAdmin, onOpenMaterials, onOpenPricing }) => {
+const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenSocial, onOpenPlanner, onOpenBattlePlan, onSetupTool, onDeleteTool, onRenameTool, onStartFocus, onClearToolData, onOpenAdmin, onOpenMaterials, onOpenPricing, onOpenCreditStore }) => {
 
     const [menuOpen, setMenuOpen] = useState(null); // toolId of open menu
     const [renamingTool, setRenamingTool] = useState(null);
@@ -67,6 +68,9 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
                 </div>
 
                 <div className="flex items-center gap-4 sm:gap-6">
+                    {onOpenCreditStore && (
+                        <CreditBadge onClick={onOpenCreditStore} />
+                    )}
                     {onOpenPricing && (
                         <button onClick={onOpenPricing} className="bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-500 border border-amber-500/30 px-3 py-1.5 rounded-xl font-black text-[10px] uppercase tracking-widest hover:from-amber-500/30 hover:to-orange-500/30 transition-all flex items-center gap-1.5 shadow-[0_0_15px_rgba(245,158,11,0.15)]">
                             <Crown size={12}/> <span className="hidden sm:inline">Upgrade</span>

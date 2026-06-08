@@ -16,7 +16,7 @@ const findUserByEmail = async (email) => {
 };
 
 const findUserById = async (id) => {
-    const result = await pool.query('SELECT id, username, email, selected_exam, tracking_mode, current_streak, role, active_exam_id, onboarding_completed FROM users WHERE id = $1', [id]);
+    const result = await pool.query('SELECT id, username, email, selected_exam, tracking_mode, current_streak, role, active_exam_id, onboarding_completed, credits FROM users WHERE id = $1', [id]);
     return result.rows[0];
 };
 
