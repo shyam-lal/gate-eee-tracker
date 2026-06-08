@@ -7,7 +7,7 @@ require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
 const bootstrapMigrations = [
-    'migration_v1.sql',
+    // migration_v1.sql does not exist in this repo – it was likely a placeholder.
     'migration_v2.sql',
     'migration_v3_tools.sql',
     'migration_v4_flashcards.sql',
