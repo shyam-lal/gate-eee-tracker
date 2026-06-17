@@ -303,6 +303,33 @@ const completeOnboarding = async (userId) => {
             console.error('Full error:', fcErr);
         }
 
+        // Provision Default Module Tracker (Course Syllabus)
+        try {
+            const toolService = require('./toolService');
+            // We need the exam details to properly set up the tracker syllabus
+            const examRes = await pool.query(
+                'SELECT e.id, e.name FROM user_enrollments ue JOIN exams e ON ue.exam_id = e.id WHERE ue.user_id = $1 AND ue.is_active = TRUE',
+                [userId]
+            );
+            
+            if (examRes.rows.length > 0) {
+                const exam = examRes.rows[0];
+                
+                // Check if already exists
+                const existingTracker = await pool.query(
+                    `SELECT id FROM tools WHERE user_id = $1 AND tool_type = 'module' AND is_default = TRUE LIMIT 1`, 
+                    [userId]
+                );
+                
+                if (existingTracker.rows.length === 0) {
+                    await toolService.createTool(userId, 'Course Syllabus', 'module', exam.name, exam.id, true);
+                    console.log(`✅ Default Course Tracker (module) provisioned for User ${userId}.`);
+                }
+            }
+        } catch (trkErr) {
+            console.error('Warning: Failed to provision course tracker after onboarding:', trkErr.message);
+        }
+
         return res.rows[0];
     } catch (err) {
         await client.query('ROLLBACK');

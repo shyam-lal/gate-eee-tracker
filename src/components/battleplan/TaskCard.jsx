@@ -3,6 +3,7 @@ import {
     BookOpen, RotateCcw, Zap, Clock, Star, CheckCircle, SkipForward,
     Play, ChevronRight, Flame, TrendingUp, Target, AlertTriangle, ArrowUpRight
 } from 'lucide-react';
+import { useTheme } from '../../contexts/ThemeContext';
 
 const REASON_CONFIG = {
     CARRYOVER: { label: 'Carried Over', icon: '↻', color: 'text-amber-400 bg-amber-500/10 border-amber-500/20' },
@@ -56,6 +57,7 @@ const TaskCard = ({
     onStart,
     actionLoading,
 }) => {
+    const { mode } = useTheme();
     const typeConfig = TYPE_CONFIG[task.type] || TYPE_CONFIG.LEARN;
     const TypeIcon = typeConfig.icon;
     const reasons = task.reasons || [];
@@ -77,14 +79,14 @@ const TaskCard = ({
                 <h2 className="text-xl sm:text-2xl font-black text-heading uppercase tracking-tighter mb-1">
                     {task.topic_name}
                 </h2>
-                <p className="text-xs text-surface-400 font-bold uppercase tracking-widest mb-4">{task.subject_name}</p>
+                <p className="text-xs text-muted font-bold uppercase tracking-widest mb-4">{task.subject_name}</p>
 
                 {/* Meta row */}
                 <div className="flex items-center gap-3 flex-wrap mb-4">
                     <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full border inline-flex items-center gap-1.5 ${typeConfig.color}`}>
                         <TypeIcon size={12} /> {typeConfig.label}
                     </span>
-                    <span className="text-surface-400 text-sm font-bold flex items-center gap-1.5">
+                    <span className="text-muted text-sm font-bold flex items-center gap-1.5">
                         <Clock size={14} /> {formatDuration(task.duration_minutes)}
                     </span>
                     <DifficultyStars level={task.difficulty_stars || task.difficulty_level} />
@@ -146,10 +148,10 @@ const TaskCard = ({
 
                 <div className="flex-1 min-w-0">
                     <h4 className={`font-black uppercase tracking-tighter text-sm sm:text-base leading-tight mb-1 ${
-                        isCompleted ? 'text-surface-500 line-through' :
-                        isSkipped ? 'text-surface-500 line-through' :
-                        isActive ? 'text-heading' : 'text-body opacity-80'
-                    }`}>
+                        isCompleted ? 'text-muted line-through' :
+                        isSkipped ? 'text-muted line-through' :
+                        isActive ? '' : 'opacity-80'
+                    }`} style={{ color: mode === 'light' ? (isActive ? '#020617' : '#1e293b') : (isActive ? '#ffffff' : '#e2e8f0') }}>
                         {task.topic_name}
                     </h4>
                     <div className="flex items-center gap-2.5 flex-wrap">

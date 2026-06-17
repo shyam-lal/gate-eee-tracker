@@ -1,6 +1,6 @@
 const pool = require('../config/db');
 
-const createTool = async (userId, name, toolType = 'time', selectedExam = 'GATE', examId = null) => {
+const createTool = async (userId, name, toolType = 'time', selectedExam = 'GATE', examId = null, isDefault = false) => {
     // Prevent duplicate flashcard tools
     if (toolType === 'flashcard') {
         const existing = await pool.query(
@@ -13,12 +13,50 @@ const createTool = async (userId, name, toolType = 'time', selectedExam = 'GATE'
     }
 
     const res = await pool.query(
-        `INSERT INTO tools (user_id, name, tool_type, selected_exam, exam_id) 
-         VALUES ($1, $2, $3, $4, $5) 
+        `INSERT INTO tools (user_id, name, tool_type, selected_exam, exam_id, is_default) 
+         VALUES ($1, $2, $3, $4, $5, $6) 
          RETURNING id, user_id, name, tool_type, selected_exam, exam_id, is_default, TO_CHAR(target_date, 'YYYY-MM-DD') as target_date, created_at`,
-        [userId, name, toolType, selectedExam, examId]
+        [userId, name, toolType, selectedExam, examId, isDefault]
     );
-    return res.rows[0];
+    const newTool = res.rows[0];
+
+    // Prepopulate subjects and topics if it's a tracking tool and an exam is provided
+    if ((toolType === 'time' || toolType === 'module') && examId) {
+        // Fetch exam subjects
+        const examSubjectsRes = await pool.query(
+            `SELECT id, name FROM exam_subjects WHERE exam_id = $1 ORDER BY sort_order ASC`,
+            [examId]
+        );
+        
+        for (const es of examSubjectsRes.rows) {
+            // Insert subject into user's tracker
+            const subRes = await pool.query(
+                `INSERT INTO subjects (user_id, name, tool_id) VALUES ($1, $2, $3) RETURNING id`,
+                [userId, es.name, newTool.id]
+            );
+            const newSubjectId = subRes.rows[0].id;
+
+            // Fetch topics for this subject
+            const examTopicsRes = await pool.query(
+                `SELECT name, estimated_hours FROM exam_topics WHERE subject_id = $1 ORDER BY sort_order ASC`,
+                [es.id]
+            );
+
+            // Insert topics into user's tracker
+            for (const et of examTopicsRes.rows) {
+                const estimatedMinutes = Math.round((et.estimated_hours || 12) * 60);
+                const defaultModules = 1; // Default to 1 module if using module mode
+
+                await pool.query(
+                    `INSERT INTO topics (subject_id, name, estimated_minutes, total_modules) 
+                     VALUES ($1, $2, $3, $4)`,
+                    [newSubjectId, et.name, estimatedMinutes, defaultModules]
+                );
+            }
+        }
+    }
+
+    return newTool;
 };
 
 const getUserTools = async (userId, examId = null) => {

@@ -122,8 +122,8 @@ const BattlePlanSetup = ({ onComplete, onBack, subjects = [] }) => {
                                 return (
                                     <div key={id} className="flex items-center gap-3 p-3 bg-surface-950 border border-surface-800 rounded-xl">
                                         <div className="flex flex-col gap-1">
-                                            <button onClick={() => handleMoveUp(index)} disabled={index === 0} className="text-surface-600 hover:text-white disabled:opacity-20"><GripVertical size={14} className="rotate-90" /></button>
-                                            <button onClick={() => handleMoveDown(index)} disabled={index === subjectOrder.length - 1} className="text-surface-600 hover:text-white disabled:opacity-20"><GripVertical size={14} className="rotate-90" /></button>
+                                            <button onClick={() => handleMoveUp(index)} disabled={index === 0} className="text-surface-500 hover:text-heading disabled:opacity-20"><GripVertical size={14} className="rotate-90" /></button>
+                                            <button onClick={() => handleMoveDown(index)} disabled={index === subjectOrder.length - 1} className="text-surface-500 hover:text-heading disabled:opacity-20"><GripVertical size={14} className="rotate-90" /></button>
                                         </div>
                                         <span className="font-bold text-sm text-heading">{subject.subject_name || subject.name}</span>
                                         <span className="ml-auto text-[10px] text-surface-500 font-bold uppercase tracking-widest">#{index + 1}</span>

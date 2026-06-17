@@ -893,6 +893,8 @@ const getRoadmapData = async (userId) => {
                 not_started: 0,
                 topics: [],
                 total_time_spent_minutes: 0,
+                total_base_minutes: 0,
+                total_capped_time_spent: 0,
                 confidence_sum: 0,
             });
         }
@@ -912,10 +914,15 @@ const getRoadmapData = async (userId) => {
             weightage: topicWeight
         });
 
+        const baseMinutes = baseHours * 60;
+        const timeSpent = parseInt(row.time_spent) || 0;
+        subj.total_base_minutes += baseMinutes;
+        subj.total_capped_time_spent += Math.min(timeSpent, baseMinutes);
+
         const personalized = computePersonalizedHours(
             baseHours,
             effectiveConfidence,
-            parseInt(row.time_spent) || 0
+            timeSpent
         );
 
         subj.topics.push({
@@ -925,7 +932,7 @@ const getRoadmapData = async (userId) => {
             weightage: topicWeight,
             confidence: effectiveConfidence,
             status: effectiveStatus,
-            time_spent: parseInt(row.time_spent) || 0,
+            time_spent: timeSpent,
             base_hours: baseHours,
             estimated_hours: personalized.remaining_hours,
             multiplier: personalized.multiplier,
@@ -938,8 +945,8 @@ const getRoadmapData = async (userId) => {
         avg_confidence: s.total_topics > 0
             ? Math.round((s.confidence_sum / (s.total_topics * 5)) * 100) / 100
             : 0,
-        completion_percent: s.total_topics > 0
-            ? Math.round(((s.mastered + s.revising) / s.total_topics) * 100)
+        completion_percent: s.total_base_minutes > 0
+            ? Math.round((s.total_capped_time_spent / s.total_base_minutes) * 100)
             : 0,
     }));
 

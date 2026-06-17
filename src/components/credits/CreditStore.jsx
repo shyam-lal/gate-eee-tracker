@@ -79,37 +79,37 @@ const CreditStore = ({ onBack }) => {
 
             // API call to initialize payment session
             const session = await userApi.buyCreditSession(tier.id, tier.price);
-            
+
             // Client-side gateway integration (Razorpay)
             const options = {
-               key: session.key, // Should be passed securely from backend or ENV
-               amount: session.amount,
-               currency: session.currency,
-               name: "GATE EEE Tracker",
-               description: `${tier.credits} AI Credits (${tier.name})`,
-               order_id: session.id,
-               handler: async function (response) {
-                  try {
-                      await userApi.verifyCreditPayment({
-                          razorpay_order_id: response.razorpay_order_id,
-                          razorpay_payment_id: response.razorpay_payment_id,
-                          razorpay_signature: response.razorpay_signature,
-                          credits: tier.credits
-                      });
-                      await refreshCredits();
-                      alert('Payment successful! Credits added to your account.');
-                  } catch (err) {
-                      console.error('Verification failed', err);
-                      alert('Payment verification failed. Please contact support if amount was deducted.');
-                  }
-               },
-               theme: {
-                   color: "#3b82f6" // Primary color
-               }
+                key: session.key, // Should be passed securely from backend or ENV
+                amount: session.amount,
+                currency: session.currency,
+                name: "GATE EEE Tracker",
+                description: `${tier.credits} AI Credits (${tier.name})`,
+                order_id: session.id,
+                handler: async function (response) {
+                    try {
+                        await userApi.verifyCreditPayment({
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_signature: response.razorpay_signature,
+                            credits: tier.credits
+                        });
+                        await refreshCredits();
+                        alert('Payment successful! Credits added to your account.');
+                    } catch (err) {
+                        console.error('Verification failed', err);
+                        alert('Payment verification failed. Please contact support if amount was deducted.');
+                    }
+                },
+                theme: {
+                    color: "#3b82f6" // Primary color
+                }
             };
             const rzp = new window.Razorpay(options);
-            
-            rzp.on('payment.failed', function (response){
+
+            rzp.on('payment.failed', function (response) {
                 console.error(response.error);
                 alert(`Payment failed: ${response.error.description}`);
             });
@@ -126,8 +126,8 @@ const CreditStore = ({ onBack }) => {
     return (
         <div className="max-w-6xl mx-auto px-4 py-8 animate-in fade-in duration-500">
             <div className="mb-10">
-                <button 
-                    onClick={() => onBack ? onBack() : window.history.back()} 
+                <button
+                    onClick={() => onBack ? onBack() : window.history.back()}
                     className="flex items-center gap-2 text-surface-400 hover:text-heading font-medium text-sm transition-colors mb-6"
                 >
                     <ArrowLeft size={16} /> Back
@@ -153,12 +153,12 @@ const CreditStore = ({ onBack }) => {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-start">
                 {pricingTiers.map((tier) => (
-                    <div 
+                    <div
                         key={tier.id}
                         className={`
                             relative flex flex-col bg-surface-900 rounded-3xl p-6 lg:p-8 transition-all duration-300
-                            ${tier.recommended 
-                                ? 'border-2 border-primary-500 shadow-xl shadow-primary-500/10 md:-translate-y-4' 
+                            ${tier.recommended
+                                ? 'border-2 border-primary-500 shadow-xl shadow-primary-500/10 md:-translate-y-4'
                                 : 'border border-surface-800 hover:border-surface-700 hover:shadow-lg'
                             }
                         `}
@@ -180,10 +180,10 @@ const CreditStore = ({ onBack }) => {
                         </div>
 
                         <div className="mb-8 flex-1">
-                            <div className="mb-6 p-4 bg-surface-950 rounded-2xl border border-surface-800/50">
+                            {/* <div className="mb-6 p-4 bg-surface-950 rounded-2xl border border-surface-800/50">
                                 <p className="text-sm font-bold text-heading mb-1">Approx. {tier.decks} Topic Decks</p>
                                 <p className="text-xs text-surface-400 font-medium">Efficiency: <span className="text-emerald-400 font-bold">{tier.efficiency}</span> per deck</p>
-                            </div>
+                            </div> */}
 
                             <ul className="space-y-3">
                                 {tier.features.map((feat, idx) => (

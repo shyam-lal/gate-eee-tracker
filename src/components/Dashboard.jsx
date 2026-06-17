@@ -71,16 +71,16 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
                     {onOpenCreditStore && (
                         <CreditBadge onClick={onOpenCreditStore} />
                     )}
-                    {onOpenPricing && (
+                    {/* {onOpenPricing && (
                         <button onClick={onOpenPricing} className="bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-500 border border-amber-500/30 px-3 py-1.5 rounded-xl font-black text-[10px] uppercase tracking-widest hover:from-amber-500/30 hover:to-orange-500/30 transition-all flex items-center gap-1.5 shadow-[0_0_15px_rgba(245,158,11,0.15)]">
-                            <Crown size={12}/> <span className="hidden sm:inline">Upgrade</span>
+                            <Crown size={12} /> <span className="hidden sm:inline">Upgrade</span>
                         </button>
-                    )}
-                    <div className="hidden md:flex bg-surface-900/50 border border-surface-800 rounded-full px-4 py-2 items-center gap-3">
+                    )} */}
+                    {/* <div className="hidden md:flex bg-surface-900/50 border border-surface-800 rounded-full px-4 py-2 items-center gap-3">
                         <Search size={14} className="text-surface-500" />
                         <span className="text-[10px] text-surface-500 font-black uppercase tracking-widest">Global Search</span>
                         <div className="px-1.5 py-0.5 bg-surface-800 rounded text-[9px] font-mono text-surface-600">CTRL K</div>
-                    </div>
+                    </div> */}
                     <ExamSwitcher />
                     <button onClick={onOpenProfile} className="relative group">
                         <div className="w-10 h-10 bg-surface-800 rounded-full border border-surface-700 overflow-hidden group-hover:border-primary-500 transition-colors">
@@ -232,7 +232,7 @@ const Dashboard = ({ user, tools, streakData, onOpenTool, onOpenProfile, onOpenS
                                             <button onClick={submitRename} className="px-3 py-2 bg-primary-600 text-white text-[10px] font-black uppercase rounded-xl">Save</button>
                                         </div>
                                     ) : (
-                                        <h4 className="text-heading font-black uppercase tracking-tighter text-xl mb-1 group-hover:text-primary-400 transition-colors pr-8">
+                                        <h4 className="text-heading font-black uppercase tracking-tighter text-xl mb-1 transition-colors pr-8">
                                             {tool.name}
                                         </h4>
                                     )}

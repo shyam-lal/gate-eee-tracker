@@ -6,7 +6,7 @@ const Wizard = ({ onComplete, onBack }) => {
     const [data, setData] = useState({
         name: '',
         exam: 'GATE',
-        mode: 'time' // 'time' or 'module'
+        mode: 'module' // Defaults to module
     });
 
     const nextStep = () => setStep(s => s + 1);
@@ -79,21 +79,7 @@ const Wizard = ({ onComplete, onBack }) => {
             title: "Tracking Protocol",
             label: "LOGGING MODE",
             content: (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div
-                        onClick={() => setData({ ...data, mode: 'time' })}
-                        className={`p-6 rounded-[2.5rem] border-2 transition-all cursor-pointer flex flex-col gap-6 relative group ${data.mode === 'time' ? 'border-primary-500 bg-primary-500/10' : 'border-surface-800 bg-surface-900/50 hover:border-surface-700'}`}
-                    >
-                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${data.mode === 'time' ? 'bg-primary-500 text-white' : 'bg-surface-800 text-surface-500 group-hover:text-white'}`}>
-                            <Clock size={32} />
-                        </div>
-                        <div>
-                            <h4 className="font-black uppercase tracking-tight text-xl mb-2">Course Progress</h4>
-                            <p className="text-xs text-surface-500 font-medium leading-relaxed">Track your course completion. Set hour estimates for topics and log study time to see when you'll finish. Best for course-based prep.</p>
-                        </div>
-                        {data.mode === 'time' && <div className="absolute top-6 right-6"><CheckCircle2 className="text-primary-400" /></div>}
-                    </div>
-
+                <div className="grid grid-cols-1 gap-4 max-w-sm mx-auto">
                     <div
                         onClick={() => setData({ ...data, mode: 'module' })}
                         className={`p-6 rounded-[2.5rem] border-2 transition-all cursor-pointer flex flex-col gap-6 relative group ${data.mode === 'module' ? 'border-primary-500 bg-primary-500/10' : 'border-surface-800 bg-surface-900/50 hover:border-surface-700'}`}
@@ -106,24 +92,6 @@ const Wizard = ({ onComplete, onBack }) => {
                             <p className="text-xs text-surface-500 font-medium leading-relaxed">Progress by blocks. Count finished modules instead of watching the clock. Best for topic mastery.</p>
                         </div>
                         {data.mode === 'module' && <div className="absolute top-6 right-6"><CheckCircle2 className="text-primary-400" /></div>}
-                    </div>
-
-                    <div
-                        onClick={() => setData({ ...data, mode: 'flashcard' })}
-                        className={`p-6 rounded-[2.5rem] border-2 transition-all cursor-pointer flex flex-col gap-6 relative group ${data.mode === 'flashcard' ? 'border-primary-500 bg-primary-500/10' : 'border-surface-800 bg-surface-900/50 hover:border-surface-700'}`}
-                    >
-                        <div className="flex items-start gap-5">
-                            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 ${data.mode === 'flashcard' ? 'bg-primary-500 text-white' : 'bg-surface-800 text-surface-500 group-hover:text-white'}`}>
-                                <Brain size={32} />
-                            </div>
-                            <div>
-                                <h4 className="font-black uppercase tracking-tight text-xl mb-2">Flashcards (SRS)</h4>
-                                <p className="text-xs text-surface-500 font-medium leading-relaxed max-w-sm">
-                                    Spaced Repetition System. Create decks, add flashcards, and use the Anki SM-2 algorithm to permanently memorize formulas and concepts.
-                                </p>
-                            </div>
-                        </div>
-                        {data.mode === 'flashcard' && <div className="absolute top-6 right-6"><CheckCircle2 className="text-primary-400" /></div>}
                     </div>
                 </div>
             )

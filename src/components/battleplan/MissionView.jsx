@@ -42,7 +42,7 @@ const MissionView = ({ plan, onComplete, onSkip, onStart, actionLoading }) => {
             {/* Pending Tasks Queue */}
             {pendingTasks.length > 0 && (
                 <div className="space-y-2">
-                    <h3 className="text-[10px] font-black text-body opacity-60 uppercase tracking-[0.3em] px-1 pt-2">
+                    <h3 className="text-[10px] font-black text-muted uppercase tracking-[0.3em] px-1 pt-2">
                         Up Next · {pendingTasks.length} remaining
                     </h3>
                     {pendingTasks.map(task => (
@@ -62,7 +62,7 @@ const MissionView = ({ plan, onComplete, onSkip, onStart, actionLoading }) => {
             {/* Completed Tasks (collapsed) */}
             {completedTasks.length > 0 && (
                 <div className="space-y-2">
-                    <h3 className="text-[10px] font-black text-body opacity-60 uppercase tracking-[0.3em] px-1 pt-2">
+                    <h3 className="text-[10px] font-black text-muted uppercase tracking-[0.3em] px-1 pt-2">
                         Completed · {completedTasks.length} tasks
                     </h3>
                     {completedTasks.map(task => (
@@ -74,7 +74,7 @@ const MissionView = ({ plan, onComplete, onSkip, onStart, actionLoading }) => {
             {/* Skipped Tasks */}
             {skippedTasks.length > 0 && (
                 <div className="space-y-2">
-                    <h3 className="text-[10px] font-black text-body opacity-60 uppercase tracking-[0.3em] px-1 pt-2">
+                    <h3 className="text-[10px] font-black text-muted uppercase tracking-[0.3em] px-1 pt-2">
                         Skipped · {skippedTasks.length}
                     </h3>
                     {skippedTasks.map(task => (

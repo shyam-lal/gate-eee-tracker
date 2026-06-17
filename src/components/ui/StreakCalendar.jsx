@@ -101,8 +101,8 @@ const StreakCalendar = ({ toolId, currentStreak = 0, activeDays = [], dayDetails
             <div className="px-5 pt-5 pb-3 flex justify-between items-center">
                 <div className="flex items-center gap-3">
                     <div className="flex items-center gap-1.5">
-                        <Flame size={16} className={`${currentStreak > 0 ? 'text-orange-400' : 'text-surface-700'}`} fill={currentStreak > 0 ? 'currentColor' : 'none'} />
-                        <span className={`text-sm font-black tracking-tight ${currentStreak > 0 ? 'text-orange-400' : 'text-surface-700'}`}>
+                        <Flame size={16} className={`${currentStreak > 0 ? 'text-orange-400' : 'text-surface-400'}`} fill={currentStreak > 0 ? 'currentColor' : 'none'} />
+                        <span className={`text-sm font-black tracking-tight ${currentStreak > 0 ? 'text-orange-400' : 'text-surface-400'}`}>
                             {currentStreak}
                         </span>
                     </div>

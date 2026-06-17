@@ -124,7 +124,7 @@ const SubjectProgressBar = ({ subject, compact = false }) => {
                                                         <Star 
                                                             key={i} 
                                                             size={10} 
-                                                            className={i < topic.difficulty ? 'text-rose-400 fill-rose-400' : 'text-surface-700'} 
+                                                            className={i < topic.difficulty ? 'text-rose-400 fill-rose-400' : 'text-surface-400'} 
                                                         />
                                                     ))}
                                                     <span className="text-[9px] text-surface-500 uppercase font-bold tracking-widest ml-1 hidden sm:inline">Diff</span>

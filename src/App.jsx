@@ -25,6 +25,7 @@ import ExamSwitcher from './components/exam/ExamSwitcher';
 import StudyMaterials from './components/materials/StudyMaterials';
 import Pricing from './components/pricing/Pricing';
 import CreditStore from './components/credits/CreditStore';
+import { useTheme } from './contexts/ThemeContext';
 import {
   Calendar as CalendarIcon, Trash2, Plus, X,
   ChevronDown, ChevronRight, Clock, Edit3,
@@ -35,6 +36,7 @@ import {
 } from 'lucide-react';
 
 function App() {
+  const { mode } = useTheme();
   // --- AUTH STATE ---
   const [user, setUser] = useState(() => {
     try { return JSON.parse(localStorage.getItem('user')); } catch { return null; }
@@ -262,7 +264,7 @@ function App() {
   const onWizardComplete = async (wizardData) => {
     try {
       // Create a new tool via the tools API
-      const newTool = await toolsApi.create(wizardData.name, wizardData.mode, wizardData.exam);
+      const newTool = await toolsApi.create(wizardData.name, wizardData.mode, wizardData.exam, user?.active_exam_id);
       await loadTools();
       setView('dashboard');
     } catch (err) { alert("Tool creation failed: " + err.message); }
@@ -593,10 +595,12 @@ function App() {
                         <p className="text-5xl font-black text-primary-400">{flashcardAnalytics?.learned_cards || 0}</p>
                         <p className="text-xs font-bold text-surface-500 mt-2">Started spaced repetition</p>
                       </div>
-                      <div className="bg-slate-900/50 p-6 rounded-3xl border border-slate-800/50 text-center">
-                        <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Avg. Ease Factor</h4>
-                        <p className="text-5xl font-black text-emerald-400">{flashcardAnalytics?.avg_ease_factor || '2.50'}</p>
-                        <p className="text-xs font-bold text-slate-500 mt-2">Higher = Easier recall</p>
+                      <div className="bg-surface-900/50 p-6 rounded-3xl border border-surface-800/50 text-center">
+                        <h4 className="text-[10px] font-black text-muted uppercase tracking-widest mb-2">Avg. Ease Factor</h4>
+                        <div className="flex items-end gap-2">
+                          <span className="text-3xl font-black text-heading leading-none tracking-tighter">{flashcardAnalytics?.avg_ease_factor || '2.50'}</span>
+                        </div>
+                        <p className="text-xs font-bold text-muted mt-2">Higher = Easier recall</p>
                       </div>
                     </div>
                     <div className="bg-primary-700/20 p-6 rounded-3xl border border-primary-500/30">
@@ -650,17 +654,17 @@ function App() {
                         ) : (
                           <>
                             <div className="bg-surface-900/30 p-4 rounded-2xl border border-surface-800/30">
-                              <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Study Done</p>
-                              <p className="text-xl font-black text-emerald-400 tracking-tighter">{formatTime(totalStudyMins)}</p>
+                              <p className="text-[9px] font-black text-muted uppercase tracking-widest mb-1">Study Done</p>
+                              <p className="text-lg font-black text-heading tracking-tighter">{formatTime(totalStudyMins)}</p>
                             </div>
                             <div className="bg-surface-900/30 p-4 rounded-2xl border border-surface-800/30">
-                              <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Time Left</p>
-                              <p className="text-xl font-black text-primary-400 tracking-tighter">{formatTime(remainingMins)}</p>
+                              <p className="text-[9px] font-black text-muted uppercase tracking-widest mb-1">Time Left</p>
+                              <p className="text-lg font-black text-heading tracking-tighter">{formatTime(remainingMins)}</p>
                             </div>
                             <div className="bg-surface-900/30 p-4 rounded-2xl border border-surface-800/30 col-span-2 flex items-center justify-between">
                               <div>
-                                <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Required Daily</p>
-                                <p className="text-2xl font-black text-heading tracking-tighter">{formatTime(dailyGoalMins)} <span className="text-xs text-surface-500 font-bold">/ day</span></p>
+                                <p className="text-[9px] font-black text-muted uppercase tracking-widest mb-1">Required Daily</p>
+                                <p className="text-lg font-black text-heading tracking-tighter">{formatTime(dailyGoalMins)} <span className="text-xs text-surface-500 font-bold">/ day</span></p>
                               </div>
                               <Zap size={24} className="text-yellow-400 opacity-50" />
                             </div>
@@ -676,13 +680,14 @@ function App() {
                         {syllabus.map(sub => {
                           const subTotal = sub.topics.reduce((acc, t) => acc + (t.time || 0), 0);
                           const subDone = sub.topics.reduce((acc, t) => acc + (t.timeSpent || 0), 0);
+                          const subTarget = subTotal;
                           const weight = totalEstimatedMins === 0 ? 0 : Math.round((subTotal / totalEstimatedMins) * 100);
                           const subProgress = subTotal === 0 ? 0 : Math.round((subDone / subTotal) * 100);
                           return (
                             <div key={sub.id} className="space-y-1.5">
                               <div className="flex justify-between text-[11px] font-bold">
-                                <span className="text-slate-300">{sub.name} <span className="text-slate-600 font-black ml-2">{weight}% Weight</span></span>
-                                <span className="text-primary-400">{subProgress}%</span>
+                                <span className="text-heading font-black">{sub.name} <span className="text-muted font-black ml-2">{weight}% Weight</span></span>
+                                <span className="text-body font-mono font-bold text-[10px]">{formatTime(subDone)} / {formatTime(subTarget)}</span>
                               </div>
                               <div className="h-2 bg-surface-900 rounded-full overflow-hidden flex">
                                 <div className="h-full bg-primary-500 transition-all duration-1000" style={{ width: `${subProgress}%` }} />
@@ -899,7 +904,9 @@ function App() {
               >
                 <ArrowLeft size={16} /> HUB
               </button>
-              <button onClick={() => openEditor()} className="bg-white text-black px-8 py-4 rounded-xl sm:rounded-2xl flex items-center justify-center sm:justify-start gap-3 font-black transition-all hover:bg-primary-500 hover:text-white shadow-xl shadow-white/5 uppercase tracking-tighter"><Plus size={20} /> NEW SUBJECT</button>
+              {(activeTool?.tool_type === 'module' || activeTool?.tool_type === 'time') && (
+                <button onClick={() => openEditor()} className="bg-white text-black px-8 py-4 rounded-xl sm:rounded-2xl flex items-center justify-center sm:justify-start gap-3 font-black transition-all hover:bg-primary-500 hover:text-white shadow-xl shadow-white/5 uppercase tracking-tighter"><Plus size={20} /> NEW SUBJECT</button>
+              )}
             </div>
 
           </header>
@@ -918,11 +925,11 @@ function App() {
                   formatTime={formatTime}
                 />
               </div>
-              <div className="bg-surface-900/50 border border-surface-800/50 p-6 rounded-3xl flex items-center gap-6 relative overflow-hidden group">
+              {/* <div className="bg-surface-900/50 border border-surface-800/50 p-6 rounded-3xl flex items-center gap-6 relative overflow-hidden group">
                 <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none transition-opacity"><Flame size={120} /></div>
                 <div className="p-4 bg-orange-500/10 rounded-2xl text-orange-500"><Flame size={32} fill="currentColor" /></div>
                 <div><p className="text-[10px] font-black text-surface-500 uppercase tracking-widest leading-none mb-1">Efficiency</p><h2 className="text-3xl sm:text-4xl font-black text-heading leading-none tracking-tighter">PREMIUM</h2></div>
-              </div>
+              </div> */}
               <div onClick={() => setShowAnalytics(true)} className="bg-surface-900/50 border border-surface-800 border-primary-500/20 p-6 rounded-3xl flex items-center gap-6 relative overflow-hidden group cursor-pointer hover:border-primary-500/50 transition-all active:scale-[0.98]">
                 <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none transition-opacity group-hover:opacity-10"><BarChart3 size={120} /></div>
                 <div className="p-4 bg-primary-500/10 rounded-2xl text-primary-400 group-hover:scale-110 transition-transform"><BarChart3 size={32} /></div>
@@ -970,7 +977,7 @@ function App() {
           ) : (
             <>
               {/* SYLLABUS GRID */}
-              {loading && !syllabus.length && <div className="text-center py-20 text-slate-600 font-black uppercase tracking-widest animate-pulse text-xs">Synchronizing Syllabus...</div>}
+              {loading && !syllabus.length && <div className="text-center py-20 text-muted font-black uppercase tracking-widest animate-pulse text-xs">Synchronizing Syllabus...</div>}
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                 {syllabus.map((sub) => {
@@ -988,10 +995,10 @@ function App() {
                     <div key={sub.id} className={`bg-surface-900 border ${subProgress >= 100 ? 'border-emerald-500/30' : 'border-surface-800/50'} rounded-2xl sm:rounded-[2rem] p-6 sm:p-8 transition-all hover:bg-surface-950 hover:border-primary-500/40 relative group shadow-sm flex flex-col`}>
                       <div className="flex justify-between items-start mb-6">
                         <div className="cursor-pointer select-none flex-1 pr-2" onClick={() => toggleExpand(sub.id)}>
-                          <h3 className="font-black uppercase text-sm sm:text-base leading-tight tracking-tighter group-hover:text-primary-400 transition-colors">{sub.name}</h3>
+                          <h3 className="font-black uppercase text-sm sm:text-base leading-tight tracking-tighter" style={{ color: mode === 'light' ? '#020617' : '#ffffff' }}>{sub.name}</h3>
                         </div>
                         <div className="flex gap-2">
-                          <button onClick={() => openEditor(sub)} className="p-1.5 text-surface-700 hover:text-heading transition-colors"><Edit3 size={16} /></button>
+                          <button onClick={() => openEditor(sub)} className="p-1.5 text-muted hover:text-heading transition-colors"><Edit3 size={16} /></button>
                         </div>
                       </div>
 
@@ -1016,12 +1023,11 @@ function App() {
                               return (
                                 <div key={tIdx} className="group/topic bg-surface-950/40 border border-surface-800/30 rounded-xl p-3 sm:p-4 transition-all hover:border-primary-500/20 active:scale-[0.98]">
                                   <div className="flex justify-between items-center mb-1 gap-2">
-                                    <span onClick={() => setLoggingTopic({ subId: sub.id, topicName: t.name, currentSpent: done, topicId: t.id })} className={`text-[11px] sm:text-xs font-bold leading-tight flex-1 cursor-pointer ${tp >= 100 ? 'text-emerald-400 opacity-60' : 'text-slate-300'}`}>{t.name}</span>
+                                    <span onClick={() => setLoggingTopic({ subId: sub.id, topicName: t.name, currentSpent: done, topicId: t.id, isCompleted: tp >= 100 })} className={`text-[11px] sm:text-xs font-bold leading-tight flex-1 cursor-pointer ${tp >= 100 ? 'text-emerald-400 opacity-60' : ''}`} style={tp >= 100 ? {} : { color: mode === 'light' ? '#1e293b' : '#e2e8f0' }}>{t.name}</span>
                                     <div className="flex items-center gap-2 min-w-max">
-                                      {trackingMode === 'module'
-                                        ? <span className="text-[9px] font-mono text-surface-600 font-black">{done}/{weight}</span>
-                                        : <span className="text-[9px] font-mono text-surface-600 font-black">{formatTime(done)} / {formatTime(weight)}</span>
-                                      }
+                                      {trackingMode !== 'module' && (
+                                        <span className="text-[9px] font-mono text-surface-600 font-black">{formatTime(done)} / {formatTime(weight)}</span>
+                                      )}
                                       <div className="flex gap-1">
                                         <button onClick={() => {
                                           setEditingLog({
@@ -1031,7 +1037,9 @@ function App() {
                                             topicName: t.name
                                           });
                                         }} className="p-1 hover:text-primary-400 transition-colors" title="Edit total"><Edit3 size={10} /></button>
-                                        <button onClick={() => setLoggingTopic({ subId: sub.id, topicName: t.name, currentSpent: done, topicId: t.id })} className="p-1 hover:text-primary-400 transition-colors"><Plus size={10} /></button>
+                                        {trackingMode !== 'module' && (
+                                          <button onClick={() => setLoggingTopic({ subId: sub.id, topicName: t.name, currentSpent: done, topicId: t.id })} className="p-1 hover:text-primary-400 transition-colors"><Plus size={10} /></button>
+                                        )}
                                       </div>
                                     </div>
                                   </div>
@@ -1047,12 +1055,12 @@ function App() {
                         </div>
                       </div>
 
-                      {!isOpen && sub.topics.length > 0 && <div className="text-center py-2 opacity-50 group-hover:opacity-100 transition-opacity cursor-pointer text-surface-700 hover:text-primary-500" onClick={() => toggleExpand(sub.id)}><ChevronDown size={14} className="mx-auto" /></div>}
+                      {!isOpen && sub.topics.length > 0 && <div className="text-center py-2 opacity-50 group-hover:opacity-100 transition-opacity cursor-pointer text-muted hover:text-primary-500" onClick={() => toggleExpand(sub.id)}><ChevronDown size={14} className="mx-auto" /></div>}
                     </div>
                   );
                 })}
 
-                <button onClick={() => openEditor()} className="border-2 border-dashed border-surface-800/50 rounded-2xl sm:rounded-[2rem] p-8 flex flex-col items-center justify-center gap-4 text-surface-700 hover:text-primary-500 hover:border-primary-500/30 transition-all group h-full min-h-[220px]">
+                <button onClick={() => openEditor()} className="border-2 border-dashed border-surface-800/50 rounded-2xl sm:rounded-[2rem] p-8 flex flex-col items-center justify-center gap-4 text-muted hover:text-primary-500 hover:border-primary-500/30 transition-all group h-full min-h-[220px]">
                   <div className="p-4 bg-surface-900 rounded-2xl group-hover:scale-110 transition-transform"><Plus size={32} /></div>
                   <span className="font-black uppercase tracking-widest text-[9px] sm:text-[10px]">Add New Subject</span>
                 </button>
@@ -1068,44 +1076,50 @@ function App() {
               <h3 className="font-black text-heading text-xl mb-6 uppercase tracking-tight flex items-center gap-2"><Clock size={20} className="text-primary-400" /> {trackingMode === 'module' ? 'Check Unit' : 'Log Time'}</h3>
               <div className="mb-6 space-y-1 text-center sm:text-left">
                 <p className="text-primary-400 font-black text-lg leading-tight uppercase tracking-tighter">{loggingTopic.topicName}</p>
-                <p className="text-[10px] text-surface-500 font-bold uppercase tracking-widest">Currently: {trackingMode === 'module' ? `${loggingTopic.currentSpent} Done` : formatTime(loggingTopic.currentSpent)}</p>
+                {trackingMode !== 'module' && (
+                  <p className="text-[10px] text-surface-500 font-bold uppercase tracking-widest">Currently: {formatTime(loggingTopic.currentSpent)}</p>
+                )}
               </div>
 
               <div className="space-y-4">
                 <div className="flex flex-col gap-3">
                   {trackingMode === 'module' ? (
                     <>
-                      <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest pl-1">Modules Completed</label>
-                      <input
-                        type="number"
-                        min="0"
-                        id="quick-log-input"
-                        className="bg-surface-900 border border-surface-800 rounded-2xl p-4 text-heading text-lg font-mono text-center focus:border-primary-500 outline-none transition-all shadow-inner [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                        placeholder="0"
-                        autoFocus
-                      />
+                      <p className="text-sm font-bold text-center mb-4 text-heading">
+                        {loggingTopic.isCompleted ? 'Do you want to mark this subtopic as not completed?' : 'Is the subtopic completed?'}
+                      </p>
+                      <div className="flex gap-3">
+                        <button
+                          onClick={() => setLoggingTopic(null)}
+                          className="flex-1 bg-surface-800 text-surface-400 py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-surface-700 hover:text-white transition-all active:scale-95"
+                        >No</button>
+                        <button
+                          onClick={() => {
+                            handleEditLogSave(loggingTopic.topicId, loggingTopic.isCompleted ? 0 : 1);
+                            setLoggingTopic(null);
+                          }}
+                          className="flex-1 bg-primary-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-primary-500 transition-all active:scale-95 shadow-lg shadow-primary-600/10"
+                        >Yes</button>
+                      </div>
                     </>
                   ) : (
-                    <TimeInput
-                      onChange={setQuickLogMinutes}
-                      autoFocus
-                    />
+                    <>
+                      <TimeInput
+                        onChange={setQuickLogMinutes}
+                        autoFocus
+                      />
+                      <button
+                        onClick={() => {
+                          if (quickLogMinutes > 0) {
+                            handleLogTopicActivity(loggingTopic.topicId, String(quickLogMinutes));
+                          }
+                          setLoggingTopic(null);
+                          setQuickLogMinutes(0);
+                        }}
+                        className="bg-primary-600 text-white px-6 py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-primary-500 transition-all active:scale-95 shadow-lg shadow-primary-600/10"
+                      >Log Work</button>
+                    </>
                   )}
-                  <button
-                    onClick={() => {
-                      if (trackingMode === 'module') {
-                        const val = document.getElementById('quick-log-input').value;
-                        handleLogTopicActivity(loggingTopic.topicId, val);
-                      } else {
-                        if (quickLogMinutes > 0) {
-                          handleLogTopicActivity(loggingTopic.topicId, String(quickLogMinutes));
-                        }
-                      }
-                      setLoggingTopic(null);
-                      setQuickLogMinutes(0);
-                    }}
-                    className="bg-primary-600 text-white px-6 py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-primary-500 transition-all active:scale-95 shadow-lg shadow-primary-600/10"
-                  >{trackingMode === 'module' ? 'Finish Units' : 'Log Work'}</button>
                 </div>
               </div>
             </div>

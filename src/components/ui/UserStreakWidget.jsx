@@ -88,7 +88,7 @@ const UserStreakWidget = ({ currentStreak = 0, activeDays = [], toolsByDay = {},
             <div>
                 <div className="flex justify-between items-center mb-2">
                     <span className="text-[9px] font-black text-surface-600 uppercase tracking-widest">Last 4 Weeks</span>
-                    <span className="text-[9px] font-black text-surface-700 uppercase tracking-widest">
+                    <span className="text-[9px] font-black text-surface-400 uppercase tracking-widest">
                         {activeDays.filter(d => {
                             const dayDate = new Date(d + 'T12:00:00');
                             const diff = Math.round((today - dayDate) / (1000 * 60 * 60 * 24));
@@ -100,7 +100,7 @@ const UserStreakWidget = ({ currentStreak = 0, activeDays = [], toolsByDay = {},
                 {/* Day labels */}
                 <div className="grid grid-cols-7 gap-1 mb-1">
                     {dayLabels.map((d, i) => (
-                        <div key={i} className="text-[8px] font-black text-surface-700 text-center">{d}</div>
+                        <div key={i} className="text-[8px] font-black text-surface-400 text-center">{d}</div>
                     ))}
                 </div>
 

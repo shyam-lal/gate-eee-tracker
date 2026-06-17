@@ -95,7 +95,7 @@ const TimeInput = forwardRef(({ value = null, onChange, compact = false, autoFoc
             </div>
 
             {/* Separator */}
-            <div className="flex items-end pb-5 text-surface-700 font-black text-xl">:</div>
+            <div className="flex items-end pb-5 text-surface-400 font-black text-xl">:</div>
 
             {/* Minutes */}
             <div className="flex-1 space-y-1.5">

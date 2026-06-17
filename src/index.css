@@ -40,6 +40,19 @@
 }
 
 @layer utilities {
+  .text-dynamic-title {
+    color: #020617;
+  }
+  [data-mode="dark"] .text-dynamic-title {
+    color: #ffffff;
+  }
+  .text-dynamic-subtitle {
+    color: #1e293b;
+  }
+  [data-mode="dark"] .text-dynamic-subtitle {
+    color: #e2e8f0;
+  }
+
   .expand-container {
     display: grid;
     grid-template-rows: 0fr;
