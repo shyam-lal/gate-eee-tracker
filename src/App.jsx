@@ -13,7 +13,7 @@ import FlashcardDashboard from './components/flashcards/FlashcardDashboard';
 import StudySession from './components/flashcards/StudySession';
 import DeckManager from './components/flashcards/DeckManager';
 import CardEditor from './components/flashcards/CardEditor';
-import PlannerDashboard from './components/planner/PlannerDashboard';
+import SyllabusTracker from './components/tracker/SyllabusTracker';
 import BattlePlan from './components/battleplan/BattlePlan';
 import FocusTool from './components/focus/FocusTool';
 import GlobalFocusOverlay from './components/focus/GlobalFocusOverlay';
@@ -25,6 +25,7 @@ import ExamSwitcher from './components/exam/ExamSwitcher';
 import StudyMaterials from './components/materials/StudyMaterials';
 import Pricing from './components/pricing/Pricing';
 import CreditStore from './components/credits/CreditStore';
+import AppLayout from './components/layout/AppLayout';
 import { useTheme } from './contexts/ThemeContext';
 import {
   Calendar as CalendarIcon, Trash2, Plus, X,
@@ -63,6 +64,7 @@ function App() {
   // --- UI STATES ---
   const [loggingTopic, setLoggingTopic] = useState(null);
   const [editingLog, setEditingLog] = useState(null); // { topicId, minutes, modules, topicName }
+  const [searchQuery, setSearchQuery] = useState('');
   const [celebration, setCelebration] = useState(null);
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [flashcardAnalytics, setFlashcardAnalytics] = useState(null);
@@ -229,6 +231,16 @@ function App() {
     setView('landing');
   };
 
+  // Auto-select a tool for planner view if none is active
+  useEffect(() => {
+    if (view === 'planner' && !activeTool && userTools.length > 0) {
+      const defaultTool = userTools.find(t => ['module', 'time'].includes(t.tool_type));
+      if (defaultTool) {
+        handleOpenTool(defaultTool);
+      }
+    }
+  }, [view, activeTool, userTools]);
+
   const triggerCelebration = (type) => {
     setCelebration(type);
     setTimeout(() => setCelebration(null), 3000);
@@ -290,7 +302,7 @@ function App() {
     setToolStreakData(null);
     loadData(tool.id);
     loadToolStreak(tool.id);
-    setView('app');
+    setView(['module', 'time'].includes(tool.tool_type) ? 'planner' : 'app');
   };
 
   const handleDeleteTool = async (toolId) => {
@@ -516,8 +528,27 @@ function App() {
     }
     if (view === 'materials') return <StudyMaterials examId={user?.active_exam_id} examName={user?.selected_exam || 'Exam'} syllabus={[]} onBack={() => setView('dashboard')} />;
     if (view === 'social_terminal') return <Social currentUser={user} onBack={() => setView('dashboard')} />;
-    if (view === 'planner') return <PlannerDashboard onBack={() => setView('dashboard')} />;
+    if (view === 'planner') return (
+      <SyllabusTracker
+        user={user}
+        activeTool={activeTool}
+        syllabus={syllabus}
+        toolStreakData={toolStreakData}
+        loadToolStreak={loadToolStreak}
+        searchQuery={searchQuery}
+        openEditor={openEditor}
+        setLoggingTopic={setLoggingTopic}
+        setEditingLog={setEditingLog}
+        onBack={() => setView('dashboard')}
+      />
+    );
     if (view === 'battle_plan') return <BattlePlan onBack={() => setView('dashboard')} />;
+    if (view === 'mock_tests') return <div className="p-8 text-center"><h2 className="text-2xl font-black text-heading uppercase tracking-widest">Mock Tests</h2><p className="text-surface-500 mt-2">Coming soon...</p></div>;
+    if (view === 'flashcards') {
+      const fTool = userTools.find(t => t.tool_type === 'flashcard' || t.tool_type === 'flashcards');
+      if (!fTool) return <div className="p-8 text-center text-surface-500">Initializing Flashcards... Please create a flashcards tool first or wait.</div>;
+      return <FlashcardDashboard tool={fTool} user={user} onTopUp={() => setView('credit_store')} />;
+    }
 
     return (
       <div className="min-h-screen bg-transparent text-surface-400 font-sans p-4 md:p-8 pb-32 selection:bg-primary-500/30">
@@ -976,95 +1007,6 @@ function App() {
             <RevisionDashboard tool={activeTool} user={user} />
           ) : (
             <>
-              {/* SYLLABUS GRID */}
-              {loading && !syllabus.length && <div className="text-center py-20 text-muted font-black uppercase tracking-widest animate-pulse text-xs">Synchronizing Syllabus...</div>}
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-                {syllabus.map((sub) => {
-                  const subTotal = trackingMode === 'module'
-                    ? sub.topics.reduce((acc, t) => acc + (t.totalModules || 0), 0)
-                    : sub.topics.reduce((acc, t) => acc + (t.time || 0), 0);
-                  const subDone = trackingMode === 'module'
-                    ? sub.topics.reduce((acc, t) => acc + (t.completedModules || 0), 0)
-                    : sub.topics.reduce((acc, t) => acc + (t.timeSpent || 0), 0);
-                  const subProgress = subTotal === 0 ? 0 : Math.round((subDone / subTotal) * 100);
-                  const isOpen = expanded[sub.id];
-
-
-                  return (
-                    <div key={sub.id} className={`bg-surface-900 border ${subProgress >= 100 ? 'border-emerald-500/30' : 'border-surface-800/50'} rounded-2xl sm:rounded-[2rem] p-6 sm:p-8 transition-all hover:bg-surface-950 hover:border-primary-500/40 relative group shadow-sm flex flex-col`}>
-                      <div className="flex justify-between items-start mb-6">
-                        <div className="cursor-pointer select-none flex-1 pr-2" onClick={() => toggleExpand(sub.id)}>
-                          <h3 className="font-black uppercase text-sm sm:text-base leading-tight tracking-tighter" style={{ color: mode === 'light' ? '#020617' : '#ffffff' }}>{sub.name}</h3>
-                        </div>
-                        <div className="flex gap-2">
-                          <button onClick={() => openEditor(sub)} className="p-1.5 text-muted hover:text-heading transition-colors"><Edit3 size={16} /></button>
-                        </div>
-                      </div>
-
-                      <div className="flex justify-between items-end mb-2 text-[10px] font-black uppercase tracking-widest text-surface-500">
-                        <span>
-                          {trackingMode === 'module' ? `${subDone} / ${subTotal} Modules` : `${formatTime(subDone)} / ${formatTime(subTotal)}`}
-                        </span>
-                        <span className={subProgress >= 100 ? 'text-emerald-400' : 'text-indigo-400'}>{subProgress}%</span>
-                      </div>
-
-                      <div className="h-2 w-full bg-surface-800/50 rounded-full overflow-hidden mb-6 cursor-pointer" onClick={() => toggleExpand(sub.id)}>
-                        <div className={`h-full ${subProgress >= 100 ? 'bg-emerald-500' : 'bg-gradient-to-r from-primary-600 to-primary-400'} transition-all duration-1000`} style={{ width: `${subProgress}%` }} />
-                      </div>
-
-                      <div className={`expand-container ${isOpen ? 'open' : ''}`}>
-                        <div className="expand-content">
-                          <div className="space-y-2 pt-2">
-                            {sub.topics.map((t, tIdx) => {
-                              const weight = trackingMode === 'module' ? t.totalModules : t.time;
-                              const done = trackingMode === 'module' ? t.completedModules : t.timeSpent;
-                              const tp = weight > 0 ? (done / weight) * 100 : 0;
-                              return (
-                                <div key={tIdx} className="group/topic bg-surface-950/40 border border-surface-800/30 rounded-xl p-3 sm:p-4 transition-all hover:border-primary-500/20 active:scale-[0.98]">
-                                  <div className="flex justify-between items-center mb-1 gap-2">
-                                    <span onClick={() => setLoggingTopic({ subId: sub.id, topicName: t.name, currentSpent: done, topicId: t.id, isCompleted: tp >= 100 })} className={`text-[11px] sm:text-xs font-bold leading-tight flex-1 cursor-pointer ${tp >= 100 ? 'text-emerald-400 opacity-60' : ''}`} style={tp >= 100 ? {} : { color: mode === 'light' ? '#1e293b' : '#e2e8f0' }}>{t.name}</span>
-                                    <div className="flex items-center gap-2 min-w-max">
-                                      {trackingMode !== 'module' && (
-                                        <span className="text-[9px] font-mono text-surface-600 font-black">{formatTime(done)} / {formatTime(weight)}</span>
-                                      )}
-                                      <div className="flex gap-1">
-                                        <button onClick={() => {
-                                          setEditingLog({
-                                            topicId: t.id,
-                                            minutes: done,
-                                            modules: done,
-                                            topicName: t.name
-                                          });
-                                        }} className="p-1 hover:text-primary-400 transition-colors" title="Edit total"><Edit3 size={10} /></button>
-                                        {trackingMode !== 'module' && (
-                                          <button onClick={() => setLoggingTopic({ subId: sub.id, topicName: t.name, currentSpent: done, topicId: t.id })} className="p-1 hover:text-primary-400 transition-colors"><Plus size={10} /></button>
-                                        )}
-                                      </div>
-                                    </div>
-                                  </div>
-
-                                  <div className="h-1 w-full bg-surface-900 rounded-full overflow-hidden">
-                                    <div className={`h-full ${tp >= 100 ? 'bg-emerald-500' : 'bg-primary-600'} transition-all duration-500`} style={{ width: `${Math.min(100, tp)}%` }} />
-                                  </div>
-                                </div>
-                              )
-                            })}
-                            <button onClick={() => openEditor(sub)} className="w-full py-3 sm:py-4 border-2 border-dashed border-surface-800/50 rounded-2xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-surface-600 hover:text-primary-400 hover:border-primary-500/30 transition-all flex items-center justify-center gap-2 mt-2 font-black">+ Update Syllabus</button>
-                          </div>
-                        </div>
-                      </div>
-
-                      {!isOpen && sub.topics.length > 0 && <div className="text-center py-2 opacity-50 group-hover:opacity-100 transition-opacity cursor-pointer text-muted hover:text-primary-500" onClick={() => toggleExpand(sub.id)}><ChevronDown size={14} className="mx-auto" /></div>}
-                    </div>
-                  );
-                })}
-
-                <button onClick={() => openEditor()} className="border-2 border-dashed border-surface-800/50 rounded-2xl sm:rounded-[2rem] p-8 flex flex-col items-center justify-center gap-4 text-muted hover:text-primary-500 hover:border-primary-500/30 transition-all group h-full min-h-[220px]">
-                  <div className="p-4 bg-surface-900 rounded-2xl group-hover:scale-110 transition-transform"><Plus size={32} /></div>
-                  <span className="font-black uppercase tracking-widest text-[9px] sm:text-[10px]">Add New Subject</span>
-                </button>
-              </div>
             </>
           )}
         </div>
@@ -1130,12 +1072,20 @@ function App() {
     );
   };
 
-  return (
-    <>
-      {renderCurrentView()}
+  const isAuthView = user && !['landing', 'auth', 'wizard', 'exam_onboarding'].includes(view);
 
-      {/* GLOBAL FOCUS OVERLAY - Always alive when user is logged in */}
-      {user && view !== 'landing' && view !== 'auth' && (
+  const topbarProps = {
+    user,
+    showSearch: view === 'planner',
+    searchQuery,
+    setSearchQuery,
+    onOpenProfile: () => setView('profile'),
+    onOpenCreditStore: () => setView('credit_store'),
+    onStartFocus: () => setIsFocusOverlayOpen(true)
+  };
+
+  const focusOverlay = (
+      user && view !== 'landing' && view !== 'auth' && (
         <GlobalFocusOverlay
           isOpen={isFocusOverlayOpen}
           isMinimized={isFocusOverlayMinimized}
@@ -1150,12 +1100,31 @@ function App() {
           focusToolId={globalFocusTool?.id}
           onSessionSaved={() => {
             if (activeTool?.id === globalFocusTool?.id) {
-              // Reload focus analytics if currently viewing the focus tool
               loadData();
             }
           }}
         />
-      )}
+      )
+  );
+
+  if (isAuthView) {
+      return (
+          <AppLayout 
+            currentView={view} 
+            onViewChange={setView} 
+            onSetupTool={() => setView('wizard')}
+            topbarProps={topbarProps}
+          >
+              {renderCurrentView()}
+              {focusOverlay}
+          </AppLayout>
+      );
+  }
+
+  return (
+    <>
+      {renderCurrentView()}
+      {focusOverlay}
     </>
   );
 }

@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, FolderOpen, Play, CalendarClock, Trash2, Zap, Library } from 'lucide-react';
+import { Plus, FolderOpen, Play, CalendarClock, Trash2, Zap, Library, Sigma, FlaskConical, Cpu } from 'lucide-react';
 import { flashcards as flashcardsApi } from '../../services/api';
+
+const getGroupIcon = (name) => {
+    const lower = name.toLowerCase();
+    if (lower.includes('math')) return <Sigma size={18} />;
+    if (lower.includes('chem')) return <FlaskConical size={18} />;
+    if (lower.includes('electronic') || lower.includes('circuit')) return <Cpu size={18} />;
+    return <Library size={18} />;
+};
 
 const DeckManager = ({ toolId, onStudyDeck }) => {
     const [groups, setGroups] = useState([]);
@@ -126,10 +134,10 @@ const DeckManager = ({ toolId, onStudyDeck }) => {
                             {/* Subject Header */}
                             <div className="flex items-center justify-between pb-2 border-b border-surface-800">
                                 <div className="flex items-center gap-3">
-                                    <div className="p-2 bg-primary-500/10 rounded-lg text-primary-400">
-                                        <Library size={18} />
+                                    <div className="p-2 bg-surface-800 rounded-lg text-surface-400">
+                                        {getGroupIcon(group.name)}
                                     </div>
-                                    <h3 className="text-xl font-black text-heading">{group.name}</h3>
+                                    <h3 className="text-sm font-black text-surface-500 uppercase tracking-widest">{group.name}</h3>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <button
@@ -203,22 +211,20 @@ const DeckManager = ({ toolId, onStudyDeck }) => {
                                                     <button
                                                         onClick={() => onStudyDeck(deck, 'study')}
                                                         disabled={dueCount === 0}
-                                                        className={`flex-1 py-3 rounded-xl font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all ${dueCount > 0 ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/20 hover:bg-primary-500' : 'bg-surface-800/80 text-surface-600 cursor-not-allowed'}`}
+                                                        className={`flex-1 py-2.5 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition-all ${dueCount > 0 ? 'bg-primary-500 text-white hover:bg-primary-400' : 'bg-surface-800/80 text-surface-500 cursor-not-allowed'}`}
                                                     >
-                                                        <Play size={14} fill="currentColor" /> Study Due
+                                                        Study Due
                                                     </button>
                                                     <button
                                                         onClick={() => onStudyDeck(deck, 'cram')}
                                                         disabled={totalCount === 0}
-                                                        className={`flex-1 py-3 rounded-xl font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all ${totalCount > 0 ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20 hover:bg-amber-500 hover:text-black hover:border-amber-500' : 'bg-surface-800/80 text-surface-600 cursor-not-allowed border border-transparent'}`}
-                                                        title="Cram Mode (Study all cards without SRS)"
+                                                        className={`flex-1 py-2.5 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition-all ${totalCount > 0 ? 'bg-surface-900 text-surface-500 hover:text-heading hover:bg-surface-800 border border-surface-800' : 'bg-surface-800/80 text-surface-600 cursor-not-allowed border border-transparent'}`}
                                                     >
-                                                        <Zap size={14} fill="currentColor" /> Cram
+                                                        Cram
                                                     </button>
                                                     <button
                                                         onClick={() => onStudyDeck(deck, 'manage')}
-                                                        className="py-3 px-3 rounded-xl font-bold text-xs uppercase tracking-widest bg-surface-800 text-surface-400 hover:bg-surface-700 hover:text-heading transition-all flex items-center justify-center flex-1"
-                                                        title="Manage Cards"
+                                                        className="flex-1 py-2.5 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest bg-surface-900 text-surface-500 hover:text-heading hover:bg-surface-800 border border-surface-800 transition-all"
                                                     >
                                                         Manage
                                                     </button>

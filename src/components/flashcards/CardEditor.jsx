@@ -263,51 +263,47 @@ const CardEditor = ({ deckId, user, onTopUp }) => {
             <div className="bg-surface-900 border-b border-surface-800 p-6 flex-shrink-0 flex flex-col gap-4 z-20 shadow-md">
                 <div className="flex items-center justify-between">
                     <h3 className="text-xl font-black text-heading px-2">Deck Details</h3>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-4 mt-2">
+                    <div className="bg-surface-950 rounded-2xl p-5 border border-surface-800 flex-1">
+                        <p className="text-[10px] font-black text-surface-500 uppercase tracking-widest mb-1">Total Cards</p>
+                        <p className="text-3xl font-black text-primary-500">{cards.length}</p>
+                    </div>
+                    <div className="bg-surface-950 rounded-2xl p-5 border border-surface-800 flex-1">
+                        <p className="text-[10px] font-black text-surface-500 uppercase tracking-widest mb-1">Due Today</p>
+                        <p className="text-3xl font-black text-primary-500">{dueCount}</p>
+                    </div>
+                    <div className="bg-surface-950 rounded-2xl p-5 border border-surface-800 flex-1">
+                        <p className="text-[10px] font-black text-surface-500 uppercase tracking-widest mb-1">Learned</p>
+                        <p className="text-3xl font-black text-primary-500">{learnedCards.length}</p>
+                    </div>
+                    <div className="bg-surface-950 rounded-2xl p-5 border border-surface-800 flex-1">
+                        <p className="text-[10px] font-black text-surface-500 uppercase tracking-widest mb-1">Avg Ease</p>
+                        <p className="text-3xl font-black text-primary-500">{avgEaseNode}</p>
+                    </div>
                     {user?.effective_ai_mode !== 'disabled' && (
                         <button
                             onClick={() => setShowAIGenerator(!showAIGenerator)}
-                            className={`px-4 py-2 rounded-xl font-bold text-xs uppercase tracking-widest flex items-center gap-2 transition-all shadow-lg ${showAIGenerator ? 'bg-surface-800 text-surface-400 hover:text-white' : 'bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500 hover:text-white hover:border-emerald-500'}`}
+                            className={`flex-1 sm:max-w-[200px] rounded-2xl font-bold text-sm flex flex-col items-center justify-center gap-2 transition-all shadow-lg border border-transparent ${showAIGenerator ? 'bg-surface-800 text-surface-400 hover:text-white' : 'bg-primary-500 text-white hover:bg-primary-400'}`}
                         >
-                            {showAIGenerator ? <X size={14} /> : <Bot size={14} />}
+                            {showAIGenerator ? <X size={20} /> : <Bot size={20} />}
                             {showAIGenerator ? 'Close AI' : 'AI Generate'}
                         </button>
                     )}
                 </div>
-
-                {showAIGenerator && (
-                    <div className="pt-2">
-                        <AIGenerator
-                            deckId={deckId}
-                            mode={user?.effective_ai_mode}
-                            onImportComplete={handleImportComplete}
-                            onCancel={() => setShowAIGenerator(false)}
-                            onTopUp={onTopUp}
-                        />
-                    </div>
-                )}
-
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-2">
-                    <div className="bg-surface-800/50 rounded-xl p-4 border border-surface-700/50">
-                        <p className="text-[10px] font-black text-surface-400 uppercase tracking-widest mb-1">Total Cards</p>
-                        <p className="text-2xl font-black text-heading">{cards.length}</p>
-                    </div>
-                    <div className="bg-amber-500/10 rounded-xl p-4 border border-amber-500/20">
-                        <p className="text-[10px] font-black text-amber-500 uppercase tracking-widest mb-1">Due Today</p>
-                        <p className="text-2xl font-black text-amber-400">{dueCount}</p>
-                    </div>
-                    <div className="bg-primary-500/10 rounded-xl p-4 border border-primary-500/20">
-                        <p className="text-[10px] font-black text-primary-400 uppercase tracking-widest mb-1">Learned</p>
-                        <p className="text-2xl font-black text-primary-400">{learnedCards.length}</p>
-                    </div>
-                    <div className="bg-emerald-500/10 rounded-xl p-4 border border-emerald-500/20">
-                        <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1">Avg Ease</p>
-                        <p className="text-2xl font-black text-emerald-400">{avgEaseNode}</p>
-                    </div>
-                </div>
             </div>
 
-            {/* New Card Form (Sticky Top) */}
-            <div className="bg-surface-900/90 border-b border-surface-800 p-6 flex-shrink-0 z-10 backdrop-blur-md">
+            {/* New Card Form */}
+            <div className="bg-surface-950 border border-surface-800 rounded-[2rem] p-6 mx-6 mt-8 flex-shrink-0 z-10">
+                <div className="flex items-center gap-2 mb-6 border-b border-surface-800 pb-4">
+                     <div className="w-6 h-6 rounded-full bg-surface-800 flex items-center justify-center text-surface-400">
+                         <Plus size={14} />
+                     </div>
+                     <h3 className="font-bold text-heading">Create New Flashcard</h3>
+                     <div className="ml-auto flex gap-2">
+                         <span className="px-3 py-1 bg-primary-100 text-primary-500 text-xs font-bold rounded-full">Subject</span>
+                     </div>
+                </div>
                 <form onSubmit={handleCreateCard} className="flex flex-col sm:flex-row gap-4">
                     <div className="flex-1 space-y-2">
                         <div className="flex justify-between items-center mb-1">
@@ -365,7 +361,7 @@ const CardEditor = ({ deckId, user, onTopUp }) => {
                         <button
                             type="submit"
                             disabled={uploadingFront || uploadingBack || (isQuillEmpty(front) && !frontImage) || (isQuillEmpty(back) && !backImage)}
-                            className="h-20 px-6 bg-primary-600 disabled:bg-surface-800 text-white disabled:text-surface-500 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-primary-500 transition-colors shadow-lg shadow-primary-600/20 disabled:shadow-none flex items-center justify-center gap-2 w-full sm:w-auto"
+                            className="h-full min-h-[160px] px-8 bg-primary-600 disabled:bg-surface-800 text-white disabled:text-surface-500 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-primary-500 transition-colors shadow-lg shadow-primary-600/20 disabled:shadow-none flex flex-col items-center justify-center gap-2 w-full sm:w-auto"
                         >
                             <Plus size={16} /> Add Card
                         </button>
@@ -375,6 +371,12 @@ const CardEditor = ({ deckId, user, onTopUp }) => {
 
             {/* Existing Cards List */}
             <div className="p-6">
+                <div className="flex justify-between items-center mb-6">
+                     <h3 className="font-medium text-heading">Existing Cards ({cards.length})</h3>
+                     <div className="flex items-center gap-2 text-xs text-surface-500 font-bold">
+                         Sort by: <span className="bg-surface-800 px-3 py-1.5 rounded-lg text-heading">Newly Created v</span>
+                     </div>
+                </div>
                 {cards.length === 0 ? (
                     <div className="h-full flex flex-col items-center justify-center text-center opacity-50">
                         <BrainCircuit size={48} className="text-surface-600 mb-4" />
@@ -480,26 +482,29 @@ const CardEditor = ({ deckId, user, onTopUp }) => {
                                         </button>
                                     </div>
 
-                                    <div className="flex-1 pr-16 space-y-2">
-                                        <p className="text-xs font-black text-surface-500 uppercase tracking-widest mb-1.5">Front</p>
-                                        <div className="card-rich-display" dangerouslySetInnerHTML={{ __html: extractImage(card.front_content).text }} />
-                                        {extractImage(card.front_content).image && (
-                                            <img src={extractImage(card.front_content).image} alt="Front" className="h-16 rounded-lg border border-surface-800" />
-                                        )}
-                                    </div>
-                                    <div className="w-full h-px bg-surface-800/50 block"></div>
-                                    <div className="flex-1 space-y-2">
-                                        <p className="text-xs font-black text-primary-500 uppercase tracking-widest mb-1.5">Back</p>
-                                        <div className="card-rich-display text-surface-400" dangerouslySetInnerHTML={{ __html: extractImage(card.back_content).text }} />
-                                        {extractImage(card.back_content).image && (
-                                            <img src={extractImage(card.back_content).image} alt="Back" className="h-16 rounded-lg border border-surface-800" />
-                                        )}
-                                    </div>
-
-                                    <div className="pt-2 flex items-center justify-between text-[10px] font-black text-surface-600 uppercase tracking-[0.2em]">
-                                        <span>Rep: {card.repetition}</span>
-                                        <span>Int: {card.interval_days}d</span>
-                                        <span className="text-primary-400/50">Due: {nextReview}</span>
+                                    <div className="flex flex-col md:flex-row gap-8 pr-16 relative">
+                                        <div className="flex-1 space-y-2">
+                                            <p className="text-[10px] font-black text-surface-400 uppercase tracking-widest mb-1.5">Front</p>
+                                            <div className="card-rich-display text-heading font-medium" dangerouslySetInnerHTML={{ __html: extractImage(card.front_content).text }} />
+                                            {extractImage(card.front_content).image && (
+                                                <img src={extractImage(card.front_content).image} alt="Front" className="h-16 rounded-lg border border-surface-800" />
+                                            )}
+                                        </div>
+                                        <div className="hidden md:block w-px bg-surface-800/50"></div>
+                                        <div className="flex-1 space-y-2">
+                                            <div className="flex justify-between items-start">
+                                                <p className="text-[10px] font-black text-surface-400 uppercase tracking-widest mb-1.5">Back</p>
+                                                <div className="flex gap-1.5 absolute top-0 right-[-60px]">
+                                                    <span className="px-2 py-0.5 bg-surface-800 text-surface-500 text-[9px] font-black rounded-md">REP:{card.repetition}</span>
+                                                    <span className="px-2 py-0.5 bg-surface-800 text-surface-500 text-[9px] font-black rounded-md">INT:{card.interval_days}D</span>
+                                                    <span className="px-2 py-0.5 bg-primary-500/20 text-primary-500 text-[9px] font-black rounded-md">DUE:{nextReview}</span>
+                                                </div>
+                                            </div>
+                                            <div className="card-rich-display text-surface-500" dangerouslySetInnerHTML={{ __html: extractImage(card.back_content).text }} />
+                                            {extractImage(card.back_content).image && (
+                                                <img src={extractImage(card.back_content).image} alt="Back" className="h-16 rounded-lg border border-surface-800" />
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             );

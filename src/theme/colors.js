@@ -144,29 +144,29 @@ export const themeColors = {
       glassBorderOpacity: '0.08',
     },
     [MODES.LIGHT]: {
-      // Surfaces — warm light grays
-      base: '#f7f9f8',
-      surface950: '#eff3f1',
-      surface900: '#e0e7e3',
-      surface800: '#c8d5ce',
-      surface700: '#94a39b',
-      surface600: '#6b7e76',
-      surface500: '#4a5c55',
-      surface400: '#2e3834',
-      surface300: '#1a201d',
+      // Surfaces — clean whites and cool grays for a sleek look
+      base: '#f8fafc',
+      surface950: '#ffffff', // Cards, main content areas
+      surface900: '#f1f5f9', // Sidebar, secondary backgrounds
+      surface800: '#e2e8f0', // Borders, hover states
+      surface700: '#cbd5e1',
+      surface600: '#94a3b8',
+      surface500: '#64748b',
+      surface400: '#475569',
+      surface300: '#334155',
 
       // Text
-      heading: '#030712',
-      body: '#1a201d',
-      muted: '#4a5c55',
+      heading: '#0f172a',
+      body: '#1e293b',
+      muted: '#64748b',
 
-      // Primary accent — deeper green for light bg contrast
-      primary700: '#1a3025',
-      primary600: '#233B2E',
-      primary500: '#2E4D3D',
-      primary400: '#3D6652',
-      primary300: '#6B9E85',
-      primary100: '#C8DDD2',
+      // Primary accent — Deep Forest Green & Bright Mint
+      primary700: '#064e3b',
+      primary600: '#0d241a', // Hover state for primary buttons
+      primary500: '#163a2a', // Primary buttons, dark green text
+      primary400: '#22543d', // Lighter dark green
+      primary300: '#6ee7b7', // Bright mint for highlights
+      primary100: '#d1fae5', // Very light mint for active backgrounds
 
       // Secondary accent — sage
       secondary600: '#56746A',
@@ -174,12 +174,12 @@ export const themeColors = {
       secondary400: '#87A296',
 
       // Atmosphere glows — gentle
-      glow1: 'rgba(46, 77, 61, 0.06)',
-      glow2: 'rgba(135, 162, 150, 0.05)',
+      glow1: 'rgba(16, 185, 129, 0.05)',
+      glow2: 'rgba(52, 211, 153, 0.05)',
 
       // Glassmorphism — crisp glass on light
       glassBlur: '16px',
-      glassBgOpacity: '0.55',
+      glassBgOpacity: '0.8',
       glassBorderOpacity: '0.1',
     },
   },
