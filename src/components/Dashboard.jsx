@@ -126,7 +126,7 @@ const Dashboard = ({ user, tools, streakData, onStartFocus, onOpenBattlePlan, on
 
                 {/* Syllabus Mastery Widget */}
                 <div 
-                    onClick={() => moduleTool && onOpenTool && onOpenTool(moduleTool)}
+                    onClick={() => onOpenPlanner && onOpenPlanner()}
                     className="bg-surface-900 border border-surface-800 rounded-3xl p-6 relative flex flex-col justify-center cursor-pointer hover:border-emerald-500/50 hover:bg-surface-800/50 transition-all group"
                 >
                     <h3 className="text-[10px] font-black text-surface-500 uppercase tracking-widest absolute top-6 left-6">Syllabus Mastery</h3>

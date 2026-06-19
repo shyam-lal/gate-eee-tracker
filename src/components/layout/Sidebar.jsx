@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutGrid, BookOpen, Target, Brain, ClipboardCheck, Plus, Settings, HelpCircle } from 'lucide-react';
+import { LayoutGrid, BookOpen, Target, Brain, ClipboardCheck, Plus, Settings, HelpCircle, Calendar } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
 
 const Sidebar = ({ currentView, onViewChange, onSetupTool }) => {
@@ -7,9 +7,10 @@ const Sidebar = ({ currentView, onViewChange, onSetupTool }) => {
 
     const navItems = [
         { id: 'dashboard', label: 'Dashboard', icon: LayoutGrid },
-        { id: 'planner', label: 'Syllabus Tracker', icon: BookOpen },
+        { id: 'planner', label: 'Module Tracker', icon: BookOpen },
         { id: 'battle_plan', label: 'Battle Planner', icon: Target },
-        { id: 'flashcards', label: 'Flashcards', icon: Brain }, // We'll need a global flashcards view
+        { id: 'daily_planner', label: 'Daily Planner', icon: Calendar },
+        { id: 'flashcards', label: 'Flashcards', icon: Brain },
         { id: 'mock_tests', label: 'Mock Tests', icon: ClipboardCheck },
     ];
 

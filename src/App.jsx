@@ -14,6 +14,7 @@ import StudySession from './components/flashcards/StudySession';
 import DeckManager from './components/flashcards/DeckManager';
 import CardEditor from './components/flashcards/CardEditor';
 import SyllabusTracker from './components/tracker/SyllabusTracker';
+import PlannerDashboard from './components/planner/PlannerDashboard';
 import BattlePlan from './components/battleplan/BattlePlan';
 import FocusTool from './components/focus/FocusTool';
 import GlobalFocusOverlay from './components/focus/GlobalFocusOverlay';
@@ -542,6 +543,7 @@ function App() {
         onBack={() => setView('dashboard')}
       />
     );
+    if (view === 'daily_planner') return <PlannerDashboard onBack={() => setView('dashboard')} />;
     if (view === 'battle_plan') return <BattlePlan onBack={() => setView('dashboard')} />;
     if (view === 'mock_tests') return <div className="p-8 text-center"><h2 className="text-2xl font-black text-heading uppercase tracking-widest">Mock Tests</h2><p className="text-surface-500 mt-2">Coming soon...</p></div>;
     if (view === 'flashcards') {

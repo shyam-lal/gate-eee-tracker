@@ -73,12 +73,7 @@ const SyllabusTracker = ({
                     </p>
                 </div>
                 <div className="flex items-center gap-3 shrink-0">
-                    <button 
-                        onClick={onBack}
-                        className="flex items-center gap-2 px-5 py-3 border border-surface-800 rounded-xl text-surface-400 hover:text-heading hover:bg-surface-900 font-bold text-xs uppercase tracking-widest transition-all"
-                    >
-                        <ArrowLeft size={16} /> HUB
-                    </button>
+                    {/* Hub button removed as per new sidebar navigation paradigm */}
                     <button 
                         onClick={() => openEditor()}
                         className="flex items-center gap-2 px-6 py-3 bg-surface-900 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500 hover:text-white rounded-xl font-bold text-xs uppercase tracking-widest transition-all shadow-lg shadow-emerald-500/10"

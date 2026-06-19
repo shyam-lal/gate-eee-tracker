@@ -71,11 +71,7 @@ const PlannerDashboard = ({ onBack }) => {
     const [timelineDate, setTimelineDate] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState(new Date());
 
-    // UI Layout State
-    const [isTaskListCollapsed, setIsTaskListCollapsed] = useState(false);
-    const [isKanbanCollapsed, setIsKanbanCollapsed] = useState(false);
-    const [isDiaryCollapsed, setIsDiaryCollapsed] = useState(false);
-
+    // UI Layout State removed (Fixed 3-column layout)
     // Data State
     const [diaryContent, setDiaryContent] = useState('');
     const [isSaving, setIsSaving] = useState(false);
@@ -306,24 +302,8 @@ const PlannerDashboard = ({ onBack }) => {
         }
     };
 
-    const toggleTaskListCollapse = () => {
-        if (!isTaskListCollapsed && isKanbanCollapsed && isDiaryCollapsed) setIsKanbanCollapsed(false);
-        setIsTaskListCollapsed(!isTaskListCollapsed);
-    };
-
-    const toggleKanbanCollapse = () => {
-        if (!isKanbanCollapsed && isDiaryCollapsed && isTaskListCollapsed) setIsDiaryCollapsed(false);
-        setIsKanbanCollapsed(!isKanbanCollapsed);
-    };
-
-    const toggleDiaryCollapse = () => {
-        if (!isDiaryCollapsed && isKanbanCollapsed && isTaskListCollapsed) setIsKanbanCollapsed(false);
-        setIsDiaryCollapsed(!isDiaryCollapsed);
-    };
-
     const changeViewMode = (mode) => {
         setViewMode(mode);
-        // Do not force expand both anymore; user controls the collapse explicitly!
     };
 
 
@@ -403,26 +383,7 @@ const PlannerDashboard = ({ onBack }) => {
         }
     }), [customLinkHandler, customDividerHandler]);
 
-    // Compute grid spans dynamically based on collapse state
-    let taskListCols = 'xl:col-span-12';
-    let kanbanCols = 'xl:col-span-12';
-    let diaryCols = 'xl:col-span-12';
-
-    let openCount = (!isTaskListCollapsed ? 1 : 0) + (!isKanbanCollapsed ? 1 : 0) + (!isDiaryCollapsed ? 1 : 0);
-
-    if (openCount === 3) {
-        taskListCols = 'xl:col-span-2';
-        kanbanCols = 'xl:col-span-5';
-        diaryCols = 'xl:col-span-5';
-    } else if (openCount === 2) {
-        if (isTaskListCollapsed) { taskListCols = 'xl:col-span-1'; kanbanCols = 'xl:col-span-5'; diaryCols = 'xl:col-span-6'; }
-        if (isKanbanCollapsed) { taskListCols = 'xl:col-span-3'; kanbanCols = 'xl:col-span-1'; diaryCols = 'xl:col-span-8'; }
-        if (isDiaryCollapsed) { taskListCols = 'xl:col-span-3'; kanbanCols = 'xl:col-span-8'; diaryCols = 'xl:col-span-1'; }
-    } else {
-        if (!isTaskListCollapsed) { taskListCols = 'xl:col-span-10'; kanbanCols = 'xl:col-span-1'; diaryCols = 'xl:col-span-1'; }
-        if (!isKanbanCollapsed) { taskListCols = 'xl:col-span-1'; kanbanCols = 'xl:col-span-10'; diaryCols = 'xl:col-span-1'; }
-        if (!isDiaryCollapsed) { taskListCols = 'xl:col-span-1'; kanbanCols = 'xl:col-span-1'; diaryCols = 'xl:col-span-10'; }
-    }
+    // Grid spans are now fixed in the JSX for responsiveness.
 
     return (
         <div className="min-h-screen bg-base text-surface-400 font-sans p-4 md:p-8 selection:bg-primary-500/30">
@@ -430,11 +391,14 @@ const PlannerDashboard = ({ onBack }) => {
             <style>{`
                 .quill { display: flex; flex-direction: column; height: 100%; }
                 .ql-toolbar {
-                    background-color: rgba(15, 23, 42, 0.8) !important;
+                    background-color: transparent !important;
                     border: none !important;
-                    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+                    border-bottom: 1px solid rgba(150, 150, 150, 0.1) !important;
                     border-radius: 1.5rem 1.5rem 0 0;
                     padding: 12px 16px !important;
+                }
+                .dark .ql-toolbar {
+                    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
                 }
                 .ql-container {
                     border: none !important;
@@ -443,306 +407,260 @@ const PlannerDashboard = ({ onBack }) => {
                     flex-grow: 1;
                     overflow-y: auto;
                 }
-                .ql-editor { font-size: 1rem; color: #e2e8f0; padding: 24px; }
-                .ql-editor hr { border: 0; height: 1px; background: rgba(255, 255, 255, 0.1); margin: 1rem 0; }
-                .ql-editor.ql-blank::before { color: #64748b; font-style: italic; }
-                .ql-snow .ql-stroke { stroke: #94a3b8; }
-                .ql-snow .ql-fill { fill: #94a3b8; }
-                .ql-snow .ql-picker { color: #94a3b8; }
-                .ql-snow .ql-picker-options { background-color: #0f172a; border-color: rgba(255,255,255,0.1); }
-                .ql-snow .ql-picker-item:hover { color: #fff; }
-                button.ql-active .ql-stroke { stroke: #8b5cf6 !important; }
+                .ql-editor { font-size: 1rem; color: inherit; padding: 24px; }
+                .ql-editor hr { border: 0; height: 1px; background: rgba(150, 150, 150, 0.1); margin: 1rem 0; }
+                .dark .ql-editor hr { background: rgba(255, 255, 255, 0.1); }
+                .ql-editor.ql-blank::before { color: #94a3b8; font-style: italic; }
+                .ql-snow .ql-stroke { stroke: #64748b; }
+                .dark .ql-snow .ql-stroke { stroke: #94a3b8; }
+                .ql-snow .ql-fill { fill: #64748b; }
+                .dark .ql-snow .ql-fill { fill: #94a3b8; }
+                .ql-snow .ql-picker { color: #64748b; }
+                .dark .ql-snow .ql-picker { color: #94a3b8; }
+                .ql-snow .ql-picker-options { background-color: #ffffff; border-color: rgba(0,0,0,0.1); }
+                .dark .ql-snow .ql-picker-options { background-color: #0f172a; border-color: rgba(255,255,255,0.1); }
+                .ql-snow .ql-picker-item:hover { color: #000; }
+                .dark .ql-snow .ql-picker-item:hover { color: #fff; }
+                button.ql-active .ql-stroke { stroke: #059669 !important; }
+                .dark button.ql-active .ql-stroke { stroke: #10b981 !important; }
                 
                 .planner-scroll::-webkit-scrollbar { height: 6px; width: 6px; }
-                .planner-scroll::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); border-radius: 4px; }
-                .planner-scroll::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.3); border-radius: 4px; }
-                .planner-scroll::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.6); }
+                .planner-scroll::-webkit-scrollbar-track { background: rgba(150, 150, 150, 0.1); border-radius: 4px; }
+                .dark .planner-scroll::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); }
+                .planner-scroll::-webkit-scrollbar-thumb { background: rgba(150, 150, 150, 0.3); border-radius: 4px; }
+                .dark .planner-scroll::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); }
+                .planner-scroll::-webkit-scrollbar-thumb:hover { background: rgba(150, 150, 150, 0.5); }
+                .dark .planner-scroll::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.3); }
 
                 .ql-divider::after { content: '—'; font-size: 14px; font-weight: bold; color: #94a3b8; }
-                .ql-divider:hover::after { color: #fff; }
-
-                /* Hide Quill tooltip natively and style beautifully */
-                .ql-tooltip {
-                    background-color: #0f172a !important;
-                    border: 1px solid rgba(255,255,255,0.1) !important;
-                    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1) !important;
-                    border-radius: 0.5rem !important;
-                    color: white !important;
-                }
-                .ql-tooltip input[type=text] {
-                    background: #1e293b !important;
-                    border: 1px solid rgba(255,255,255,0.1) !important;
-                    color: white !important;
-                }
-                .ql-tooltip[data-mode="formula"]::before {
-                    color: #94a3b8 !important;
-                }
+                .ql-divider:hover::after { color: #64748b; }
+                .dark .ql-divider:hover::after { color: #fff; }
             `}</style>
 
             {/* Header */}
-            <header className="max-w-[1600px] mx-auto flex items-center justify-between mb-8 pb-4 border-b border-white/5">
-                <div className="flex items-center gap-4">
-                    <button onClick={onBack} className="p-2 bg-surface-900 border border-surface-700 rounded-xl hover:bg-surface-800 transition-colors">
-                        <ChevronLeft size={20} />
-                    </button>
-                    <div>
-                        <h1 className="text-2xl font-black text-heading uppercase tracking-tighter cursor-pointer select-none">Command Center</h1>
-                        <p className="text-[10px] text-surface-500 font-bold uppercase tracking-widest cursor-default select-none">Hybrid Study Planner</p>
-                    </div>
-                </div>
+            <header className="max-w-[1600px] w-full mx-auto mb-8">
+                <h1 className="text-3xl font-black text-heading tracking-tighter">Hybrid Planner</h1>
+                <p className="text-sm font-medium text-surface-500 mt-1">Manage your long-term goals, weekly tasks, and daily diary.</p>
             </header>
 
             {/* TIMELINE NAVIGATOR */}
-            <div className="max-w-[1600px] mx-auto mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
-
+            <div className="max-w-[1600px] mx-auto mb-8 flex flex-col lg:flex-row items-center justify-between gap-6 bg-surface-50 dark:bg-surface-900/20 p-2 pl-4 rounded-3xl border border-surface-200 dark:border-white/5">
+                
                 {/* View Toggles */}
-                <div className="flex items-center bg-surface-900/50 p-1.5 rounded-2xl border border-white/5 shadow-inner">
+                <div className="flex items-center bg-surface-100 dark:bg-surface-900/50 p-1 rounded-2xl w-full lg:w-auto overflow-x-auto">
                     <button
                         onClick={() => changeViewMode('week')}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${viewMode === 'week' ? 'bg-primary-500 text-white shadow-lg' : 'text-surface-500 hover:text-surface-400'}`}
+                        className={`flex-1 lg:flex-none flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${viewMode === 'week' ? 'bg-white dark:bg-surface-800 text-heading shadow-sm' : 'text-surface-500 hover:text-surface-400'}`}
                     >
-                        <LayoutGrid size={14} /> Weekly
+                        Weekly
                     </button>
                     <button
                         onClick={() => changeViewMode('month')}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${viewMode === 'month' ? 'bg-emerald-500 text-white shadow-lg' : 'text-surface-500 hover:text-surface-400'}`}
+                        className={`flex-1 lg:flex-none flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${viewMode === 'month' ? 'bg-white dark:bg-surface-800 text-heading shadow-sm' : 'text-surface-500 hover:text-surface-400'}`}
                     >
-                        <CalendarDays size={14} /> Monthly
+                        Monthly
                     </button>
                     <button
                         onClick={() => changeViewMode('half_year')}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${viewMode === 'half_year' ? 'bg-amber-500 text-white shadow-lg' : 'text-surface-500 hover:text-surface-400'}`}
+                        className={`flex-1 lg:flex-none flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${viewMode === 'half_year' ? 'bg-white dark:bg-surface-800 text-heading shadow-sm' : 'text-surface-500 hover:text-surface-400'}`}
                     >
-                        <Columns size={14} /> H-Yearly
+                        Half-Yearly
                     </button>
-                </div >
+                </div>
 
                 {/* Horizontal Scroll Strip */}
-                <div className="flex items-center gap-2 bg-surface-900/40 backdrop-blur-md px-2 py-4 rounded-[2.5rem] border border-white/5 flex-1 max-w-3xl justify-center">
-                    <button onClick={() => changeTimelineScope(-1)} className="p-2 text-surface-400 hover:text-heading shrink-0"><ChevronLeft size={16} /></button>
+                <div className="flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth pr-2 w-full lg:w-auto">
+                    <button onClick={() => changeTimelineScope(-1)} className="p-2 text-surface-400 hover:text-heading shrink-0 hidden lg:block"><ChevronLeft size={16} /></button>
 
-                    <div className="flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth px-2">
+                    <div className="flex items-center gap-2 px-2">
                         {scrollItems.map((item, idx) => (
                             <button
                                 key={idx}
                                 onClick={() => handleItemClick(item)}
-                                className={`relative flex flex-col items-center justify-center min-w-[2.8rem] p-1.5 pb-3 rounded-2xl transition-all cursor-pointer select-none shrink-0 ${item.isActive
-                                    ? 'bg-gradient-to-br from-slate-700 to-slate-800 shadow-xl border border-white/10 scale-105 z-10'
-                                    : 'hover:bg-surface-800 border border-transparent'
+                                className={`relative flex flex-col items-center justify-center min-w-[3.5rem] p-2 py-3 rounded-2xl transition-all cursor-pointer select-none shrink-0 ${item.isActive
+                                    ? 'bg-primary-900 dark:bg-surface-800 shadow-md text-white dark:text-heading scale-105'
+                                    : 'hover:bg-surface-200 dark:hover:bg-surface-900/50 text-surface-500'
                                     }`}
                             >
-                                <span className={`text-[8px] font-black uppercase tracking-widest ${item.isActive ? 'text-primary-400' : 'text-surface-500'}`}>{item.label}</span>
-                                <span className={`text-base font-black tracking-tighter ${item.isActive ? 'text-heading' : 'text-surface-400'}`}>{item.subLabel}</span>
-
-                                {/* Diary Data Indicator */}
+                                <span className={`text-[10px] font-bold uppercase mb-1 ${item.isActive ? 'text-primary-200 dark:text-surface-400' : 'text-surface-600'}`}>{item.label.charAt(0)}</span>
+                                <span className={`text-base font-black ${item.isActive ? 'text-white dark:text-heading' : 'text-surface-500'}`}>{item.subLabel}</span>
                                 {item.hasData && (
-                                    <div className="absolute bottom-1 w-1.5 h-1.5 rounded-full bg-primary-500 shadow-[0_0_8px_rgba(99,102,241,0.8)]"></div>
+                                    <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-sm"></div>
                                 )}
                             </button>
                         ))}
                     </div>
 
-                    <button onClick={() => changeTimelineScope(1)} className="p-2 text-surface-400 hover:text-heading shrink-0"><ChevronRight size={16} /></button>
+                    <button onClick={() => changeTimelineScope(1)} className="p-2 text-surface-400 hover:text-heading shrink-0 hidden lg:block"><ChevronRight size={16} /></button>
                 </div>
             </div>
 
-            <main className="max-w-[1600px] mx-auto grid grid-cols-1 xl:grid-cols-12 gap-4 md:gap-8 min-h-[500px] h-auto xl:h-[calc(100vh-240px)]">
+            {/* MAIN CONTENT GRID */}
+            <main className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 h-auto xl:h-[calc(100vh-240px)]">
 
-                {/* EXTREME LEFT PANE: TASK LIST */}
-                {!isTaskListCollapsed ? (
-                    <div className={`${taskListCols} transition-all duration-300 flex flex-col backdrop-blur-xl border border-white/5 rounded-[2.5rem] overflow-hidden bg-surface-900/20`}>
-                        <div className="p-6 border-b border-white/5 bg-surface-900/60 shadow-md z-10 flex justify-between items-center group">
-                            <div>
-                                <h2 className="font-black text-heading uppercase tracking-widest text-sm flex items-center gap-2">Tasks</h2>
-                                <p className="text-[10px] text-surface-500 font-bold mt-1">ALL GOALS</p>
+                {/* COL 1: GOALS & BACKLOG */}
+                <div className="lg:col-span-3 flex flex-col bg-white dark:bg-surface-900/20 rounded-[2rem] border border-surface-200 dark:border-white/5 overflow-hidden">
+                    <div className="p-6 pb-4">
+                        <h2 className="font-black text-heading uppercase tracking-widest text-xs flex items-center gap-2">Goals & Backlog</h2>
+                    </div>
+                    <div className="px-4">
+                        <button className="w-full py-3 mb-4 rounded-2xl border-2 border-dashed border-surface-200 dark:border-surface-700 hover:border-primary-500/50 text-surface-500 hover:text-heading flex items-center justify-center gap-2 text-sm font-bold transition-all">
+                            <Plus size={16} /> Add Goal
+                        </button>
+                    </div>
+                    <div className="flex-1 overflow-y-auto planner-scroll px-4 pb-4 space-y-2">
+                        {goals.length > 0 ? goals.map(goal => (
+                            <div key={goal.id} className="flex items-start gap-2 bg-surface-50 dark:bg-surface-800/40 p-3 rounded-2xl border border-surface-200 dark:border-white/5">
+                                {goal.status === 'completed' ? (
+                                    <CheckCircle2 size={16} className="text-emerald-500 shrink-0 mt-0.5" />
+                                ) : goal.status === 'in_progress' ? (
+                                    <Clock size={16} className="text-amber-500 shrink-0 mt-0.5" />
+                                ) : (
+                                    <Circle size={16} className="text-surface-400 shrink-0 mt-0.5" />
+                                )}
+                                <span className={`text-xs font-medium leading-snug break-words ${goal.status === 'completed' ? 'line-through text-surface-400' : 'text-surface-700 dark:text-surface-400'}`}>
+                                    {goal.title}
+                                </span>
                             </div>
-                            <button onClick={toggleTaskListCollapse} className="text-surface-500 hover:text-heading p-2 bg-surface-800/50 hover:bg-surface-700 rounded-xl transition-all" title="Minimize Task List">
-                                <Minimize2 size={16} />
-                            </button>
-                        </div>
-                        <div className="flex-1 overflow-y-auto planner-scroll p-4 space-y-2">
-                            {goals.length > 0 ? goals.map(goal => (
-                                <div key={goal.id} className="flex items-start gap-2 bg-surface-800/40 p-3 rounded-2xl border border-white/5">
-                                    {goal.status === 'completed' ? (
-                                        <CheckCircle2 size={16} className="text-emerald-500 shrink-0 mt-0.5" />
-                                    ) : goal.status === 'in_progress' ? (
-                                        <Clock size={16} className="text-amber-500 shrink-0 mt-0.5" />
-                                    ) : (
-                                        <Circle size={16} className="text-surface-500 shrink-0 mt-0.5" />
-                                    )}
-                                    <span className={`text-xs font-medium leading-snug break-words ${goal.status === 'completed' ? 'line-through text-surface-500' : 'text-surface-400'}`}>
-                                        {goal.title}
+                        )) : (
+                            <div className="flex flex-col items-center justify-center h-40 text-center px-4">
+                                <div className="w-12 h-12 rounded-2xl border-2 border-surface-200 dark:border-surface-800 flex items-center justify-center mb-3 text-surface-400">
+                                    <LayoutGrid size={24} />
+                                </div>
+                                <h3 className="text-sm font-black text-heading mb-1">No Goals</h3>
+                                <p className="text-[10px] text-surface-500 uppercase tracking-widest font-bold">Ready for your long-term vision.</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* COL 2: WEEKLY OBJECTIVES KANBAN */}
+                <div className="lg:col-span-5 flex flex-col rounded-[2rem] overflow-hidden">
+                    <div className="p-2 pb-4">
+                        <h2 className="font-black text-heading uppercase tracking-widest text-xs flex items-center gap-2 px-4">Weekly Objectives</h2>
+                    </div>
+                    <div className="flex-1 flex overflow-x-auto overflow-y-auto gap-4 planner-scroll snap-x">
+                        {columns.map(col => (
+                            <div
+                                key={col.id}
+                                className={`flex-1 rounded-[2rem] p-4 transition-colors min-w-[260px] snap-center flex flex-col bg-surface-50 dark:bg-surface-900/20 border border-surface-200 dark:border-white/5 ${isDragging ? 'border-dashed border-primary-500/30' : ''}`}
+                                onDragOver={handleDragOver}
+                                onDrop={(e) => handleDrop(e, col.id)}
+                            >
+                                <div className="flex items-center gap-2 mb-4 px-2">
+                                    <h3 className="font-black text-heading uppercase tracking-widest text-[10px]">{col.title}</h3>
+                                    <span className="text-[10px] font-bold text-surface-500 bg-surface-200 dark:bg-surface-800 px-2 py-0.5 rounded-full">
+                                        {goals.filter(g => g.status === col.id).length}
                                     </span>
                                 </div>
-                            )) : (
-                                <div className="text-center text-surface-500 text-xs py-4 font-bold uppercase tracking-widest">No goals</div>
-                            )}
-                        </div>
-                    </div>
-                ) : (
-                    <div onClick={toggleTaskListCollapse} className={`${taskListCols} transition-all duration-300 flex xl:flex-col items-center justify-center p-4 bg-surface-900/40 backdrop-blur-xl border border-white/5 rounded-[2.5rem] cursor-pointer hover:bg-surface-800/60 h-16 xl:h-auto`}>
-                        <div className="bg-surface-800 p-2 md:p-3 rounded-2xl text-surface-400 mr-4 xl:mr-0">
-                            <Maximize2 size={18} />
-                        </div>
-                        <span className="xl:mt-4 xl:rotate-180 text-[10px] font-black tracking-widest uppercase text-surface-500" style={{ writingMode: 'vertical-rl' }}>
-                            Task List
-                        </span>
-                    </div>
-                )}
 
-                {/* MIDDLE PANE: WEEKLY/MONTHLY KANBAN */}
-                {!isKanbanCollapsed ? (
-                    <div className={`${kanbanCols} transition-all duration-300 flex flex-col backdrop-blur-xl border border-white/5 rounded-[2.5rem] overflow-hidden bg-surface-900/20`}>
-                        <div className="p-6 border-b border-white/5 bg-surface-900/60 shadow-md z-10 flex justify-between items-center group">
-                            <div>
-                                <h2 className="font-black text-heading uppercase tracking-widest text-sm flex items-center gap-2">
-                                    {viewMode === 'week' ? 'Weekly Objectives' : (viewMode === 'month' ? 'Monthly Board' : 'Half-Yearly Board')}
-                                </h2>
-                                <p className="text-[10px] text-surface-500 font-bold mt-1">
-                                    {viewMode === 'week' ? `Week of ${getMonday(timelineDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}`
-                                        : viewMode === 'month' ? `${timelineDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`
-                                            : `${timelineDate.getFullYear()} - ${timelineDate.getMonth() < 6 ? 'First Half (H1)' : 'Second Half (H2)'}`
-                                    }
-                                </p>
-                            </div>
-                            <button onClick={toggleKanbanCollapse} className="text-surface-500 hover:text-heading p-2 bg-surface-800/50 hover:bg-surface-700 rounded-xl transition-all" title="Minimize Kanban">
-                                <Minimize2 size={16} />
-                            </button>
-                        </div>
+                                {col.id === 'todo' && (
+                                    <form onSubmit={handleAddGoal} className="mb-3 shrink-0">
+                                        <div className="relative flex items-center bg-white dark:bg-surface-950/30 border border-surface-200 dark:border-surface-700/50 rounded-2xl focus-within:border-primary-500/50 transition-colors overflow-hidden group">
+                                            <div className="pl-3 text-surface-400 group-focus-within:text-primary-500 transition-colors"><Plus size={14} /></div>
+                                            <input
+                                                type="text"
+                                                value={newGoalTitle}
+                                                onChange={e => setNewGoalTitle(e.target.value)}
+                                                placeholder="Add to this week"
+                                                className="w-full bg-transparent border-none text-sm text-heading p-3 py-2.5 focus:outline-none placeholder:text-surface-500 font-medium"
+                                            />
+                                        </div>
+                                    </form>
+                                )}
 
-                        <div className="flex-1 flex overflow-x-auto overflow-y-auto p-2 sm:p-4 gap-4 planner-scroll">
-                            {columns.map(col => (
-                                <div
-                                    key={col.id}
-                                    className={`flex-1 rounded-3xl p-4 transition-colors border min-w-[260px] xl:min-w-0 flex flex-col ${isDragging ? 'border-dashed border-primary-500/30 bg-primary-500/5' : col.bg + ' ' + col.border}`}
-                                    onDragOver={handleDragOver}
-                                    onDrop={(e) => handleDrop(e, col.id)}
-                                >
-                                    <div className="flex items-center gap-2 mb-4">
-                                        {col.icon}
-                                        <h3 className="font-black text-surface-400 uppercase tracking-widest text-[10px]">{col.title}</h3>
-                                        <span className="ml-auto text-[10px] font-bold text-surface-500 bg-surface-800/50 px-2 py-0.5 rounded-full">
-                                            {goals.filter(g => g.status === col.id).length}
-                                        </span>
-                                    </div>
-
-                                    <div className="flex-1 overflow-y-auto planner-scroll space-y-3 pb-2 pr-1">
-                                        {goals.filter(g => g.status === col.id).map(goal => (
-                                            <div
-                                                key={goal.id}
-                                                draggable
-                                                onDragStart={(e) => handleDragStart(e, goal.id)}
-                                                onDragEnd={() => setIsDragging(false)}
-                                                className="group bg-surface-800/80 border border-surface-700/50 p-4 rounded-2xl cursor-grab active:cursor-grabbing hover:border-primary-500/50 transition-colors shadow-lg flex flex-col gap-2"
-                                            >
-                                                <div className="flex items-start gap-2">
-                                                    <GripVertical size={14} className="text-surface-600 shrink-0 mt-0.5" />
-                                                    <span className="text-sm font-medium text-surface-400 leading-snug break-words">
-                                                        {goal.title}
-                                                    </span>
-                                                    <button
-                                                        onClick={() => handleDeleteGoal(goal.id)}
-                                                        className="ml-auto text-surface-600 opacity-0 group-hover:opacity-100 hover:text-red-400 transition-all shrink-0"
-                                                    >
-                                                        <Trash2 size={14} />
-                                                    </button>
-                                                </div>
-                                                {viewMode !== 'week' && goal.week_start_date && (
-                                                    <div className="ml-5 mt-1 text-[9px] font-bold uppercase tracking-widest text-surface-500">
-                                                        Week of {new Date(goal.week_start_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                                                    </div>
-                                                )}
+                                <div className="flex-1 overflow-y-auto planner-scroll space-y-3 pb-2">
+                                    {goals.filter(g => g.status === col.id).map(goal => (
+                                        <div
+                                            key={goal.id}
+                                            draggable
+                                            onDragStart={(e) => handleDragStart(e, goal.id)}
+                                            onDragEnd={() => setIsDragging(false)}
+                                            className="group bg-white dark:bg-surface-800/80 border border-surface-200 dark:border-surface-700/50 p-4 rounded-2xl cursor-grab active:cursor-grabbing hover:border-primary-500/50 transition-colors shadow-sm flex flex-col gap-2"
+                                        >
+                                            <div className="flex items-start gap-2">
+                                                <GripVertical size={14} className="text-surface-400 shrink-0 mt-0.5" />
+                                                <span className="text-sm font-medium text-heading leading-snug break-words">
+                                                    {goal.title}
+                                                </span>
+                                                <button
+                                                    onClick={() => handleDeleteGoal(goal.id)}
+                                                    className="ml-auto text-surface-400 opacity-0 group-hover:opacity-100 hover:text-red-500 transition-all shrink-0"
+                                                >
+                                                    <Trash2 size={14} />
+                                                </button>
                                             </div>
-                                        ))}
-
-                                        {/* Add Quick Goal in To Do column */}
-                                        {col.id === 'todo' && (
-                                            <form onSubmit={handleAddGoal} className="mt-2 shrink-0">
-                                                <div className="relative flex items-center bg-surface-950/30 border border-surface-700/50 rounded-2xl focus-within:border-primary-500/50 transition-colors overflow-hidden">
-                                                    <div className="pl-3 text-surface-500"><Plus size={14} /></div>
-                                                    <input
-                                                        type="text"
-                                                        value={newGoalTitle}
-                                                        onChange={e => setNewGoalTitle(e.target.value)}
-                                                        placeholder={viewMode === 'week' ? "Add to this week..." : "Add to period start..."}
-                                                        className="w-full bg-transparent border-none text-sm text-surface-400 p-3 focus:outline-none placeholder:text-surface-600 font-medium"
-                                                    />
+                                            {viewMode !== 'week' && goal.week_start_date && (
+                                                <div className="ml-5 mt-1 text-[9px] font-bold uppercase tracking-widest text-surface-500">
+                                                    Week of {new Date(goal.week_start_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                                                 </div>
-                                            </form>
-                                        )}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                ) : (
-                    <div onClick={toggleKanbanCollapse} className={`${kanbanCols} transition-all duration-300 flex xl:flex-col items-center justify-center p-4 bg-surface-900/40 backdrop-blur-xl border border-white/5 rounded-[2.5rem] cursor-pointer hover:bg-surface-800/60 h-16 xl:h-auto`}>
-                        <div className="bg-surface-800 p-2 md:p-3 rounded-2xl text-surface-400 mr-4 xl:mr-0">
-                            <Maximize2 size={18} />
-                        </div>
-                        <span className="xl:mt-4 xl:rotate-180 text-[10px] font-black tracking-widest uppercase text-surface-500" style={{ writingMode: 'vertical-rl' }}>
-                            {viewMode === 'week' ? 'Weekly Kanban' : (viewMode === 'month' ? 'Monthly Kanban' : 'Half-Yearly Kanban')}
-                        </span>
-                    </div>
-                )}
-
-                {/* RIGHT PANE: DAILY/MONTHLY/H-YEARLY DIARY (WYSIWYG) */}
-                {!isDiaryCollapsed ? (
-                    <div className={`${diaryCols} flex flex-col bg-surface-900/40 backdrop-blur-xl border border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl transition-all duration-300 h-[600px] xl:h-auto`}>
-                        <div className="p-6 border-b border-white/5 bg-surface-900/60 flex justify-between items-center z-10 transition-all">
-                            <div>
-                                <h2 className="font-black text-heading uppercase tracking-widest text-sm text-primary-400">
-                                    {viewMode === 'week' ? 'Daily Diary' : (viewMode === 'month' ? 'Monthly Diary' : 'H-Yearly Diary')}
-                                </h2>
-                                <p className="text-[10px] text-surface-500 font-bold mt-1">
-                                    {viewMode === 'week' ? selectedDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
-                                        : viewMode === 'month' ? `${timelineDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`
-                                            : `${timelineDate.getFullYear()} - ${timelineDate.getMonth() < 6 ? 'First Half (H1)' : 'Second Half (H2)'}`
-                                    }
-                                </p>
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <div className="px-3 py-1 rounded-full bg-surface-800/50 border border-surface-700 flex items-center gap-2 shadow-inner">
-                                    {isSaving ? (
-                                        <>
-                                            <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></div>
-                                            <span className="text-[10px] font-bold text-amber-500 uppercase tracking-widest hidden sm:inline">Saving</span>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
-                                            <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest hidden sm:inline">Saved</span>
-                                        </>
+                                            )}
+                                        </div>
+                                    ))}
+                                    {goals.filter(g => g.status === col.id).length === 0 && col.id !== 'todo' && (
+                                        <div className="h-24 flex items-center justify-center text-center px-4 border-2 border-dashed border-surface-200 dark:border-surface-800 rounded-2xl">
+                                            <p className="text-[10px] text-surface-400 uppercase tracking-widest font-bold">
+                                                {col.id === 'in_progress' ? 'Drop active tasks here' : 'Drop completed tasks here'}
+                                            </p>
+                                        </div>
                                     )}
                                 </div>
-                                <button onClick={toggleDiaryCollapse} className="text-surface-500 hover:text-heading p-2 bg-surface-800/50 hover:bg-surface-700 rounded-xl transition-all" title="Minimize Diary">
-                                    <Minimize2 size={16} />
-                                </button>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* COL 3: DAILY DIARY */}
+                <div className="lg:col-span-4 flex flex-col bg-white dark:bg-surface-900/20 rounded-[2rem] border border-surface-200 dark:border-white/5 overflow-hidden shadow-sm h-[600px] xl:h-auto">
+                    <div className="p-6 pb-2 flex justify-between items-center z-10">
+                        <div>
+                            <h2 className="font-black text-heading uppercase tracking-widest text-xs">
+                                {viewMode === 'week' ? 'Daily Diary' : (viewMode === 'month' ? 'Monthly Diary' : 'H-Yearly Diary')}
+                            </h2>
+                            <p className="text-[10px] text-surface-500 font-bold mt-1">
+                                {viewMode === 'week' ? selectedDate.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })
+                                    : viewMode === 'month' ? `${timelineDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`
+                                        : `${timelineDate.getFullYear()} - ${timelineDate.getMonth() < 6 ? 'First Half (H1)' : 'Second Half (H2)'}`
+                                }
+                            </p>
+                        </div>
+                        <div className="flex items-center">
+                            <div className="px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-surface-800/50 text-emerald-700 dark:text-emerald-500 border border-emerald-100 dark:border-transparent flex items-center gap-2">
+                                {isSaving ? (
+                                    <>
+                                        <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></div>
+                                        <span className="text-[10px] font-bold text-amber-600 dark:text-amber-500 uppercase tracking-widest">Saving</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+                                        <span className="text-[10px] font-bold uppercase tracking-widest">Saved</span>
+                                    </>
+                                )}
                             </div>
                         </div>
+                    </div>
 
-                        <div className="flex-1 w-full relative">
-                            <ReactQuill
-                                ref={quillRef}
-                                theme="snow"
-                                value={diaryContent}
-                                onChange={handleDiaryChange}
-                                modules={modules}
-                                placeholder="Start typing your notes..."
-                            />
-                        </div>
+                    <div className="flex-1 w-full relative">
+                        <ReactQuill
+                            ref={quillRef}
+                            theme="snow"
+                            value={diaryContent}
+                            onChange={handleDiaryChange}
+                            modules={modules}
+                            placeholder="Start typing your notes..."
+                        />
                     </div>
-                ) : (
-                    <div onClick={toggleDiaryCollapse} className={`${diaryCols} transition-all duration-300 flex xl:flex-col items-center justify-center p-4 bg-surface-900/40 backdrop-blur-xl border border-white/5 rounded-[2.5rem] cursor-pointer hover:bg-surface-800/60 h-16 xl:h-auto`}>
-                        <div className="bg-surface-800 p-2 md:p-3 rounded-2xl text-surface-400 mr-4 xl:mr-0">
-                            <Maximize2 size={18} />
-                        </div>
-                        <span className="xl:mt-4 xl:rotate-180 text-[10px] font-black tracking-widest uppercase text-surface-500 flex items-center justify-center gap-2" style={{ writingMode: 'vertical-rl' }}>
-                            <span className="text-primary-400 hidden xl:inline">•</span>
-                            {viewMode === 'week' ? 'Daily Diary' : (viewMode === 'month' ? 'Monthly Diary' : 'H-Yearly Diary')}
+                    
+                    <div className="p-3 px-6 border-t border-surface-200 dark:border-white/5 bg-surface-50 dark:bg-surface-900/40 flex justify-between items-center">
+                        <span className="text-xs text-surface-500 font-medium">
+                            {diaryContent.replace(/<[^>]*>/g, '').trim().split(/\s+/).filter(w => w.length > 0).length} words
                         </span>
+                        <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-widest font-black text-heading">
+                            <span>✨ AI Reflect Enabled</span>
+                        </div>
                     </div>
-                )}
+                </div>
             </main>
         </div>
     );
