@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
     Clock, Target, Calendar, BarChart3, 
     Flame, Timer, Activity, TrendingUp, CheckCircle, RotateCw, BookOpen
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import CourseCalculatorModal from './calculator/CourseCalculatorModal';
+import StreakCalendar from './ui/StreakCalendar';
+import { battlePlan, syllabus as syllabusApi } from '../services/api';
 
 // Mock Data for Weekly Focus Trends
 const mockChartData = [
@@ -23,11 +25,41 @@ const mockRecentActivity = [
     { id: 3, icon: BookOpen, label: 'Completed: Vector Calculus Mock Test', sub: 'EXAM SIMULATION', time: 'Yesterday', colorClass: 'bg-fuchsia-500/10 text-fuchsia-400' },
 ];
 
-const Dashboard = ({ user, tools, streakData, onStartFocus }) => {
+const Dashboard = ({ user, tools, streakData, onStartFocus, onOpenBattlePlan, onOpenTool }) => {
     const [showCalculator, setShowCalculator] = useState(false);
+    
+    // Data states
+    const [plan, setPlan] = useState(null);
+    const [roadmap, setRoadmap] = useState(null);
+    const [syllabusStats, setSyllabusStats] = useState({ completed: 0, total: 0 });
 
-    const hasBattlePlan = tools?.some(t => t.tool_type === 'battle_plan') || false; // Mocking battle plan detection
+    const hasBattlePlan = tools?.some(t => t.tool_type === 'battle_plan') || false; // Or checking logic
     const moduleTool = tools?.find(t => t.tool_type === 'module');
+
+    useEffect(() => {
+        // Fetch Battle Plan Data
+        battlePlan.getToday().then(setPlan).catch(() => {});
+        battlePlan.getRoadmap().then(setRoadmap).catch(() => {});
+        
+        // Fetch Syllabus Data
+        if (moduleTool) {
+            syllabusApi.get(moduleTool.id).then(data => {
+                const total = data.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + (t.totalModules || 0), 0), 0);
+                const completed = data.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + (t.completedModules || 0), 0), 0);
+                setSyllabusStats({ completed, total });
+            }).catch(() => {});
+        }
+    }, [moduleTool]);
+
+    // Derived stats
+    const remainingHours = plan?.summary?.remaining_minutes ? Math.ceil(plan.summary.remaining_minutes / 60) : 0;
+    const totalGoalHours = roadmap?.settings?.daily_available_hours || 4;
+    const goalProgress = totalGoalHours > 0 && plan?.summary?.completed_minutes 
+        ? Math.min(100, Math.round((plan.summary.completed_minutes / (totalGoalHours * 60)) * 100)) 
+        : 0;
+    const daysRemaining = roadmap?.exam?.days_remaining || '?';
+
+    const syllabusProgress = syllabusStats.total > 0 ? Math.round((syllabusStats.completed / syllabusStats.total) * 1000) / 10 : 0;
 
     // Date formatting
     const today = new Date();
@@ -48,59 +80,70 @@ const Dashboard = ({ user, tools, streakData, onStartFocus }) => {
             {/* Top Grid: Daily Goal, Streak, Syllabus */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 {/* Daily Goal Widget */}
-                <div className="bg-surface-900 border border-surface-800 rounded-3xl p-6 flex flex-col items-center justify-center relative overflow-hidden group">
+                <div 
+                    onClick={() => onOpenBattlePlan && onOpenBattlePlan()}
+                    className="bg-surface-900 border border-surface-800 rounded-3xl p-6 flex flex-col items-center justify-center relative overflow-hidden group cursor-pointer hover:border-primary-500/50 hover:bg-surface-800/50 transition-all"
+                >
                     <h3 className="text-[10px] font-black text-surface-500 uppercase tracking-widest absolute top-6">Daily Goal</h3>
                     
-                    {hasBattlePlan ? (
+                    {plan ? (
                         <>
-                            <div className="relative w-32 h-32 mt-6 mb-4">
+                            <div className="relative w-32 h-32 mt-6 mb-4 group-hover:scale-105 transition-transform">
                                 <svg className="w-full h-full transform -rotate-90">
                                     <circle cx="64" cy="64" r="56" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-surface-800" />
-                                    <circle cx="64" cy="64" r="56" stroke="currentColor" strokeWidth="8" fill="transparent" strokeDasharray="351.8" strokeDashoffset="175.9" className="text-primary-500" strokeLinecap="round" />
+                                    <circle cx="64" cy="64" r="56" stroke="currentColor" strokeWidth="8" fill="transparent" strokeDasharray="351.8" strokeDashoffset={351.8 - (351.8 * goalProgress / 100)} className="text-primary-500 transition-all duration-1000" strokeLinecap="round" />
                                 </svg>
                                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                    <span className="text-2xl font-black text-heading leading-none">2h</span>
+                                    <span className="text-2xl font-black text-heading leading-none">{remainingHours}h</span>
                                     <span className="text-[10px] font-bold text-surface-500 uppercase">Left</span>
                                 </div>
                             </div>
-                            <p className="text-xs font-bold text-surface-500">50% of 4-hour goal met</p>
+                            <p className="text-xs font-bold text-surface-500">{daysRemaining} days until deadline</p>
                         </>
                     ) : (
                         <div className="flex flex-col items-center justify-center mt-6 h-32 text-center opacity-50">
-                            <Target size={32} className="text-surface-600 mb-3" />
+                            <Target size={32} className="text-surface-600 mb-3 group-hover:scale-110 transition-transform" />
                             <p className="text-xs font-bold text-surface-500">Setup Battle Plan<br/>to track goals</p>
                         </div>
                     )}
                 </div>
 
                 {/* Current Streak Widget */}
-                <div className="bg-surface-900 border border-surface-800 rounded-3xl p-6 flex flex-col items-center justify-center relative">
-                    <h3 className="text-[10px] font-black text-surface-500 uppercase tracking-widest absolute top-6">Current Streak</h3>
-                    <div className="mt-8 mb-4 text-orange-500 relative">
-                        <Flame size={48} fill="currentColor" className="drop-shadow-[0_0_15px_rgba(249,115,22,0.5)]" />
+                <div className="bg-surface-900 border border-surface-800 rounded-3xl overflow-hidden relative group">
+                    <div className="absolute top-4 left-6 z-10 pointer-events-none">
+                        <h3 className="text-[10px] font-black text-surface-500 uppercase tracking-widest">Global Streak</h3>
                     </div>
-                    <div className="text-center mb-2">
-                        <span className="text-3xl font-black text-heading">{streakData?.currentStreak || 14} </span>
-                        <span className="text-xl font-bold text-heading">Days</span>
+                    <div className="p-4 pt-10 h-full w-full opacity-80 group-hover:opacity-100 transition-opacity">
+                        <StreakCalendar
+                            toolId={null} // global streak
+                            currentStreak={streakData?.currentStreak || 0}
+                            activeDays={streakData?.activeDays || []}
+                            dayDetails={streakData?.dayDetails || {}}
+                            formatTime={(mins) => `${Math.floor(mins / 60)}h ${mins % 60}m`}
+                        />
                     </div>
-                    <p className="text-xs font-bold text-surface-500">Top 5% of learners this month</p>
                 </div>
 
                 {/* Syllabus Mastery Widget */}
-                <div className="bg-surface-900 border border-surface-800 rounded-3xl p-6 relative flex flex-col justify-center">
+                <div 
+                    onClick={() => moduleTool && onOpenTool && onOpenTool(moduleTool)}
+                    className="bg-surface-900 border border-surface-800 rounded-3xl p-6 relative flex flex-col justify-center cursor-pointer hover:border-emerald-500/50 hover:bg-surface-800/50 transition-all group"
+                >
                     <h3 className="text-[10px] font-black text-surface-500 uppercase tracking-widest absolute top-6 left-6">Syllabus Mastery</h3>
-                    <div className="mt-6">
+                    <div className="mt-6 group-hover:scale-[1.02] transition-transform">
                         <div className="flex justify-between items-end mb-4">
                             <div>
-                                <span className="text-4xl font-black text-heading">45 </span>
-                                <span className="text-xl font-bold text-surface-500">/ 120</span>
+                                <span className="text-4xl font-black text-heading">{syllabusStats.completed} </span>
+                                <span className="text-xl font-bold text-surface-500">/ {syllabusStats.total}</span>
                             </div>
-                            <span className="text-emerald-400 font-black text-lg">37.5%</span>
+                            <span className="text-emerald-400 font-black text-lg">{syllabusProgress}%</span>
                         </div>
                         <div className="h-2 w-full bg-surface-800 rounded-full overflow-hidden mb-3">
-                            <div className="h-full bg-emerald-500" style={{ width: '37.5%' }} />
+                            <div className="h-full bg-emerald-500 transition-all duration-1000" style={{ width: `${syllabusProgress}%` }} />
                         </div>
-                        <p className="text-xs font-bold text-surface-500">7 modules added this week</p>
+                        {syllabusStats.total === 0 && (
+                            <p className="text-xs font-bold text-surface-500">Add modules to track progress</p>
+                        )}
                     </div>
                 </div>
             </div>
