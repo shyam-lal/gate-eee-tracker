@@ -194,12 +194,16 @@ const SyllabusTracker = ({
                                                         <div className="flex items-center gap-2">
                                                             <button 
                                                                 onClick={() => {
-                                                                    setEditingLog({
-                                                                        topicId: t.id,
-                                                                        minutes: done,
-                                                                        modules: done,
-                                                                        topicName: t.name
-                                                                    });
+                                                                    if (trackingMode === 'module') {
+                                                                        setLoggingTopic({ subId: sub.id, topicName: t.name, currentSpent: done, topicId: t.id, isCompleted: tp >= 100 });
+                                                                    } else {
+                                                                        setEditingLog({
+                                                                            topicId: t.id,
+                                                                            minutes: done,
+                                                                            modules: done,
+                                                                            topicName: t.name
+                                                                        });
+                                                                    }
                                                                 }} 
                                                                 className="p-1.5 text-surface-600 hover:text-primary-400 transition-colors"
                                                             >

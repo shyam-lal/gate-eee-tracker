@@ -438,13 +438,13 @@ const PlannerDashboard = ({ onBack }) => {
             `}</style>
 
             {/* Header */}
-            <header className="max-w-[1600px] w-full mx-auto mb-8">
+            <header className="w-full mb-8">
                 <h1 className="text-3xl font-black text-heading tracking-tighter">Hybrid Planner</h1>
                 <p className="text-sm font-medium text-surface-500 mt-1">Manage your long-term goals, weekly tasks, and daily diary.</p>
             </header>
 
             {/* TIMELINE NAVIGATOR */}
-            <div className="max-w-[1600px] mx-auto mb-8 flex flex-col lg:flex-row items-center justify-between gap-6 bg-surface-50 dark:bg-surface-900/20 p-2 pl-4 rounded-3xl border border-surface-200 dark:border-white/5">
+            <div className="w-full mb-8 flex flex-col lg:flex-row items-center justify-between gap-6 bg-surface-50 dark:bg-surface-900/20 p-2 pl-4 rounded-3xl border border-surface-200 dark:border-white/5">
                 
                 {/* View Toggles */}
                 <div className="flex items-center bg-surface-100 dark:bg-surface-900/50 p-1 rounded-2xl w-full lg:w-auto overflow-x-auto">
@@ -496,10 +496,10 @@ const PlannerDashboard = ({ onBack }) => {
             </div>
 
             {/* MAIN CONTENT GRID */}
-            <main className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 h-auto xl:h-[calc(100vh-240px)]">
+            <main className="w-full grid grid-cols-1 2xl:grid-cols-12 gap-6 h-auto 2xl:h-[calc(100vh-240px)]">
 
                 {/* COL 1: GOALS & BACKLOG */}
-                <div className="lg:col-span-3 flex flex-col bg-white dark:bg-surface-900/20 rounded-[2rem] border border-surface-200 dark:border-white/5 overflow-hidden">
+                <div className="2xl:col-span-3 flex flex-col bg-white dark:bg-surface-900/20 rounded-[2rem] border border-surface-200 dark:border-white/5 overflow-hidden min-h-[400px]">
                     <div className="p-6 pb-4">
                         <h2 className="font-black text-heading uppercase tracking-widest text-xs flex items-center gap-2">Goals & Backlog</h2>
                     </div>
@@ -535,7 +535,7 @@ const PlannerDashboard = ({ onBack }) => {
                 </div>
 
                 {/* COL 2: WEEKLY OBJECTIVES KANBAN */}
-                <div className="lg:col-span-5 flex flex-col rounded-[2rem] overflow-hidden">
+                <div className="2xl:col-span-6 flex flex-col rounded-[2rem] overflow-hidden min-h-[400px]">
                     <div className="p-2 pb-4">
                         <h2 className="font-black text-heading uppercase tracking-widest text-xs flex items-center gap-2 px-4">Weekly Objectives</h2>
                     </div>
@@ -543,7 +543,7 @@ const PlannerDashboard = ({ onBack }) => {
                         {columns.map(col => (
                             <div
                                 key={col.id}
-                                className={`flex-1 rounded-[2rem] p-4 transition-colors min-w-[260px] snap-center flex flex-col bg-surface-50 dark:bg-surface-900/20 border border-surface-200 dark:border-white/5 ${isDragging ? 'border-dashed border-primary-500/30' : ''}`}
+                                className={`flex-1 rounded-[2rem] p-4 transition-colors min-w-[200px] snap-center flex flex-col bg-surface-50 dark:bg-surface-900/20 border border-surface-200 dark:border-white/5 ${isDragging ? 'border-dashed border-primary-500/30' : ''}`}
                                 onDragOver={handleDragOver}
                                 onDrop={(e) => handleDrop(e, col.id)}
                             >
@@ -611,7 +611,7 @@ const PlannerDashboard = ({ onBack }) => {
                 </div>
 
                 {/* COL 3: DAILY DIARY */}
-                <div className="lg:col-span-4 flex flex-col bg-white dark:bg-surface-900/20 rounded-[2rem] border border-surface-200 dark:border-white/5 overflow-hidden shadow-sm h-[600px] xl:h-auto">
+                <div className="2xl:col-span-3 flex flex-col bg-white dark:bg-surface-900/20 rounded-[2rem] border border-surface-200 dark:border-white/5 overflow-hidden shadow-sm h-[600px] 2xl:h-auto min-h-[500px]">
                     <div className="p-6 pb-2 flex justify-between items-center z-10">
                         <div>
                             <h2 className="font-black text-heading uppercase tracking-widest text-xs">

@@ -545,16 +545,19 @@ function App() {
     );
     if (view === 'daily_planner') return <PlannerDashboard onBack={() => setView('dashboard')} />;
     if (view === 'battle_plan') return <BattlePlan onBack={() => setView('dashboard')} />;
-    if (view === 'mock_tests') return <div className="p-8 text-center"><h2 className="text-2xl font-black text-heading uppercase tracking-widest">Mock Tests</h2><p className="text-surface-500 mt-2">Coming soon...</p></div>;
+    if (view === 'revision_tests') return <RevisionDashboard user={user} tool={activeTool} />;
+    if (view === 'mock_tests') return <div className="p-8 text-center"><h2 className="text-2xl font-black text-heading uppercase tracking-widest">PYQ Mock Tests</h2><p className="text-surface-500 mt-2">Coming soon...</p></div>;
     if (view === 'flashcards') {
       const fTool = userTools.find(t => t.tool_type === 'flashcard' || t.tool_type === 'flashcards');
       if (!fTool) return <div className="p-8 text-center text-surface-500">Initializing Flashcards... Please create a flashcards tool first or wait.</div>;
       return <FlashcardDashboard tool={fTool} user={user} onTopUp={() => setView('credit_store')} />;
     }
 
-    return (
-      <div className="min-h-screen bg-transparent text-surface-400 font-sans p-4 md:p-8 pb-32 selection:bg-primary-500/30">
+    return null;
+  };
 
+  const renderPopups = () => (
+    <>
         {(editingLog) && (
           <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200" onClick={() => setEditingLog(null)}>
             <div className="bg-surface-950 border border-surface-700 p-6 md:p-8 rounded-3xl shadow-2xl w-full max-w-sm" onClick={e => e.stopPropagation()}>
@@ -799,23 +802,23 @@ function App() {
                             }}
                             onBlur={e => handleManualTopicUpdate(topic.id, 'name', e.target.value)}
                           />
-                          <div className="flex gap-2">
-                            <div className="w-24">
-                              <input
-                                type="text"
-                                placeholder={trackingMode === 'module' ? "Modules" : "12h"}
-                                className="w-full bg-surface-900 border border-surface-800 rounded-xl p-3 text-sm text-center text-primary-400 font-mono font-bold focus:border-primary-500 outline-none"
-                                value={trackingMode === 'module' ? topic.modules : topic.estimate}
-                                onChange={e => {
-                                  const updated = [...editorData.topics];
-                                  if (trackingMode === 'module') updated[idx].modules = e.target.value;
-                                  else updated[idx].estimate = e.target.value;
-                                  setEditorData({ ...editorData, topics: updated });
-                                }}
-                                onBlur={e => handleManualTopicUpdate(topic.id, trackingMode === 'module' ? 'modules' : 'estimate', e.target.value)}
-                              />
-                            </div>
-
+                            <div className="flex gap-2">
+                              {trackingMode !== 'module' && (
+                                <div className="w-24">
+                                  <input
+                                    type="text"
+                                    placeholder="12h"
+                                    className="w-full bg-surface-900 border border-surface-800 rounded-xl p-3 text-sm text-center text-primary-400 font-mono font-bold focus:border-primary-500 outline-none"
+                                    value={topic.estimate}
+                                    onChange={e => {
+                                      const updated = [...editorData.topics];
+                                      updated[idx].estimate = e.target.value;
+                                      setEditorData({ ...editorData, topics: updated });
+                                    }}
+                                    onBlur={e => handleManualTopicUpdate(topic.id, 'estimate', e.target.value)}
+                                  />
+                                </div>
+                              )}
                             <button
                               type="button"
                               disabled={editorData.topics.length === 1}
@@ -839,25 +842,27 @@ function App() {
                                 <div className="flex items-center gap-2">
                                   <span className="text-[10px] font-mono text-primary-400 font-bold">
                                     {trackingMode === 'module'
-                                      ? `${topic.completedModules} / ${topic.modules} Modules`
+                                      ? (topic.completedModules >= 1 ? 'Completed' : 'Not Completed')
                                       : `${formatTime(topic.timeSpent)} Logged`}
                                   </span>
-                                  <button
-                                    type="button"
-                                    onClick={() => {
-                                      setEditingLog({
-                                        topicId: topic.id,
-                                        minutes: topic.timeSpent || 0,
-                                        modules: topic.completedModules || 0,
-                                        topicName: topic.name
-                                      });
-                                    }}
-                                    className="p-1 text-surface-600 hover:text-primary-400 transition-colors rounded hover:bg-surface-800" title="Edit total"
-                                  ><Edit3 size={11} /></button>
+                                  {trackingMode !== 'module' && (
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setEditingLog({
+                                          topicId: topic.id,
+                                          minutes: topic.timeSpent || 0,
+                                          modules: topic.completedModules || 0,
+                                          topicName: topic.name
+                                        });
+                                      }}
+                                      className="p-1 text-surface-600 hover:text-primary-400 transition-colors rounded hover:bg-surface-800" title="Edit total"
+                                    ><Edit3 size={11} /></button>
+                                  )}
                                 </div>
                               </div>
                               <div className="h-1 w-full bg-surface-800 rounded-full overflow-hidden">
-                                <div className="h-full bg-primary-500" style={{ width: `${Math.min(100, (trackingMode === 'module' ? (topic.completedModules / (topic.modules || 1)) : (topic.timeSpent / parseFormalTime(topic.estimate))) * 100)}%` }} />
+                                <div className="h-full bg-primary-500" style={{ width: `${Math.min(100, (trackingMode === 'module' ? (topic.completedModules >= 1 ? 1 : 0) : (topic.timeSpent / parseFormalTime(topic.estimate))) * 100)}%` }} />
                               </div>
                             </div>
 
@@ -866,39 +871,37 @@ function App() {
                               <span className="text-[9px] font-black text-surface-600 uppercase tracking-widest block mb-2">Log Activity</span>
                               <div className="flex items-center gap-2">
                                 {trackingMode === 'module' ? (
-                                  <input
-                                    type="number"
-                                    min="0"
-                                    id={`log-hub-${topic.id}`}
-                                    placeholder="+ Mod"
-                                    className="w-20 bg-surface-950 border border-surface-800 rounded-lg p-2 text-xs text-center text-heading focus:border-primary-500 outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      handleLogTopicActivity(topic.id, topic.completedModules >= 1 ? "-1" : "1");
+                                    }}
+                                    className={`px-4 py-2 text-white rounded-lg transition-all text-[10px] font-black uppercase tracking-wider w-full ${topic.completedModules >= 1 ? 'bg-rose-500 hover:bg-rose-400' : 'bg-emerald-500 hover:bg-emerald-400'}`}
+                                  >
+                                    {topic.completedModules >= 1 ? 'Mark Incomplete' : 'Mark Complete'}
+                                  </button>
                                 ) : (
-                                  <TimeInput
-                                    compact
-                                    ref={el => { hubTimeRefs.current[topic.id] = el; }}
-                                  />
-                                )}
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    if (trackingMode === 'module') {
-                                      const val = document.getElementById(`log-hub-${topic.id}`).value;
-                                      handleLogTopicActivity(topic.id, val);
-                                      document.getElementById(`log-hub-${topic.id}`).value = '';
-                                    } else {
-                                      const ref = hubTimeRefs.current[topic.id];
-                                      if (ref) {
-                                        const mins = ref.getTotalMinutes();
-                                        if (mins > 0) {
-                                          handleLogTopicActivity(topic.id, String(mins));
-                                          ref.reset();
+                                  <>
+                                    <TimeInput
+                                      compact
+                                      ref={el => { hubTimeRefs.current[topic.id] = el; }}
+                                    />
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const ref = hubTimeRefs.current[topic.id];
+                                        if (ref) {
+                                          const mins = ref.getTotalMinutes();
+                                          if (mins > 0) {
+                                            handleLogTopicActivity(topic.id, String(mins));
+                                            ref.reset();
+                                          }
                                         }
-                                      }
-                                    }
-                                  }}
-                                  className="px-3 py-2 bg-primary-600 hover:bg-primary-500 text-white rounded-lg transition-all text-[10px] font-black uppercase tracking-wider whitespace-nowrap"
-                                >Log</button>
+                                      }}
+                                      className="px-3 py-2 bg-primary-600 hover:bg-primary-500 text-white rounded-lg transition-all text-[10px] font-black uppercase tracking-wider whitespace-nowrap"
+                                    >Log</button>
+                                  </>
+                                )}
                               </div>
                             </div>
                           </div>
@@ -920,98 +923,6 @@ function App() {
             </div>
           </div>
         )}
-
-        {/* DASHBOARD CONTENT */}
-        <div className="max-w-7xl mx-auto space-y-8 md:space-y-12">
-          <header className="flex flex-col md:flex-row justify-between items-center md:items-end gap-6 border-b border-surface-900 pb-8">
-            <div className="space-y-1 text-center md:text-left">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-heading tracking-tighter uppercase leading-none">{activeTool?.name || 'VAULT'}</h1>
-              <p className="text-surface-500 font-bold tracking-widest text-[9px] sm:text-[10px] uppercase italic">
-                Engineer: {user.username} • {activeTool?.tool_type === 'module' ? 'MODULE' : 'COURSE'} MODE • {activeTool?.selected_exam || 'GATE'}
-              </p>
-            </div>
-            <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-              <button
-                onClick={() => { setActiveTool(null); setSyllabus([]); loadTools(); loadUserStreak(); setView('dashboard'); }}
-                className="flex items-center justify-center gap-2 text-surface-400 hover:text-heading transition-colors font-black uppercase tracking-widest text-[10px] border border-surface-800 px-6 py-4 sm:py-2 rounded-xl"
-              >
-                <ArrowLeft size={16} /> HUB
-              </button>
-              {(activeTool?.tool_type === 'module' || activeTool?.tool_type === 'time') && (
-                <button onClick={() => openEditor()} className="bg-white text-black px-8 py-4 rounded-xl sm:rounded-2xl flex items-center justify-center sm:justify-start gap-3 font-black transition-all hover:bg-primary-500 hover:text-white shadow-xl shadow-white/5 uppercase tracking-tighter"><Plus size={20} /> NEW SUBJECT</button>
-              )}
-            </div>
-
-          </header>
-
-
-          {/* SUMMARY TILES */}
-          {!(activeTool?.tool_type === 'flashcard' || activeTool?.tool_type === 'revision') && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-              <div className="w-full">
-                <StreakCalendar
-                  toolId={activeTool?.id}
-                  currentStreak={toolStreakData?.currentStreak || 0}
-                  activeDays={toolStreakData?.activeDays || []}
-                  dayDetails={toolStreakData?.dayDetails || {}}
-                  onMonthChange={(y, m) => loadToolStreak(activeTool?.id, y, m)}
-                  formatTime={formatTime}
-                />
-              </div>
-              {/* <div className="bg-surface-900/50 border border-surface-800/50 p-6 rounded-3xl flex items-center gap-6 relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none transition-opacity"><Flame size={120} /></div>
-                <div className="p-4 bg-orange-500/10 rounded-2xl text-orange-500"><Flame size={32} fill="currentColor" /></div>
-                <div><p className="text-[10px] font-black text-surface-500 uppercase tracking-widest leading-none mb-1">Efficiency</p><h2 className="text-3xl sm:text-4xl font-black text-heading leading-none tracking-tighter">PREMIUM</h2></div>
-              </div> */}
-              <div onClick={() => setShowAnalytics(true)} className="bg-surface-900/50 border border-surface-800 border-primary-500/20 p-6 rounded-3xl flex items-center gap-6 relative overflow-hidden group cursor-pointer hover:border-primary-500/50 transition-all active:scale-[0.98]">
-                <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none transition-opacity group-hover:opacity-10"><BarChart3 size={120} /></div>
-                <div className="p-4 bg-primary-500/10 rounded-2xl text-primary-400 group-hover:scale-110 transition-transform"><BarChart3 size={32} /></div>
-                <div className="flex-1">
-                  {trackingMode === 'module' ? (
-                    <>
-                      <p className="text-[10px] font-black text-surface-500 uppercase tracking-widest leading-none mb-1 flex justify-between">Modules <span className="text-primary-400">{progressPercentage}%</span></p>
-                      <h2 className="text-3xl sm:text-4xl font-black text-heading leading-none tracking-tighter">
-                        {syllabus.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + (t.completedModules || 0), 0), 0)}
-                        <span className="text-[10px] text-surface-600 align-middle"> / {syllabus.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + (t.totalModules || 0), 0), 0)} DONE</span>
-                      </h2>
-                      <div className="mt-3 space-y-1">
-                        <div className="h-1.5 w-full bg-surface-800 rounded-full overflow-hidden shrink-0"><div className="h-full bg-primary-500 transition-all duration-1000" style={{ width: `${progressPercentage}%` }} /></div>
-                        <div className="flex justify-between items-center text-[9px] font-black text-surface-500 uppercase tracking-widest">
-                          <span>{syllabus.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + Math.max(0, (t.totalModules || 0) - (t.completedModules || 0)), 0), 0)} modules left</span>
-                          <span className="text-primary-400">{progressPercentage}% cleared</span>
-                        </div>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <p className="text-[10px] font-black text-surface-500 uppercase tracking-widest leading-none mb-1 flex justify-between">Study Hours <span className="text-primary-400">{progressPercentage}%</span></p>
-                      <h2 className="text-3xl sm:text-4xl font-black text-heading leading-none tracking-tighter">{formatTime(totalStudyMins)} <span className="text-[10px] text-surface-600 align-middle"> DONE</span></h2>
-                      <div className="mt-3 space-y-1">
-                        <div className="h-1.5 w-full bg-surface-800 rounded-full overflow-hidden shrink-0"><div className="h-full bg-primary-500 transition-all duration-1000" style={{ width: `${progressPercentage}%` }} /></div>
-                        <div className="flex justify-between items-center text-[9px] font-black text-surface-500 uppercase tracking-widest">
-                          <span>Goal: {formatTime(dailyGoalMins)}</span>
-                          <span className="text-surface-600">{formatTime(remainingMins)} LEFT</span>
-                        </div>
-                      </div>
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* MAIN TOOL VIEW */}
-          {activeTool?.tool_type === 'flashcard' ? (
-            <FlashcardDashboard tool={activeTool} user={user} onTopUp={() => setView('credit_store')} />
-          ) : activeTool?.tool_type === 'focus' ? (
-            <FocusTool tool={activeTool} />
-          ) : activeTool?.tool_type === 'revision' ? (
-            <RevisionDashboard tool={activeTool} user={user} />
-          ) : (
-            <>
-            </>
-          )}
-        </div>
 
         {/* QUICK LOG MODAL */}
         {loggingTopic && (
@@ -1039,7 +950,7 @@ function App() {
                         >No</button>
                         <button
                           onClick={() => {
-                            handleEditLogSave(loggingTopic.topicId, loggingTopic.isCompleted ? 0 : 1);
+                            handleLogTopicActivity(loggingTopic.topicId, loggingTopic.isCompleted ? "-1" : "1");
                             setLoggingTopic(null);
                           }}
                           className="flex-1 bg-primary-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-primary-500 transition-all active:scale-95 shadow-lg shadow-primary-600/10"
@@ -1070,9 +981,8 @@ function App() {
           </div>
         )}
 
-      </div>
-    );
-  };
+    </>
+  );
 
   const isAuthView = user && !['landing', 'auth', 'wizard', 'exam_onboarding'].includes(view);
 
@@ -1118,6 +1028,7 @@ function App() {
             topbarProps={topbarProps}
           >
               {renderCurrentView()}
+              {renderPopups()}
               {focusOverlay}
           </AppLayout>
       );
@@ -1126,6 +1037,7 @@ function App() {
   return (
     <>
       {renderCurrentView()}
+      {renderPopups()}
       {focusOverlay}
     </>
   );

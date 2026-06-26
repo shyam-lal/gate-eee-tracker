@@ -6,6 +6,7 @@ import {
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import CourseCalculatorModal from './calculator/CourseCalculatorModal';
 import StreakCalendar from './ui/StreakCalendar';
+import GlobalActivityGrid from './ui/GlobalActivityGrid';
 import { battlePlan, syllabus as syllabusApi } from '../services/api';
 
 // Mock Data for Weekly Focus Trends
@@ -44,20 +45,23 @@ const Dashboard = ({ user, tools, streakData, onStartFocus, onOpenBattlePlan, on
         // Fetch Syllabus Data
         if (moduleTool) {
             syllabusApi.get(moduleTool.id).then(data => {
-                const total = data.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + (t.totalModules || 0), 0), 0);
-                const completed = data.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + (t.completedModules || 0), 0), 0);
+                const total = data.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + (t.total_modules || 1), 0), 0);
+                const completed = data.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + (t.completed_modules || 0), 0), 0);
                 setSyllabusStats({ completed, total });
             }).catch(() => {});
         }
     }, [moduleTool]);
 
     // Derived stats
-    const remainingHours = plan?.summary?.remaining_minutes ? Math.ceil(plan.summary.remaining_minutes / 60) : 0;
+    const remainingMins = plan?.summary?.remaining_minutes || 0;
+    const formattedRemaining = remainingMins > 0 ? `${Math.floor(remainingMins/60)}h ${Math.round(remainingMins%60)}m` : '0m';
     const totalGoalHours = roadmap?.settings?.daily_available_hours || 4;
     const goalProgress = totalGoalHours > 0 && plan?.summary?.completed_minutes 
         ? Math.min(100, Math.round((plan.summary.completed_minutes / (totalGoalHours * 60)) * 100)) 
         : 0;
-    const daysRemaining = roadmap?.exam?.days_remaining || '?';
+    const daysRemaining = roadmap?.exam?.days_remaining !== undefined && roadmap?.exam?.days_remaining !== null 
+        ? roadmap.exam.days_remaining 
+        : (moduleTool?.target_date ? Math.max(0, Math.ceil((new Date(moduleTool.target_date) - new Date()) / (1000 * 60 * 60 * 24))) : '?');
 
     const syllabusProgress = syllabusStats.total > 0 ? Math.round((syllabusStats.completed / syllabusStats.total) * 1000) / 10 : 0;
 
@@ -94,8 +98,8 @@ const Dashboard = ({ user, tools, streakData, onStartFocus, onOpenBattlePlan, on
                                     <circle cx="64" cy="64" r="56" stroke="currentColor" strokeWidth="8" fill="transparent" strokeDasharray="351.8" strokeDashoffset={351.8 - (351.8 * goalProgress / 100)} className="text-primary-500 transition-all duration-1000" strokeLinecap="round" />
                                 </svg>
                                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                    <span className="text-2xl font-black text-heading leading-none">{remainingHours}h</span>
-                                    <span className="text-[10px] font-bold text-surface-500 uppercase">Left</span>
+                                    <span className="text-xl font-black text-heading leading-none">{formattedRemaining}</span>
+                                    <span className="text-[10px] font-bold text-surface-500 uppercase mt-1">Left</span>
                                 </div>
                             </div>
                             <p className="text-xs font-bold text-surface-500">{daysRemaining} days until deadline</p>
@@ -109,19 +113,12 @@ const Dashboard = ({ user, tools, streakData, onStartFocus, onOpenBattlePlan, on
                 </div>
 
                 {/* Current Streak Widget */}
-                <div className="bg-surface-900 border border-surface-800 rounded-3xl overflow-hidden relative group">
-                    <div className="absolute top-4 left-6 z-10 pointer-events-none">
-                        <h3 className="text-[10px] font-black text-surface-500 uppercase tracking-widest">Global Streak</h3>
-                    </div>
-                    <div className="p-4 pt-10 h-full w-full opacity-80 group-hover:opacity-100 transition-opacity">
-                        <StreakCalendar
-                            toolId={null} // global streak
-                            currentStreak={streakData?.currentStreak || 0}
-                            activeDays={streakData?.activeDays || []}
-                            dayDetails={streakData?.dayDetails || {}}
-                            formatTime={(mins) => `${Math.floor(mins / 60)}h ${mins % 60}m`}
-                        />
-                    </div>
+                <div className="bg-surface-900 border border-surface-800 rounded-3xl overflow-hidden relative group p-6">
+                    <GlobalActivityGrid
+                        currentStreak={streakData?.currentStreak || 0}
+                        activeDays={streakData?.activeDays || []}
+                        toolsByDay={streakData?.toolsByDay || {}}
+                    />
                 </div>
 
                 {/* Syllabus Mastery Widget */}

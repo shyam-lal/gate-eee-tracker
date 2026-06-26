@@ -52,9 +52,11 @@ function calculateStreak(sortedDaysDesc) {
 const getToolStreak = async (userId, toolId, year, month) => {
     // 1. Get ALL unique active days for this tool (for streak calculation)
     const activeDaysRes = await pool.query(`
-        SELECT DISTINCT al.log_date::text as activity_date
+        SELECT al.log_date::text as activity_date
         FROM activity_logs al
         WHERE al.tool_id = $1 AND al.user_id = $2
+        GROUP BY al.log_date
+        HAVING SUM(COALESCE(al.minutes_logged, 0)) > 0 OR SUM(COALESCE(al.modules_logged, 0)) > 0
         ORDER BY activity_date DESC
     `, [toolId, userId]);
 
@@ -113,10 +115,18 @@ const getToolStreak = async (userId, toolId, year, month) => {
 const getUserStreak = async (userId) => {
     // 1. Get all unique active days across ALL tools
     const activeDaysRes = await pool.query(`
-        SELECT DISTINCT al.log_date::text as activity_date
-        FROM activity_logs al
-        WHERE al.user_id = $1
-        ORDER BY activity_date DESC
+        WITH daily_activity AS (
+            SELECT log_date::text as activity_date
+            FROM activity_logs
+            WHERE user_id = $1
+            GROUP BY log_date
+            HAVING SUM(COALESCE(minutes_logged, 0)) > 0 OR SUM(COALESCE(modules_logged, 0)) > 0
+            UNION
+            SELECT plan_date::text as activity_date
+            FROM user_task_logs
+            WHERE user_id = $1 AND completed = TRUE
+        )
+        SELECT activity_date FROM daily_activity ORDER BY activity_date DESC
     `, [userId]);
 
     const allActiveDays = activeDaysRes.rows.map(r => r.activity_date);
@@ -129,15 +139,27 @@ const getUserStreak = async (userId) => {
     const sixtyDaysAgoStr = getLocalDateStr(sixtyDaysAgo);
 
     const toolActivityRes = await pool.query(`
-        SELECT DISTINCT
-            al.log_date::text as activity_date,
-            tools.id as tool_id,
-            tools.name as tool_name,
-            tools.tool_type
-        FROM activity_logs al
-        JOIN tools ON al.tool_id = tools.id
-        WHERE al.user_id = $1 AND al.log_date >= $2
-        ORDER BY activity_date DESC
+        WITH base_activity AS (
+            SELECT
+                al.log_date::text as activity_date,
+                tools.id as tool_id,
+                tools.name as tool_name,
+                tools.tool_type
+            FROM activity_logs al
+            JOIN tools ON al.tool_id = tools.id
+            WHERE al.user_id = $1 AND al.log_date >= $2
+            GROUP BY al.log_date, tools.id, tools.name, tools.tool_type
+            HAVING SUM(COALESCE(al.minutes_logged, 0)) > 0 OR SUM(COALESCE(al.modules_logged, 0)) > 0
+            UNION
+            SELECT
+                utl.plan_date::text as activity_date,
+                NULL as tool_id,
+                'Battle Plan' as tool_name,
+                'battle_plan' as tool_type
+            FROM user_task_logs utl
+            WHERE utl.user_id = $1 AND utl.plan_date >= $2 AND utl.completed = TRUE
+        )
+        SELECT * FROM base_activity ORDER BY activity_date DESC
     `, [userId, sixtyDaysAgoStr]);
 
     // Group by day
