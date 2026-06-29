@@ -16,9 +16,9 @@ const Sidebar = ({ currentView, onViewChange, onSetupTool }) => {
     ];
 
     return (
-        <aside className="w-64 h-screen fixed left-0 top-0 bg-surface-950 border-r border-surface-800 flex flex-col z-40 transition-colors duration-300">
+        <aside className="fixed bottom-0 left-0 w-full h-16 bg-surface-950 border-t border-surface-800 flex flex-row items-center justify-around z-50 px-2 md:w-64 md:h-screen md:top-0 md:border-r md:border-t-0 md:flex-col md:px-0 md:items-stretch md:justify-start transition-colors duration-300">
             {/* Logo/Header */}
-            <div className="p-6 pb-8 border-b border-surface-900/50">
+            <div className="hidden md:block p-6 pb-8 border-b border-surface-900/50">
                 <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center font-black italic text-white shadow-lg shadow-primary-500/20">V</div>
                     <div>
@@ -29,28 +29,28 @@ const Sidebar = ({ currentView, onViewChange, onSetupTool }) => {
             </div>
 
             {/* Main Navigation */}
-            <nav className="flex-1 py-6 px-4 space-y-1 overflow-y-auto no-scrollbar">
+            <nav className="flex flex-row w-full justify-around py-0 px-0 space-y-0 overflow-x-auto no-scrollbar md:flex-col md:flex-1 md:py-6 md:px-4 md:space-y-1 md:overflow-y-auto md:justify-start">
                 {navItems.map((item) => {
                     const isActive = currentView === item.id;
                     return (
                         <button
                             key={item.id}
                             onClick={() => onViewChange(item.id)}
-                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm tracking-wide transition-all ${
+                            className={`flex flex-col items-center justify-center gap-1 px-2 py-2 rounded-lg w-auto min-w-[4rem] font-bold tracking-wide transition-all md:flex-row md:w-full md:px-4 md:py-3 md:rounded-xl md:gap-3 md:justify-start ${
                                 isActive 
                                     ? 'bg-primary-500/10 text-primary-400 shadow-inner' 
                                     : 'text-surface-400 hover:bg-surface-900 hover:text-heading'
                             }`}
                         >
                             <item.icon size={18} className={isActive ? 'text-primary-400' : 'opacity-70'} />
-                            {item.label}
+                            <span className="text-[9px] md:text-sm">{item.label}</span>
                         </button>
                     );
                 })}
             </nav>
 
             {/* Bottom Actions */}
-            <div className="p-4 space-y-4">
+            <div className="hidden md:block p-4 space-y-4">
                 {/* Upgrade to Pro Card */}
                 <div className="bg-emerald-900/40 border border-emerald-500/20 rounded-2xl p-4 cursor-pointer hover:bg-emerald-900/60 transition-colors">
                     <h4 className="text-sm font-black text-emerald-400 mb-1">Upgrade to Pro</h4>
@@ -58,7 +58,7 @@ const Sidebar = ({ currentView, onViewChange, onSetupTool }) => {
                 </div>
 
                 <div className="space-y-1">
-                    <button className="w-full flex items-center gap-3 px-4 py-3 text-surface-400 hover:bg-surface-900 hover:text-heading rounded-xl font-bold text-sm tracking-wide transition-all">
+                    <button onClick={() => onViewChange('profile')} className="w-full flex items-center gap-3 px-4 py-3 text-surface-400 hover:bg-surface-900 hover:text-heading rounded-xl font-bold text-sm tracking-wide transition-all">
                         <Settings size={18} className="opacity-70" />
                         Settings
                     </button>

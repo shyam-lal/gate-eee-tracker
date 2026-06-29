@@ -56,14 +56,14 @@ const GlobalActivityGrid = ({ currentStreak = 0, activeDays = [], toolsByDay = {
     return (
         <div className="flex flex-col h-full w-full">
             {/* Header Section */}
-            <div className="flex items-center gap-4 mb-8">
-                <div className="w-16 h-16 rounded-2xl border border-surface-700/50 flex items-center justify-center bg-surface-800/20">
-                    <Flame size={28} className={currentStreak > 0 ? "text-amber-500" : "text-surface-600"} strokeWidth={1.5} />
+            <div className="flex items-center gap-4 mb-4">
+                <div className="w-12 h-12 rounded-2xl border border-surface-700/50 flex items-center justify-center bg-surface-800/20 shrink-0">
+                    <Flame size={24} className={currentStreak > 0 ? "text-amber-500" : "text-surface-600"} strokeWidth={1.5} />
                 </div>
                 <div>
                     <div className="flex items-baseline gap-2">
-                        <span className="text-4xl font-black text-heading leading-none">{currentStreak}</span>
-                        <span className="text-xs font-black text-surface-500 uppercase tracking-widest">Days Streak</span>
+                        <span className="text-3xl font-black text-heading leading-none">{currentStreak}</span>
+                        <span className="text-[10px] font-black text-surface-500 uppercase tracking-widest">Days Streak</span>
                     </div>
                     <p className="text-[10px] font-black text-surface-500 uppercase tracking-widest mt-2">
                         {currentStreak > 0 ? `Active for ${currentStreak} days` : 'Log activity to start'}
@@ -78,11 +78,11 @@ const GlobalActivityGrid = ({ currentStreak = 0, activeDays = [], toolsByDay = {
             </div>
 
             {/* Grid */}
-            <div className="flex-1 flex flex-col justify-center mb-6">
-                <div className="grid grid-cols-7 gap-y-3 gap-x-2 w-full max-w-sm mx-auto">
+            <div className="flex-1 flex flex-col justify-center mb-4 overflow-x-auto no-scrollbar">
+                <div className="grid grid-cols-7 gap-y-2 gap-x-1.5 w-full min-w-[280px] max-w-xs mx-auto py-1 px-1">
                     {/* Day Labels */}
                     {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, i) => (
-                        <div key={`label-${i}`} className="text-center text-[10px] font-black text-surface-600 mb-2">
+                        <div key={`label-${i}`} className="text-center text-[9px] font-black text-surface-600 mb-1">
                             {day}
                         </div>
                     ))}
@@ -102,14 +102,14 @@ const GlobalActivityGrid = ({ currentStreak = 0, activeDays = [], toolsByDay = {
                                 )}
                                 
                                 {isActive ? (
-                                    <div className="w-10 h-10 bg-amber-900/30 border border-amber-900/50 rounded-[10px] flex items-center justify-center gap-1 shadow-inner relative z-10">
+                                    <div className="w-8 h-8 bg-amber-900/30 border border-amber-900/50 rounded-lg flex items-center justify-center gap-[2px] shadow-inner relative z-10">
                                         {dots.map((dotColor, dotIdx) => (
-                                            <div key={dotIdx} className={`w-2.5 h-2.5 rounded-full ${dotColor}`} />
+                                            <div key={dotIdx} className={`w-1.5 h-1.5 rounded-full ${dotColor}`} />
                                         ))}
                                     </div>
                                 ) : (
-                                    <div className={`w-10 h-10 flex items-center justify-center relative z-10`}>
-                                        <div className={`w-1.5 h-1.5 rounded-full ${isFuture ? 'bg-surface-800' : 'bg-surface-700'}`} />
+                                    <div className={`w-8 h-8 flex items-center justify-center relative z-10`}>
+                                        <div className={`w-1 h-1 rounded-full ${isFuture ? 'bg-surface-800' : 'bg-surface-700'}`} />
                                     </div>
                                 )}
                             </div>

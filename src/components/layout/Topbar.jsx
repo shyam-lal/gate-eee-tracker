@@ -12,7 +12,7 @@ const Topbar = ({
     onStartFocus 
 }) => {
     return (
-        <header className="h-20 px-8 flex items-center justify-between z-30">
+        <header className="h-20 px-4 md:px-8 flex items-center justify-between z-30">
             {/* Left side: Search (optional) */}
             <div className="flex-1">
                 {showSearch && (

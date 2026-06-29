@@ -70,10 +70,10 @@ const Dashboard = ({ user, tools, streakData, onStartFocus, onOpenBattlePlan, on
     const formattedDate = today.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 
     return (
-        <div className="min-h-screen bg-transparent text-surface-400 overflow-hidden relative p-8 md:p-12">
+        <div className="min-h-screen bg-transparent text-surface-400 overflow-hidden relative p-4 md:p-8 lg:p-12">
             {/* Header */}
             <header className="mb-12">
-                <h1 className="text-4xl sm:text-5xl font-black text-heading uppercase tracking-tighter leading-none mb-3">
+                <h1 className="text-3xl md:text-5xl font-black text-heading uppercase tracking-tighter leading-none mb-3">
                     Welcome back, Engineer
                 </h1>
                 <p className="text-sm font-bold text-surface-500 tracking-widest uppercase">
@@ -82,7 +82,7 @@ const Dashboard = ({ user, tools, streakData, onStartFocus, onOpenBattlePlan, on
             </header>
 
             {/* Top Grid: Daily Goal, Streak, Syllabus */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-6">
                 {/* Daily Goal Widget */}
                 <div 
                     onClick={() => onOpenBattlePlan && onOpenBattlePlan()}

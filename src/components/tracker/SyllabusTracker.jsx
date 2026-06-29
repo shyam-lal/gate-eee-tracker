@@ -63,11 +63,11 @@ const SyllabusTracker = ({
     const trackingMode = activeTool?.tool_type || 'module';
 
     return (
-        <div className="max-w-6xl mx-auto p-8 space-y-8 animate-in fade-in duration-300">
+        <div className="max-w-6xl mx-auto p-4 md:p-8 space-y-8 animate-in fade-in duration-300">
             {/* Header */}
-            <header className="flex justify-between items-end gap-6 mb-8">
+            <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8">
                 <div>
-                    <h1 className="text-4xl sm:text-5xl font-black text-heading uppercase tracking-tighter leading-none mb-2">Syllabus Tracker</h1>
+                    <h1 className="text-3xl md:text-5xl font-black text-heading uppercase tracking-tighter leading-none mb-2">Syllabus Tracker</h1>
                     <p className="text-[10px] text-surface-500 font-bold uppercase tracking-widest italic">
                         Engineer: {user?.username} • MODULE MODE • {activeTool?.selected_exam || 'GATE CS'}
                     </p>

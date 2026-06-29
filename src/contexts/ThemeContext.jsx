@@ -1,11 +1,12 @@
 import { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import { ACTIVE_THEME, MODES, themeColors } from '../theme/colors';
+import { ACTIVE_THEME, MODES, THEMES, themeColors } from '../theme/colors';
 
 const ThemeContext = createContext({
   theme: ACTIVE_THEME,
   mode: MODES.DARK,
   toggleMode: () => {},
   setMode: () => {},
+  setTheme: () => {},
 });
 
 /**
@@ -57,12 +58,11 @@ function applyThemeVars(theme, mode) {
 }
 
 /**
- * ThemeProvider — supports runtime dark/light mode switching.
+ * ThemeProvider — supports runtime dark/light mode switching and color theme switching.
  * Persists user preference in localStorage.
  */
 export const ThemeProvider = ({ children }) => {
   const [mode, setModeState] = useState(() => {
-    // Read saved preference, fallback to the default from colors.js
     try {
       const saved = localStorage.getItem('vault-theme-mode');
       if (saved === MODES.DARK || saved === MODES.LIGHT) return saved;
@@ -70,22 +70,35 @@ export const ThemeProvider = ({ children }) => {
     return MODES.DARK;
   });
 
+  const [theme, setThemeState] = useState(() => {
+    try {
+      const saved = localStorage.getItem('vault-theme-family');
+      if (Object.values(THEMES).includes(saved)) return saved;
+    } catch {}
+    return ACTIVE_THEME;
+  });
+
   const setMode = useCallback((newMode) => {
     setModeState(newMode);
     try { localStorage.setItem('vault-theme-mode', newMode); } catch {}
+  }, []);
+
+  const setTheme = useCallback((newTheme) => {
+    setThemeState(newTheme);
+    try { localStorage.setItem('vault-theme-family', newTheme); } catch {}
   }, []);
 
   const toggleMode = useCallback(() => {
     setMode(mode === MODES.DARK ? MODES.LIGHT : MODES.DARK);
   }, [mode, setMode]);
 
-  // Apply vars whenever mode changes
+  // Apply vars whenever mode or theme changes
   useEffect(() => {
-    applyThemeVars(ACTIVE_THEME, mode);
-  }, [mode]);
+    applyThemeVars(theme, mode);
+  }, [mode, theme]);
 
   return (
-    <ThemeContext.Provider value={{ theme: ACTIVE_THEME, mode, toggleMode, setMode }}>
+    <ThemeContext.Provider value={{ theme, mode, toggleMode, setMode, setTheme }}>
       {children}
     </ThemeContext.Provider>
   );
