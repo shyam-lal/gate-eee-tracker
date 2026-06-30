@@ -2,6 +2,8 @@ const userService = require('../services/userService');
 const toolService = require('../services/toolService');
 const aiConfigService = require('../services/aiConfigService');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
+const sessionService = require('../services/sessionService');
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 
@@ -81,6 +83,21 @@ const login = async (req, res) => {
             process.env.JWT_SECRET,
             { expiresIn: '7d' }
         );
+
+        // Record session
+        const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+        const userAgent = req.headers['user-agent'] || 'Unknown Device';
+        // Basic device parsing
+        let deviceName = 'Unknown Device';
+        if (userAgent.includes('Windows')) deviceName = 'Windows PC';
+        else if (userAgent.includes('Mac')) deviceName = 'MacBook';
+        else if (userAgent.includes('iPhone')) deviceName = 'iPhone';
+        else if (userAgent.includes('Android')) deviceName = 'Android Device';
+        else deviceName = userAgent.substring(0, 50); // fallback to raw string (truncated)
+        
+        const ipAddress = req.ip || req.connection.remoteAddress;
+        
+        await sessionService.addSession(user.id, tokenHash, deviceName, ipAddress, 'Unknown Location');
 
         const effectiveAiMode = await aiConfigService.getEffectiveAiMode(user.id);
 

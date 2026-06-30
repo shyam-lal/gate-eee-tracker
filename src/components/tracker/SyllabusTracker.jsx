@@ -75,8 +75,8 @@ const SyllabusTracker = ({
                 <div className="flex items-center gap-3 shrink-0">
                     {/* Hub button removed as per new sidebar navigation paradigm */}
                     <button 
-                        onClick={() => openEditor()}
-                        className="flex items-center gap-2 px-6 py-3 bg-surface-900 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500 hover:text-white rounded-xl font-bold text-xs uppercase tracking-widest transition-all shadow-lg shadow-emerald-500/10"
+                        onClick={() => openEditor(null, true)}
+                        className="flex items-center gap-2 px-6 py-3 bg-surface-900 border border-primary-500/30 text-primary-400 hover:bg-primary-500 hover:text-white rounded-xl font-bold text-xs uppercase tracking-widest transition-all shadow-lg shadow-primary-500/10"
                     >
                         <Plus size={16} /> NEW SUBJECT
                     </button>
@@ -109,10 +109,10 @@ const SyllabusTracker = ({
                     <div className="mt-8">
                         <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest mb-2">
                             <span className="text-surface-500">{modulesLeft} MODULES LEFT</span>
-                            <span className="text-emerald-400">{progressPercentage}% Cleared</span>
+                            <span className="text-primary-400">{progressPercentage}% Cleared</span>
                         </div>
                         <div className="h-2 w-full bg-surface-800 rounded-full overflow-hidden">
-                            <div className="h-full bg-emerald-500 transition-all duration-1000" style={{ width: `${progressPercentage}%` }} />
+                            <div className="h-full bg-primary-500 transition-all duration-1000" style={{ width: `${progressPercentage}%` }} />
                         </div>
                     </div>
 
@@ -149,16 +149,16 @@ const SyllabusTracker = ({
                         const isSubMatch = searchQuery && sub.name.toLowerCase().includes(searchQuery.toLowerCase());
 
                         return (
-                            <div key={sub.id} className={`bg-surface-900 border ${subProgress >= 100 ? 'border-emerald-500/30' : 'border-surface-800/50'} rounded-2xl p-6 transition-all relative group shadow-sm flex flex-col ${isSubMatch ? 'ring-2 ring-primary-500' : ''}`}>
-                                <div className="flex justify-between items-start mb-4 cursor-pointer" onClick={() => toggleExpand(sub.id)}>
+                            <div key={sub.id} className={`bg-surface-900 border ${subProgress >= 100 ? 'border-primary-500/30' : 'border-surface-800/50'} rounded-2xl p-4 sm:p-5 transition-all relative group flex flex-col ${isSubMatch ? 'ring-1 ring-primary-500' : ''}`}>
+                                <div className="flex justify-between items-start mb-3 cursor-pointer" onClick={() => toggleExpand(sub.id)}>
                                     <div className="flex items-center gap-3">
-                                        <h3 className="font-black uppercase text-base sm:text-lg tracking-widest text-heading">{sub.name}</h3>
+                                        <h3 className="font-black uppercase text-sm sm:text-base tracking-widest text-slate-900 dark:text-white">{sub.name}</h3>
                                         <button onClick={(e) => { e.stopPropagation(); openEditor(sub); }} className="p-1.5 text-surface-600 hover:text-primary-400 transition-colors">
                                             <Edit3 size={14} />
                                         </button>
                                     </div>
                                     <div className="flex items-center gap-4">
-                                        <span className="text-emerald-400 font-black text-lg">{subProgress}%</span>
+                                        <span className="text-primary-400 font-black text-base">{subProgress}%</span>
                                         <ChevronDown size={20} className={`text-surface-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
                                     </div>
                                 </div>
@@ -170,7 +170,7 @@ const SyllabusTracker = ({
                                 </div>
 
                                 <div className="h-1.5 w-full bg-surface-800 rounded-full overflow-hidden mb-2 cursor-pointer" onClick={() => toggleExpand(sub.id)}>
-                                    <div className={`h-full ${subProgress >= 100 ? 'bg-emerald-500' : 'bg-primary-500'} transition-all duration-1000`} style={{ width: `${subProgress}%` }} />
+                                    <div className={`h-full ${subProgress >= 100 ? 'bg-primary-500' : 'bg-primary-500'} transition-all duration-1000`} style={{ width: `${subProgress}%` }} />
                                 </div>
 
                                 <div className={`overflow-hidden transition-all duration-500 ease-in-out ${isOpen ? 'max-h-[5000px] opacity-100 mt-6' : 'max-h-0 opacity-0'}`}>
@@ -187,7 +187,7 @@ const SyllabusTracker = ({
                                                     <div className="flex justify-between items-center gap-4">
                                                         <span 
                                                             onClick={() => setLoggingTopic({ subId: sub.id, topicName: t.name, currentSpent: done, topicId: t.id, isCompleted: tp >= 100 })} 
-                                                            className={`text-sm font-bold flex-1 cursor-pointer hover:text-primary-400 transition-colors ${tp >= 100 ? 'text-emerald-400/80' : 'text-surface-400'}`}
+                                                            className={`text-sm font-bold flex-1 cursor-pointer hover:text-primary-400 transition-colors ${tp >= 100 ? 'text-primary-400/80' : 'text-slate-900 dark:text-white'}`}
                                                         >
                                                             {t.name}
                                                         </span>
@@ -212,7 +212,7 @@ const SyllabusTracker = ({
                                                         </div>
                                                     </div>
                                                     {/* Bottom progress border */}
-                                                    <div className="absolute bottom-0 left-0 h-0.5 bg-emerald-500 rounded-b-xl transition-all duration-500" style={{ width: `${Math.min(100, tp)}%` }} />
+                                                    <div className="absolute bottom-0 left-0 h-0.5 bg-primary-500 rounded-b-xl transition-all duration-500" style={{ width: `${Math.min(100, tp)}%` }} />
                                                 </div>
                                             );
                                         })}

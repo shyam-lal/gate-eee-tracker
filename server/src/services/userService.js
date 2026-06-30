@@ -62,6 +62,27 @@ const getLeaderboard = async () => {
 };
 
 
+const updateProfile = async (userId, username, email) => {
+    const result = await pool.query(
+        'UPDATE users SET username = $1, email = $2 WHERE id = $3 RETURNING id, username, email, selected_exam, tracking_mode, current_streak, role, active_exam_id, onboarding_completed',
+        [username, email, userId]
+    );
+    return result.rows[0];
+};
+
+const updatePassword = async (userId, newPassword) => {
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await pool.query(
+        'UPDATE users SET password_hash = $1 WHERE id = $2',
+        [hashedPassword, userId]
+    );
+    return true;
+};
+
+const getPasswordHash = async (userId) => {
+    const result = await pool.query('SELECT password_hash FROM users WHERE id = $1', [userId]);
+    return result.rows[0]?.password_hash;
+};
 
 module.exports = {
     createUser,
@@ -71,4 +92,7 @@ module.exports = {
     updatePreferences,
     updateStreak,
     getLeaderboard,
+    updateProfile,
+    updatePassword,
+    getPasswordHash,
 };

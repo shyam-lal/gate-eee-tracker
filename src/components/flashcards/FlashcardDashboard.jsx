@@ -31,7 +31,7 @@ const FlashcardDashboard = ({ tool, user, onTopUp }) => {
     };
 
     return (
-        <div className={`w-full max-w-7xl mx-auto ${view === 'manage_cards' ? 'min-h-[calc(100vh-8rem)] pb-12' : 'h-[calc(100vh-8rem)]'}`}>
+        <div className={`w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 ${view === 'manage_cards' ? 'min-h-[calc(100vh-8rem)] pb-12' : 'h-[calc(100vh-8rem)]'}`}>
             {view === 'decks' && (
                 <div className="animate-in fade-in zoom-in-95 duration-300">
                     <div className="flex justify-center mb-8">

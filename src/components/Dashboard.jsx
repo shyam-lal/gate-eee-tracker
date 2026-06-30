@@ -124,7 +124,7 @@ const Dashboard = ({ user, tools, streakData, onStartFocus, onOpenBattlePlan, on
                 {/* Syllabus Mastery Widget */}
                 <div 
                     onClick={() => onOpenPlanner && onOpenPlanner()}
-                    className="bg-surface-900 border border-surface-800 rounded-3xl p-6 relative flex flex-col justify-center cursor-pointer hover:border-emerald-500/50 hover:bg-surface-800/50 transition-all group"
+                    className="bg-surface-900 border border-surface-800 rounded-3xl p-6 relative flex flex-col justify-center cursor-pointer hover:border-primary-500/50 hover:bg-surface-800/50 transition-all group"
                 >
                     <h3 className="text-[10px] font-black text-surface-500 uppercase tracking-widest absolute top-6 left-6">Syllabus Mastery</h3>
                     <div className="mt-6 group-hover:scale-[1.02] transition-transform">
@@ -133,10 +133,10 @@ const Dashboard = ({ user, tools, streakData, onStartFocus, onOpenBattlePlan, on
                                 <span className="text-4xl font-black text-heading">{syllabusStats.completed} </span>
                                 <span className="text-xl font-bold text-surface-500">/ {syllabusStats.total}</span>
                             </div>
-                            <span className="text-emerald-400 font-black text-lg">{syllabusProgress}%</span>
+                            <span className="text-primary-400 font-black text-lg">{syllabusProgress}%</span>
                         </div>
                         <div className="h-2 w-full bg-surface-800 rounded-full overflow-hidden mb-3">
-                            <div className="h-full bg-emerald-500 transition-all duration-1000" style={{ width: `${syllabusProgress}%` }} />
+                            <div className="h-full bg-primary-500 transition-all duration-1000" style={{ width: `${syllabusProgress}%` }} />
                         </div>
                         {syllabusStats.total === 0 && (
                             <p className="text-xs font-bold text-surface-500">Add modules to track progress</p>
@@ -180,8 +180,8 @@ const Dashboard = ({ user, tools, streakData, onStartFocus, onOpenBattlePlan, on
                     </button>
 
                     {/* Run Estimator Action */}
-                    <button onClick={() => setShowCalculator(true)} className="bg-surface-900 border border-surface-800 rounded-3xl p-6 flex flex-col items-center justify-center flex-1 hover:border-emerald-500/50 hover:bg-surface-800/50 transition-all group active:scale-[0.98]">
-                        <div className="w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <button onClick={() => setShowCalculator(true)} className="bg-surface-900 border border-surface-800 rounded-3xl p-6 flex flex-col items-center justify-center flex-1 hover:border-primary-500/50 hover:bg-surface-800/50 transition-all group active:scale-[0.98]">
+                        <div className="w-12 h-12 rounded-full bg-primary-500/10 text-primary-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                             <TrendingUp size={24} />
                         </div>
                         <h4 className="text-base font-black text-heading mb-2">Run Estimator</h4>

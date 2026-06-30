@@ -3,6 +3,8 @@ const router = express.Router();
 const userService = require('../services/userService');
 const authenticateToken = require('../middleware/authMiddleware');
 const aiConfigService = require('../services/aiConfigService');
+const sessionService = require('../services/sessionService');
+const bcrypt = require('bcryptjs');
 
 router.use(authenticateToken);
 
@@ -30,6 +32,57 @@ router.patch('/preferences', async (req, res) => {
         const { selected_exam, tracking_mode } = req.body;
         const user = await userService.updatePreferences(req.user.id, selected_exam, tracking_mode);
         res.json(user);
+    } catch (err) {
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+router.put('/profile', async (req, res) => {
+    try {
+        const { username, email } = req.body;
+        const updatedUser = await userService.updateProfile(req.user.id, username, email);
+        res.json(updatedUser);
+    } catch (err) {
+        if (err.constraint === 'users_email_key') {
+            return res.status(400).json({ error: 'Email already exists' });
+        }
+        if (err.constraint === 'users_username_key') {
+            return res.status(400).json({ error: 'Username already exists' });
+        }
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+router.put('/password', async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        const currentHash = await userService.getPasswordHash(req.user.id);
+        
+        const isValid = await bcrypt.compare(currentPassword, currentHash);
+        if (!isValid) {
+            return res.status(400).json({ error: 'Incorrect current password' });
+        }
+        
+        await userService.updatePassword(req.user.id, newPassword);
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+router.get('/sessions', async (req, res) => {
+    try {
+        const sessions = await sessionService.getSessionsByUser(req.user.id);
+        res.json({ sessions });
+    } catch (err) {
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+router.delete('/sessions/:id', async (req, res) => {
+    try {
+        await sessionService.deleteSession(req.params.id, req.user.id);
+        res.json({ success: true });
     } catch (err) {
         res.status(500).json({ error: 'Server error' });
     }

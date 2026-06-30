@@ -499,7 +499,7 @@ const PlannerDashboard = ({ onBack }) => {
             <main className="w-full grid grid-cols-1 2xl:grid-cols-12 gap-6 h-auto 2xl:h-[calc(100vh-240px)]">
 
                 {/* COL 1: GOALS & BACKLOG */}
-                <div className="2xl:col-span-3 flex flex-col bg-white dark:bg-surface-900/20 rounded-[2rem] border border-surface-200 dark:border-white/5 overflow-hidden min-h-[400px]">
+                <div className="2xl:col-span-3 flex flex-col bg-surface-950 rounded-[2rem] border border-surface-800 overflow-hidden min-h-[400px]">
                     <div className="p-6 pb-4">
                         <h2 className="font-black text-heading uppercase tracking-widest text-xs flex items-center gap-2">Goals & Backlog</h2>
                     </div>
@@ -543,7 +543,7 @@ const PlannerDashboard = ({ onBack }) => {
                         {columns.map(col => (
                             <div
                                 key={col.id}
-                                className={`flex-1 rounded-[2rem] p-4 transition-colors min-w-[200px] snap-center flex flex-col bg-surface-50 dark:bg-surface-900/20 border border-surface-200 dark:border-white/5 ${isDragging ? 'border-dashed border-primary-500/30' : ''}`}
+                                className={`flex-1 rounded-[2rem] p-4 transition-colors min-w-[200px] snap-center flex flex-col bg-surface-950 border border-surface-800 ${isDragging ? 'border-dashed border-primary-500/30' : ''}`}
                                 onDragOver={handleDragOver}
                                 onDrop={(e) => handleDrop(e, col.id)}
                             >
@@ -556,7 +556,7 @@ const PlannerDashboard = ({ onBack }) => {
 
                                 {col.id === 'todo' && (
                                     <form onSubmit={handleAddGoal} className="mb-3 shrink-0">
-                                        <div className="relative flex items-center bg-white dark:bg-surface-950/30 border border-surface-200 dark:border-surface-700/50 rounded-2xl focus-within:border-primary-500/50 transition-colors overflow-hidden group">
+                                        <div className="relative flex items-center bg-surface-900 border border-surface-800 rounded-2xl focus-within:border-primary-500/50 transition-colors overflow-hidden group">
                                             <div className="pl-3 text-surface-400 group-focus-within:text-primary-500 transition-colors"><Plus size={14} /></div>
                                             <input
                                                 type="text"
@@ -576,7 +576,7 @@ const PlannerDashboard = ({ onBack }) => {
                                             draggable
                                             onDragStart={(e) => handleDragStart(e, goal.id)}
                                             onDragEnd={() => setIsDragging(false)}
-                                            className="group bg-white dark:bg-surface-800/80 border border-surface-200 dark:border-surface-700/50 p-4 rounded-2xl cursor-grab active:cursor-grabbing hover:border-primary-500/50 transition-colors shadow-sm flex flex-col gap-2"
+                                            className="group bg-surface-900 border border-surface-800 p-4 rounded-2xl cursor-grab active:cursor-grabbing hover:border-primary-500/50 transition-colors shadow-sm flex flex-col gap-2"
                                         >
                                             <div className="flex items-start gap-2">
                                                 <GripVertical size={14} className="text-surface-400 shrink-0 mt-0.5" />
@@ -611,7 +611,7 @@ const PlannerDashboard = ({ onBack }) => {
                 </div>
 
                 {/* COL 3: DAILY DIARY */}
-                <div className="2xl:col-span-3 flex flex-col bg-white dark:bg-surface-900/20 rounded-[2rem] border border-surface-200 dark:border-white/5 overflow-hidden shadow-sm h-[600px] 2xl:h-auto min-h-[500px]">
+                <div className="2xl:col-span-3 flex flex-col bg-surface-950 rounded-[2rem] border border-surface-800 overflow-hidden shadow-sm h-[600px] 2xl:h-auto min-h-[500px]">
                     <div className="p-6 pb-2 flex justify-between items-center z-10">
                         <div>
                             <h2 className="font-black text-heading uppercase tracking-widest text-xs">
@@ -652,7 +652,7 @@ const PlannerDashboard = ({ onBack }) => {
                         />
                     </div>
                     
-                    <div className="p-3 px-6 border-t border-surface-200 dark:border-white/5 bg-surface-50 dark:bg-surface-900/40 flex justify-between items-center">
+                    <div className="p-3 px-6 border-t border-surface-800 bg-surface-900 flex justify-between items-center">
                         <span className="text-xs text-surface-500 font-medium">
                             {diaryContent.replace(/<[^>]*>/g, '').trim().split(/\s+/).filter(w => w.length > 0).length} words
                         </span>
