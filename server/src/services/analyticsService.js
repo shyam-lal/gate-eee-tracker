@@ -133,6 +133,26 @@ const analyticsService = {
                 percentageChange
             }
         };
+    },
+
+    getRecentActivities: async (userId, limit = 5) => {
+        const query = `
+            SELECT 
+                al.id,
+                al.minutes_logged as value,
+                al.created_at,
+                t.name as topic_name,
+                tl.name as tool_name,
+                tl.tool_type
+            FROM activity_logs al
+            LEFT JOIN topics t ON al.topic_id = t.id
+            LEFT JOIN tools tl ON al.tool_id = tl.id
+            WHERE al.user_id = $1
+            ORDER BY al.created_at DESC
+            LIMIT $2
+        `;
+        const res = await db.query(query, [userId, limit]);
+        return res.rows;
     }
 };
 

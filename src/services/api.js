@@ -473,6 +473,11 @@ export const analytics = {
         const res = await fetch(`${API_URL}/analytics/global`, { headers: getHeaders() });
         if (!res.ok) throw new Error('Failed to fetch global analytics');
         return res.json();
+    },
+    getRecentActivities: async () => {
+        const res = await fetch(`${API_URL}/analytics/recent`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to fetch recent activities');
+        return res.json();
     }
 };
 

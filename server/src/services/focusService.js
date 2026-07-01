@@ -41,7 +41,7 @@ const focusService = {
 
                 if (existingLog.rows.length > 0) {
                     await client.query(
-                        'UPDATE activity_logs SET minutes_logged = minutes_logged + $1 WHERE id = $2',
+                        'UPDATE activity_logs SET minutes_logged = minutes_logged + $1, created_at = CURRENT_TIMESTAMP WHERE id = $2',
                         [durationMinutes, existingLog.rows[0].id]
                     );
                 } else {

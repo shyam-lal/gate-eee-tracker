@@ -24,7 +24,7 @@ const Profile = ({ user, onBack, onResetProgress, onLogout }) => {
     const [sessions, setSessions] = useState([]);
     const [isEditingProfile, setIsEditingProfile] = useState(false);
     const [isChangingPassword, setIsChangingPassword] = useState(false);
-    
+
     const [profileForm, setProfileForm] = useState({ username: user?.username || '', email: user?.email || '' });
     const [passwordForm, setPasswordForm] = useState({ currentPassword: '', newPassword: '' });
     const [actionLoading, setActionLoading] = useState(false);
@@ -64,7 +64,7 @@ const Profile = ({ user, onBack, onResetProgress, onLogout }) => {
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || 'Failed to update profile');
-            
+
             // Note: In a real app we should update the global user context here
             setActionSuccess('Profile updated successfully');
             setTimeout(() => { setIsEditingProfile(false); setActionSuccess(''); }, 1500);
@@ -89,9 +89,9 @@ const Profile = ({ user, onBack, onResetProgress, onLogout }) => {
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || 'Failed to change password');
-            
+
             setActionSuccess('Password changed successfully');
-            setTimeout(() => { setIsChangingPassword(false); setActionSuccess(''); setPasswordForm({currentPassword:'', newPassword:''}); }, 1500);
+            setTimeout(() => { setIsChangingPassword(false); setActionSuccess(''); setPasswordForm({ currentPassword: '', newPassword: '' }); }, 1500);
         } catch (err) {
             setActionError(err.message);
         } finally {
@@ -134,7 +134,7 @@ const Profile = ({ user, onBack, onResetProgress, onLogout }) => {
         <div className="min-h-screen bg-base text-surface-400 font-sans pb-16">
             <main className="max-w-5xl mx-auto px-6 py-10">
                 {/* Header */}
-                <div className="mb-8">
+                {/* <div className="mb-8">
                     {onBack && (
                         <button onClick={onBack} className="flex items-center gap-2 text-surface-500 hover:text-heading transition-colors font-bold text-sm mb-4">
                             <ArrowLeft size={16} /> Back
@@ -142,7 +142,7 @@ const Profile = ({ user, onBack, onResetProgress, onLogout }) => {
                     )}
                     <h1 className="text-2xl font-bold text-heading mb-1">Manage Workspace</h1>
                     <p className="text-sm text-surface-500">Configure your academic sanctuary and account preferences.</p>
-                </div>
+                </div> */}
 
                 {/* Tabs */}
                 <div className="flex overflow-x-auto no-scrollbar gap-8 border-b border-surface-800 mb-8">
@@ -150,11 +150,10 @@ const Profile = ({ user, onBack, onResetProgress, onLogout }) => {
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
-                            className={`flex items-center gap-2 pb-3 text-sm font-bold transition-colors border-b-2 whitespace-nowrap ${
-                                activeTab === tab.id 
-                                    ? 'border-primary-500 text-primary-500' 
+                            className={`flex items-center gap-2 pb-3 text-sm font-bold transition-colors border-b-2 whitespace-nowrap ${activeTab === tab.id
+                                    ? 'border-primary-500 text-primary-500'
                                     : 'border-transparent text-surface-500 hover:text-heading'
-                            }`}
+                                }`}
                         >
                             <tab.icon size={16} className={activeTab === tab.id ? 'text-primary-500' : 'text-surface-400'} />
                             {tab.label}
@@ -370,7 +369,7 @@ const Profile = ({ user, onBack, onResetProgress, onLogout }) => {
                         </div>
                     )}
                 </div>
-                
+
                 {/* Footer */}
                 <div className="mt-12 pt-6 border-t border-surface-800 flex flex-col md:flex-row justify-between items-center text-xs text-surface-500">
                     <p>© 2024 Vault Academic. All rights reserved.</p>
@@ -393,23 +392,23 @@ const Profile = ({ user, onBack, onResetProgress, onLogout }) => {
                         <form onSubmit={handleUpdateProfile} className="p-6 space-y-4">
                             {actionError && <div className="p-3 bg-rose-500/10 text-rose-500 text-xs rounded-xl font-bold">{actionError}</div>}
                             {actionSuccess && <div className="p-3 bg-emerald-500/10 text-emerald-500 text-xs rounded-xl font-bold">{actionSuccess}</div>}
-                            
+
                             <div>
                                 <label className="block text-[10px] text-surface-500 font-bold uppercase tracking-widest mb-1">Username</label>
-                                <input 
+                                <input
                                     type="text"
                                     value={profileForm.username}
-                                    onChange={(e) => setProfileForm({...profileForm, username: e.target.value})}
+                                    onChange={(e) => setProfileForm({ ...profileForm, username: e.target.value })}
                                     className="w-full bg-surface-900 border border-surface-800 rounded-xl p-3 text-sm text-heading focus:border-primary-500 outline-none transition-colors"
                                     required
                                 />
                             </div>
                             <div>
                                 <label className="block text-[10px] text-surface-500 font-bold uppercase tracking-widest mb-1">Email</label>
-                                <input 
+                                <input
                                     type="email"
                                     value={profileForm.email}
-                                    onChange={(e) => setProfileForm({...profileForm, email: e.target.value})}
+                                    onChange={(e) => setProfileForm({ ...profileForm, email: e.target.value })}
                                     className="w-full bg-surface-900 border border-surface-800 rounded-xl p-3 text-sm text-heading focus:border-primary-500 outline-none transition-colors"
                                     required
                                 />
@@ -435,23 +434,23 @@ const Profile = ({ user, onBack, onResetProgress, onLogout }) => {
                         <form onSubmit={handleChangePassword} className="p-6 space-y-4">
                             {actionError && <div className="p-3 bg-rose-500/10 text-rose-500 text-xs rounded-xl font-bold">{actionError}</div>}
                             {actionSuccess && <div className="p-3 bg-emerald-500/10 text-emerald-500 text-xs rounded-xl font-bold">{actionSuccess}</div>}
-                            
+
                             <div>
                                 <label className="block text-[10px] text-surface-500 font-bold uppercase tracking-widest mb-1">Current Password</label>
-                                <input 
+                                <input
                                     type="password"
                                     value={passwordForm.currentPassword}
-                                    onChange={(e) => setPasswordForm({...passwordForm, currentPassword: e.target.value})}
+                                    onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
                                     className="w-full bg-surface-900 border border-surface-800 rounded-xl p-3 text-sm text-heading focus:border-primary-500 outline-none transition-colors"
                                     required
                                 />
                             </div>
                             <div>
                                 <label className="block text-[10px] text-surface-500 font-bold uppercase tracking-widest mb-1">New Password</label>
-                                <input 
+                                <input
                                     type="password"
                                     value={passwordForm.newPassword}
-                                    onChange={(e) => setPasswordForm({...passwordForm, newPassword: e.target.value})}
+                                    onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
                                     className="w-full bg-surface-900 border border-surface-800 rounded-xl p-3 text-sm text-heading focus:border-primary-500 outline-none transition-colors"
                                     required
                                 />

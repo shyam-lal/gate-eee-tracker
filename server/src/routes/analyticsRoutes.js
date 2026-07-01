@@ -9,4 +9,7 @@ router.use(authMiddleware);
 // Get Global Dashboard Stats
 router.get('/global', analyticsController.getGlobalStats);
 
+// Get Recent Activities
+router.get('/recent', analyticsController.getRecentActivities);
+
 module.exports = router;

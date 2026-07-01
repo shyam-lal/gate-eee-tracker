@@ -214,15 +214,23 @@ async function completeAttempt(attemptId, toolId, userId) {
     if (toolId && userId) {
         // Log the actual minutes spent (minimum 1 minute if they spent any time)
         const minutesLog = Math.max(1, Math.round(totalTime / 60));
-        await db.query(`
-             INSERT INTO activity_logs (user_id, tool_id, minutes_logged, log_date) 
-             SELECT $1, $2, $3, $4
-             WHERE NOT EXISTS (
-                SELECT 1 FROM activity_logs 
-                WHERE user_id = $1 AND tool_id = $2 AND log_date = $4
-             )`,
-            [userId, toolId, minutesLog, getLocalDateStr()]
+        
+        const existingLog = await db.query(
+            'SELECT id FROM activity_logs WHERE user_id = $1 AND tool_id = $2 AND log_date = $3',
+            [userId, toolId, getLocalDateStr()]
         );
+        
+        if (existingLog.rows.length > 0) {
+            await db.query(
+                'UPDATE activity_logs SET minutes_logged = minutes_logged + $1, created_at = CURRENT_TIMESTAMP WHERE id = $2',
+                [minutesLog, existingLog.rows[0].id]
+            );
+        } else {
+            await db.query(
+                'INSERT INTO activity_logs (user_id, tool_id, minutes_logged, log_date) VALUES ($1, $2, $3, $4)',
+                [userId, toolId, minutesLog, getLocalDateStr()]
+            );
+        }
     }
 
     return { score, maxScore, totalTime };

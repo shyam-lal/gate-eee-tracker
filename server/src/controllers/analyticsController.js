@@ -11,6 +11,18 @@ const getGlobalStats = async (req, res) => {
     }
 };
 
+const getRecentActivities = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const activities = await analyticsService.getRecentActivities(userId);
+        res.status(200).json(activities);
+    } catch (error) {
+        console.error('Error fetching recent activities:', error);
+        res.status(500).json({ error: 'Internal server error while fetching recent activities' });
+    }
+};
+
 module.exports = {
-    getGlobalStats
+    getGlobalStats,
+    getRecentActivities
 };

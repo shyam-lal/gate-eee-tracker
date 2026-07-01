@@ -143,12 +143,37 @@ const completeTask = async (userId, taskId, actualDuration, selfRating = null) =
             topicState.status = newStatus;
         }
 
-        // Log completion
+        // Log completion in user_task_logs
         await client.query(
             `INSERT INTO user_task_logs (user_id, topic_id, task_type, task_id, planned_duration, actual_duration, completed, completed_at, plan_date)
              VALUES ($1, $2, $3, $4, $5, $6, TRUE, NOW(), CURRENT_DATE)`,
             [userId, task.topic_id, task.type, task.id, task.duration_minutes, duration]
         );
+
+        // Track activity for global streaks & recent activities
+        // Upsert activity_logs for this topic today
+        const existingLog = await client.query(
+            'SELECT id FROM activity_logs WHERE user_id = $1 AND topic_id = $2 AND log_date = CURRENT_DATE',
+            [userId, task.topic_id]
+        );
+
+        if (existingLog.rows.length > 0) {
+            await client.query(
+                'UPDATE activity_logs SET minutes_logged = minutes_logged + $1, created_at = CURRENT_TIMESTAMP WHERE id = $2',
+                [duration, existingLog.rows[0].id]
+            );
+        } else {
+            // Find tool_id via subject for this topic
+            await client.query(
+                `INSERT INTO activity_logs (user_id, topic_id, minutes_logged, log_date, tool_id)
+                 SELECT $1, $2, $3, CURRENT_DATE, s.tool_id
+                 FROM topics t
+                 JOIN subjects s ON t.subject_id = s.id
+                 WHERE t.id = $2
+                 LIMIT 1`,
+                [userId, task.topic_id, duration]
+            );
+        }
 
         await client.query('COMMIT');
 

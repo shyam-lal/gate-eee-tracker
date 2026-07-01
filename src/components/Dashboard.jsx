@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { 
-    Clock, Target, Calendar, BarChart3, 
+import {
+    Clock, Target, Calendar, BarChart3,
     Flame, Timer, Activity, TrendingUp, CheckCircle, RotateCw, BookOpen
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import CourseCalculatorModal from './calculator/CourseCalculatorModal';
 import StreakCalendar from './ui/StreakCalendar';
 import GlobalActivityGrid from './ui/GlobalActivityGrid';
-import { battlePlan, syllabus as syllabusApi } from '../services/api';
+import { battlePlan, syllabus as syllabusApi, analytics } from '../services/api';
 
 // Mock Data for Weekly Focus Trends
 const mockChartData = [
@@ -28,39 +28,43 @@ const mockRecentActivity = [
 
 const Dashboard = ({ user, tools, streakData, onStartFocus, onOpenBattlePlan, onOpenTool }) => {
     const [showCalculator, setShowCalculator] = useState(false);
-    
+
     // Data states
     const [plan, setPlan] = useState(null);
     const [roadmap, setRoadmap] = useState(null);
     const [syllabusStats, setSyllabusStats] = useState({ completed: 0, total: 0 });
+    const [recentActivities, setRecentActivities] = useState([]);
 
     const hasBattlePlan = tools?.some(t => t.tool_type === 'battle_plan') || false; // Or checking logic
     const moduleTool = tools?.find(t => t.tool_type === 'module');
 
     useEffect(() => {
         // Fetch Battle Plan Data
-        battlePlan.getToday().then(setPlan).catch(() => {});
-        battlePlan.getRoadmap().then(setRoadmap).catch(() => {});
-        
+        battlePlan.getToday().then(setPlan).catch(() => { });
+        battlePlan.getRoadmap().then(setRoadmap).catch(() => { });
+
         // Fetch Syllabus Data
         if (moduleTool) {
             syllabusApi.get(moduleTool.id).then(data => {
                 const total = data.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + (t.total_modules || 1), 0), 0);
                 const completed = data.reduce((acc, s) => acc + s.topics.reduce((ta, t) => ta + (t.completed_modules || 0), 0), 0);
                 setSyllabusStats({ completed, total });
-            }).catch(() => {});
+            }).catch(() => { });
         }
+
+        // Fetch Recent Activities
+        analytics.getRecentActivities().then(setRecentActivities).catch(() => { });
     }, [moduleTool]);
 
     // Derived stats
     const remainingMins = plan?.summary?.remaining_minutes || 0;
-    const formattedRemaining = remainingMins > 0 ? `${Math.floor(remainingMins/60)}h ${Math.round(remainingMins%60)}m` : '0m';
+    const formattedRemaining = remainingMins > 0 ? `${Math.floor(remainingMins / 60)}h ${Math.round(remainingMins % 60)}m` : '0m';
     const totalGoalHours = roadmap?.settings?.daily_available_hours || 4;
-    const goalProgress = totalGoalHours > 0 && plan?.summary?.completed_minutes 
-        ? Math.min(100, Math.round((plan.summary.completed_minutes / (totalGoalHours * 60)) * 100)) 
+    const goalProgress = totalGoalHours > 0 && plan?.summary?.completed_minutes
+        ? Math.min(100, Math.round((plan.summary.completed_minutes / (totalGoalHours * 60)) * 100))
         : 0;
-    const daysRemaining = roadmap?.exam?.days_remaining !== undefined && roadmap?.exam?.days_remaining !== null 
-        ? roadmap.exam.days_remaining 
+    const daysRemaining = roadmap?.exam?.days_remaining !== undefined && roadmap?.exam?.days_remaining !== null
+        ? roadmap.exam.days_remaining
         : (moduleTool?.target_date ? Math.max(0, Math.ceil((new Date(moduleTool.target_date) - new Date()) / (1000 * 60 * 60 * 24))) : '?');
 
     const syllabusProgress = syllabusStats.total > 0 ? Math.round((syllabusStats.completed / syllabusStats.total) * 1000) / 10 : 0;
@@ -84,12 +88,12 @@ const Dashboard = ({ user, tools, streakData, onStartFocus, onOpenBattlePlan, on
             {/* Top Grid: Daily Goal, Streak, Syllabus */}
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-6">
                 {/* Daily Goal Widget */}
-                <div 
+                <div
                     onClick={() => onOpenBattlePlan && onOpenBattlePlan()}
                     className="bg-surface-900 border border-surface-800 rounded-3xl p-6 flex flex-col items-center justify-center relative overflow-hidden group cursor-pointer hover:border-primary-500/50 hover:bg-surface-800/50 transition-all"
                 >
                     <h3 className="text-[10px] font-black text-surface-500 uppercase tracking-widest absolute top-6">Daily Goal</h3>
-                    
+
                     {plan ? (
                         <>
                             <div className="relative w-32 h-32 mt-6 mb-4 group-hover:scale-105 transition-transform">
@@ -107,7 +111,7 @@ const Dashboard = ({ user, tools, streakData, onStartFocus, onOpenBattlePlan, on
                     ) : (
                         <div className="flex flex-col items-center justify-center mt-6 h-32 text-center opacity-50">
                             <Target size={32} className="text-surface-600 mb-3 group-hover:scale-110 transition-transform" />
-                            <p className="text-xs font-bold text-surface-500">Setup Battle Plan<br/>to track goals</p>
+                            <p className="text-xs font-bold text-surface-500">Setup Battle Plan<br />to track goals</p>
                         </div>
                     )}
                 </div>
@@ -122,7 +126,7 @@ const Dashboard = ({ user, tools, streakData, onStartFocus, onOpenBattlePlan, on
                 </div>
 
                 {/* Syllabus Mastery Widget */}
-                <div 
+                <div
                     onClick={() => onOpenPlanner && onOpenPlanner()}
                     className="bg-surface-900 border border-surface-800 rounded-3xl p-6 relative flex flex-col justify-center cursor-pointer hover:border-primary-500/50 hover:bg-surface-800/50 transition-all group"
                 >
@@ -147,7 +151,7 @@ const Dashboard = ({ user, tools, streakData, onStartFocus, onOpenBattlePlan, on
 
             {/* Middle Grid: Charts and Actions */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-                
+
                 {/* Weekly Focus Trends */}
                 <div className="bg-surface-900 border border-surface-800 rounded-3xl p-6 lg:col-span-2 min-h-[300px] flex flex-col">
                     <div className="flex justify-between items-center mb-6">
@@ -161,7 +165,7 @@ const Dashboard = ({ user, tools, streakData, onStartFocus, onOpenBattlePlan, on
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={mockChartData}>
                                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748b' }} dy={10} />
-                                <Tooltip cursor={{fill: 'rgba(255,255,255,0.05)'}} contentStyle={{ backgroundColor: '#0f172a', border: 'none', borderRadius: '12px' }} />
+                                <Tooltip cursor={{ fill: 'rgba(255,255,255,0.05)' }} contentStyle={{ backgroundColor: '#0f172a', border: 'none', borderRadius: '12px' }} />
                                 <Bar dataKey="uv" fill="var(--color-primary-500)" radius={[4, 4, 0, 0]} barSize={30} />
                             </BarChart>
                         </ResponsiveContainer>
@@ -190,26 +194,90 @@ const Dashboard = ({ user, tools, streakData, onStartFocus, onOpenBattlePlan, on
                 </div>
             </div>
 
-            {/* Bottom Section: Recent Activity */}
+            {/* Bottom Section: Recent Activity / Next Steps */}
             <div className="bg-surface-900 border border-surface-800 rounded-3xl p-6">
                 <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-[10px] font-black text-surface-500 uppercase tracking-widest">Recent Activity</h3>
-                    <button className="text-[10px] font-black text-primary-400 uppercase tracking-widest hover:text-primary-300">View History</button>
+                    <h3 className="text-[10px] font-black text-surface-500 uppercase tracking-widest">
+                        {recentActivities.length > 0 ? 'Recent Activity' : 'Next Steps'}
+                    </h3>
+                    {recentActivities.length > 0 && (
+                        <button className="text-[10px] font-black text-primary-400 uppercase tracking-widest hover:text-primary-300">View History</button>
+                    )}
                 </div>
-                
+
                 <div className="space-y-4">
-                    {mockRecentActivity.map(activity => (
-                        <div key={activity.id} className="flex items-center gap-4 p-4 rounded-2xl hover:bg-surface-800/50 transition-colors">
-                            <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${activity.colorClass}`}>
-                                <activity.icon size={18} />
+                    {recentActivities.length > 0 ? (
+                        recentActivities.slice(0, 3).map(activity => {
+                            let Icon = CheckCircle;
+                            let colorClass = 'bg-primary-500/10 text-primary-400';
+                            let subLabel = activity.tool_type ? activity.tool_type.replace('_', ' ').toUpperCase() : 'ACTIVITY';
+                            let title = activity.value > 0 ? `Logged ${activity.value} mins` : 'Completed activity';
+                            if (activity.value === 0) {
+                                if (activity.tool_type === 'battle_plan') title = 'Completed task';
+                                if (activity.tool_type === 'module') title = 'Completed module';
+                            }
+                            if (activity.topic_name) {
+                                title += activity.value > 0 ? ` in ${activity.topic_name}` : ` for ${activity.topic_name}`;
+                            } else if (activity.tool_name) {
+                                title += activity.value > 0 ? ` using ${activity.tool_name}` : ` using ${activity.tool_name}`;
+                            }
+
+                            if (activity.tool_type === 'module') {
+                                Icon = BookOpen;
+                                colorClass = 'bg-emerald-500/10 text-emerald-400';
+                            } else if (activity.tool_type === 'flashcards') {
+                                Icon = RotateCw;
+                                colorClass = 'bg-fuchsia-500/10 text-fuchsia-400';
+                            }
+
+                            // Simple relative time (e.g. '2 hours ago', 'Yesterday')
+                            const date = new Date(activity.created_at);
+                            const now = new Date();
+                            const diffHrs = Math.floor((now - date) / (1000 * 60 * 60));
+                            let timeStr = 'Just now';
+                            if (diffHrs > 24) {
+                                timeStr = diffHrs < 48 ? 'Yesterday' : `${Math.floor(diffHrs / 24)} days ago`;
+                            } else if (diffHrs > 0) {
+                                timeStr = `${diffHrs} hour${diffHrs > 1 ? 's' : ''} ago`;
+                            } else {
+                                const diffMins = Math.floor((now - date) / (1000 * 60));
+                                if (diffMins > 0) timeStr = `${diffMins} min${diffMins > 1 ? 's' : ''} ago`;
+                            }
+
+                            return (
+                                <div key={activity.id} className="flex items-center gap-4 p-4 rounded-2xl hover:bg-surface-800/50 transition-colors">
+                                    <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${colorClass}`}>
+                                        <Icon size={18} />
+                                    </div>
+                                    <div className="flex-1">
+                                        <h4 className="text-sm font-black text-heading">{title}</h4>
+                                        <p className="text-[9px] font-bold text-surface-500 uppercase tracking-widest mt-0.5">{subLabel}</p>
+                                    </div>
+                                    <span className="text-xs font-bold text-surface-500 shrink-0">{timeStr}</span>
+                                </div>
+                            );
+                        })
+                    ) : (
+                        [
+                            { id: 'battle_plan', icon: Target, label: 'Configure Battle Plan', sub: 'SET YOUR GOALS', colorClass: 'bg-primary-500/10 text-primary-400', action: onOpenBattlePlan },
+                            { id: 'syllabus', icon: BookOpen, label: 'Track Syllabus Progress', sub: 'LOG YOUR MODULES', colorClass: 'bg-emerald-500/10 text-emerald-400', action: () => moduleTool && onOpenTool && onOpenTool(moduleTool) },
+                            { id: 'focus', icon: Timer, label: 'Start a Focus Session', sub: 'LOG STUDY TIME', colorClass: 'bg-fuchsia-500/10 text-fuchsia-400', action: onStartFocus }
+                        ].map(step => (
+                            <div
+                                key={step.id}
+                                onClick={step.action}
+                                className="flex items-center gap-4 p-4 rounded-2xl hover:bg-surface-800/50 transition-colors cursor-pointer group"
+                            >
+                                <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${step.colorClass} group-hover:scale-110 transition-transform`}>
+                                    <step.icon size={18} />
+                                </div>
+                                <div className="flex-1">
+                                    <h4 className="text-sm font-black text-heading group-hover:text-primary-400 transition-colors">{step.label}</h4>
+                                    <p className="text-[9px] font-bold text-surface-500 uppercase tracking-widest mt-0.5">{step.sub}</p>
+                                </div>
                             </div>
-                            <div className="flex-1">
-                                <h4 className="text-sm font-black text-heading">{activity.label}</h4>
-                                <p className="text-[9px] font-bold text-surface-500 uppercase tracking-widest mt-0.5">{activity.sub}</p>
-                            </div>
-                            <span className="text-xs font-bold text-surface-500 shrink-0">{activity.time}</span>
-                        </div>
-                    ))}
+                        ))
+                    )}
                 </div>
             </div>
 

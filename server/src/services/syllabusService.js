@@ -116,7 +116,7 @@ const editActivityLog = async (logId, minutes, modules) => {
 
     // 2. Update Log
     const logRes = await pool.query(
-        'UPDATE activity_logs SET minutes_logged = $1, modules_logged = $2 WHERE id = $3 RETURNING *',
+        'UPDATE activity_logs SET minutes_logged = $1, modules_logged = $2, created_at = CURRENT_TIMESTAMP WHERE id = $3 RETURNING *',
         [minutes, modules, logId]
     );
 
