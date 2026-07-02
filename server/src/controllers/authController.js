@@ -1,108 +1,57 @@
 const userService = require('../services/userService');
 const toolService = require('../services/toolService');
 const aiConfigService = require('../services/aiConfigService');
-const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
 const sessionService = require('../services/sessionService');
-const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 
-const register = async (req, res) => {
+const sync = async (req, res) => {
     try {
-        const { username, email, password } = req.body;
-        if (!username || !email || !password) {
-            return res.status(400).json({ error: 'All fields are required' });
+        // req.user is populated by the authMiddleware from Firebase ID token
+        // However, this endpoint might be called right after sign up, so req.user.id might be null.
+        // We expect email, displayName, and uid in the body as fallback.
+        
+        const { email, displayName, uid } = req.body;
+        
+        if (!email) {
+            return res.status(400).json({ error: 'Email is required for sync' });
         }
 
-        // Check if user exists
-        const existingUser = await userService.findUserByEmail(email);
-        if (existingUser) {
-            return res.status(409).json({ error: 'User already exists' });
-        }
+        let user = await userService.findUserByEmail(email);
 
-        const user = await userService.createUser(username, email, password);
-
-        // Auto-provision a Global Focus Tracker and Global Revision Tests for the new user
-        try {
-            await toolService.createTool(user.id, "Global Focus Tracker", "focus", "General");
-            await toolService.createTool(user.id, "Global Revision Tests", "revision", user.selected_exam || "GATE");
-        } catch (toolErr) {
-            console.error("Warning: Failed to auto-provision default tools for new user", toolErr);
-            // Non-fatal, we still let registration succeed
-        }
-
-        const token = jwt.sign(
-            { id: user.id, username: user.username, role: user.role || 'user' },
-            process.env.JWT_SECRET,
-            { expiresIn: '7d' }
-        );
-
-        const effectiveAiMode = await aiConfigService.getEffectiveAiMode(user.id);
-
-        res.status(201).json({
-            message: 'User registered successfully',
-            user: {
-                id: user.id,
-                username: user.username,
-                email: user.email,
-                selected_exam: user.selected_exam,
-                tracking_mode: user.tracking_mode,
-                current_streak: user.current_streak,
-                role: user.role || 'user',
-                active_exam_id: user.active_exam_id || null,
-                onboarding_completed: user.onboarding_completed || false,
-                effective_ai_mode: effectiveAiMode,
-            },
-            token
-        });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-};
-
-const login = async (req, res) => {
-    try {
-        const { email, password } = req.body;
-        if (!email || !password) {
-            return res.status(400).json({ error: 'Email and password are required' });
-        }
-
-        const user = await userService.findUserByEmail(email);
         if (!user) {
-            return res.status(401).json({ error: 'Invalid credentials' });
+            // Create user in our DB (password_hash can be empty or a dummy value since Firebase handles auth)
+            user = await userService.createUser(displayName || email.split('@')[0], email, 'FIREBASE_MANAGED');
+            
+            // Auto-provision a Global Focus Tracker and Global Revision Tests for the new user
+            try {
+                await toolService.createTool(user.id, "Global Focus Tracker", "focus", "General");
+                await toolService.createTool(user.id, "Global Revision Tests", "revision", user.selected_exam || "GATE");
+            } catch (toolErr) {
+                console.error("Warning: Failed to auto-provision default tools for new user", toolErr);
+            }
         }
-
-        const isValid = await userService.validatePassword(password, user.password_hash);
-        if (!isValid) {
-            return res.status(401).json({ error: 'Invalid credentials' });
-        }
-
-        const token = jwt.sign(
-            { id: user.id, username: user.username, role: user.role || 'user' },
-            process.env.JWT_SECRET,
-            { expiresIn: '7d' }
-        );
 
         // Record session
-        const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
-        const userAgent = req.headers['user-agent'] || 'Unknown Device';
-        // Basic device parsing
-        let deviceName = 'Unknown Device';
-        if (userAgent.includes('Windows')) deviceName = 'Windows PC';
-        else if (userAgent.includes('Mac')) deviceName = 'MacBook';
-        else if (userAgent.includes('iPhone')) deviceName = 'iPhone';
-        else if (userAgent.includes('Android')) deviceName = 'Android Device';
-        else deviceName = userAgent.substring(0, 50); // fallback to raw string (truncated)
-        
-        const ipAddress = req.ip || req.connection.remoteAddress;
-        
-        await sessionService.addSession(user.id, tokenHash, deviceName, ipAddress, 'Unknown Location');
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+        if (token) {
+            const crypto = require('crypto');
+            const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+            const userAgent = req.headers['user-agent'] || 'Unknown Device';
+            let deviceName = 'Unknown Device';
+            if (userAgent.includes('Windows')) deviceName = 'Windows PC';
+            else if (userAgent.includes('Mac')) deviceName = 'MacBook';
+            else if (userAgent.includes('iPhone')) deviceName = 'iPhone';
+            else if (userAgent.includes('Android')) deviceName = 'Android Device';
+            else deviceName = userAgent.substring(0, 50); 
+            
+            const ipAddress = req.ip || req.connection.remoteAddress;
+            await sessionService.addSession(user.id, tokenHash, deviceName, ipAddress, 'Unknown Location');
+        }
 
         const effectiveAiMode = await aiConfigService.getEffectiveAiMode(user.id);
 
         res.json({
-            message: 'Login successful',
+            message: 'Sync successful',
             user: {
                 id: user.id,
                 username: user.username,
@@ -114,8 +63,7 @@ const login = async (req, res) => {
                 active_exam_id: user.active_exam_id || null,
                 onboarding_completed: user.onboarding_completed || false,
                 effective_ai_mode: effectiveAiMode,
-            },
-            token
+            }
         });
     } catch (err) {
         console.error(err);
@@ -124,6 +72,5 @@ const login = async (req, res) => {
 };
 
 module.exports = {
-    register,
-    login,
+    sync
 };

@@ -12,22 +12,17 @@ const getHeaders = () => {
 };
 
 export const auth = {
-    login: async (email, password) => {
-        const res = await fetch(`${API_URL}/auth/login`, {
+    sync: async (user, displayName) => {
+        const res = await fetch(`${API_URL}/auth/sync`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password })
+            headers: getHeaders(),
+            body: JSON.stringify({ 
+                email: user.email, 
+                displayName: displayName || user.displayName || 'User',
+                uid: user.uid
+            })
         });
-        if (!res.ok) throw new Error((await res.json()).error || 'Login failed');
-        return res.json();
-    },
-    register: async (username, email, password) => {
-        const res = await fetch(`${API_URL}/auth/register`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, email, password })
-        });
-        if (!res.ok) throw new Error((await res.json()).error || 'Registration failed');
+        if (!res.ok) throw new Error((await res.json()).error || 'Sync failed');
         return res.json();
     }
 };

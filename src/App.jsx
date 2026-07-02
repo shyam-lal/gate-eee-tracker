@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { syllabus as syllabusApi, auth as authApi, user as userApi, tools as toolsApi, streak as streakApi, flashcards as flashcardsApi } from './services/api';
 import Auth from './components/Auth';
+import { auth as firebaseAuth } from './services/firebase';
+import { signOut } from 'firebase/auth';
 import Landing from './components/Landing_new';
 import Wizard from './components/Wizard';
 import Profile from './components/Profile';
@@ -223,7 +225,12 @@ function App() {
     }
   }, [user]);
 
-  const logout = () => {
+  const logout = async () => {
+    try {
+      await signOut(firebaseAuth);
+    } catch (error) {
+      console.error("Error signing out from Firebase:", error);
+    }
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);
@@ -495,7 +502,7 @@ function App() {
       localStorage.setItem('user', JSON.stringify(updatedUser));
       setUser(updatedUser);
     }} onBack={() => setView('dashboard')} />;
-    if (view === 'profile') return <Profile user={user} onBack={() => setView('dashboard')} onResetProgress={handleResetProgress} onLogout={logout} />;
+    if (view === 'profile') return <Profile user={user} onBack={() => setView('dashboard')} onResetProgress={handleResetProgress} onLogout={logout} onProfileUpdate={(updatedUser) => { setUser(updatedUser); localStorage.setItem('user', JSON.stringify(updatedUser)); }} />;
     if (view === 'dashboard') return (
       <Dashboard
         user={user}

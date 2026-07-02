@@ -3,12 +3,14 @@ import {
     ArrowLeft, Bell, Settings, Edit2, Shield, Lock,
     CreditCard, GraduationCap, Laptop, Smartphone,
     Check, AlertTriangle, Monitor, LogOut, Loader2,
-    User, Activity, Sun, Moon, Trash2
+    User, Activity, Sun, Moon, Trash2, Eye, EyeOff
 } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { MODES, THEMES } from '../theme/colors';
+import { auth as firebaseAuth } from '../services/firebase';
+import { updatePassword, reauthenticateWithCredential, EmailAuthProvider } from 'firebase/auth';
 
-const Profile = ({ user, onBack, onResetProgress, onLogout }) => {
+const Profile = ({ user, onBack, onResetProgress, onLogout, onProfileUpdate }) => {
     const { mode, toggleMode, theme, setTheme } = useTheme();
     const isDark = mode === MODES.DARK;
 
@@ -24,6 +26,8 @@ const Profile = ({ user, onBack, onResetProgress, onLogout }) => {
     const [sessions, setSessions] = useState([]);
     const [isEditingProfile, setIsEditingProfile] = useState(false);
     const [isChangingPassword, setIsChangingPassword] = useState(false);
+    const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
 
     const [profileForm, setProfileForm] = useState({ username: user?.username || '', email: user?.email || '' });
     const [passwordForm, setPasswordForm] = useState({ currentPassword: '', newPassword: '' });
@@ -38,7 +42,7 @@ const Profile = ({ user, onBack, onResetProgress, onLogout }) => {
     const fetchSessions = async () => {
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch('http://localhost:5000/api/users/sessions', {
+            const res = await fetch('/api/user/sessions', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (res.ok) {
@@ -57,7 +61,7 @@ const Profile = ({ user, onBack, onResetProgress, onLogout }) => {
         setActionSuccess('');
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch('http://localhost:5000/api/users/profile', {
+            const res = await fetch('/api/user/profile', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                 body: JSON.stringify(profileForm)
@@ -65,7 +69,9 @@ const Profile = ({ user, onBack, onResetProgress, onLogout }) => {
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || 'Failed to update profile');
 
-            // Note: In a real app we should update the global user context here
+            if (onProfileUpdate) {
+                onProfileUpdate({ ...user, ...data });
+            }
             setActionSuccess('Profile updated successfully');
             setTimeout(() => { setIsEditingProfile(false); setActionSuccess(''); }, 1500);
         } catch (err) {
@@ -81,19 +87,38 @@ const Profile = ({ user, onBack, onResetProgress, onLogout }) => {
         setActionError('');
         setActionSuccess('');
         try {
+            const fbUser = firebaseAuth.currentUser;
+            if (!fbUser) throw new Error("No active authenticated session.");
+
+            // Check if user is Google
+            const isGoogle = fbUser.providerData.some(p => p.providerId === 'google.com');
+            if (isGoogle) {
+                throw new Error("You signed in with Google. Password change is not applicable.");
+            }
+
+            const credential = EmailAuthProvider.credential(fbUser.email, passwordForm.currentPassword);
+            await reauthenticateWithCredential(fbUser, credential);
+            await updatePassword(fbUser, passwordForm.newPassword);
+
+            // Also keep postgres in sync just in case
             const token = localStorage.getItem('token');
-            const res = await fetch('http://localhost:5000/api/users/password', {
+            await fetch('/api/user/password', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                 body: JSON.stringify(passwordForm)
             });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error || 'Failed to change password');
 
             setActionSuccess('Password changed successfully');
             setTimeout(() => { setIsChangingPassword(false); setActionSuccess(''); setPasswordForm({ currentPassword: '', newPassword: '' }); }, 1500);
         } catch (err) {
-            setActionError(err.message);
+            console.error(err);
+            if (err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
+                setActionError('Incorrect current password');
+            } else if (err.code === 'auth/weak-password') {
+                setActionError('New password is too weak');
+            } else {
+                setActionError(err.message || 'Failed to change password');
+            }
         } finally {
             setActionLoading(false);
         }
@@ -102,7 +127,7 @@ const Profile = ({ user, onBack, onResetProgress, onLogout }) => {
     const handleRevokeSession = async (sessionId) => {
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch(`http://localhost:5000/api/users/sessions/${sessionId}`, {
+            const res = await fetch(`/api/user/sessions/${sessionId}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -185,6 +210,9 @@ const Profile = ({ user, onBack, onResetProgress, onLogout }) => {
                                     </button>
                                     <button onClick={() => setIsChangingPassword(true)} className="w-full py-2.5 bg-transparent border border-surface-700 hover:border-surface-600 text-heading rounded-lg font-bold text-sm transition-all flex items-center justify-center gap-2">
                                         Change Password
+                                    </button>
+                                    <button onClick={onLogout} className="w-full py-2.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 border border-rose-500/20 rounded-lg font-bold text-sm transition-all flex items-center justify-center gap-2">
+                                        <LogOut size={16} /> Logout
                                     </button>
                                 </div>
                             </div>
@@ -409,7 +437,8 @@ const Profile = ({ user, onBack, onResetProgress, onLogout }) => {
                                     type="email"
                                     value={profileForm.email}
                                     onChange={(e) => setProfileForm({ ...profileForm, email: e.target.value })}
-                                    className="w-full bg-surface-900 border border-surface-800 rounded-xl p-3 text-sm text-heading focus:border-primary-500 outline-none transition-colors"
+                                    className="w-full bg-surface-900 border border-surface-800 rounded-xl p-3 text-sm text-surface-500 cursor-not-allowed outline-none transition-colors"
+                                    disabled
                                     required
                                 />
                             </div>
@@ -435,25 +464,43 @@ const Profile = ({ user, onBack, onResetProgress, onLogout }) => {
                             {actionError && <div className="p-3 bg-rose-500/10 text-rose-500 text-xs rounded-xl font-bold">{actionError}</div>}
                             {actionSuccess && <div className="p-3 bg-emerald-500/10 text-emerald-500 text-xs rounded-xl font-bold">{actionSuccess}</div>}
 
-                            <div>
+                            <div className="relative">
                                 <label className="block text-[10px] text-surface-500 font-bold uppercase tracking-widest mb-1">Current Password</label>
-                                <input
-                                    type="password"
-                                    value={passwordForm.currentPassword}
-                                    onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
-                                    className="w-full bg-surface-900 border border-surface-800 rounded-xl p-3 text-sm text-heading focus:border-primary-500 outline-none transition-colors"
-                                    required
-                                />
+                                <div className="relative">
+                                    <input
+                                        type={showCurrentPassword ? "text" : "password"}
+                                        value={passwordForm.currentPassword}
+                                        onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
+                                        className="w-full bg-surface-900 border border-surface-800 rounded-xl p-3 pr-10 text-sm text-heading focus:border-primary-500 outline-none transition-colors"
+                                        required
+                                    />
+                                    <button 
+                                        type="button"
+                                        onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-surface-400 hover:text-heading transition-colors"
+                                    >
+                                        {showCurrentPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                                    </button>
+                                </div>
                             </div>
-                            <div>
+                            <div className="relative">
                                 <label className="block text-[10px] text-surface-500 font-bold uppercase tracking-widest mb-1">New Password</label>
-                                <input
-                                    type="password"
-                                    value={passwordForm.newPassword}
-                                    onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
-                                    className="w-full bg-surface-900 border border-surface-800 rounded-xl p-3 text-sm text-heading focus:border-primary-500 outline-none transition-colors"
-                                    required
-                                />
+                                <div className="relative">
+                                    <input
+                                        type={showNewPassword ? "text" : "password"}
+                                        value={passwordForm.newPassword}
+                                        onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
+                                        className="w-full bg-surface-900 border border-surface-800 rounded-xl p-3 pr-10 text-sm text-heading focus:border-primary-500 outline-none transition-colors"
+                                        required
+                                    />
+                                    <button 
+                                        type="button"
+                                        onClick={() => setShowNewPassword(!showNewPassword)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-surface-400 hover:text-heading transition-colors"
+                                    >
+                                        {showNewPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                                    </button>
+                                </div>
                             </div>
                             <div className="pt-4 flex gap-3">
                                 <button type="button" onClick={() => setIsChangingPassword(false)} className="flex-1 py-3 bg-surface-800 text-heading rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-surface-700 transition-colors">Cancel</button>

@@ -30,15 +30,17 @@ const analyticsService = {
         const heatmapQuery = `
             WITH combined_daily AS (
                 -- Topic logs (includes linked focus sessions)
-                SELECT log_date::date as dt, SUM(minutes_logged) as mins
-                FROM activity_logs
-                WHERE user_id = $1 AND log_date >= $2
-                GROUP BY log_date
+                SELECT to_char(al.log_date::date, 'YYYY-MM-DD') as dt, 
+                       (COALESCE(al.minutes_logged, 0) + 
+                       (COALESCE(al.modules_logged, 0) * (COALESCE(t.estimated_minutes, 0) / GREATEST(COALESCE(t.total_modules, 1), 1)))) as mins
+                FROM activity_logs al
+                LEFT JOIN topics t ON al.topic_id = t.id
+                WHERE al.user_id = $1 AND al.log_date >= $2
                 
                 UNION ALL
                 
                 -- Unlinked focus sessions
-                SELECT DATE(completed_at AT TIME ZONE 'UTC') as dt, SUM(duration_minutes) as mins
+                SELECT to_char(DATE(completed_at AT TIME ZONE 'UTC'), 'YYYY-MM-DD') as dt, SUM(duration_minutes) as mins
                 FROM focus_sessions
                 WHERE user_id = $1 AND completed_at >= $2::date AND linked_topic_id IS NULL
                 GROUP BY DATE(completed_at AT TIME ZONE 'UTC')
@@ -50,20 +52,28 @@ const analyticsService = {
         `;
         const heatmapRes = await db.query(heatmapQuery, [userId, thirtyDaysAgoStr]);
 
-        // Format the dates as purely local date strings for the frontend
-        const heatmapData = heatmapRes.rows.map(row => {
-            const dateObj = new Date(row.date);
-            // JS dates from postgres might be midnight UTC, which shifts if local timezone is behind.
-            // Using split('T')[0] from standard ISO string might drift if it's offset.
-            // But doing `.toISOString()` on a purely constructed date works.
-            return {
-                date: row.date.toISOString().split('T')[0],
-                value: parseInt(row.value)
-            };
+        // Create a 30-day zero-filled array
+        const heatmapData = [];
+        for (let i = 29; i >= 0; i--) {
+            const d = new Date(today);
+            d.setDate(today.getDate() - i);
+            heatmapData.push({
+                date: getLocalDateStr(d),
+                value: 0
+            });
+        }
+
+        // Fill with actual data
+        heatmapRes.rows.forEach(row => {
+            const rowDateStr = row.date; // already formatted as 'YYYY-MM-DD' string from Postgres
+            const target = heatmapData.find(d => d.date === rowDateStr);
+            if (target) {
+                target.value = parseInt(row.value);
+            }
         });
 
-        // Calculate Consistency Score
-        const activeDays = new Set(heatmapData.map(d => d.date)).size;
+        // Calculate Consistency Score (days with volume > 0)
+        const activeDays = heatmapData.filter(d => d.value > 0).length;
         const consistencyScore = Math.round((activeDays / 30) * 100);
 
         // 2. Tool Distribution (Last 30 Days)
@@ -71,13 +81,14 @@ const analyticsService = {
         // For activity_logs, we need to join back to topics -> subjects -> tools
         const distributionQuery = `
             WITH tool_times AS (
-                SELECT t.name as tool_name, SUM(al.minutes_logged) as mins
+                SELECT tl.name as tool_name, 
+                       (COALESCE(al.minutes_logged, 0) + 
+                       (COALESCE(al.modules_logged, 0) * (COALESCE(top.estimated_minutes, 0) / GREATEST(COALESCE(top.total_modules, 1), 1)))) as mins
                 FROM activity_logs al
                 JOIN topics top ON al.topic_id = top.id
                 JOIN subjects s ON top.subject_id = s.id
-                JOIN tools t ON s.tool_id = t.id
+                JOIN tools tl ON s.tool_id = tl.id
                 WHERE al.user_id = $1 AND al.log_date >= $2
-                GROUP BY t.name
                 
                 UNION ALL
                 

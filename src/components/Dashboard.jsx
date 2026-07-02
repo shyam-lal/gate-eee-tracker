@@ -7,6 +7,7 @@ import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import CourseCalculatorModal from './calculator/CourseCalculatorModal';
 import StreakCalendar from './ui/StreakCalendar';
 import GlobalActivityGrid from './ui/GlobalActivityGrid';
+import GlobalInsightsModal from './ui/GlobalInsightsModal';
 import { battlePlan, syllabus as syllabusApi, analytics } from '../services/api';
 
 // Mock Data for Weekly Focus Trends
@@ -34,6 +35,8 @@ const Dashboard = ({ user, tools, streakData, onStartFocus, onOpenBattlePlan, on
     const [roadmap, setRoadmap] = useState(null);
     const [syllabusStats, setSyllabusStats] = useState({ completed: 0, total: 0 });
     const [recentActivities, setRecentActivities] = useState([]);
+    const [globalInsights, setGlobalInsights] = useState(null);
+    const [showInsights, setShowInsights] = useState(false);
 
     const hasBattlePlan = tools?.some(t => t.tool_type === 'battle_plan') || false; // Or checking logic
     const moduleTool = tools?.find(t => t.tool_type === 'module');
@@ -52,8 +55,9 @@ const Dashboard = ({ user, tools, streakData, onStartFocus, onOpenBattlePlan, on
             }).catch(() => { });
         }
 
-        // Fetch Recent Activities
+        // Fetch Recent Activities and Global Insights
         analytics.getRecentActivities().then(setRecentActivities).catch(() => { });
+        analytics.getGlobalInsights().then(setGlobalInsights).catch(() => { });
     }, [moduleTool]);
 
     // Derived stats
@@ -153,17 +157,21 @@ const Dashboard = ({ user, tools, streakData, onStartFocus, onOpenBattlePlan, on
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
 
                 {/* Weekly Focus Trends */}
-                <div className="bg-surface-900 border border-surface-800 rounded-3xl p-6 lg:col-span-2 min-h-[300px] flex flex-col">
+                <div 
+                    className="bg-surface-900 border border-surface-800 rounded-3xl p-6 lg:col-span-2 min-h-[300px] flex flex-col cursor-pointer hover:border-primary-500/50 hover:bg-surface-800/50 transition-all group"
+                    onClick={() => setShowInsights(true)}
+                >
                     <div className="flex justify-between items-center mb-6">
-                        <h3 className="text-[10px] font-black text-surface-500 uppercase tracking-widest">Weekly Focus Trends</h3>
-                        <select className="bg-transparent text-xs font-bold text-surface-400 outline-none cursor-pointer">
-                            <option>Last 7 Days</option>
-                        </select>
+                        <h3 className="text-[10px] font-black text-surface-500 uppercase tracking-widest group-hover:text-primary-400 transition-colors">Weekly Activity Volume (Eq. Mins)</h3>
+                        <div className="text-xs font-bold text-surface-400">Click for Global Insights</div>
                     </div>
-                    <div className="flex-1 w-full h-full min-h-[200px] opacity-40">
-                        {/* Placeholder Chart */}
+                    <div className="flex-1 w-full h-full min-h-[200px] opacity-80 group-hover:opacity-100 transition-opacity">
                         <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={mockChartData}>
+                            <BarChart data={globalInsights?.heatmapData ? globalInsights.heatmapData.slice(-7).map(d => {
+                                const [y, m, day] = d.date.split('-');
+                                const dateObj = new Date(y, m - 1, day);
+                                return { name: dateObj.toLocaleDateString('en-US', { weekday: 'short' }), uv: d.value };
+                            }) : mockChartData}>
                                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748b' }} dy={10} />
                                 <Tooltip cursor={{ fill: 'rgba(255,255,255,0.05)' }} contentStyle={{ backgroundColor: '#0f172a', border: 'none', borderRadius: '12px' }} />
                                 <Bar dataKey="uv" fill="var(--color-primary-500)" radius={[4, 4, 0, 0]} barSize={30} />
@@ -283,6 +291,9 @@ const Dashboard = ({ user, tools, streakData, onStartFocus, onOpenBattlePlan, on
 
             {/* Course Calculator Modal */}
             {showCalculator && <CourseCalculatorModal onClose={() => setShowCalculator(false)} />}
+
+            {/* Global Insights Modal */}
+            {showInsights && <GlobalInsightsModal onClose={() => setShowInsights(false)} data={globalInsights} />}
         </div>
     );
 };
