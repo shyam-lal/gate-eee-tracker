@@ -57,24 +57,27 @@ const Sidebar = ({ currentView, onViewChange, onSetupTool, isCollapsed, setIsCol
             </nav>
 
             {/* Bottom Actions */}
-            <div className="hidden md:block p-4 space-y-4">
-                {/* Upgrade to Pro Card */}
-                {/* <div className="bg-emerald-900/40 border border-emerald-500/20 rounded-2xl p-4 cursor-pointer hover:bg-emerald-900/60 transition-colors">
-                    <h4 className="text-sm font-black text-emerald-400 mb-1">Upgrade to Pro</h4>
-                    <p className="text-[10px] text-surface-400 font-medium leading-tight">Unlock advanced analytics and cloud sync.</p>
-                </div> */}
+            <div className="hidden md:block p-4 space-y-3">
+                <button 
+                    onClick={() => onViewChange('start_focus')}
+                    className={`bg-[#173627] hover:bg-[#1f4734] text-emerald-300 border border-emerald-500/30 rounded-xl font-bold text-xs uppercase tracking-wider py-3 transition-all flex items-center justify-center gap-2 shadow-lg ${isCollapsed ? 'w-12 mx-auto px-0' : 'w-full px-4'}`}
+                    title={isCollapsed ? "Start Focus Session" : undefined}
+                >
+                    <span className="text-emerald-400">⚡</span>
+                    <span className={isCollapsed ? 'hidden' : 'block'}>Start Focus Session</span>
+                </button>
 
                 <div className="space-y-1">
                     <button 
                         onClick={() => onViewChange('profile')} 
-                        className={`flex items-center gap-3 py-3 text-surface-400 hover:bg-surface-900 hover:text-heading rounded-xl font-bold text-sm tracking-wide transition-all ${isCollapsed ? 'justify-center w-12 mx-auto px-0' : 'w-full px-4 justify-start'}`}
+                        className={`flex items-center gap-3 py-2.5 text-surface-400 hover:bg-surface-900 hover:text-heading rounded-xl font-bold text-sm tracking-wide transition-all ${isCollapsed ? 'justify-center w-12 mx-auto px-0' : 'w-full px-4 justify-start'}`}
                         title={isCollapsed ? "Settings" : undefined}
                     >
                         <Settings size={18} className="shrink-0 opacity-70" />
                         <span className={isCollapsed ? 'hidden' : 'block'}>Settings</span>
                     </button>
                     <button 
-                        className={`flex items-center gap-3 py-3 text-surface-400 hover:bg-surface-900 hover:text-heading rounded-xl font-bold text-sm tracking-wide transition-all ${isCollapsed ? 'justify-center w-12 mx-auto px-0' : 'w-full px-4 justify-start'}`}
+                        className={`flex items-center gap-3 py-2.5 text-surface-400 hover:bg-surface-900 hover:text-heading rounded-xl font-bold text-sm tracking-wide transition-all ${isCollapsed ? 'justify-center w-12 mx-auto px-0' : 'w-full px-4 justify-start'}`}
                         title={isCollapsed ? "Help" : undefined}
                     >
                         <HelpCircle size={18} className="shrink-0 opacity-70" />

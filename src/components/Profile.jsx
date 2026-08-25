@@ -14,7 +14,7 @@ const Profile = ({ user, onBack, onResetProgress, onLogout, onProfileUpdate }) =
     const { mode, toggleMode, theme, setTheme } = useTheme();
     const isDark = mode === MODES.DARK;
 
-    const [activeTab, setActiveTab] = useState('profile');
+    const [activeTab, setActiveTab] = useState(user ? 'profile' : 'preferences');
 
     const [learningMode, setLearningMode] = useState('parallel');
     const [notifications, setNotifications] = useState({
@@ -153,7 +153,7 @@ const Profile = ({ user, onBack, onResetProgress, onLogout, onProfileUpdate }) =
         { id: 'billing', label: 'Billing', icon: CreditCard },
         { id: 'security', label: 'Security', icon: Shield },
         { id: 'privacy', label: 'Privacy & Data', icon: AlertTriangle }
-    ];
+    ].filter(tab => user ? true : tab.id === 'preferences');
 
     return (
         <div className="min-h-screen bg-base text-surface-400 font-sans pb-16">

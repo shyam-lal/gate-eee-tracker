@@ -67,7 +67,7 @@ export const ThemeProvider = ({ children }) => {
       const saved = localStorage.getItem('vault-theme-mode');
       if (saved === MODES.DARK || saved === MODES.LIGHT) return saved;
     } catch {}
-    return MODES.DARK;
+    return MODES.LIGHT;
   });
 
   const [theme, setThemeState] = useState(() => {

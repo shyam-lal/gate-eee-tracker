@@ -8,7 +8,51 @@ const llmService = require('../services/llmService');
 const creditService = require('../services/creditService');
 const pool = require('../config/db');
 
-// Protect all flashcard routes
+// --- PUBLIC OFFICIAL DECKS ---
+router.get('/official', async (req, res) => {
+    try {
+        const pool = require('../config/db');
+        const { exam_slug } = req.query;
+
+        const branchToExamSlug = {
+            'computer-science': 'gate-cs',
+            'mechanical-engineering': 'gate-me',
+            'electrical-engineering': 'gate-ee',
+            'civil-engineering': 'gate-ce',
+            'electronics-communication': 'gate-ec',
+            'chemical-engineering': 'gate-ch',
+            'instrumentation': 'gate-in',
+            'aerospace': 'gate-ae',
+            'biotechnology': 'gate-bt'
+        };
+        const mappedSlug = exam_slug ? (branchToExamSlug[exam_slug] || exam_slug) : null;
+
+        let query = `
+             SELECT s.id, s.title, s.content, es.name as subject_name, et.name as topic_name, s.topic_id 
+             FROM study_materials s 
+             JOIN exam_subjects es ON es.id = s.subject_id 
+             JOIN exam_topics et ON et.id = s.topic_id 
+             JOIN exams e ON e.id = s.exam_id
+             WHERE s.content_type = 'flashcard_json' AND s.is_published = TRUE
+        `;
+        const params = [];
+
+        if (mappedSlug) {
+            query += ` AND e.slug = $1`;
+            params.push(mappedSlug);
+        }
+
+        query += ` ORDER BY es.sort_order ASC, et.sort_order ASC`;
+
+        const materials = await pool.query(query, params);
+        res.json(materials.rows);
+    } catch (err) {
+        console.error('Error fetching official decks:', err);
+        res.status(500).json({ error: 'Failed to fetch official decks' });
+    }
+});
+
+// Protect all other flashcard routes
 router.use(authMiddleware);
 
 // --- AI GENERATION ---
@@ -146,26 +190,7 @@ router.post('/decks/:deckId/generate', async (req, res) => {
     }
 });
 
-// --- OFFICIAL DECKS ---
-router.get('/official', async (req, res) => {
-    try {
-        const pool = require('../config/db');
-        const materials = await pool.query(
-            `SELECT s.id, s.title, s.content, es.name as subject_name, et.name as topic_name, s.topic_id 
-             FROM study_materials s 
-             JOIN exam_subjects es ON es.id = s.subject_id 
-             JOIN exam_topics et ON et.id = s.topic_id 
-             JOIN users u ON u.active_exam_id = s.exam_id 
-             WHERE u.id = $1 AND s.content_type = 'flashcard_json' AND s.is_published = TRUE
-             ORDER BY es.sort_order ASC, et.sort_order ASC`,
-            [req.user.id]
-        );
-        res.json(materials.rows);
-    } catch (err) {
-        console.error('Error fetching official decks:', err);
-        res.status(500).json({ error: 'Failed to fetch official decks' });
-    }
-});
+// --- OFFICIAL DECKS (IMPORT) ---
 
 router.post('/official/:id/import', async (req, res) => {
     try {
@@ -181,7 +206,10 @@ router.post('/official/:id/import', async (req, res) => {
 
         // Get the material
         const materialRes = await pool.query(
-            `SELECT title, content, topic_id FROM study_materials WHERE id = $1 AND content_type = 'flashcard_json'`,
+            `SELECT s.title, s.content, s.topic_id, es.name as subject_name 
+             FROM study_materials s
+             LEFT JOIN exam_subjects es ON es.id = s.subject_id
+             WHERE s.id = $1 AND s.content_type = 'flashcard_json'`,
             [materialId]
         );
         
@@ -189,16 +217,31 @@ router.post('/official/:id/import', async (req, res) => {
         
         const mat = materialRes.rows[0];
         const cards = JSON.parse(mat.content);
+        const groupName = mat.subject_name || 'Imported Decks';
+        // Find or create a group for imported decks
+        let groupRes = await pool.query('SELECT id FROM flashcard_groups WHERE tool_id = $1 AND name = $2 LIMIT 1', [toolId, groupName]);
+        let groupId;
+        if (groupRes.rows.length === 0) {
+            const newGroup = await pool.query('INSERT INTO flashcard_groups (tool_id, name) VALUES ($1, $2) RETURNING id', [toolId, groupName]);
+            groupId = newGroup.rows[0].id;
+        } else {
+            groupId = groupRes.rows[0].id;
+        }
+
+        // Check if deck already exists in this group to prevent duplicates
+        const existingDeck = await pool.query('SELECT id FROM decks WHERE group_id = $1 AND name = $2', [groupId, mat.title]);
+        if (existingDeck.rows.length > 0) {
+            return res.status(409).json({ error: 'Deck already added' });
+        }
 
         // Create the deck
-        const deckRes = await pool.query(`INSERT INTO decks (tool_id, name) VALUES ($1, $2) RETURNING id`, [toolId, mat.title]);
+        const deckRes = await pool.query(`INSERT INTO decks (group_id, name) VALUES ($1, $2) RETURNING id`, [groupId, mat.title]);
         const deckId = deckRes.rows[0].id;
-
         // Insert cards
         for (const c of cards) {
             await pool.query(
                 `INSERT INTO cards (deck_id, front_content, back_content, source_topic_id) VALUES ($1, $2, $3, $4)`,
-                [deckId, c.front, c.back, mat.topic_id]
+                [deckId, c.front, c.back, null]
             );
         }
 

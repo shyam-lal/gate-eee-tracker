@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Rocket, Shield, Target, Zap, ChevronRight, BarChart3, Clock, Map, Sparkles, Layers, Trophy } from 'lucide-react';
+import GatewayActionModal from './diagnostic/GatewayActionModal';
 
-const Landing = ({ onStart }) => {
+const Landing = ({ onStart, onSignup }) => {
+    const [isGatewayModalOpen, setIsGatewayModalOpen] = useState(false);
     return (
         <div className="min-h-screen bg-transparent text-heading selection:bg-primary-500/30 overflow-x-hidden relative">
             {/* Navbar */}
@@ -12,7 +14,7 @@ const Landing = ({ onStart }) => {
                         <span className="font-black tracking-tighter text-xl uppercase">Gate <span className="text-primary-400">Vault</span></span>
                     </div>
                     <button
-                        onClick={onStart}
+                        onClick={() => setIsGatewayModalOpen(true)}
                         className="bg-white/90 backdrop-blur text-black px-6 py-2 rounded-full font-black text-sm uppercase tracking-widest hover:bg-primary-400 hover:text-white transition-all shadow-xl shadow-white/5 hover:shadow-primary-500/20"
                     >
                         Open Vault
@@ -44,7 +46,7 @@ const Landing = ({ onStart }) => {
 
                     <div className="flex flex-col sm:flex-row gap-4 justify-center animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
                         <button
-                            onClick={onStart}
+                            onClick={() => setIsGatewayModalOpen(true)}
                             className="relative bg-gradient-to-r from-primary-600 to-primary-500 text-white px-12 py-5 rounded-2xl font-black text-lg uppercase tracking-widest hover:from-primary-500 hover:to-primary-400 transition-all shadow-2xl shadow-primary-600/30 group overflow-hidden"
                         >
                             <span className="relative z-10">Start Tracking <ChevronRight size={20} className="inline ml-2 group-hover:translate-x-1 transition-transform" /></span>
@@ -118,6 +120,19 @@ const Landing = ({ onStart }) => {
                 <p className="text-surface-600 text-xs font-bold uppercase tracking-widest">© 2026 GATE VAULT ENGINEERING SYSTEMS</p>
                 <p className="text-surface-600 text-xs font-bold uppercase tracking-widest">- Arunima & Shyam</p>
             </footer>
+            
+            <GatewayActionModal 
+                isOpen={isGatewayModalOpen}
+                onClose={() => setIsGatewayModalOpen(false)}
+                onAction={(action) => {
+                    setIsGatewayModalOpen(false);
+                    if (action === 'signup') {
+                        onSignup?.();
+                    } else {
+                        onStart?.();
+                    }
+                }}
+            />
         </div>
     );
 };

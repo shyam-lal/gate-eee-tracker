@@ -288,8 +288,10 @@ export const flashcards = {
     },
 
     // OFFICIAL DECKS
-    getOfficialDecks: async () => {
-        const res = await fetch(`${API_URL}/flashcards/official`, { headers: getHeaders() });
+    getOfficialDecks: async (examSlug) => {
+        let url = `${API_URL}/flashcards/official`;
+        if (examSlug) url += `?exam_slug=${encodeURIComponent(examSlug)}`;
+        const res = await fetch(url, { headers: getHeaders() });
         if (!res.ok) throw new Error('Failed to fetch official decks');
         return res.json();
     },
@@ -631,6 +633,72 @@ export const revision = {
     getInProgressAttempt: async (setId) => {
         const res = await fetch(`${API_URL}/revision/sets/${setId}/attempts/in-progress`, { headers: getHeaders() });
         if (!res.ok) throw new Error('Failed to check in-progress');
+        return res.json();
+    }
+};
+
+export const pyq = {
+    getStats: async () => {
+        const res = await fetch(`${API_URL}/pyq/stats`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to get PYQ stats');
+        return res.json();
+    },
+    getPapers: async (filters = {}) => {
+        const params = new URLSearchParams(filters);
+        const res = await fetch(`${API_URL}/pyq/papers?${params}`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to get PYQ papers');
+        return res.json();
+    },
+    getPaper: async (paperId) => {
+        const res = await fetch(`${API_URL}/pyq/papers/${paperId}`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to get PYQ paper');
+        return res.json();
+    },
+    createAttempt: async (paperId, questionOrder, mode = 'exam') => {
+        const res = await fetch(`${API_URL}/pyq/papers/${paperId}/attempts`, {
+            method: 'POST', headers: getHeaders(),
+            body: JSON.stringify({ questionOrder, mode })
+        });
+        if (!res.ok) throw new Error('Failed to create PYQ attempt');
+        return res.json();
+    },
+    getInProgressAttempt: async (paperId) => {
+        const res = await fetch(`${API_URL}/pyq/papers/${paperId}/attempts/in-progress`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to check in-progress PYQ attempt');
+        return res.json();
+    },
+    getAttemptHistory: async (paperId) => {
+        const res = await fetch(`${API_URL}/pyq/papers/${paperId}/history`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to get PYQ attempt history');
+        return res.json();
+    },
+    getAttempt: async (attemptId) => {
+        const res = await fetch(`${API_URL}/pyq/attempts/${attemptId}`, { headers: getHeaders() });
+        if (!res.ok) throw new Error('Failed to get PYQ attempt');
+        return res.json();
+    },
+    saveAnswer: async (attemptId, questionId, answer, timeSpent) => {
+        const res = await fetch(`${API_URL}/pyq/attempts/${attemptId}/answer`, {
+            method: 'PUT', headers: getHeaders(),
+            body: JSON.stringify({ questionId, answer, timeSpent })
+        });
+        if (!res.ok) throw new Error('Failed to save PYQ answer');
+        return res.json();
+    },
+    pauseAttempt: async (attemptId, currentIndex, timeTaken) => {
+        const res = await fetch(`${API_URL}/pyq/attempts/${attemptId}/pause`, {
+            method: 'PUT', headers: getHeaders(),
+            body: JSON.stringify({ currentIndex, timeTaken })
+        });
+        if (!res.ok) throw new Error('Failed to pause PYQ attempt');
+        return res.json();
+    },
+    completeAttempt: async (attemptId, toolId) => {
+        const res = await fetch(`${API_URL}/pyq/attempts/${attemptId}/complete`, {
+            method: 'PUT', headers: getHeaders(),
+            body: JSON.stringify({ toolId })
+        });
+        if (!res.ok) throw new Error('Failed to complete PYQ attempt');
         return res.json();
     }
 };

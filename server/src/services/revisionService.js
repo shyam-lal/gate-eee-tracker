@@ -19,6 +19,57 @@ async function createSet(userId, title, topics, questionCount, timePerQuestion =
     return result.rows[0];
 }
 
+async function generateCustomTest(userId, { subjects, difficulty, numQuestions }) {
+    // 1. Fetch questions from pyq_questions matching criteria
+    let query = `SELECT * FROM pyq_questions WHERE subject_tag = ANY($1)`;
+    const params = [subjects];
+    let idx = 2;
+
+    if (difficulty && difficulty !== 'mixed') {
+        query += ` AND difficulty = $${idx++}`;
+        params.push(difficulty);
+    }
+    
+    query += ` ORDER BY RANDOM() LIMIT $${idx}`;
+    params.push(numQuestions || 25);
+
+    const qResult = await db.query(query, params);
+    const questions = qResult.rows;
+
+    if (questions.length === 0) {
+        throw new Error('No questions found matching your criteria');
+    }
+
+    // 2. Create a new revision set
+    const title = 'Custom Test - ' + subjects.join(', ').substring(0, 30);
+    const topicsStr = subjects.join(', ');
+    const set = await createSet(userId, title, topicsStr, questions.length, 180, null);
+
+    // 3. Insert fetched questions into revision_questions
+    const inserted = [];
+    for (let i = 0; i < questions.length; i++) {
+        const q = questions[i];
+        const result = await db.query(
+            `INSERT INTO revision_questions (set_id, question_type, question_text, options, correct_answer, explanation, marks, negative_marks, sort_order)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
+            [
+                set.id,
+                q.question_type || 'mcq',
+                q.question_text,
+                q.options ? JSON.stringify(q.options) : null,
+                JSON.stringify(q.correct_answer),
+                q.explanation || '',
+                q.marks || 1,
+                q.negative_marks || 0,
+                i
+            ]
+        );
+        inserted.push(result.rows[0]);
+    }
+
+    return { ...set, questions: inserted };
+}
+
 async function getUserSets(userId, examId = null) {
     let query = `SELECT rs.*,
             (SELECT COUNT(*) FROM revision_questions rq WHERE rq.set_id = rs.id) as actual_question_count,
@@ -253,7 +304,7 @@ async function getInProgressAttempt(setId) {
 }
 
 module.exports = {
-    createSet, getUserSets, getSet, deleteSet, updateSet,
+    createSet, generateCustomTest, getUserSets, getSet, deleteSet, updateSet,
     importQuestions, deleteQuestion,
     createAttempt, getAttempt, saveAnswer, pauseAttempt, completeAttempt,
     getAttemptHistory, getInProgressAttempt

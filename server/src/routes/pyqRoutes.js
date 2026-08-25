@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/authMiddleware');
 const pc = require('../controllers/pyqController');
+// Stats
+router.get('/stats', auth, pc.getGlobalStats);
 
 // Papers (public listing, auth for attempts)
 router.get('/papers', auth, pc.getPapers);

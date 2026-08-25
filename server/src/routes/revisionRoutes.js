@@ -5,6 +5,7 @@ const rc = require('../controllers/revisionController');
 
 // Sets
 router.post('/sets', auth, rc.createSet);
+router.post('/generate-from-pyq', auth, rc.generateCustomTest);
 router.get('/sets', auth, rc.getUserSets);
 router.get('/sets/:id', auth, rc.getSet);
 router.delete('/sets/:id', auth, rc.deleteSet);

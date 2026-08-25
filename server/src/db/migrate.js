@@ -36,7 +36,9 @@ const migrate = async () => {
             'migration_v24_study_preferences.sql',
             'migration_v25_ai_generation_mode.sql',
             'migration_v26_credits_system.sql',
-            'migration_v27_increase_name_lengths.sql'
+            'migration_v27_increase_name_lengths.sql',
+            'migration_v28_active_sessions.sql',
+            'migration_v29_diagnostic_tests.sql'
         ];
 
         for (const file of migrations) {

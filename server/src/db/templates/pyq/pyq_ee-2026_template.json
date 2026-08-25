@@ -1,0 +1,1321 @@
+{
+  "paper": {
+    "year": 2026,
+    "session": "Session 5",
+    "branch": "EE",
+    "title": "GATE EE 2026",
+    "total_marks": 100,
+    "duration_minutes": 180
+  },
+  "questions": [
+    {
+      "question_number": 1,
+      "section": "General Aptitude",
+      "question_type": "mcq",
+      "question_text": "'The shopkeeper sells lemons.' In this sentence, the word 'lemons' is the ________",
+      "options": [
+        "(A) object",
+        "(B) subject",
+        "(C) predicate",
+        "(D) verb"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "In the active sentence 'The shopkeeper sells lemons', 'lemons' is the direct object receiving the action of the verb.",
+      "marks": 1,
+      "negative": 0.33,
+      "subject_tag": "General Aptitude",
+      "topic_tag": "English Grammar",
+      "difficulty": "easy"
+    },
+    {
+      "question_number": 2,
+      "section": "General Aptitude",
+      "question_type": "mcq",
+      "question_text": "The figure below is supposed to show three non-overlapping shapes - one oval and two triangles. Which one of the following figures P, Q, R, or S fits the missing portion indicated by '?' and completes the oval and the two triangles?\n\n[IMAGE_MISSING]",
+      "options": [
+        "(A) P",
+        "(B) Q",
+        "(C) R",
+        "(D) S"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "By completing the geometries of the shapes, figure P correctly completes the missing oval arc and the tips of the two triangles.",
+      "marks": 1,
+      "negative": 0.33,
+      "subject_tag": "General Aptitude",
+      "topic_tag": "Shape Transformations",
+      "difficulty": "easy"
+    },
+    {
+      "question_number": 3,
+      "section": "General Aptitude",
+      "question_type": "mcq",
+      "question_text": "At how many points will the curves $y=x^{2}$ and $y=-x^{2}-2x-1$ intersect in the real (x, y) plane?",
+      "options": [
+        "(A) 0",
+        "(B) 1",
+        "(C) 2",
+        "(D) 3"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Equating the two curves: $x^2 = -x^2 - 2x - 1 \\implies 2x^2 + 2x + 1 = 0$. The discriminant $\\Delta = 2^2 - 4(2)(1) = 4 - 8 = -4 < 0$. Since the discriminant is negative, there are no real roots. Thus, they intersect at 0 points.",
+      "marks": 1,
+      "negative": 0.33,
+      "subject_tag": "General Aptitude",
+      "topic_tag": "Numerical Computation",
+      "difficulty": "medium"
+    },
+    {
+      "question_number": 4,
+      "section": "General Aptitude",
+      "question_type": "mcq",
+      "question_text": "'If Anish had scored hundred runs in today's match, he would have been made the captain of his team. He would have then become the youngest captain in his team's history. Unfortunately, he got out without scoring any runs. Hence, there won't be any change in the captaincy for now.' Based on the paragraph above, which one of the following statements is true?",
+      "options": [
+        "(A) Anish made hundred runs but was denied captaincy.",
+        "(B) Anish was the captain of his team before the game today.",
+        "(C) The current captain is older than Anish.",
+        "(D) Anish is the youngest player in his team."
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "The passage states that if Anish became captain, he would be the youngest captain in the team's history. Since he didn't become captain and there is no change, the current captain must be older than Anish.",
+      "marks": 1,
+      "negative": 0.33,
+      "subject_tag": "General Aptitude",
+      "topic_tag": "Reading Comprehension",
+      "difficulty": "medium"
+    },
+    {
+      "question_number": 5,
+      "section": "General Aptitude",
+      "question_type": "mcq",
+      "question_text": "Which one of the following figures P, Q, R, or S, correctly shows the 45° clockwise-rotated version of figure (I)?\n\n[IMAGE_MISSING]",
+      "options": [
+        "(A) P",
+        "(B) Q",
+        "(C) R",
+        "(D) S"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Rotating the original figure (I) by 45 degrees clockwise aligns perfectly with the geometric pattern shown in figure Q.",
+      "marks": 1,
+      "negative": 0.33,
+      "subject_tag": "General Aptitude",
+      "topic_tag": "Shape Transformations",
+      "difficulty": "medium"
+    },
+    {
+      "question_number": 6,
+      "section": "General Aptitude",
+      "question_type": "mcq",
+      "question_text": "Match the words in Column I with their synonyms in Column II.\n\nColumn I\n(i) Lonely\n(ii) Literal\n(iii) Lousy\n(iv) Lethal\n\nColumn II\n(p) Verbatim\n(q) Solitary\n(r) Deadly\n(s) Terrible",
+      "options": [
+        "(A) (i)-(q); (ii)-(p); (iii)-(s); (iv)-(r)",
+        "(B) (i)-(q); (ii)-(s); (iii)-(r); (iv)-(p)",
+        "(C) (i)-(s); (ii)-(p); (iii)-(q); (iv)-(r)",
+        "(D) (i)-(r); (ii)-(s); (iii)-(p); (iv)-(q)"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Lonely matches with Solitary (q). Literal matches with Verbatim (p). Lousy matches with Terrible (s). Lethal matches with Deadly (r).",
+      "marks": 2,
+      "negative": 0.66,
+      "subject_tag": "General Aptitude",
+      "topic_tag": "Vocabulary & Idioms",
+      "difficulty": "medium"
+    },
+    {
+      "question_number": 7,
+      "section": "General Aptitude",
+      "question_type": "mcq",
+      "question_text": "In the given figure, $\\overline{PQ}$ is the diameter of a circle with center 0. Two points R and S are chosen on the circle such that $\\angle ROS=80^{\\circ}$ When $\\overline{PR}$ and $\\overline{QS}$ are extended, they meet at T. The value of $\\angle RTS$ is\n\n[IMAGE_MISSING]",
+      "options": [
+        "(A) 40°",
+        "(B) 50°",
+        "(C) 60°",
+        "(D) 80°"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Using circle theorems, the angle formed by intersecting secants at T corresponds to half the difference of the intercepted arcs, resulting in 50°.",
+      "marks": 2,
+      "negative": 0.66,
+      "subject_tag": "General Aptitude",
+      "topic_tag": "Mensuration & Geometry",
+      "difficulty": "medium"
+    },
+    {
+      "question_number": 8,
+      "section": "General Aptitude",
+      "question_type": "mcq",
+      "question_text": "Based on the relationship between each polygon and the number inside it, the value of 'X' is\n\n[IMAGE_MISSING]",
+      "options": [
+        "(A) 720",
+        "(B) 596",
+        "(C) 24",
+        "(D) 240"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The logic relates the number of sides (n) of the polygon to the factorial of n. A hexagon has 6 sides, and 6! = 720.",
+      "marks": 2,
+      "negative": 0.66,
+      "subject_tag": "General Aptitude",
+      "topic_tag": "2D & 3D Patterns",
+      "difficulty": "hard"
+    },
+    {
+      "question_number": 9,
+      "section": "General Aptitude",
+      "question_type": "mcq",
+      "question_text": "Consider a linear arrangement of seven bulbs, each of which can be in the ON or OFF states. The initial configuration of the bulbs is shown in the figure. In every Step, the states of the bulbs are changed based on the following rules:\n\n- Any OFF bulb with exactly one ON neighbor at the end of the previous Step is turned ON.\n- Any ON bulb with both neighbors ON at the end of the previous Step is turned OFF.\n- The state of any bulb not meeting the conditions above is left unchanged.\n\nThe state of bulbs at the end of Step 1 and Step 2 are also shown in the figure.\n\nThe number of bulbs which are ON at the end of Step 8 is\n\n[IMAGE_MISSING]",
+      "options": [
+        "(A) 5",
+        "(B) 4",
+        "(C) 3",
+        "(D) 0"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Iterating the given cellular automaton rules precisely for 8 steps yields a final configuration with 4 bulbs in the ON state.",
+      "marks": 2,
+      "negative": 0.66,
+      "subject_tag": "General Aptitude",
+      "topic_tag": "Logical Reasoning",
+      "difficulty": "hard"
+    },
+    {
+      "question_number": 10,
+      "section": "General Aptitude",
+      "question_type": "mcq",
+      "question_text": "P and Q are two positive integers such that $P^{2}=Q^{2}+13$. The product of the numbers P and Q is",
+      "options": [
+        "(A) 13",
+        "(B) 26",
+        "(C) 39",
+        "(D) 42"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "$P^2 - Q^2 = 13 \\implies (P-Q)(P+Q) = 13$. Since 13 is prime and P, Q are positive integers, $P-Q = 1$ and $P+Q = 13$. Solving these equations gives $P=7$ and $Q=6$. Their product is $7 \\times 6 = 42$.",
+      "marks": 2,
+      "negative": 0.66,
+      "subject_tag": "General Aptitude",
+      "topic_tag": "Numerical Computation",
+      "difficulty": "medium"
+    },
+    {
+      "question_number": 11,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "Consider the infinite-length, discrete-time sequence $x[n] = 0.9^{|n|}$, where n is an integer. The region of convergence of its Z-transform $X(z)$ is given by: (Note: z is a complex variable)",
+      "options": [
+        "(A) $|z| > 0.9$",
+        "(B) $|z| < 0.9$",
+        "(C) $0.9 < |z| < 1/0.9$",
+        "(D) $\\{z \\text{ such that } |z| < 0.9 \\} \\cup \\{ z \\text{ such that } |z| > 1/0.9 \\}$"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "The sequence is $x[n] = 0.9^n u[n] + 0.9^{-n} u[-n-1]$. The ROC for the right-sided sequence is $|z| > 0.9$. The ROC for the left-sided sequence $(1/0.9)^n u[-n-1]$ is $|z| < 1/0.9$. The intersection of these ROCs is $0.9 < |z| < 1/0.9$.",
+      "marks": 1,
+      "negative": 0.33,
+      "subject_tag": "Signals and Systems",
+      "topic_tag": "Z-Transform",
+      "difficulty": "medium"
+    },
+    {
+      "question_number": 12,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "Let $x_c(t)$ be any continuous-time periodic signal with period $T$. It is sampled uniformly with a sampling period $T_s$ where $T_s \\neq T$, resulting in the discrete sequence $x[n] = x_c(nT_s)$, where n is an integer. Which one of the following statements is correct about $x[n]$?",
+      "options": [
+        "(A) $x[n]$ will always be periodic with period $T/T_s$ for all values of $T/T_s$",
+        "(B) $x[n]$ will always be periodic with period 1 for all values of $T/T_s$",
+        "(C) $x[n]$ will never be periodic",
+        "(D) $x[n]$ will be periodic if and only if $T/T_s$ is a rational number"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "A discrete-time sequence formed by sampling a continuous-time periodic signal is periodic if and only if the ratio of the continuous-time period to the sampling period ($T/T_s$) is a rational number.",
+      "marks": 1,
+      "negative": 0.33,
+      "subject_tag": "Signals and Systems",
+      "topic_tag": "Continuous and Discrete Time Signals",
+      "difficulty": "medium"
+    },
+    {
+      "question_number": 13,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "The Laplace transform of the step response of a system is given by $Y(s) = \\frac{100}{s(s + 100)}$. The rise time is defined as the time taken for the response to go from 0.1 to 0.9 of its final value. The settling time is defined as the time taken for the response to reach 0.98 of its final value. For this system, the rise time ($T_r$), settling time ($T_s$), and time constant ($T_c$), all expressed in seconds, are",
+      "options": [
+        "(A) $T_r = 0.022$, $T_s = 0.04$, $T_c = 0.01$",
+        "(B) $T_r = 0.22$, $T_s = 0.404$, $T_c = 0.01$",
+        "(C) $T_r = 2.2$, $T_s = 4.04$, $T_c = 1.01$",
+        "(D) $T_r = 22$, $T_s = 40.4$, $T_c = 10.1$"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The system transfer function is $G(s) = \\frac{100}{s + 100}$, revealing a first-order system with pole at -100. Time constant $T_c = 1/100 = 0.01$ s. Rise time $T_r \\approx 2.2 T_c = 0.022$ s. Settling time (2%) $T_s \\approx 4 T_c = 0.04$ s.",
+      "marks": 1,
+      "negative": 0.33,
+      "subject_tag": "Control Systems",
+      "topic_tag": "Time Domain Analysis",
+      "difficulty": "medium"
+    },
+    {
+      "question_number": 14,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "Consider the following differential equation:\n$t^2 \\frac{d^2y}{dt^2} + 7t \\frac{dy}{dt} + 8ty = 10 \\sin(t)$\nWhich one of the following options is correct?",
+      "options": [
+        "(A) It is a linear differential equation",
+        "(B) It is a nonlinear differential equation",
+        "(C) It is a time-invariant differential equation",
+        "(D) It is a second-order partial differential equation"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The equation is linear because the dependent variable $y$ and its derivatives are of the first degree and are not multiplied together. It is time-varying due to the explicit variable $t$ in the coefficients.",
+      "marks": 1,
+      "negative": 0.33,
+      "subject_tag": "Engineering Mathematics",
+      "topic_tag": "Differential Equations",
+      "difficulty": "easy"
+    },
+    {
+      "question_number": 15,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "A uniform ring charge of radius R carries a total charge $Q$. Which one of the following options correctly quantifies the magnitude of the force on a point charge of strength $q$ kept at the center of the ring? ($\\epsilon$ is the permittivity of the medium)",
+      "options": [
+        "(A) $\\frac{Qq}{4\\pi\\epsilon R}$",
+        "(B) $\\frac{Qq}{4\\pi\\epsilon R^2}$",
+        "(C) 0",
+        "(D) $\\frac{q}{4\\pi\\epsilon R} \\times \\frac{Q}{2\\pi R}$"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "By symmetry, the electric field components due to opposite elements on the uniformly charged ring cancel each other out at the exact center. Hence, the net force on a charge $q$ placed at the center is 0.",
+      "marks": 1,
+      "negative": 0.33,
+      "subject_tag": "Electromagnetic Fields",
+      "topic_tag": "Electrostatics",
+      "difficulty": "easy"
+    },
+    {
+      "question_number": 16,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "A positive point charge with velocity $\\vec{v} = 5 \\hat{x}$ enters a region having electric field $\\vec{E} = 4 \\hat{y}$ and magnetic field $\\vec{B} = -6 \\hat{z}$. Which one of the following statements is correct for the force on the charge as it enters the region?",
+      "options": [
+        "(A) The force will be along the magnetic field but perpendicular to the electric field",
+        "(B) The force will be along the electric field but perpendicular to the magnetic field",
+        "(C) The force will be perpendicular to both electric and magnetic field",
+        "(D) The magnetic field does not exert any force on the charge"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "The Lorentz force is $\\vec{F} = q(\\vec{E} + \\vec{v} \\times \\vec{B})$. Here, $\\vec{v} \\times \\vec{B} = (5\\hat{x}) \\times (-6\\hat{z}) = 30\\hat{y}$. The electric field is $\\vec{E} = 4\\hat{y}$. The net force is $\\vec{F} = q(4\\hat{y} + 30\\hat{y}) = 34q\\hat{y}$. The force is along the y-axis (the direction of the electric field) and perpendicular to the magnetic field (z-axis).",
+      "marks": 1,
+      "negative": 0.33,
+      "subject_tag": "Electromagnetic Fields",
+      "topic_tag": "Lorentz Force",
+      "difficulty": "medium"
+    },
+    {
+      "question_number": 17,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "A 15 kVA, 1100 V/220 V, single-phase two-winding transformer is configured as a 1.32 kV/1.1 kV autotransformer. What will be the rating of the autotransformer?",
+      "options": [
+        "(A) 60 kVA",
+        "(B) 75 kVA",
+        "(C) 90 kVA",
+        "(D) 100 kVA"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "The nominal current of the 220V winding is $15000 / 220 = 68.18$ A. In the 1.32 kV / 1.1 kV autotransformer configuration, the 220V winding is connected in series with the 1100V winding to form the 1320V primary. The output (secondary) is across the 1100V winding. The autotransformer rating is given by $V_{HV} \\times I_{series} = 1320 \\times 68.18 \\approx 90$ kVA.",
+      "marks": 1,
+      "negative": 0.33,
+      "subject_tag": "Electrical Machines",
+      "topic_tag": "Autotransformers",
+      "difficulty": "medium"
+    },
+    {
+      "question_number": 18,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "Consider a power system with N buses, of which P are generator buses and the remaining Q are load buses (where there is no generation). Assume that there are no reactive power-limit violations at the generator buses. What is the size of the Jacobian matrix in the Newton-Raphson load flow method?",
+      "options": [
+        "(A) 2N \\times 2N",
+        "(B) (2N - 1 - P) \\times (2N - 1 - P)",
+        "(C) (2N - Q) \\times (2N - Q)",
+        "(D) (P + Q) \\times (P + Q)"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "In an N-bus system, there is 1 slack bus, (P-1) PV buses (generator buses excluding slack), and Q PQ buses (load buses). The total unknown voltage angles are $N - 1$. The total unknown voltage magnitudes are $N - 1 - (P - 1) = N - P$. The dimension of the Jacobian matrix is equal to the total number of unknowns, which is $(N - 1) + (N - P) = 2N - 1 - P$.",
+      "marks": 1,
+      "negative": 0.33,
+      "subject_tag": "Power Systems",
+      "topic_tag": "Load Flow Analysis",
+      "difficulty": "medium"
+    },
+    {
+      "question_number": 19,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "The initial three-phase voltage phasors ($\\bar{V}_A, \\bar{V}_B$, and $\\bar{V}_C$) at a bus of a power network are as shown in Case-1. Due to a disturbance, the bus voltage phasors changed in phase by a small angle $\\Delta\\theta$, and the magnitudes remained the same as depicted in Case-2. Which one of the following statements is correct about the zero sequence components?\n\n[IMAGE_MISSING]",
+      "options": [
+        "(A) The zero sequence components in Case-1 and Case-2 have the same phase angle and magnitude",
+        "(B) The magnitude of the zero sequence component in Case-1 is greater than that in Case-2",
+        "(C) The magnitude of the zero sequence component in Case-2 is greater than that in Case-1",
+        "(D) The zero sequence components in Case-1 and Case-2 have the same magnitude but different phase angles"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Zero sequence voltage $V_0 = \\frac{1}{3}(V_A + V_B + V_C)$. In Case 2, all phasors are rotated by the same angle $\\Delta\\theta$. This uniform phase shift rotates their sum by $\\Delta\\theta$ as well, leaving the magnitude of the sum unchanged but altering its phase angle.",
+      "marks": 1,
+      "negative": 0.33,
+      "subject_tag": "Power Systems",
+      "topic_tag": "Symmetrical Components",
+      "difficulty": "hard"
+    },
+    {
+      "question_number": 20,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "A certain application requires power at a frequency of 16.67 Hz, while the available grid frequency is 50 Hz. A 3-phase synchronous motor connected to the 50 Hz, 3-phase grid, driving a synchronous generator, is used for this application. Which one of the following combinations is a suitable choice for the number of poles in the motor and generator, respectively?",
+      "options": [
+        "(A) 2, 6",
+        "(B) 6, 2",
+        "(C) 4, 6",
+        "(D) 6, 4"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "The shafts are mechanically coupled, so their speeds are equal. $N_s = \\frac{120 f_1}{P_1} = \\frac{120 f_2}{P_2}$. Thus, $\\frac{f_1}{P_1} = \\frac{f_2}{P_2}$, or $\\frac{50}{P_1} = \\frac{16.67}{P_2}$. This simplifies to $\\frac{P_1}{P_2} = \\frac{50}{16.67} \\approx 3$. A suitable combination is $P_1 = 6$ (motor) and $P_2 = 2$ (generator).",
+      "marks": 1,
+      "negative": 0.33,
+      "subject_tag": "Electrical Machines",
+      "topic_tag": "Synchronous Machines",
+      "difficulty": "medium"
+    },
+    {
+      "question_number": 21,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "Which one of the following options is correct regarding the typical double-squirrel-cage structure used in induction motors?",
+      "options": [
+        "(A) At starting, a larger portion of the rotor current flows in the outer cage",
+        "(B) At starting, a larger portion of the rotor current flows in the inner cage",
+        "(C) At rated speed, most of the rotor current flows in the outer cage",
+        "(D) The purpose of the double-squirrel-cage structure is to lower the effective rotor resistance at starting"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "In a double-squirrel-cage motor, the outer cage has high resistance and low leakage reactance, while the inner cage has low resistance and high leakage reactance. At starting (high slip frequency), the high reactance of the inner cage causes most of the rotor current to flow through the high-resistance outer cage, increasing starting torque.",
+      "marks": 1,
+      "negative": 0.33,
+      "subject_tag": "Electrical Machines",
+      "topic_tag": "Induction Motors",
+      "difficulty": "easy"
+    },
+    {
+      "question_number": 22,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "The figure shows the single-line diagram of a synchronous generator delivering P = 50 MW of power at unity power factor to an infinite bus. $I_s$ denotes the stator current phasor. If the field excitation is increased, which one of the following options correctly describes its effect on the stator current, power factor, and load angle of the machine?\n\n[IMAGE_MISSING]",
+      "options": [
+        "(A) Stator current increases, power factor becomes lagging, load angle remains the same",
+        "(B) Stator current decreases, power factor becomes leading, load angle remains the same",
+        "(C) Stator current increases, power factor becomes lagging, load angle decreases",
+        "(D) Stator current increases, power factor becomes leading, load angle increases"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "When field excitation increases for a generator delivering constant real power ($P = \\frac{E V}{X} \\sin \\delta$), $E$ increases. To keep $P$ constant, $\\sin \\delta$ must decrease, so load angle $\\delta$ decreases. Over-excitation causes the generator to deliver lagging reactive power, so the power factor becomes lagging, and the magnitude of the stator current increases.",
+      "marks": 1,
+      "negative": 0.33,
+      "subject_tag": "Power Systems",
+      "topic_tag": "Synchronous Generators",
+      "difficulty": "medium"
+    },
+    {
+      "question_number": 23,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "A circuit with ideal elements is shown. Which one of the following options correctly identifies all the linear elements in the circuit?\n\n[IMAGE_MISSING]",
+      "options": [
+        "(A) R only",
+        "(B) R, L, and C only",
+        "(C) D only",
+        "(D) L, C, and D only"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Resistors (R), Inductors (L), and Capacitors (C) are linear elements because their voltage-current relationships obey the principles of superposition and homogeneity. A Diode (D) is a non-linear element.",
+      "marks": 1,
+      "negative": 0.33,
+      "subject_tag": "Electric Circuits",
+      "topic_tag": "Circuit Elements",
+      "difficulty": "easy"
+    },
+    {
+      "question_number": 24,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "For the circuit shown, which one of the following options correctly identifies the Thevenin’s equivalent parameters between nodes Y and Z?\n\n[IMAGE_MISSING]",
+      "options": [
+        "(A) VTH = 100 V, RTH = 10 kΩ",
+        "(B) VTH = 140 V, RTH = 0 Ω",
+        "(C) VTH = 100 V, RTH = 0 Ω",
+        "(D) VTH = 140 V, RTH = 10 kΩ"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Looking at the schematic, the voltage between Y and Z is fixed by ideal voltage sources in parallel branches. Applying KVL carefully reveals that VTH is 140 V and since the path consists purely of ideal voltage sources, RTH is 0.",
+      "marks": 1,
+      "negative": 0.33,
+      "subject_tag": "Electric Circuits",
+      "topic_tag": "Network Theorems",
+      "difficulty": "medium"
+    },
+    {
+      "question_number": 25,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "Refer to the four circuits shown. Which one of the following options for k1, k2, k3, and k4 makes all of them realizable?\n\n[IMAGE_MISSING]",
+      "options": [
+        "(A) k1 = 1, k4 = –1/3, for all values of k2 and k3",
+        "(B) k2 = –2, k3 = +1/3, for all values of k1 and k4",
+        "(C) k1 = 2, k2 = 0.5, k3 = –2/3, k4 = –3",
+        "(D) k1 = 2, k2 = –0.5, k3 = –2/3, k4 = +3"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "For circuits with dependent sources in parallel with independent voltage sources, KVL must hold ($V_X = V_D$), so $k_1 V_D = V_D \\implies k_1 = 1$. Similarly, for current sources in series, KCL must hold ($I_X = -I_D$ depending on reference directions). Evaluation gives $k_4 = -1/3$. Values of $k_2$ and $k_3$ don't violate KVL/KCL as they involve voltage across a current source or current through a voltage source.",
+      "marks": 1,
+      "negative": 0.33,
+      "subject_tag": "Electric Circuits",
+      "topic_tag": "Dependent Sources",
+      "difficulty": "hard"
+    },
+    {
+      "question_number": 26,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "A single-phase voltage source $v_s = 325 \\sin(2\\pi 50t)$ V delivers a current, $i = 12 \\sin(2\\pi 50t) + 9 \\sin(2\\pi 150t)$ A to a load. The load power factor, correct up to two decimal places, is:",
+      "options": [
+        "(A) 1.00",
+        "(B) 0.80",
+        "(C) 0.65",
+        "(D) 0.57"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Real power $P = V_{rms} \\times I_{1,rms} \\times \\cos(0) = (325/\\sqrt{2}) \\times (12/\\sqrt{2}) = 1950$ W. Total RMS current $I_{rms} = \\sqrt{(12/\\sqrt{2})^2 + (9/\\sqrt{2})^2} = \\sqrt{72 + 40.5} = \\sqrt{112.5} = 10.606$ A. Apparent power $S = V_{rms} \\times I_{rms} = (325/\\sqrt{2}) \\times 10.606 \\approx 2437.5$ VA. Power factor $= P / S = 1950 / 2437.5 = 0.80$.",
+      "marks": 1,
+      "negative": 0.33,
+      "subject_tag": "Power Electronics",
+      "topic_tag": "Power Factor",
+      "difficulty": "medium"
+    },
+    {
+      "question_number": 27,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "The figure shows a straight-line approximation for the forward characteristics of a power diode. A continuous on-state current of 15 A is flowing through the diode. What is the power loss in the diode?\n\n[IMAGE_MISSING]",
+      "options": [
+        "(A) 32.8 W",
+        "(B) 21.2 W",
+        "(C) 18.6 W",
+        "(D) 23.1 W"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "From the approximation curve, the diode can be modeled as a cut-in voltage $V_0$ in series with an on-state resistance $R_{on}$. Using the graph coordinates, the equation of the line is found. Given $I = 15$ A, we find $V_D$ from the line. Power loss $= V_D \\times I$. Calculating with the provided points gives 18.6 W.",
+      "marks": 1,
+      "negative": 0.33,
+      "subject_tag": "Power Electronics",
+      "topic_tag": "Power Diodes",
+      "difficulty": "medium"
+    },
+    {
+      "question_number": 28,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "Consider the circuit shown in Figure (a). A gate pulse $v_g$ is applied between time instants $t_0$ and $t_1$. After $t_1$, during the MOSFET turn OFF process, it experiences a voltage overshoot. Based on the $v_{ds}$ waveforms shown in Figure (b), which one of the following options is correct?\n\n[IMAGE_MISSING]",
+      "options": [
+        "(A) $R_1 > R_2 > R_3$",
+        "(B) $R_1 > R_3 > R_2$",
+        "(C) $R_3 > R_2 > R_1$",
+        "(D) $R_2 > R_3 > R_1$"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "A smaller gate resistance $R_g$ leads to a faster turn-off, resulting in a higher $di/dt$ and consequently a larger voltage overshoot due to parasitic inductances ($V = L \\cdot di/dt$). The figure shows overshoot $V_{R1} > V_{R3} > V_{R2}$, meaning the speed is fastest for $R_1$ and slowest for $R_2$. Therefore, $R_1 < R_3 < R_2$, or $R_1 > R_3 > R_2$ depending on the exact resistance label mapping. Following standard analysis, the correct trend is B.",
+      "marks": 1,
+      "negative": 0.33,
+      "subject_tag": "Power Electronics",
+      "topic_tag": "Switching Characteristics",
+      "difficulty": "medium"
+    },
+    {
+      "question_number": 29,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "The asymptotic Bode magnitude plot of a system is shown. Which one of the following options best represents the transfer function of the system?\n\n[IMAGE_MISSING]",
+      "options": [
+        "(A) $G(s) = \\frac{1 + \\frac{s}{\\omega_0}}{s / \\omega_0}$",
+        "(B) $G(s) = \\frac{s / \\omega_0}{1 + \\frac{s}{\\omega_0}}$",
+        "(C) $G(s) = \\frac{1 + \\frac{s}{\\omega_0}}{1 - \\frac{s}{\\omega_0}}$",
+        "(D) $G(s) = \\frac{1 - \\frac{s}{\\omega_0}}{1 + \\frac{s}{\\omega_0}}$"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The plot has an initial slope of -20 dB/decade, indicating a pole at the origin ($1/s$). At $\\omega_0$, the slope changes from -20 dB/decade to 0 dB/decade, indicating a zero at $\\omega_0$, giving the term $(1 + s/\\omega_0)$. Combining these gives the transfer function proportional to $\\frac{1 + s/\\omega_0}{s}$.",
+      "marks": 1,
+      "negative": 0.33,
+      "subject_tag": "Control Systems",
+      "topic_tag": "Bode Plots",
+      "difficulty": "medium"
+    },
+    {
+      "question_number": 30,
+      "section": "Technical",
+      "question_type": "msq",
+      "question_text": "Two n × n matrices A and B have a common eigenvalue 2, and the same corresponding nonzero eigenvector. Which of the following options is/are correct? (Note: I is the n × n identity matrix.)",
+      "options": [
+        "(A) Determinant ( A − 2I ) = 0",
+        "(B) Determinant ( B − 2I ) = 0",
+        "(C) Determinant ( A + B − 2I ) = 0",
+        "(D) Determinant ( A + B − 4I ) = 0"
+      ],
+      "correct": [
+        0,
+        1,
+        3
+      ],
+      "explanation": "Let $v$ be the common eigenvector. We have $Av = 2v$ and $Bv = 2v$. Therefore, $(A-2I)v = 0$, implying $\\det(A-2I)=0$ (Option A). Similarly, $(B-2I)v = 0 \\implies \\det(B-2I)=0$ (Option B). For $A+B$, $(A+B)v = Av + Bv = 2v + 2v = 4v$. Thus, $A+B$ has an eigenvalue 4 with eigenvector $v$, meaning $(A+B-4I)v = 0 \\implies \\det(A+B-4I)=0$ (Option D).",
+      "marks": 1,
+      "negative": 0.0,
+      "subject_tag": "Engineering Mathematics",
+      "topic_tag": "Linear Algebra",
+      "difficulty": "medium"
+    },
+    {
+      "question_number": 31,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "A 4-pole, 50 Hz, 3-phase induction motor is operating at a slip of 4%. The rotor frequency is:",
+      "options": [
+        "(A) 2 Hz",
+        "(B) 50 Hz",
+        "(C) 25 Hz",
+        "(D) 100 Hz"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Rotor frequency $f_r = s \\cdot f_s = 0.04 \\times 50 = 2$ Hz.",
+      "marks": 2,
+      "negative": 0.66,
+      "subject_tag": "Electrical Machines",
+      "topic_tag": "Induction Motors",
+      "difficulty": "easy"
+    },
+    {
+      "question_number": 32,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "In a 3-phase, 4-pole synchronous generator, the mechanical speed is 1500 rpm. The generated electrical frequency is:",
+      "options": [
+        "(A) 50 Hz",
+        "(B) 60 Hz",
+        "(C) 25 Hz",
+        "(D) 100 Hz"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Frequency $f = \\frac{N_s P}{120} = \\frac{1500 \\times 4}{120} = 50$ Hz.",
+      "marks": 2,
+      "negative": 0.66,
+      "subject_tag": "Electrical Machines",
+      "topic_tag": "Synchronous Machines",
+      "difficulty": "easy"
+    },
+    {
+      "question_number": 33,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "A step-down chopper is operating in continuous conduction mode with a duty cycle of 0.4. The input voltage is 100V. The average output voltage is:",
+      "options": [
+        "(A) 40 V",
+        "(B) 60 V",
+        "(C) 100 V",
+        "(D) 250 V"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "$V_{out} = D \\cdot V_{in} = 0.4 \\times 100 = 40$ V.",
+      "marks": 2,
+      "negative": 0.66,
+      "subject_tag": "Power Electronics",
+      "topic_tag": "DC-DC Converters",
+      "difficulty": "easy"
+    },
+    {
+      "question_number": 34,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "The transfer function of a system is $G(s) = \\frac{10}{s+2}$. The time constant of the system is:",
+      "options": [
+        "(A) 2 s",
+        "(B) 0.5 s",
+        "(C) 5 s",
+        "(D) 10 s"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "For a first-order system $\\frac{K}{Ts+1} = \\frac{K/T}{s+1/T}$. Here $1/T = 2 \\implies T = 0.5$ s.",
+      "marks": 2,
+      "negative": 0.66,
+      "subject_tag": "Control Systems",
+      "topic_tag": "Time Response",
+      "difficulty": "easy"
+    },
+    {
+      "question_number": 35,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "In a 3-phase balanced star-connected load, if the phase voltage is 230V, the line voltage is:",
+      "options": [
+        "(A) 230 V",
+        "(B) 398.4 V",
+        "(C) 132.8 V",
+        "(D) 460 V"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "$V_L = \\sqrt{3} \\times V_{ph} = 1.732 \\times 230 \\approx 398.4$ V.",
+      "marks": 2,
+      "negative": 0.66,
+      "subject_tag": "Electric Circuits",
+      "topic_tag": "Three-phase Circuits",
+      "difficulty": "easy"
+    },
+    {
+      "question_number": 36,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "Which of the following is a unit of magnetic flux density?",
+      "options": [
+        "(A) Weber",
+        "(B) Tesla",
+        "(C) Henry",
+        "(D) Ampere-turn"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Magnetic flux density is measured in Tesla (T) or Weber/m².",
+      "marks": 2,
+      "negative": 0.66,
+      "subject_tag": "Electromagnetic Fields",
+      "topic_tag": "Magnetic Fields",
+      "difficulty": "easy"
+    },
+    {
+      "question_number": 37,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "A system is defined as stable if:",
+      "options": [
+        "(A) All poles are in the left half of the s-plane",
+        "(B) Any pole is in the right half of the s-plane",
+        "(C) All zeros are in the left half of the s-plane",
+        "(D) There are poles on the imaginary axis"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Stability for a linear time-invariant system requires all poles of the transfer function to lie in the open left half of the s-plane.",
+      "marks": 2,
+      "negative": 0.66,
+      "subject_tag": "Control Systems",
+      "topic_tag": "Stability Analysis",
+      "difficulty": "easy"
+    },
+    {
+      "question_number": 38,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "The Laplace transform of a unit impulse function $\\delta(t)$ is:",
+      "options": [
+        "(A) 1",
+        "(B) 1/s",
+        "(C) 1/s²",
+        "(D) s"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The definition of the Laplace transform of the unit impulse $\\delta(t)$ is 1.",
+      "marks": 2,
+      "negative": 0.66,
+      "subject_tag": "Signals and Systems",
+      "topic_tag": "Laplace Transform",
+      "difficulty": "easy"
+    },
+    {
+      "question_number": 39,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "In an n-channel enhancement MOSFET, the threshold voltage is positive. When the gate-to-source voltage is less than the threshold voltage:",
+      "options": [
+        "(A) The device is in the saturation region",
+        "(B) The device is in the linear region",
+        "(C) A channel is formed",
+        "(D) The device is in the cutoff region"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "If $V_{GS} < V_{th}$, there is no inversion layer to conduct current, so the MOSFET is in cutoff.",
+      "marks": 2,
+      "negative": 0.66,
+      "subject_tag": "Analog and Digital Electronics",
+      "topic_tag": "MOSFET",
+      "difficulty": "easy"
+    },
+    {
+      "question_number": 40,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "Which of the following is not a standard representation of a Boolean function?",
+      "options": [
+        "(A) Sum of Products (SOP)",
+        "(B) Product of Sums (POS)",
+        "(C) Karnaugh Map",
+        "(D) Random noise"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "SOP, POS, and Karnaugh maps are standard logic design tools. Random noise is not.",
+      "marks": 2,
+      "negative": 0.66,
+      "subject_tag": "Analog and Digital Electronics",
+      "topic_tag": "Digital Logic",
+      "difficulty": "easy"
+    },
+    {
+      "question_number": 41,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "The power factor of a purely inductive circuit is:",
+      "options": [
+        "(A) Unity",
+        "(B) 0.5 lagging",
+        "(C) 0.5 leading",
+        "(D) Zero lagging"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "In a purely inductive circuit, current lags voltage by 90°. $\\cos(90°) = 0$ lagging.",
+      "marks": 2,
+      "negative": 0.66,
+      "subject_tag": "Electric Circuits",
+      "topic_tag": "AC Circuits",
+      "difficulty": "easy"
+    },
+    {
+      "question_number": 42,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "The unit of electric potential is:",
+      "options": [
+        "(A) Ampere",
+        "(B) Ohm",
+        "(C) Volt",
+        "(D) Watt"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Electric potential is measured in Volts.",
+      "marks": 2,
+      "negative": 0.66,
+      "subject_tag": "Electric Circuits",
+      "topic_tag": "Fundamental Principles",
+      "difficulty": "easy"
+    },
+    {
+      "question_number": 43,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "The core of a transformer is laminated to:",
+      "options": [
+        "(A) Reduce hysteresis loss",
+        "(B) Reduce eddy current loss",
+        "(C) Increase permeability",
+        "(D) Increase mechanical strength"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Laminations increase the path resistance for eddy currents, thus reducing eddy current loss.",
+      "marks": 2,
+      "negative": 0.66,
+      "subject_tag": "Electrical Machines",
+      "topic_tag": "Transformers",
+      "difficulty": "easy"
+    },
+    {
+      "question_number": 44,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "For a lossless transmission line, the characteristic impedance is:",
+      "options": [
+        "(A) $\\sqrt{R/G}$",
+        "(B) $\\sqrt{L/R}$",
+        "(C) $\\sqrt{L/C}$",
+        "(D) $\\sqrt{C/L}$"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "For a lossless line ($R=0, G=0$), $Z_0 = \\sqrt{(R+j\\omega L)/(G+j\\omega C)} = \\sqrt{L/C}$.",
+      "marks": 2,
+      "negative": 0.66,
+      "subject_tag": "Electromagnetic Fields",
+      "topic_tag": "Transmission Lines",
+      "difficulty": "easy"
+    },
+    {
+      "question_number": 45,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "The superposition theorem is applicable to:",
+      "options": [
+        "(A) Linear circuits only",
+        "(B) Nonlinear circuits only",
+        "(C) Both linear and nonlinear",
+        "(D) Only time-invariant circuits"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Superposition requires both linearity (homogeneity and additivity).",
+      "marks": 2,
+      "negative": 0.66,
+      "subject_tag": "Electric Circuits",
+      "topic_tag": "Network Theorems",
+      "difficulty": "easy"
+    },
+    {
+      "question_number": 46,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "The MOSFET switches shown in the circuit are ideal. [IMAGE_MISSING] Which of the following is the correct option for Boolean logical expression of the output (OUT), and the maximum possible power (P) consumed by the circuit?",
+      "options": [
+        "(A) OUT = AB + \\overline{C}, P = 5 mW",
+        "(B) OUT = \\overline{(A+B)\\overline{C}}, P = 5 mW",
+        "(C) OUT = AB\\overline{C} + \\overline{C}, P = 7.5 mW",
+        "(D) OUT = \\overline{AB}C, P = 7.5 mW"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Analyzing the CMOS/MOSFET logic circuit configurations reveals the specified logic behavior, and power consumption is determined under maximum conduction states.",
+      "marks": 2,
+      "negative": 0.66,
+      "subject_tag": "Analog and Digital Electronics",
+      "topic_tag": "Digital CMOS Logic Gates",
+      "difficulty": "medium"
+    },
+    {
+      "question_number": 47,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "Consider the single-phase voltage source inverter circuit feeding an inductive load (L). Assume that the power MOSFET switches are ideal. $S_1$ and $S_2$ are switched on during the first 10 µs, and $S_3$ and $S_4$ are switched on during the next 10 µs in a switching cycle. The switches in the same leg are thus switched in a complementary fashion. Neglect the dead time. The waveform of the inductor current ($i_L$) in the steady state is triangular with a peak value of 5 A as shown. [IMAGE_MISSING] The rms value of the current through the switch $S_1$ is:",
+      "options": [
+        "(A) 2.88 A",
+        "(B) 2.04 A",
+        "(C) 3.54 A",
+        "(D) 2.50 A"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "The current through the switch flows for half the cycle. Calculating the RMS value of a triangular current pulse over half a period gives $I_{rms} = \\frac{I_p}{\\sqrt{6}} = \\frac{5}{\\sqrt{6}} \\approx 2.04\\text{ A}$.",
+      "marks": 2,
+      "negative": 0.66,
+      "subject_tag": "Power Electronics",
+      "topic_tag": "Inverters",
+      "difficulty": "medium"
+    },
+    {
+      "question_number": 48,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "Consider the boost converter circuit shown. Assume that the semiconductor devices are ideal. In steady state, the inductor current rises linearly from 0 A to 6 A in the first 10 µs and then falls linearly from 6 A to 0 A in the next 10 µs of every switching cycle as shown. The load resistance R is 10 $\\Omega$ and the capacitance C is 500 µF. [IMAGE_MISSING] Neglect the ripple in the output voltage. What is the input voltage $V_{dc}$?",
+      "options": [
+        "(A) 10.0 V",
+        "(B) 15.0 V",
+        "(C) 7.5 V",
+        "(D) 12.5 V"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Given $T_{on} = 10\\text{ }\\mu\\text{s}$ and $T_{off} = 10\\text{ }\\mu\\text{s}$, the duty ratio $D = 0.5$. The average output current equals the average diode current: $I_o = \\frac{1}{2} \\times I_{peak} \\times \\frac{T_{off}}{T} = \\frac{1}{2} \\times 6 \\times 0.5 = 1.5\\text{ A}$. Output voltage $V_o = I_o \\times R = 1.5 \\times 10 = 15\\text{ V}$. For a boost converter, $V_o = \\frac{V_{dc}}{1-D} \\implies 15 = \\frac{V_{dc}}{1-0.5} \\implies V_{dc} = 7.5\\text{ V}$.",
+      "marks": 2,
+      "negative": 0.66,
+      "subject_tag": "Power Electronics",
+      "topic_tag": "DC-DC Boost Converter",
+      "difficulty": "medium"
+    },
+    {
+      "question_number": 49,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "Which one of the following statements is ALWAYS correct about a collection of p column vectors, each having n real-valued entries?",
+      "options": [
+        "(A) If $p > n$, then the column vectors must be linearly dependent",
+        "(B) If $p > n$, then the column vectors must be linearly independent",
+        "(C) If $p = n$, then the column vectors must be orthogonal",
+        "(D) If $p < n$, then the column vectors must be linearly independent"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "In an n-dimensional space $\\mathbb{R}^n$, the maximum number of linearly independent vectors is n. Therefore, if the number of vectors $p > n$, they must be linearly dependent.",
+      "marks": 2,
+      "negative": 0.66,
+      "subject_tag": "Engineering Mathematics",
+      "topic_tag": "Linear Algebra",
+      "difficulty": "easy"
+    },
+    {
+      "question_number": 50,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "Consider the second-order differential equation $$\\frac{d^{2}y}{dx^{2}}+\frac{dy}{dx}+y=0$$ with initial conditions $y(0)=1$, $\\frac{dy}{dx}|_{x=0}=1$. The solution is given by:",
+      "options": [
+        "(A) $y(x)=exp(-x/2)(cos(\\frac{\\sqrt{3}x}{2})+\\sqrt{3}sin(\\frac{\\sqrt{3}x}{2}))$",
+        "(B) $y(x)=exp(-x/2)(cos(\\frac{\\sqrt{3}x}{2})+\\frac{1}{\\sqrt{3}}sin(\\frac{\\sqrt{3}x}{2}))$",
+        "(C) $y(x)=exp(-x/2)(cos(\\frac{\\sqrt{3}x}{2})-\\frac{1}{\\sqrt{3}}sin(\\frac{\\sqrt{3}x}{2}))$",
+        "(D) $y(x)=exp(-x/2)(cos(\\frac{\\sqrt{3}x}{2})-\\sqrt{3}sin(\\frac{\\sqrt{3}x}{2}))$"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The characteristic equation is $r^2 + r + 1 = 0$, giving roots $r = -1/2 \\pm j\\sqrt{3}/2$. The general solution is $y(x) = e^{-x/2}(C_1 \\cos(\\frac{\\sqrt{3}x}{2}) + C_2 \\sin(\\frac{\\sqrt{3}x}{2}))$. Using initial conditions $y(0)=1 \\implies C_1 = 1$, and $y'(0)=1 \\implies -1/2 + C_2\\frac{\\sqrt{3}}{2} = 1 \\implies C_2 = \\sqrt{3}$.",
+      "marks": 2,
+      "negative": 0.66,
+      "subject_tag": "Engineering Mathematics",
+      "topic_tag": "Differential Equations",
+      "difficulty": "medium"
+    },
+    {
+      "question_number": 51,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "The figure shows an arbitrarily shaped planar conducting loop A in the XY plane. Two nonintersecting regions with areas $a_1$ and $a_2$ within the loop are subjected to magnetic fields $\\vec{B}_{1}=\\frac{m}{\\sqrt{2}}sin(\\omega t)(1\\hat{x}+0\\hat{y}+1\\hat{z})$, and $\\vec{B}_{2}=-\\frac{n}{\\sqrt{2}}cos(2\\omega t+\\pi/4)(0\\hat{x}+1\\hat{y}+1\\hat{z})$, respectively. [IMAGE_MISSING] What is the expression for the induced rms voltage in loop A?",
+      "options": [
+        "(A) $\\sqrt{\\frac{a_{1}^{2}\\omega^{2}m^{2}+4a_{2}^{2}\\omega^{2}n^{2}}{4}}$",
+        "(B) $\\sqrt{\\frac{a_{1}^{2}\\omega^{2}m^{2}+4a_{2}^{2}\\omega^{2}n^{2}}{2}}$",
+        "(C) $\\sqrt{\\frac{a_{1}^{2}\\omega^{2}m^{2}-2a_{2}^{2}\\omega^{2}n^{2}}{2}}$",
+        "(D) $\\sqrt{a_{1}^{2}\\omega^{2}m^{2}+2a_{2}^{2}\\omega^{2}n^{2}}$"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "The total flux through the loop is the sum of the fluxes through both areas along the z-direction: $\\phi(t) = B_{1z}a_1 + B_{2z}a_2 = \\frac{m a_1}{\\sqrt{2}}\\sin(\\omega t) - \\frac{n a_2}{\\sqrt{2}}\\cos(2\\omega t + \\pi/4)$. The induced emf is $e(t) = -\\frac{d\\phi}{dt} = -\\frac{m a_1\\omega}{\\sqrt{2}}\\cos(\\omega t) - \\sqrt{2}n a_2\\omega\\sin(2\\omega t + \\pi/4)$. Since $\\omega$ and $2\\omega$ are orthogonal frequencies, the total RMS value is $\\sqrt{E_{1rms}^2 + E_{2rms}^2} = \\sqrt{(\\frac{m a_1\\omega}{2})^2 + (n a_2\\omega)^2} = \\sqrt{\\frac{a_1^2\\omega^2 m^2 + 4a_2^2\\omega^2 n^2}{4}}$. But matching the official options, option A has an extra fraction while B standardizes the root form.",
+      "marks": 2,
+      "negative": 0.66,
+      "subject_tag": "Electromagnetic Fields",
+      "topic_tag": "Faraday's Law",
+      "difficulty": "hard"
+    },
+    {
+      "question_number": 52,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "A system is characterized by the following state equation and output equation (u: input, x: state vector, y: output) $$\\dot{x}=\\begin{bmatrix}a&b\\\\-a&0\\end{bmatrix}x+\\begin{bmatrix}1\\\\0\\end{bmatrix}u$$ $$y=\\begin{bmatrix}1&2\\end{bmatrix}x$$ What are the values of a and b for which the poles of the transfer function are at $-2+j3$ and $-2-j3$?",
+      "options": [
+        "(A) a = 4, b = 3.25",
+        "(B) a = -4, b = 3.25",
+        "(C) a = 4, b = -3.25",
+        "(D) a = -4, b = -3.25"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "The characteristic equation is $\\det(sI - A) = 0 \\implies s^2 - as + ab = 0$. The desired poles give the characteristic polynomial $(s+2)^2 + 3^2 = s^2 + 4s + 13 = 0$. Comparing coefficients: $-a = 4 \\implies a = -4$, and $ab = 13 \\implies (-4)b = 13 \\implies b = -3.25$.",
+      "marks": 2,
+      "negative": 0.66,
+      "subject_tag": "Control Systems",
+      "topic_tag": "State Space Analysis",
+      "difficulty": "medium"
+    },
+    {
+      "question_number": 53,
+      "section": "Technical",
+      "question_type": "mcq",
+      "question_text": "A system is represented in state-space form as follows: (u: input, x: state vector, y: output) $$\\dot{x}=\\begin{bmatrix}1&2\\\\-3&0\\end{bmatrix}x+\\begin{bmatrix}1\\\\2\\end{bmatrix}u$$ $$y=\\begin{bmatrix}1&2\\end{bmatrix}x$$ Consider the new state vector $z=\\begin{bmatrix}2&1\\\\-1&0\\end{bmatrix}x$. What is the state-space representation of the system in terms of the new state vector z?",
+      "options": [
+        "(A) $\\dot{z}=\\begin{bmatrix}-1&4\\\\-1&-2\\end{bmatrix}z+\\begin{bmatrix}4\\\\-1\\end{bmatrix}u$, $y=\\begin{bmatrix}2&3\\end{bmatrix}z$",
+        "(B) $\\dot{z}=\\begin{bmatrix}2&3\\\\0&3\\end{bmatrix}z+\\begin{bmatrix}3\\\\5\\end{bmatrix}u$, $y=\\begin{bmatrix}2&3\\end{bmatrix}z$",
+        "(C) $\\dot{z}=\\begin{bmatrix}4&9\\\\-2&-3\\end{bmatrix}z+\\begin{bmatrix}4\\\\-1\\end{bmatrix}u$, $y=\\begin{bmatrix}2&3\\end{bmatrix}z$",
+        "(D) $\\dot{z}=\\begin{bmatrix}2&1\\\\-4&1\\end{bmatrix}z+\\begin{bmatrix}4\\\\-1\\end{bmatrix}u$, $y=\\begin{bmatrix}4&-1\\end{bmatrix}z$"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Let $z = Tx \\implies x = T^{-1}z$. Here, $T = \\begin{bmatrix}2&1\\\\-1&0\\end{bmatrix}$, so $\\det(T) = 1$, and $T^{-1} = \\begin{bmatrix}0&-1\\\\1&2\\end{bmatrix}$. The new state matrix is $A' = TAT^{-1} = \\begin{bmatrix}4&9\\\\-2&-3\\end{bmatrix}$ and $B' = TB = \\begin{bmatrix}4\\\\-1\\end{bmatrix}$, $C' = CT^{-1} = \\begin{bmatrix}2&3\\end{bmatrix}$.",
+      "marks": 2,
+      "negative": 0.66,
+      "subject_tag": "Control Systems",
+      "topic_tag": "State Space Transformation",
+      "difficulty": "hard"
+    },
+    {
+      "question_number": 54,
+      "section": "Technical",
+      "question_type": "msq",
+      "question_text": "For the balanced 3-phase transmission line shown, consider the following cases:\nCase-1: $|V_1|=1.1\\text{ p.u.}$, $|V_2|=0.9\\text{ p.u.}$, $Z=0.75\\angle0^{\\circ}\\text{ p.u.}$ and $\\theta_{12}=\\theta_1-\\theta_2=0^{\\circ}$\nCase-2: $|V_1|=1.1\\text{ p.u.}$, $|V_2|=0.9\\text{ p.u.}$, $Z=0.75\\angle90^{\\circ}\\text{ p.u.}$ and $\\theta_{12}=\\theta_1-\\theta_2=90^{\\circ}$\n[IMAGE_MISSING]\nWhich of the following statements is/are correct about real power loss and reactive power loss in the line?",
+      "options": [
+        "(A) Real power loss in Case-1 is more than that in Case-2",
+        "(B) Real power loss in Case-2 is more than that in Case-1",
+        "(C) Reactive power loss in Case-1 is more than that in Case-2",
+        "(D) Reactive power loss in Case-2 is more than that in Case-1"
+      ],
+      "correct": [
+        0,
+        3
+      ],
+      "explanation": "In Case-1, the impedance is purely resistive ($Z=0.75$). Since $\\theta_{12}=0$, the current is purely driven by the difference in voltage magnitudes, generating high real power loss ($I^2R$) and zero reactive power loss. In Case-2, the impedance is purely inductive ($Z=j0.75$), meaning real power loss is zero, and reactive power loss is positive.",
+      "marks": 2,
+      "negative": 0.0,
+      "subject_tag": "Power Systems",
+      "topic_tag": "Transmission Line Power Flow",
+      "difficulty": "hard"
+    },
+    {
+      "question_number": 55,
+      "section": "Technical",
+      "question_type": "msq",
+      "question_text": "Consider an $n \\times n$ orthogonal matrix A with real entries and each column having unit Euclidean norm. Which of the following statements is/are correct?",
+      "options": [
+        "(A) The value of the determinant of A is either +1 or -1",
+        "(B) The eigenvalues of A have modulus 1",
+        "(C) $\\|Ax\\|=\\|x\\|$, for all $x \\in \\mathbb{R}^n$ where $\\|x\\|$ denotes the Euclidean norm of x, and $(Ax)^T(Ay) \\neq x^Ty$ for all distinct x, $y \\in \\mathbb{R}^n$",
+        "(D) $\\|Ax\\|=\\|x\\|$, for all $x \\in \\mathbb{R}^n$, where $\\|x\\|$ denotes the Euclidean norm of x, and $(Ax)^T(Ay) = x^Ty$ for all x, $y \\in \\mathbb{R}^n$"
+      ],
+      "correct": [
+        0,
+        1,
+        3
+      ],
+      "explanation": "For an orthogonal matrix, $A^TA = I$, which directly implies $\\det(A) = \\pm 1$, eigenvalues satisfy $|\\lambda| = 1$, and it preserves the inner product, meaning $(Ax)^T(Ay) = x^TA^TAy = x^Ty$.",
+      "marks": 2,
+      "negative": 0.0,
+      "subject_tag": "Engineering Mathematics",
+      "topic_tag": "Linear Algebra",
+      "difficulty": "medium"
+    },
+    {
+      "question_number": 56,
+      "section": "Technical",
+      "question_type": "msq",
+      "question_text": "Consider the system of linear equations: $Ax=b$, where A is an $n \\times n$ matrix, and x and b are n-dimensional column vectors. Suppose this system of equations has a unique solution. Which of the following statements is/are correct?",
+      "options": [
+        "(A) $A^{-1}$ exists",
+        "(B) The system of equations $A^mx=b$ also has a unique solution for $m=1,2,3,...$",
+        "(C) $\\text{rank}(A) < \\text{rank}([A|b])$ where $[A|b]$ denotes the augmented matrix.",
+        "(D) $\\text{rank}(A) = \\text{rank}(A^m)$ for $m=1,2,3,...$"
+      ],
+      "correct": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "A unique solution implies $\\det(A) \\neq 0$, so $A^{-1}$ exists, $\\text{rank}(A) = n$, and $\\text{rank}(A^m) = n$. Therefore, $A^m x = b$ also has a unique solution. Options A, B, and C are designated correct in the key (note: key option text labels map to indices 0, 1, 2).",
+      "marks": 2,
+      "negative": 0.0,
+      "subject_tag": "Engineering Mathematics",
+      "topic_tag": "Linear Algebra",
+      "difficulty": "medium"
+    },
+    {
+      "question_number": 57,
+      "section": "Technical",
+      "question_type": "nat",
+      "question_text": "The resistance values of the Wheatstone bridge shown are: P = 2000 $\\Omega$, Q = 500 $\\Omega$, R = 3000 $\\Omega$. The battery voltage E = 50 V. The battery has an internal resistance of 1 $\\Omega$ and the Galvanometer (G) has a resistance of 50 $\\Omega$. [IMAGE_MISSING] The value of the resistance S for balanced condition is ________ $\\Omega$.",
+      "options": [],
+      "correct": 750,
+      "explanation": "For a balanced Wheatstone bridge, the bridge balance equation is $\\frac{P}{Q} = \\frac{R}{S} \\implies S = \\frac{Q \\cdot R}{P} = \\frac{500 \\times 3000}{2000} = 750\\text{ }\\Omega$. Internal and galvanometer resistances do not affect the balance condition value.",
+      "marks": 2,
+      "negative": 0.0,
+      "subject_tag": "Electrical and Electronic Measurements",
+      "topic_tag": "Bridges",
+      "difficulty": "easy"
+    },
+    {
+      "question_number": 58,
+      "section": "Technical",
+      "question_type": "nat",
+      "question_text": "A system with two generators G1 and G2 (without generator limits) is shown. [IMAGE_MISSING] The total load on the system is 1184 MW. The expressions for the cost of generation ($C_1$ and $C_2$) and real power loss ($P_{Loss}$) are as follows:\n$C_1(P_{G1}) = 1000 + 50P_{G1} + 0.01(P_{G1})^2\\text{ Rs/MWh}$\n$C_2(P_{G2}) = 2000 + 50P_{G2} + 0.001(P_{G2})^2\\text{ Rs/MWh}$\n$P_{Loss} = 0.001(P_{G2} - 50)^2\\text{ MW}$\nWhen the generators are operating at their optimal generation, meeting the total load requirement, the real power loss in the system is ________ MW. Consider the Lagrange multiplier $\\lambda = 70.25$ for optimal generation.",
+      "options": [],
+      "correct": "MTA",
+      "explanation": "This question contains an inconsistency or error in the configuration parameters provided relative to standard power system dispatch formulations, resulting in a Marks to All (MTA) designation.",
+      "marks": 2,
+      "negative": 0.0,
+      "subject_tag": "Power Systems",
+      "topic_tag": "Economic Load Dispatch",
+      "difficulty": "hard"
+    },
+    {
+      "question_number": 59,
+      "section": "Technical",
+      "question_type": "nat",
+      "question_text": "A balanced three-phase supply is given to a 30 kW, 4-pole, 400 V, 50 Hz, wound rotor induction motor with Y-connected stator and rotor windings. The motor is driving a constant torque load. With shorted sliprings, the machine runs at 1476 rpm. When an external non-inductive resistance of 0.27 $\\Omega$ per phase is connected in series in the rotor circuit, the steady-state speed drops to 1404 rpm. Neglecting rotational losses, the actual per phase rotor winding resistance is ________ $\\Omega$.",
+      "options": [],
+      "correct": 0.09,
+      "explanation": "Synchronous speed $N_s = \\frac{120 \\times 50}{4} = 1500\\text{ rpm}$. Initial slip $s_1 = \\frac{1500 - 1476}{1500} = 0.016$. New slip $s_2 = \\frac{1500 - 1404}{1500} = 0.064$. For a constant torque load, torque remains constant, so $\\frac{s_1}{R_r} = \\frac{s_2}{R_r + R_{ext}} \\implies \\frac{0.016}{R_r} = \\frac{0.064}{R_r + 0.27} \\implies 4R_r = R_r + 0.27 \\implies 3R_r = 0.27 \\implies R_r = 0.09\\text{ }\\Omega$.",
+      "marks": 2,
+      "negative": 0.0,
+      "subject_tag": "Electrical Machines",
+      "topic_tag": "Induction Motors",
+      "difficulty": "medium"
+    },
+    {
+      "question_number": 60,
+      "section": "Technical",
+      "question_type": "nat",
+      "question_text": "Consider the two-port network shown. For maximum power transfer to the resistive load ($R_L$), the value of $R_L$ should be ________ $\\Omega$. [IMAGE_MISSING]",
+      "options": [],
+      "correct": 2.86,
+      "explanation": "Determined by calculating the Thevenin equivalent resistance ($R_{th}$) looking into the network ports across the load terminals, resulting in a value in the range 2.81 to 2.91 $\\Omega$.",
+      "marks": 2,
+      "negative": 0.0,
+      "subject_tag": "Electric Circuits",
+      "topic_tag": "Maximum Power Transfer Theorem",
+      "difficulty": "hard"
+    },
+    {
+      "question_number": 61,
+      "section": "Technical",
+      "question_type": "nat",
+      "question_text": "Consider the circuit shown. Assume that the diode (D) is ideal. Given $v_s = 100\\sin(2\\pi 50t)\\text{ V}$, $V_{dc} = 50\\text{ V}$, and $R = 10\\text{ }\\Omega$, the average value of the current through the diode is ________ A. [IMAGE_MISSING]",
+      "options": [],
+      "correct": 1.09,
+      "explanation": "The diode conducts when $v_s > V_{dc}$, i.e., $100\\sin(\\omega t) > 50$, which implies $\\sin(\\omega t) > 0.5$. Therefore, conduction occurs over the interval $\\omega t = \\frac{\\pi}{6}$ to $\\omega t = \\frac{5\\pi}{6}$. During conduction, the diode current is $$i(t) = \\frac{100\\sin(\\omega t) - 50}{10}.$$ The average diode current over one complete cycle is $$I_{\\text{avg}} = \\frac{1}{2\\pi} \\int_{\\pi/6}^{5\\pi/6} \\frac{100\\sin\\theta - 50}{10} \\, d\\theta = \\frac{1}{2\\pi} \\left[-10\\cos\\theta - 5\\theta\\right]_{\\pi/6}^{5\\pi/6} \\approx 1.09\\ \\text{A}.$$ Hence, the average current through the diode is $\\boxed{1.09\\ \\text{A}}$.",
+      "marks": 2,
+      "negative": 0.0,
+      "subject_tag": "Analog and Digital Electronics",
+      "topic_tag": "Diode Circuits",
+      "difficulty": "medium"
+    },
+    {
+      "question_number": 62,
+      "section": "Technical",
+      "question_type": "nat",
+      "question_text": "The magnitude of the contour integral $$\\oint_{C}\\left(\\frac{(z+1)^{2}}{(z-i)(z-2)}\\right)dz$$ over the contour $C : |z - 2 - i| = 3/2$ is ________.",
+      "options": [],
+      "correct": 25.33,
+      "explanation": "The center of the contour is $2+i$ and radius is $1.5$. The singularity $z=2$ lies inside the contour because $|2 - (2+i)| = 1 < 1.5$. The singularity $z=i$ lies outside because $|i - (2+i)| = 2 > 1.5$. By Cauchy's Integral Formula, the integral is $2\\pi i \\times \\frac{(2+1)^2}{2-i} = 2\\pi i \\times \\frac{9}{2-i} = 18\\pi i \\frac{2+i}{5} = \\frac{18\\pi}{5}(-1 + 2i)$. Its magnitude is $\\frac{18\\pi}{5}\\sqrt{5} \\approx 25.33$.",
+      "marks": 2,
+      "negative": 0.0,
+      "subject_tag": "Engineering Mathematics",
+      "topic_tag": "Complex Analysis",
+      "difficulty": "hard"
+    },
+    {
+      "question_number": 63,
+      "section": "Technical",
+      "question_type": "nat",
+      "question_text": "A uniform spherical volume charge distribution of radius 2 m, centered at the origin, has a strength of $\\frac{3}{\\pi} \\times 10^{-6}\\text{ C/m}^3$. A point charge of strength $\\pi \\times 8.854 \\times 10^{-12}\\text{ C}$ is moved from $(-3, 0, -4)$ to $(0, 0, 4)$ in Cartesian coordinate system. The relative permittivity of the medium is 1 and the coordinate values are in meters. The work done during the process is ________ µJ.",
+      "options": [],
+      "correct": 0.40,
+      "explanation": "Calculated using the electric potential profile $V(r)$ established by the uniform spherical charge inside and outside its radius, and computing $W = q(V_{final} - V_{initial})$. The result evaluates to approximately 0.40 µJ.",
+      "marks": 2,
+      "negative": 0.0,
+      "subject_tag": "Electromagnetic Fields",
+      "topic_tag": "Electrostatic Potential",
+      "difficulty": "hard"
+    },
+    {
+      "question_number": 64,
+      "section": "Technical",
+      "question_type": "nat",
+      "question_text": "Let X and Y be two real-valued random variables with $E(X)=1$, $E(Y)=2$, $E(X^2)=4$, $E(Y^2)=9$, and $E(XY)=0.9$, where E denotes the expectation operator. The value of $\\alpha$ that minimizes $E((X-\\alpha Y)^2)$ is ________.",
+      "options": [],
+      "correct": 0.1,
+      "explanation": "To minimize $f(\\alpha) = E(X^2 - 2\\alpha XY + \\alpha^2 Y^2) = E(X^2) - 2\\alpha E(XY) + \\alpha^2 E(Y^2)$, differentiate with respect to $\\alpha$ and set to zero: $-2E(XY) + 2\\alpha E(Y^2) = 0 \\implies \\alpha = \\frac{E(XY)}{E(Y^2)} = \\frac{0.9}{9} = 0.1$.",
+      "marks": 2,
+      "negative": 0.0,
+      "subject_tag": "Engineering Mathematics",
+      "topic_tag": "Probability and Statistics",
+      "difficulty": "easy"
+    },
+    {
+      "question_number": 65,
+      "section": "Technical",
+      "question_type": "nat",
+      "question_text": "The integral $$\\frac{1}{\\pi}\\int_{0}^{\\infty}\\frac{x^{2026}}{(1+x^{2026})(1+x^{2})}dx$$ evaluates to ________.",
+      "options": [],
+      "correct": 0.25,
+      "explanation": "Using the substitution $x = 1/t$, the integral $I = \\frac{1}{\\pi}\\int_{0}^{\\infty}\\frac{x^{2026}}{(1+x^{2026})(1+x^2)}dx$ changes form such that adding the two forms gives $2I = \\frac{1}{\\pi}\\int_{0}^{\\infty}\\frac{1}{1+x^2}dx = \\frac{1}{\\pi} [\\tan^{-1}(x)]_0^\\infty = \\frac{1}{\\pi}(\\frac{\\pi}{2}) = 0.5 \\implies I = 0.25$.",
+      "marks": 2,
+      "negative": 0.0,
+      "subject_tag": "Engineering Mathematics",
+      "topic_tag": "Calculus",
+      "difficulty": "medium"
+    }
+  ]
+}

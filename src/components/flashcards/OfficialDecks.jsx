@@ -1,20 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import { Library, FolderOpen, Download, Play } from 'lucide-react';
 import { flashcards as flashcardsApi } from '../../services/api';
+import { useDiagnosticStore } from '../../store/useDiagnosticStore';
+import { useExam } from '../../contexts/ExamContext';
 
-const OfficialDecks = ({ toolId, onStudyOfficial }) => {
+const OfficialDecks = ({ toolId, user, onStudyOfficial, onGuestFeatureGate }) => {
     const [materials, setMaterials] = useState([]);
     const [loading, setLoading] = useState(true);
     const [importingId, setImportingId] = useState(null);
 
+    const diagnosticSubjectId = useDiagnosticStore(state => state.subjectId);
+    // Use ExamContext to get the reliably updated active exam slug for logged-in users
+    const { activeExam, loading: examLoading } = useExam() || {}; 
+
     useEffect(() => {
+        if (examLoading) return; // Wait for exam context to load
         loadOfficialDecks();
-    }, []);
+    }, [activeExam, diagnosticSubjectId, examLoading]);
 
     const loadOfficialDecks = async () => {
         try {
             setLoading(true);
-            const data = await flashcardsApi.getOfficialDecks();
+            let examSlug = activeExam?.slug;
+            // Ignore generic 'GATE' default value if somehow it leaked here
+            if (!examSlug || examSlug.toLowerCase() === 'gate') {
+                examSlug = diagnosticSubjectId;
+            }
+            const data = await flashcardsApi.getOfficialDecks(examSlug);
             setMaterials(data || []);
         } catch (err) {
             console.error('Failed to load official decks', err);
@@ -24,6 +36,13 @@ const OfficialDecks = ({ toolId, onStudyOfficial }) => {
     };
 
     const handleImport = async (materialId, title) => {
+        if (!user && onGuestFeatureGate) {
+            onGuestFeatureGate(
+                "Login to Import Official Decks",
+                "Create a free account to save curated flashcard decks, track your mastery, and use our Spaced Repetition engine."
+            );
+            return;
+        }
         if (!confirm(`Import "${title}" to your personal Flashcard Decks?`)) return;
         
         try {
@@ -32,7 +51,8 @@ const OfficialDecks = ({ toolId, onStudyOfficial }) => {
             alert('Deck successfully imported! You can now access it in the "My Decks" tab.');
         } catch (err) {
             console.error(err);
-            alert('Failed to import deck.');
+            const errMsg = err.error || err.message || 'Failed to import deck.';
+            alert(errMsg);
         } finally {
             setImportingId(null);
         }

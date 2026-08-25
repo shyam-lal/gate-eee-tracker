@@ -1,0 +1,292 @@
+{
+    "flashcard_materials": [
+        {
+            "exam_name": "GATE EE",
+            "subject_name": "Power Systems ",
+            "topic_name": "Fault Analysis: Symmetrical components, and symmetrical/unsymmetrical fault analysis ",
+            "title": "High-Yield Concepts",
+            "cards": [
+                {
+                    "front": "What is the zero-sequence current \\\\(I_{a0}\\\\) in a 3-phase ungrounded star-connected system?",
+                    "back": "\\\\(I_{a0} = 0\\\\). In an ungrounded system, no neutral return path exists, preventing the flow of zero-sequence currents."
+                },
+                {
+                    "front": "Write the transformation matrix to convert phase currents \\\\(I_a, I_b, I_c\\\\) to symmetrical components \\\\(I_{a0}, I_{a1}, I_{a2}\\\\).",
+                    "back": "$$ \\\\begin{bmatrix} I_{a0} \\\\ I_{a1} \\\\ I_{a2} \\\\end{bmatrix} = \\\\frac{1}{3} \\\\begin{bmatrix} 1 & 1 & 1 \\\\ 1 & a & a^2 \\\\ 1 & a^2 & a \\\\end{bmatrix} \\\\begin{bmatrix} I_a \\\\ I_b \\\\ I_c \\\\end{bmatrix} $$ where \\\\(a = 1\\\\angle 120^\\\\circ\\\\)."
+                },
+                {
+                    "front": "What are the boundary conditions for a single line-to-ground (LG) fault on phase 'a'?",
+                    "back": "\\\\(I_b = 0\\\\), \\\\(I_c = 0\\\\), and \\\\(V_a = I_a Z_f\\\\). In terms of symmetrical components: \\\\(I_{a0} = I_{a1} = I_{a2} = \\\\frac{I_a}{3}\\\\)."
+                },
+                {
+                    "front": "How are the sequence networks connected for a Single Line-to-Ground (LG) fault?",
+                    "back": "The positive, negative, and zero sequence networks are connected in **series**."
+                },
+                {
+                    "front": "What is the fault current \\\\(I_f\\\\) for a solid Single Line-to-Ground (LG) fault on phase 'a' in an unloaded generator?",
+                    "back": "$$I_f = \\\\frac{3 E_a}{Z_1 + Z_2 + Z_0}$$"
+                },
+                {
+                    "front": "What are the boundary conditions for a Line-to-Line (LL) fault between phases 'b' and 'c'?",
+                    "back": "\\\\(I_a = 0\\\\), \\\\(I_b = -I_c\\\\), and \\\\(V_b = V_c\\\\) (for a solid fault). Sequence currents: \\\\(I_{a0} = 0\\\\) and \\\\(I_{a1} = -I_{a2}\\\\)."
+                },
+                {
+                    "front": "How are the sequence networks connected for a Line-to-Line (LL) fault?",
+                    "back": "The positive and negative sequence networks are connected in **parallel**. The zero sequence network is completely isolated."
+                },
+                {
+                    "front": "What is the fault current \\\\(I_f\\\\) for a solid Line-to-Line (LL) fault between phases b and c?",
+                    "back": "$$I_f = -j \\\\sqrt{3} \\\\frac{E_a}{Z_1 + Z_2}$$ (assuming phase 'a' is the reference)."
+                },
+                {
+                    "front": "How are the sequence networks connected for a Double Line-to-Ground (LLG) fault?",
+                    "back": "The positive, negative, and zero sequence networks are connected in **parallel**."
+                },
+                {
+                    "front": "In which type of fault is the fault current potentially higher than a 3-phase symmetrical fault at the generator terminals?",
+                    "back": "A Single Line-to-Ground (LG) fault can have a higher fault current than a 3-phase fault if the generator is solidly grounded, because usually \\\\(Z_0 < Z_1\\\\) for a synchronous generator."
+                }
+            ]
+        },
+        {
+            "exam_name": "GATE EE",
+            "subject_name": "Electrical Machines ",
+            "topic_name": "Induction Machines: Principles, torque-speed characteristics, starting, and speed control ",
+            "title": "High-Yield Concepts",
+            "cards": [
+                {
+                    "front": "What is the formula for the synchronous speed \\\\(N_s\\\\) of a 3-phase induction motor?",
+                    "back": "$$N_s = \\\\frac{120 f}{P}$$ where \\\\(f\\\\) is the supply frequency in Hz and \\\\(P\\\\) is the number of poles."
+                },
+                {
+                    "front": "Define the slip \\\\(s\\\\) of an induction motor.",
+                    "back": "$$s = \\\\frac{N_s - N_r}{N_s}$$ where \\\\(N_s\\\\) is synchronous speed and \\\\(N_r\\\\) is rotor speed."
+                },
+                {
+                    "front": "What is the frequency of the rotor currents \\\\(f_r\\\\) in an induction motor?",
+                    "back": "$$f_r = s f$$ where \\\\(s\\\\) is the slip and \\\\(f\\\\) is the stator supply frequency."
+                },
+                {
+                    "front": "Write the condition for maximum torque in a 3-phase induction motor.",
+                    "back": "Maximum torque occurs when the rotor resistance equals the rotor standstill reactance: $$R_2 = s_m X_2$$ or $$s_m = \\\\frac{R_2}{X_2}$$."
+                },
+                {
+                    "front": "How is the starting torque \\\\(T_{st}\\\\) of a 3-phase induction motor related to the supply voltage \\\\(V\\\\)?",
+                    "back": "The starting torque is directly proportional to the square of the supply voltage: $$T_{st} \\\\propto V^2$$."
+                },
+                {
+                    "front": "In the torque-speed curve, what happens to the maximum torque \\\\(T_{max}\\\\) if the rotor resistance is increased?",
+                    "back": "The magnitude of the maximum torque \\\\(T_{max}\\\\) remains constant, but the slip at which it occurs (\\\\(s_m\\\\)) increases."
+                },
+                {
+                    "front": "What is the ratio of starting torque \\\\(T_{st}\\\\) to maximum torque \\\\(T_{max}\\\\) in terms of slip at maximum torque \\\\(s_m\\\\)?",
+                    "back": "$$\\\\frac{T_{st}}{T_{max}} = \\\\frac{2 s_m}{1 + s_m^2}$$ (assuming negligible stator impedance)."
+                },
+                {
+                    "front": "Explain the 'Crawling' phenomenon in squirrel cage induction motors.",
+                    "back": "Crawling is the tendency of the motor to run stably at a very low speed (typically \\\\(1/7\\\\) of synchronous speed) due to the presence of 7th space harmonic fields in the air gap."
+                },
+                {
+                    "front": "What is 'Cogging' or magnetic locking in an induction motor?",
+                    "back": "It is the failure of the motor to start, occurring when the number of stator slots is equal to or an integral multiple of the number of rotor slots, causing strong alignment forces."
+                },
+                {
+                    "front": "In V/f control of an induction motor below base speed, why is the V/f ratio kept constant?",
+                    "back": "To maintain a constant air-gap flux ($$\\\\Phi \\\\propto \\\\frac{V}{f}$$), which ensures that the maximum torque capability of the motor remains constant and prevents core saturation."
+                }
+            ]
+        },
+        {
+            "exam_name": "GATE EE",
+            "subject_name": "Engineering Mathematics ",
+            "topic_name": "Differential Equations: First/higher order ODEs, Cauchy/Euler equations, and PDEs ",
+            "title": "High-Yield Concepts",
+            "cards": [
+                {
+                    "front": "What is the integrating factor (IF) for the linear first-order ODE \\\\(\\\\frac{dy}{dx} + P(x)y = Q(x)\\\\)?",
+                    "back": "$$IF = e^{\\\\int P(x) dx}$$"
+                },
+                {
+                    "front": "What is the substitution used to solve a Cauchy-Euler (equidimensional) differential equation of the form \\\\(x^2 y'' + a x y' + b y = 0\\\\)?",
+                    "back": "Substitute \\\\(x = e^z\\\\) or \\\\(z = \\\\ln x\\\\), which transforms it into a linear differential equation with constant coefficients."
+                },
+                {
+                    "front": "How do the derivatives transform under the substitution \\\\(x = e^z\\\\) in a Cauchy-Euler equation?",
+                    "back": "$$x \\\\frac{dy}{dx} = \\\\frac{dy}{dz}$$ and $$x^2 \\\\frac{d^2y}{dx^2} = \\\\frac{d^2y}{dz^2} - \\\\frac{dy}{dz}$$"
+                },
+                {
+                    "front": "What is the condition for the differential equation \\\\(M(x,y)dx + N(x,y)dy = 0\\\\) to be exact?",
+                    "back": "The necessary and sufficient condition is $$\\\\frac{\\\\partial M}{\\\\partial y} = \\\\frac{\\\\partial N}{\\\\partial x}$$."
+                },
+                {
+                    "front": "If the roots of the auxiliary equation for a second-order linear homogeneous ODE are complex conjugates \\\\(\\\\alpha \\\\pm i\\\\beta\\\\), what is the general solution?",
+                    "back": "$$y(x) = e^{\\\\alpha x} (C_1 \\\\cos \\\\beta x + C_2 \\\\sin \\\\beta x)$$"
+                },
+                {
+                    "front": "Define the Wronskian \\\\(W(y_1, y_2)\\\\) of two solutions to a second-order linear ODE.",
+                    "back": "$$W(y_1, y_2) = y_1 y_2' - y_1' y_2$$. If \\\\(W \\\\neq 0\\\\), the solutions are linearly independent."
+                },
+                {
+                    "front": "What is the standard form of the 1D Wave Equation?",
+                    "back": "$$\\\\frac{\\\\partial^2 u}{\\\\partial t^2} = c^2 \\\\frac{\\\\partial^2 u}{\\\\partial x^2}$$ where \\\\(c\\\\) is the wave propagation speed."
+                },
+                {
+                    "front": "What is the standard form of the 1D Heat Equation (Diffusion Equation)?",
+                    "back": "$$\\\\frac{\\\\partial u}{\\\\partial t} = \\\\alpha \\\\frac{\\\\partial^2 u}{\\\\partial x^2}$$ where \\\\(\\\\alpha\\\\) is the thermal diffusivity."
+                },
+                {
+                    "front": "What is the standard form of the 2D Laplace Equation?",
+                    "back": "$$\\\\nabla^2 u = \\\\frac{\\\\partial^2 u}{\\\\partial x^2} + \\\\frac{\\\\partial^2 u}{\\\\partial y^2} = 0$$"
+                },
+                {
+                    "front": "State the Bernoulli differential equation form (non-linear first order ODE).",
+                    "back": "$$\\\\frac{dy}{dx} + P(x)y = Q(x)y^n$$. It is linearized by substituting \\\\(v = y^{1-n}\\\\)."
+                }
+            ]
+        },
+        {
+            "exam_name": "GATE CS",
+            "subject_name": "Algorithms ",
+            "topic_name": "Searching, sorting, hashing, and asymptotic complexity ",
+            "title": "High-Yield Concepts",
+            "cards": [
+                {
+                    "front": "What is the worst-case time complexity of QuickSort?",
+                    "back": "$$\\mathcal{O}(n^2)$$"
+                },
+                {
+                    "front": "Which sorting algorithms are inherently stable?",
+                    "back": "Merge Sort, Insertion Sort, and Bubble Sort."
+                },
+                {
+                    "front": "What is the expected time complexity for search, insert, and delete operations in a Hash Table with chaining (assuming simple uniform hashing)?",
+                    "back": "$$\\mathcal{O}(1)$$ (on average)."
+                },
+                {
+                    "front": "Define the Master Theorem case when \\(f(n) = \\Theta(n^{\\log_b a})\\) for the recurrence \\(T(n) = aT(n/b) + f(n)\\).",
+                    "back": "$$T(n) = \\Theta(n^{\\log_b a} \\log n)$$"
+                },
+                {
+                    "front": "What is the lower bound time complexity for any comparison-based sorting algorithm?",
+                    "back": "$$\\Omega(n \\log n)$$"
+                },
+                {
+                    "front": "In a max-heap of size \\(n\\), what is the time complexity to extract the maximum element?",
+                    "back": "$$\\mathcal{O}(\\log n)$$"
+                },
+                {
+                    "front": "How does Double Hashing resolve collisions?",
+                    "back": "It uses a secondary hash function to calculate the step size (probe sequence) for finding an empty slot: $$h(k, i) = (h_1(k) + i \\cdot h_2(k)) \\pmod m$$"
+                },
+                {
+                    "front": "What is the time complexity to build a binary heap from an unsorted array of \\(n\\) elements using the standard bottom-up approach (heapify)?",
+                    "back": "$$\\mathcal{O}(n)$$"
+                },
+                {
+                    "front": "Identify the relationship: if \\(f(n) = \\mathcal{O}(g(n))\\) and \\(f(n) = \\Omega(g(n))\\), then...",
+                    "back": "$$f(n) = \\Theta(g(n))$$"
+                },
+                {
+                    "front": "What is the worst-case time complexity of finding an element in a Binary Search Tree (BST)?",
+                    "back": "$$\\mathcal{O}(n)$$ (occurs when the tree is highly unbalanced/skewed)."
+                }
+            ]
+        },
+        {
+            "exam_name": "GATE CS",
+            "subject_name": "Theory of Computation ",
+            "topic_name": "Regular expressions and finite automata ",
+            "title": "High-Yield Concepts",
+            "cards": [
+                {
+                    "front": "What class of languages is recognized by Deterministic Finite Automata (DFA)?",
+                    "back": "Regular Languages."
+                },
+                {
+                    "front": "Are Nondeterministic Finite Automata (NFA) more powerful (can recognize more languages) than DFAs?",
+                    "back": "No. Every NFA can be converted to an equivalent DFA. They recognize exactly the same class of languages (Regular Languages)."
+                },
+                {
+                    "front": "Is the class of Regular Languages closed under intersection and complementation?",
+                    "back": "Yes, Regular Languages are closed under both intersection and complementation (as well as union, concatenation, and Kleene star)."
+                },
+                {
+                    "front": "What does Arden's Theorem state for solving equations of regular expressions of the form \\(R = Q + RP\\)?",
+                    "back": "If \\(P\\) does not contain the empty string (\\(\\epsilon\\)), then the equation has a unique solution: $$R = QP^*$$"
+                },
+                {
+                    "front": "What is the minimum number of states required in a DFA to accept the language of all strings over \\(\\{a,b\\}\\) of length exactly \\(n\\)?",
+                    "back": "It requires exactly \\(n + 2\\) states."
+                },
+                {
+                    "front": "What is the primary use of the Myhill-Nerode theorem?",
+                    "back": "It provides a necessary and sufficient condition for a language to be regular and is used to construct the minimal DFA for a regular language."
+                },
+                {
+                    "front": "If \\(L_1\\) and \\(L_2\\) are regular languages, is the language \\(L_1 / L_2\\) (right quotient) necessarily regular?",
+                    "back": "Yes, the right quotient of two regular languages is regular."
+                },
+                {
+                    "front": "What happens if you convert an NFA with \\(n\\) states to a DFA using the subset construction method?",
+                    "back": "The resulting DFA can have up to \\(2^n\\) states in the worst-case scenario."
+                },
+                {
+                    "front": "Is the language \\(\\{a^n b^n \\mid n \\ge 0\\}\\) a regular language?",
+                    "back": "No, it requires memory to count the number of 'a's, which a finite automaton cannot do. (It is a context-free language)."
+                },
+                {
+                    "front": "What string is denoted by the regular expression \\(\\emptyset^*\\)?",
+                    "back": "The set containing only the empty string: \\(\\{\\epsilon\\}\\)."
+                }
+            ]
+        },
+        {
+            "exam_name": "GATE CS",
+            "subject_name": "Databases ",
+            "topic_name": "Integrity constraints and normal forms ",
+            "title": "High-Yield Concepts",
+            "cards": [
+                {
+                    "front": "What is a Primary Key?",
+                    "back": "A candidate key chosen by the database designer to uniquely identify tuples in a relation. It cannot contain NULL values."
+                },
+                {
+                    "front": "Define Referential Integrity.",
+                    "back": "A rule stating that any foreign key value in a referencing relation must either match a primary key value in the referenced relation or be NULL."
+                },
+                {
+                    "front": "What constitutes the First Normal Form (1NF)?",
+                    "back": "A relation is in 1NF if all its attributes contain only atomic (indivisible) values; no multi-valued attributes or repeating groups are allowed."
+                },
+                {
+                    "front": "What is the condition for a relation to be in Second Normal Form (2NF)?",
+                    "back": "It must be in 1NF, and every non-prime attribute must be fully functionally dependent on the entire primary key (no partial dependencies)."
+                },
+                {
+                    "front": "Define Third Normal Form (3NF).",
+                    "back": "It must be in 2NF, and no non-prime attribute is transitively dependent on the primary key. Alternatively: for every functional dependency \\(X \\to Y\\), either \\(X\\) is a superkey, or \\(Y\\) is a prime attribute."
+                },
+                {
+                    "front": "What is the strict rule for Boyce-Codd Normal Form (BCNF)?",
+                    "back": "For every non-trivial functional dependency \\(X \\to Y\\), \\(X\\) MUST be a superkey."
+                },
+                {
+                    "front": "Which normal form guarantees both lossless join decomposition and dependency preservation?",
+                    "back": "Third Normal Form (3NF). BCNF guarantees lossless join but may not always preserve dependencies."
+                },
+                {
+                    "front": "What is a 'prime attribute'?",
+                    "back": "An attribute that is part of ANY candidate key of the relation."
+                },
+                {
+                    "front": "What problem does Fourth Normal Form (4NF) address?",
+                    "back": "It addresses anomalies caused by Multi-valued Dependencies (MVDs). A relation is in 4NF if, for every non-trivial MVD \\(X \\twoheadrightarrow Y\\), \\(X\\) is a superkey."
+                },
+                {
+                    "front": "How do you check if a decomposition \\(R_1, R_2\\) of relation \\(R\\) is lossless?",
+                    "back": "The intersection of \\(R_1\\) and \\(R_2\\) must be a superkey for either \\(R_1\\) or \\(R_2\\). Formally: \\((R_1 \\cap R_2) \\to R_1\\) OR \\((R_1 \\cap R_2) \\to R_2\\)."
+                }
+            ]
+        }
+    ]
+}

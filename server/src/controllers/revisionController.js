@@ -16,6 +16,20 @@ exports.createSet = async (req, res) => {
     }
 };
 
+exports.generateCustomTest = async (req, res) => {
+    try {
+        const { subjects, difficulty, numQuestions } = req.body;
+        if (!subjects || !Array.isArray(subjects) || subjects.length === 0) {
+            return res.status(400).json({ error: 'Subjects array is required' });
+        }
+        const set = await revisionService.generateCustomTest(req.user.id, { subjects, difficulty, numQuestions });
+        res.json(set);
+    } catch (err) {
+        console.error('generateCustomTest error:', err);
+        res.status(500).json({ error: 'Failed to generate custom test' });
+    }
+};
+
 exports.getUserSets = async (req, res) => {
     try {
         const sets = await revisionService.getUserSets(req.user.id, req.query.exam_id || null);

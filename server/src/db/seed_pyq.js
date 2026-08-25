@@ -2,8 +2,8 @@
  * seed_pyq.js — Ingest PYQ questions from a JSON file into the database.
  *
  * Usage:
- *   node seed_pyq.js ./pyq_data/gate_ee_2024.json
- *   node seed_pyq.js ./pyq_data/gate_ee_2023.json --publish
+ *   node server/src/db/seed_pyq.js server/src/db/templates/pyq/pyq_ee-2026_template.json
+ *   node server/src/db/seed_pyq.js pyq_ee-2026_template.json --publish
  *
  * JSON format:
  * {
@@ -46,7 +46,13 @@ async function seedPYQ(filePath, publish = false) {
     const client = await pool.connect();
 
     try {
-        const raw = fs.readFileSync(path.resolve(filePath), 'utf8');
+        let resolvedPath = path.resolve(filePath);
+        if (!fs.existsSync(resolvedPath)) {
+            // Fallback to the templates directory if just a filename was provided
+            resolvedPath = path.join(__dirname, 'templates', 'pyq', filePath);
+        }
+        
+        const raw = fs.readFileSync(resolvedPath, 'utf8');
         const data = JSON.parse(raw);
 
         if (!data.paper || !data.questions) {
@@ -89,8 +95,35 @@ async function seedPYQ(filePath, publish = false) {
 
         // Insert questions
         let inserted = 0;
+        
+        const ALLOWED_GA_TOPICS = [
+            "English Grammar", "Vocabulary & Idioms", "Reading Comprehension", "Narrative Sequencing",
+            "Data Interpretation", "Numerical Computation", "Permutations & Combinations", "Series & Progressions", "Mensuration & Geometry", "Elementary Statistics & Probability",
+            "Logical Reasoning", "Analogy", "Numerical Relations & Reasoning",
+            "Shape Transformations", "Paper Folding & Cutting", "2D & 3D Patterns"
+        ];
+
+        const ALLOWED_EE_SUBJECTS = [
+            "Engineering Mathematics", "Electric Circuits", "Electromagnetic Fields",
+            "Signals and Systems", "Electrical Machines", "Power Systems", 
+            "Control Systems", "Electrical and Electronic Measurements", 
+            "Analog and Digital Electronics", "Power Electronics"
+        ];
+
         for (let i = 0; i < data.questions.length; i++) {
             const q = data.questions[i];
+            
+            // Validate General Aptitude topic tags strictly
+            if (q.section === 'General Aptitude' || q.subject_tag === 'General Aptitude') {
+                if (!ALLOWED_GA_TOPICS.includes(q.topic_tag)) {
+                    throw new Error(`\n❌ Validation Error: Invalid topic_tag "${q.topic_tag}" at Question ${q.question_number || i+1}. \nAllowed GA tags are: ${ALLOWED_GA_TOPICS.join(', ')}\n`);
+                }
+            } else {
+                // Validate EE Subject tags
+                if (!ALLOWED_EE_SUBJECTS.includes(q.subject_tag)) {
+                    throw new Error(`\n❌ Validation Error: Invalid EE subject_tag "${q.subject_tag}" at Question ${q.question_number || i+1}. \nAllowed EE subjects are: ${ALLOWED_EE_SUBJECTS.join(', ')}\n`);
+                }
+            }
             await client.query(
                 `INSERT INTO pyq_questions
                  (paper_id, question_number, section, question_type, question_text, options, correct_answer,
@@ -135,8 +168,8 @@ const filePath = args.find(a => !a.startsWith('--'));
 const publish = args.includes('--publish');
 
 if (!filePath) {
-    console.log('Usage: node seed_pyq.js <path-to-json> [--publish]');
-    console.log('Example: node seed_pyq.js ./pyq_data/gate_ee_2024.json --publish');
+    console.log('Usage: node server/src/db/seed_pyq.js <path-to-json> [--publish]');
+    console.log('Example: node server/src/db/seed_pyq.js pyq_ee-2026_template.json --publish');
     process.exit(1);
 }
 

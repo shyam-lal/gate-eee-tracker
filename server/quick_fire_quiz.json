@@ -1,0 +1,2252 @@
+[
+  {
+    "subject_slug": "computer-science",
+    "questions": [
+      {
+        "topic_slug": "data-structures",
+        "difficulty": "medium",
+        "question_text": "Which data structure is best suited for efficiently implementing a priority queue?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Linked List"
+          },
+          {
+            "id": "b",
+            "text": "Stack"
+          },
+          {
+            "id": "c",
+            "text": "Heap"
+          },
+          {
+            "id": "d",
+            "text": "Array"
+          }
+        ],
+        "correct_option_id": "c",
+        "explanation": "A heap is a specialized tree-based data structure that allows for efficient insertion and extraction of the maximum or minimum element (in O(log n) time), making it the most optimal choice for priority queues.",
+        "related_feature_recommendation": {
+          "feature": "Flashcards",
+          "action_text": "Review data-structures Flashcard Deck"
+        }
+      },
+      {
+        "topic_slug": "operating-systems",
+        "difficulty": "medium",
+        "question_text": "What is the primary purpose of a Translation Lookaside Buffer (TLB) in a paging system?",
+        "options": [
+          {
+            "id": "a",
+            "text": "To cache frequently used page table entries"
+          },
+          {
+            "id": "b",
+            "text": "To store the entire page table in cache"
+          },
+          {
+            "id": "c",
+            "text": "To translate virtual addresses to logical addresses"
+          },
+          {
+            "id": "d",
+            "text": "To manage page swapping to the hard disk"
+          }
+        ],
+        "correct_option_id": "a",
+        "explanation": "A TLB is a high-speed memory cache that stores recent translations of virtual memory to physical memory, greatly reducing the time taken to access a user memory location.",
+        "related_feature_recommendation": {
+          "feature": "Video Lectures",
+          "action_text": "Watch Memory Management and TLB Video Module"
+        }
+      },
+      {
+        "topic_slug": "computer-networks",
+        "difficulty": "medium",
+        "question_text": "Which of the following protocols operates specifically at the Transport layer of the OSI model?",
+        "options": [
+          {
+            "id": "a",
+            "text": "HTTP"
+          },
+          {
+            "id": "b",
+            "text": "IP"
+          },
+          {
+            "id": "c",
+            "text": "TCP"
+          },
+          {
+            "id": "d",
+            "text": "Ethernet"
+          }
+        ],
+        "correct_option_id": "c",
+        "explanation": "TCP (Transmission Control Protocol) operates at the Transport layer, providing reliable, ordered, and error-checked delivery of a stream of octets between applications.",
+        "related_feature_recommendation": {
+          "feature": "Mock Tests",
+          "action_text": "Take computer-networks Layer Protocols Mock Test"
+        }
+      },
+      {
+        "topic_slug": "database-management-systems",
+        "difficulty": "medium",
+        "question_text": "In relational databases, what does the ACID property 'Isolation' guarantee?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Committed transactions are permanently recorded."
+          },
+          {
+            "id": "b",
+            "text": "Concurrent execution of transactions leaves the database in the same state as if executed sequentially."
+          },
+          {
+            "id": "c",
+            "text": "Data remains completely consistent before and after a transaction."
+          },
+          {
+            "id": "d",
+            "text": "All operations in a transaction succeed entirely, or every operation is rolled back."
+          }
+        ],
+        "correct_option_id": "b",
+        "explanation": "Isolation ensures that the concurrent execution of multiple transactions results in a system state that would be exactly the same if the transactions were executed serially, preventing data corruption.",
+        "related_feature_recommendation": {
+          "feature": "Concept Notes",
+          "action_text": "Read Transaction Management & ACID Properties Notes"
+        }
+      },
+      {
+        "topic_slug": "theory-of-computation",
+        "difficulty": "medium",
+        "question_text": "According to the Chomsky hierarchy, which type of grammar generates regular languages?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Type 0"
+          },
+          {
+            "id": "b",
+            "text": "Type 1"
+          },
+          {
+            "id": "c",
+            "text": "Type 2"
+          },
+          {
+            "id": "d",
+            "text": "Type 3"
+          }
+        ],
+        "correct_option_id": "d",
+        "explanation": "In the Chomsky hierarchy, Type 3 grammars (also known as regular grammars) generate regular languages. These languages can be computationally recognized by finite state automata.",
+        "related_feature_recommendation": {
+          "feature": "Practice Problems",
+          "action_text": "Solve theory-of-computation Practice Set"
+        }
+      }
+    ]
+  },
+  {
+    "subject_slug": "aerospace-engineering",
+    "questions": [
+      {
+        "topic_slug": "flight-mechanics",
+        "difficulty": "medium",
+        "question_text": "Which of the following aerodynamic metrics primarily determines the maximum range and endurance of an airplane during steady cruise?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Lift-to-weight ratio"
+          },
+          {
+            "id": "b",
+            "text": "Lift-to-drag ratio"
+          },
+          {
+            "id": "c",
+            "text": "Thrust-to-weight ratio"
+          },
+          {
+            "id": "d",
+            "text": "Thrust-to-drag ratio"
+          }
+        ],
+        "correct_option_id": "b",
+        "explanation": "The lift-to-drag ratio (L/D) is a measure of aerodynamic efficiency. A higher L/D minimizes the thrust required to maintain steady flight, thereby extending both the range and endurance of an aircraft.",
+        "related_feature_recommendation": {
+          "feature": "Mock Tests",
+          "action_text": "Take airplane-performance Mock Test"
+        }
+      },
+      {
+        "topic_slug": "space-dynamics",
+        "difficulty": "medium",
+        "question_text": "According to Kepler's laws of planetary motion, what quantity remains constant for a satellite in an elliptical orbit around a central body?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Orbital velocity"
+          },
+          {
+            "id": "b",
+            "text": "Kinetic energy"
+          },
+          {
+            "id": "c",
+            "text": "Areal velocity"
+          },
+          {
+            "id": "d",
+            "text": "Escape velocity"
+          }
+        ],
+        "correct_option_id": "c",
+        "explanation": "Kepler's second law dictates that a line segment joining a planet and the Sun sweeps out equal areas during equal intervals of time, meaning its areal velocity remains constant throughout the elliptical orbit.",
+        "related_feature_recommendation": {
+          "feature": "Concept Notes",
+          "action_text": "Read Kepler's Laws Concept Notes"
+        }
+      },
+      {
+        "topic_slug": "aerodynamics",
+        "difficulty": "medium",
+        "question_text": "According to thin airfoil theory, what is the theoretical lift coefficient for a symmetric airfoil at a zero degree angle of attack?",
+        "options": [
+          {
+            "id": "a",
+            "text": "2 * pi"
+          },
+          {
+            "id": "b",
+            "text": "1.0"
+          },
+          {
+            "id": "c",
+            "text": "0.0"
+          },
+          {
+            "id": "d",
+            "text": "Infinity"
+          }
+        ],
+        "correct_option_id": "c",
+        "explanation": "For a strictly symmetric airfoil at a zero angle of attack, the airflow is perfectly symmetrical over the upper and lower surfaces. This results in no net pressure difference and a lift coefficient of exactly 0.",
+        "related_feature_recommendation": {
+          "feature": "Video Lectures",
+          "action_text": "Watch Thin Airfoil Theory Video Module"
+        }
+      },
+      {
+        "topic_slug": "structures",
+        "difficulty": "medium",
+        "question_text": "When predicting the failure of ductile materials, which of the following failure theories is considered the most conservative?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Maximum Principal Stress Theory (Rankine)"
+          },
+          {
+            "id": "b",
+            "text": "Maximum Shear Stress Theory (Tresca)"
+          },
+          {
+            "id": "c",
+            "text": "Maximum Distortion Energy Theory (von Mises)"
+          },
+          {
+            "id": "d",
+            "text": "Maximum Principal Strain Theory (St. Venant)"
+          }
+        ],
+        "correct_option_id": "b",
+        "explanation": "The Tresca (Maximum Shear Stress) yield criterion is more conservative than the von Mises theory because its failure envelope (a hexagon) is inscribed entirely within the von Mises yield ellipse.",
+        "related_feature_recommendation": {
+          "feature": "Flashcards",
+          "action_text": "Review Failure Theories Flashcard Deck"
+        }
+      },
+      {
+        "topic_slug": "propulsion",
+        "difficulty": "medium",
+        "question_text": "Which fundamental thermodynamic cycle represents the ideal operational process of an aircraft turbojet engine?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Otto cycle"
+          },
+          {
+            "id": "b",
+            "text": "Carnot cycle"
+          },
+          {
+            "id": "c",
+            "text": "Diesel cycle"
+          },
+          {
+            "id": "d",
+            "text": "Brayton cycle"
+          }
+        ],
+        "correct_option_id": "d",
+        "explanation": "The ideal turbojet engine operates on the Brayton cycle, which consists of isentropic compression in the compressor, isobaric heat addition in the combustor, and isentropic expansion in the turbine and exhaust nozzle.",
+        "related_feature_recommendation": {
+          "feature": "Practice Problems",
+          "action_text": "Solve Brayton Cycle Practice Set"
+        }
+      }
+    ]
+  },
+  {
+    "subject_slug": "agricultural-engineering",
+    "questions": [
+      {
+        "topic_slug": "farm-machinery",
+        "difficulty": "medium",
+        "question_text": "Which of the following parameters evaluates the actual rate of coverage by a farm machine under field conditions, accounting for time lost during turns and adjustments?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Theoretical field capacity"
+          },
+          {
+            "id": "b",
+            "text": "Effective field capacity"
+          },
+          {
+            "id": "c",
+            "text": "Field efficiency"
+          },
+          {
+            "id": "d",
+            "text": "Application rate"
+          }
+        ],
+        "correct_option_id": "b",
+        "explanation": "Effective field capacity is the actual average rate of coverage by a machine (e.g., hectares per hour) during operation, which includes all productive and non-productive time losses in the field.",
+        "related_feature_recommendation": {
+          "feature": "Mock Tests",
+          "action_text": "Take farm-machinery Performance Mock Test"
+        }
+      },
+      {
+        "topic_slug": "farm-power",
+        "difficulty": "medium",
+        "question_text": "In a tractor's power transmission system, what is the primary function of the differential?",
+        "options": [
+          {
+            "id": "a",
+            "text": "To transmit power directly from the engine to the PTO shaft"
+          },
+          {
+            "id": "b",
+            "text": "To provide a final speed reduction before the drive wheels"
+          },
+          {
+            "id": "c",
+            "text": "To allow the inner and outer rear wheels to rotate at different speeds during a turn"
+          },
+          {
+            "id": "d",
+            "text": "To engage and disengage power from the engine to the gearbox"
+          }
+        ],
+        "correct_option_id": "c",
+        "explanation": "The differential is a special gear arrangement located between the driven wheels that allows them to rotate at different speeds when the tractor is taking a turn, preventing tire slippage.",
+        "related_feature_recommendation": {
+          "feature": "Video Lectures",
+          "action_text": "Watch Tractor Power Transmission Video Module"
+        }
+      },
+      {
+        "topic_slug": "soil-and-water-conservation-engineering",
+        "difficulty": "medium",
+        "question_text": "In hydrology, which of the following infiltration indices represents the constant average rate of infiltration such that the rainfall volume exceeding this rate equals the total direct runoff?",
+        "options": [
+          {
+            "id": "a",
+            "text": "W-index"
+          },
+          {
+            "id": "b",
+            "text": "Phi-index (\u03a6-index)"
+          },
+          {
+            "id": "c",
+            "text": "Runoff coefficient"
+          },
+          {
+            "id": "d",
+            "text": "Infiltration capacity"
+          }
+        ],
+        "correct_option_id": "b",
+        "explanation": "The Phi-index (\u03a6-index) is the average rainfall intensity above which the volume of rainfall equals the volume of runoff, commonly used to estimate excess rainfall in hydrograph analysis.",
+        "related_feature_recommendation": {
+          "feature": "Flashcards",
+          "action_text": "Review Hydrology & Infiltration Flashcard Deck"
+        }
+      },
+      {
+        "topic_slug": "irrigation-and-drainage-engineering",
+        "difficulty": "medium",
+        "question_text": "Which irrigation efficiency term specifically measures the ratio of the volume of water stored in the crop root zone to the volume of water delivered to the field?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Water conveyance efficiency"
+          },
+          {
+            "id": "b",
+            "text": "Water storage efficiency"
+          },
+          {
+            "id": "c",
+            "text": "Water distribution efficiency"
+          },
+          {
+            "id": "d",
+            "text": "Water application efficiency"
+          }
+        ],
+        "correct_option_id": "d",
+        "explanation": "Water application efficiency evaluates how effectively the applied water is retained in the root zone for crop use, omitting conveyance losses outside the field.",
+        "related_feature_recommendation": {
+          "feature": "Concept Notes",
+          "action_text": "Read Irrigation Efficiencies Concept Notes"
+        }
+      },
+      {
+        "topic_slug": "agricultural-process-engineering",
+        "difficulty": "medium",
+        "question_text": "In the size reduction of agricultural produce, which law postulates that the energy required is directly proportional to the new surface area created?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Kick's Law"
+          },
+          {
+            "id": "b",
+            "text": "Rittinger's Law"
+          },
+          {
+            "id": "c",
+            "text": "Bond's Law"
+          },
+          {
+            "id": "d",
+            "text": "Newton's Law"
+          }
+        ],
+        "correct_option_id": "b",
+        "explanation": "Rittinger's Law assumes that the work required for size reduction is directly proportional to the new surface area produced during the comminution of solids.",
+        "related_feature_recommendation": {
+          "feature": "Practice Problems",
+          "action_text": "Solve Size Reduction & Material Handling Practice Set"
+        }
+      }
+    ]
+  },
+  {
+    "subject_slug": "architecture-and-planning",
+    "questions": [
+      {
+        "topic_slug": "construction-and-management",
+        "difficulty": "medium",
+        "question_text": "In project management techniques, what is the primary difference between PERT (Program Evaluation and Review Technique) and CPM (Critical Path Method)?",
+        "options": [
+          {
+            "id": "a",
+            "text": "PERT is deterministic, while CPM is probabilistic."
+          },
+          {
+            "id": "b",
+            "text": "PERT is used primarily for repetitive projects, while CPM is for non-repetitive projects."
+          },
+          {
+            "id": "c",
+            "text": "PERT uses three time estimates for activities, while CPM uses a single deterministic time estimate."
+          },
+          {
+            "id": "d",
+            "text": "CPM focuses solely on cost minimization, whereas PERT focuses on resource allocation."
+          }
+        ],
+        "correct_option_id": "c",
+        "explanation": "PERT is a probabilistic model that utilizes three time estimates (optimistic, pessimistic, and most likely) to manage uncertainties in project duration, whereas CPM is a deterministic model using a single fixed time estimate.",
+        "related_feature_recommendation": {
+          "feature": "Concept Notes",
+          "action_text": "Read Project Management Techniques Notes"
+        }
+      },
+      {
+        "topic_slug": "environmental-planning-and-design",
+        "difficulty": "medium",
+        "question_text": "Which of the following best describes the ecological concept of a 'Carbon Footprint' in environmental planning?",
+        "options": [
+          {
+            "id": "a",
+            "text": "The total physical land area required to support a specific urban population."
+          },
+          {
+            "id": "b",
+            "text": "The total amount of greenhouse gases generated by human actions and activities."
+          },
+          {
+            "id": "c",
+            "text": "The ecological mark left by heavy construction machinery on a building site."
+          },
+          {
+            "id": "d",
+            "text": "The measurement of solid waste produced during the lifecycle of a building."
+          }
+        ],
+        "correct_option_id": "b",
+        "explanation": "A carbon footprint is defined as the total amount of greenhouse gases (including carbon dioxide and methane) that are generated by our actions, an essential metric in climate responsive design and sustainable development.",
+        "related_feature_recommendation": {
+          "feature": "Video Lectures",
+          "action_text": "Watch Climate Change and Built Environment Module"
+        }
+      },
+      {
+        "topic_slug": "history-and-contemporary-architecture",
+        "difficulty": "medium",
+        "question_text": "Which historical architectural style is predominantly characterized by the use of flying buttresses, ribbed vaults, and large stained-glass windows?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Romanesque"
+          },
+          {
+            "id": "b",
+            "text": "Renaissance"
+          },
+          {
+            "id": "c",
+            "text": "Gothic"
+          },
+          {
+            "id": "d",
+            "text": "Baroque"
+          }
+        ],
+        "correct_option_id": "c",
+        "explanation": "Gothic architecture, popular in Europe during the High and Late Middle Ages, is defined by structural innovations like flying buttresses and ribbed vaults, which allowed for increased building height and large stained-glass windows.",
+        "related_feature_recommendation": {
+          "feature": "Flashcards",
+          "action_text": "Review World History of Architecture Flashcards"
+        }
+      },
+      {
+        "topic_slug": "planning-techniques-and-management",
+        "difficulty": "medium",
+        "question_text": "In the context of Geographic Information Systems (GIS) applied to urban planning, what does 'vector data' primarily represent?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Grids of pixels with continuous spatial values, such as elevation or temperature."
+          },
+          {
+            "id": "b",
+            "text": "Discrete geographic features represented by points, lines, and polygons."
+          },
+          {
+            "id": "c",
+            "text": "Raw satellite imagery captured directly by remote sensing platforms."
+          },
+          {
+            "id": "d",
+            "text": "Tabular socio-economic survey data lacking explicit spatial coordinates."
+          }
+        ],
+        "correct_option_id": "b",
+        "explanation": "In GIS, vector data uses coordinates to represent discrete geographic features like points (e.g., a lamppost), lines (e.g., roads), and polygons (e.g., land parcels or lakes).",
+        "related_feature_recommendation": {
+          "feature": "Practice Problems",
+          "action_text": "Solve GIS and Remote Sensing Practice Set"
+        }
+      },
+      {
+        "topic_slug": "housing",
+        "difficulty": "medium",
+        "question_text": "The 'Neighbourhood Unit' concept, which advocates for a residential area centered around a primary school and safely bounded by arterial roads, was formulated by:",
+        "options": [
+          {
+            "id": "a",
+            "text": "Le Corbusier"
+          },
+          {
+            "id": "b",
+            "text": "Ebenezer Howard"
+          },
+          {
+            "id": "c",
+            "text": "Clarence Perry"
+          },
+          {
+            "id": "d",
+            "text": "Patrick Geddes"
+          }
+        ],
+        "correct_option_id": "c",
+        "explanation": "Clarence Perry developed the 'Neighbourhood Unit' concept in the 1920s as a framework for urban planning, emphasizing community-centric design with safe pedestrian access to local schools and amenities.",
+        "related_feature_recommendation": {
+          "feature": "Mock Tests",
+          "action_text": "Take Housing and Neighbourhoods Mock Test"
+        }
+      }
+    ]
+  },
+  {
+    "subject_slug": "biomedical-engineering",
+    "questions": [
+      {
+        "topic_slug": "sensors-and-bioinstrumentation",
+        "difficulty": "medium",
+        "question_text": "Which of the following biopotentials specifically represents the electrical activity of the brain?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Electrocardiogram (ECG)"
+          },
+          {
+            "id": "b",
+            "text": "Electromyogram (EMG)"
+          },
+          {
+            "id": "c",
+            "text": "Electroencephalogram (EEG)"
+          },
+          {
+            "id": "d",
+            "text": "Electrooculogram (EOG)"
+          }
+        ],
+        "correct_option_id": "c",
+        "explanation": "An Electroencephalogram (EEG) measures the electrical activity of the brain. In contrast, ECG measures heart activity, EMG measures muscle activity, and EOG measures eye movements.",
+        "related_feature_recommendation": {
+          "feature": "Flashcards",
+          "action_text": "Review Biopotentials Flashcard Deck"
+        }
+      },
+      {
+        "topic_slug": "medical-imaging-systems",
+        "difficulty": "medium",
+        "question_text": "Which medical imaging modality relies on the detection of gamma rays produced by the annihilation of positrons and electrons?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Computed Tomography (CT)"
+          },
+          {
+            "id": "b",
+            "text": "Magnetic Resonance Imaging (MRI)"
+          },
+          {
+            "id": "c",
+            "text": "Single Photon Emission Computed Tomography (SPECT)"
+          },
+          {
+            "id": "d",
+            "text": "Positron Emission Tomography (PET)"
+          }
+        ],
+        "correct_option_id": "d",
+        "explanation": "Positron Emission Tomography (PET) works by detecting pairs of gamma rays emitted indirectly by a positron-emitting radionuclide (tracer), which results from positron-electron annihilation within the body.",
+        "related_feature_recommendation": {
+          "feature": "Video Lectures",
+          "action_text": "Watch PET Imaging Physics Video Module"
+        }
+      },
+      {
+        "topic_slug": "biomechanics",
+        "difficulty": "medium",
+        "question_text": "In the study of soft tissue viscoelastic properties, which mechanical model consists of a spring and a dashpot connected in parallel?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Maxwell model"
+          },
+          {
+            "id": "b",
+            "text": "Voigt (or Kelvin-Voigt) model"
+          },
+          {
+            "id": "c",
+            "text": "Standard Linear Solid model"
+          },
+          {
+            "id": "d",
+            "text": "Burgers model"
+          }
+        ],
+        "correct_option_id": "b",
+        "explanation": "The Voigt (or Kelvin-Voigt) model represents viscoelastic behavior using a spring (elastic component) and a dashpot (viscous component) connected in parallel, often used to model creep behavior in soft tissues.",
+        "related_feature_recommendation": {
+          "feature": "Concept Notes",
+          "action_text": "Read Soft Tissue Mechanics Notes"
+        }
+      },
+      {
+        "topic_slug": "biomaterials",
+        "difficulty": "medium",
+        "question_text": "In biomaterial characterization, what is the primary application of Fourier Transform Infrared Spectroscopy (FTIR)?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Determining surface topography at the atomic level"
+          },
+          {
+            "id": "b",
+            "text": "Identifying functional groups and chemical bonds"
+          },
+          {
+            "id": "c",
+            "text": "Measuring mechanical hardness and elastic modulus"
+          },
+          {
+            "id": "d",
+            "text": "Observing the three-dimensional crystal lattice structure"
+          }
+        ],
+        "correct_option_id": "b",
+        "explanation": "FTIR is a spectroscopic technique used to obtain an infrared absorption or emission spectrum of a solid, liquid, or gas. It is widely used in biomaterials to identify chemical bonds and functional groups.",
+        "related_feature_recommendation": {
+          "feature": "Mock Tests",
+          "action_text": "Take Material Characterization Techniques Mock Test"
+        }
+      },
+      {
+        "topic_slug": "analog-and-digital-electronics",
+        "difficulty": "medium",
+        "question_text": "In operational amplifier circuits, which configuration is primarily used to amplify the difference between two signals while highly rejecting common-mode noise?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Integrator"
+          },
+          {
+            "id": "b",
+            "text": "Buffer"
+          },
+          {
+            "id": "c",
+            "text": "Instrumentation amplifier"
+          },
+          {
+            "id": "d",
+            "text": "Schmitt trigger"
+          }
+        ],
+        "correct_option_id": "c",
+        "explanation": "An instrumentation amplifier is a specialized differential amplifier equipped with input buffer amplifiers. It is specifically designed to have a very high common-mode rejection ratio (CMRR) to eliminate noise.",
+        "related_feature_recommendation": {
+          "feature": "Practice Problems",
+          "action_text": "Solve Op-Amp Configurations Practice Set"
+        }
+      }
+    ]
+  },
+  {
+    "subject_slug": "biotechnology",
+    "questions": [
+      {
+        "topic_slug": "general-biology",
+        "difficulty": "medium",
+        "question_text": "In the context of immunology, which of the following molecules is primarily responsible for presenting endogenous antigens to CD8+ cytotoxic T cells?",
+        "options": [
+          {
+            "id": "a",
+            "text": "MHC Class II molecules"
+          },
+          {
+            "id": "b",
+            "text": "MHC Class I molecules"
+          },
+          {
+            "id": "c",
+            "text": "B-cell receptors"
+          },
+          {
+            "id": "d",
+            "text": "Toll-like receptors"
+          }
+        ],
+        "correct_option_id": "b",
+        "explanation": "MHC Class I molecules are responsible for presenting endogenous antigens (such as viral proteins synthesized within an infected cell) to CD8+ cytotoxic T cells, whereas MHC Class II molecules present exogenous antigens to CD4+ helper T cells.",
+        "related_feature_recommendation": {
+          "feature": "Flashcards",
+          "action_text": "Review Immunology & MHC Flashcard Deck"
+        }
+      },
+      {
+        "topic_slug": "genetics-cellular-and-molecular-biology",
+        "difficulty": "medium",
+        "question_text": "During the regulation of gene expression in eukaryotes, which mechanism specifically involves the use of small non-coding RNAs to target and degrade specific mRNAs?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Alternative splicing"
+          },
+          {
+            "id": "b",
+            "text": "DNA methylation"
+          },
+          {
+            "id": "c",
+            "text": "RNA interference (RNAi)"
+          },
+          {
+            "id": "d",
+            "text": "Histone acetylation"
+          }
+        ],
+        "correct_option_id": "c",
+        "explanation": "RNA interference (RNAi) is a post-transcriptional regulatory mechanism where small non-coding RNAs (such as siRNA and miRNA) bind to complementary target mRNAs, leading to their degradation or the repression of their translation.",
+        "related_feature_recommendation": {
+          "feature": "Mock Tests",
+          "action_text": "Take Molecular Biology Regulatory Mechanisms Test"
+        }
+      },
+      {
+        "topic_slug": "fundamentals-of-biological-engineering",
+        "difficulty": "medium",
+        "question_text": "According to the film theory of mass transfer in a bioreactor, what is the primary driving force for the molecular diffusion of oxygen from a gas bubble into the liquid medium?",
+        "options": [
+          {
+            "id": "a",
+            "text": "The density difference between the bubble and the liquid."
+          },
+          {
+            "id": "b",
+            "text": "The temperature difference between the gas and liquid phases."
+          },
+          {
+            "id": "c",
+            "text": "The concentration gradient of oxygen across the stagnant liquid film."
+          },
+          {
+            "id": "d",
+            "text": "The convective velocity profile of the bulk liquid."
+          }
+        ],
+        "correct_option_id": "c",
+        "explanation": "According to the film theory, mass transfer occurs via molecular diffusion through a stagnant liquid film surrounding the gas bubble. The driving force for this diffusion is the concentration gradient of the solute (oxygen) across this film.",
+        "related_feature_recommendation": {
+          "feature": "Concept Notes",
+          "action_text": "Read Transport Processes & Mass Transfer Notes"
+        }
+      },
+      {
+        "topic_slug": "bioprocess-engineering-and-process-biotechnology",
+        "difficulty": "medium",
+        "question_text": "In bioreaction engineering, particularly when dealing with enzyme immobilization, what does a very large Thiele modulus typically indicate?",
+        "options": [
+          {
+            "id": "a",
+            "text": "The reaction is severely limited by internal diffusion."
+          },
+          {
+            "id": "b",
+            "text": "The reaction is strictly limited by intrinsic enzyme kinetics."
+          },
+          {
+            "id": "c",
+            "text": "The external film mass transfer resistance is negligible."
+          },
+          {
+            "id": "d",
+            "text": "The effectiveness factor of the immobilized enzyme is close to 1."
+          }
+        ],
+        "correct_option_id": "a",
+        "explanation": "The Thiele modulus relates the intrinsic reaction rate to the rate of internal diffusion within a porous catalyst or immobilized enzyme matrix. A large Thiele modulus indicates that internal diffusion is much slower than the reaction rate, meaning the overall process is severely diffusion-limited and the effectiveness factor is much less than 1.",
+        "related_feature_recommendation": {
+          "feature": "Practice Problems",
+          "action_text": "Solve Bioreaction Engineering & Kinetics Set"
+        }
+      },
+      {
+        "topic_slug": "recombinant-dna-technology-and-other-tools-in-biotechnology",
+        "difficulty": "medium",
+        "question_text": "Which analytical tool is specifically utilized to map the genome-wide binding sites of transcription factors and other DNA-associated proteins?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Northern blotting"
+          },
+          {
+            "id": "b",
+            "text": "Flow cytometry"
+          },
+          {
+            "id": "c",
+            "text": "Chromatin Immunoprecipitation sequencing (ChIP-seq)"
+          },
+          {
+            "id": "d",
+            "text": "Fourier Transform Infrared Spectroscopy (FT-IR)"
+          }
+        ],
+        "correct_option_id": "c",
+        "explanation": "ChIP sequencing (ChIP-seq) is a powerful method used to analyze protein interactions with DNA. It combines chromatin immunoprecipitation (ChIP) with massively parallel DNA sequencing to identify the binding sites of DNA-associated proteins globally.",
+        "related_feature_recommendation": {
+          "feature": "Video Lectures",
+          "action_text": "Watch Analytical Tools & ChIP-Seq Module"
+        }
+      }
+    ]
+  },
+  {
+    "subject_slug": "civil-engineering",
+    "questions": [
+      {
+        "topic_slug": "structural-engineering",
+        "difficulty": "medium",
+        "question_text": "In the analysis of trusses, which of the following equations represents the condition for a plane truss to be statically determinate and internally stable, where 'm' is the number of members and 'j' is the number of joints?",
+        "options": [
+          {
+            "id": "a",
+            "text": "m = 2j - 3"
+          },
+          {
+            "id": "b",
+            "text": "m = 2j - 4"
+          },
+          {
+            "id": "c",
+            "text": "m = 3j - 3"
+          },
+          {
+            "id": "d",
+            "text": "m = 3j - 6"
+          }
+        ],
+        "correct_option_id": "a",
+        "explanation": "For a two-dimensional (plane) truss to be statically determinate and internally stable without redundant members, it must satisfy the equation m = 2j - 3. If m is less, it is unstable; if more, it is statically indeterminate.",
+        "related_feature_recommendation": {
+          "feature": "Flashcards",
+          "action_text": "Review structural-analysis Formulas Flashcards"
+        }
+      },
+      {
+        "topic_slug": "geotechnical-engineering",
+        "difficulty": "medium",
+        "question_text": "According to Terzaghi's one-dimensional consolidation theory, the time rate of primary consolidation of a clay layer is primarily dependent on which of the following soil properties?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Active earth pressure coefficient"
+          },
+          {
+            "id": "b",
+            "text": "Shear strength parameters"
+          },
+          {
+            "id": "c",
+            "text": "Coefficient of permeability"
+          },
+          {
+            "id": "d",
+            "text": "Specific gravity of soil solids"
+          }
+        ],
+        "correct_option_id": "c",
+        "explanation": "Terzaghi's theory states that the rate of consolidation depends on the rate at which excess pore water pressure can dissipate, which is fundamentally governed by the soil's coefficient of permeability.",
+        "related_feature_recommendation": {
+          "feature": "Video Lectures",
+          "action_text": "Watch Terzaghi's Consolidation Theory Module"
+        }
+      },
+      {
+        "topic_slug": "water-resources-engineering",
+        "difficulty": "medium",
+        "question_text": "In open channel hydraulics, how is the 'specific energy' of a flowing fluid defined?",
+        "options": [
+          {
+            "id": "a",
+            "text": "The total energy head measured with respect to a universal horizontal datum."
+          },
+          {
+            "id": "b",
+            "text": "The energy head measured relative to the channel bed at that specific cross-section."
+          },
+          {
+            "id": "c",
+            "text": "The difference between kinetic energy head and pressure head."
+          },
+          {
+            "id": "d",
+            "text": "The energy loss per unit length of the channel due to bed friction."
+          }
+        ],
+        "correct_option_id": "b",
+        "explanation": "Specific energy in an open channel is defined as the total energy head (sum of pressure head and kinetic head) of the fluid evaluated with respect to the channel bed as the local datum.",
+        "related_feature_recommendation": {
+          "feature": "Practice Problems",
+          "action_text": "Solve Channel Hydraulics Specific Energy Problems"
+        }
+      },
+      {
+        "topic_slug": "environmental-engineering",
+        "difficulty": "medium",
+        "question_text": "In a municipal wastewater treatment plant, what is the primary objective of the secondary treatment stage?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Removal of large floating objects and grit."
+          },
+          {
+            "id": "b",
+            "text": "Complete disinfection of pathogenic microorganisms."
+          },
+          {
+            "id": "c",
+            "text": "Biological degradation of dissolved and colloidal organic matter."
+          },
+          {
+            "id": "d",
+            "text": "Precipitation of heavy metals and dissolved inorganic salts."
+          }
+        ],
+        "correct_option_id": "c",
+        "explanation": "Secondary treatment utilizes biological processes, such as activated sludge or trickling filters, to allow microorganisms to consume and break down the dissolved and colloidal biodegradable organic matter remaining after primary treatment.",
+        "related_feature_recommendation": {
+          "feature": "Concept Notes",
+          "action_text": "Read Wastewater Treatment Unit Processes Notes"
+        }
+      },
+      {
+        "topic_slug": "transportation-engineering",
+        "difficulty": "medium",
+        "question_text": "In the geometric design of highways, the Stopping Sight Distance (SSD) is calculated as the sum of which two components?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Overtaking distance and braking distance"
+          },
+          {
+            "id": "b",
+            "text": "Perception-reaction distance and braking distance"
+          },
+          {
+            "id": "c",
+            "text": "Sight distance and clearance distance"
+          },
+          {
+            "id": "d",
+            "text": "Friction distance and acceleration distance"
+          }
+        ],
+        "correct_option_id": "b",
+        "explanation": "Stopping Sight Distance (SSD) is the total distance traveled by a vehicle from the moment the driver perceives a hazard to the moment the vehicle comes to a complete stop. It is the sum of the lag distance (during perception and reaction) and the braking distance.",
+        "related_feature_recommendation": {
+          "feature": "Mock Tests",
+          "action_text": "Take Geometric Design of Highways Mock Test"
+        }
+      }
+    ]
+  },
+  {
+    "subject_slug": "chemical-engineering",
+    "questions": [
+      {
+        "topic_slug": "process-calculations-and-thermodynamics",
+        "difficulty": "medium",
+        "question_text": "According to Gibbs Phase Rule, what is the number of degrees of freedom for a non-reacting system containing a binary mixture in vapor-liquid equilibrium?",
+        "options": [
+          {
+            "id": "a",
+            "text": "0"
+          },
+          {
+            "id": "b",
+            "text": "1"
+          },
+          {
+            "id": "c",
+            "text": "2"
+          },
+          {
+            "id": "d",
+            "text": "3"
+          }
+        ],
+        "correct_option_id": "c",
+        "explanation": "For a non-reacting system, the Gibbs Phase Rule is F = C - P + 2. With 2 components (C=2) and 2 phases (vapor and liquid, P=2), the degrees of freedom F = 2 - 2 + 2 = 2.",
+        "related_feature_recommendation": {
+          "feature": "Flashcards",
+          "action_text": "Review Thermodynamics & Phase Rule Flashcard Deck"
+        }
+      },
+      {
+        "topic_slug": "fluid-mechanics-and-mechanical-operations",
+        "difficulty": "medium",
+        "question_text": "In the context of free settling of solid spherical particles in a Newtonian fluid in the Stokes' law regime, how does the terminal settling velocity relate to the particle diameter?",
+        "options": [
+          {
+            "id": "a",
+            "text": "It is directly proportional to the particle diameter."
+          },
+          {
+            "id": "b",
+            "text": "It is directly proportional to the square of the particle diameter."
+          },
+          {
+            "id": "c",
+            "text": "It is inversely proportional to the particle diameter."
+          },
+          {
+            "id": "d",
+            "text": "It is inversely proportional to the square of the particle diameter."
+          }
+        ],
+        "correct_option_id": "b",
+        "explanation": "According to Stokes' Law for creeping flow, the terminal settling velocity of a spherical particle is directly proportional to the square of the particle diameter and the density difference, and inversely proportional to the fluid viscosity.",
+        "related_feature_recommendation": {
+          "feature": "Practice Problems",
+          "action_text": "Solve Fluid-Particle Mechanics Practice Set"
+        }
+      },
+      {
+        "topic_slug": "heat-transfer",
+        "difficulty": "medium",
+        "question_text": "In the design of a shell and tube heat exchanger, what is the primary purpose of installing baffles on the shell side?",
+        "options": [
+          {
+            "id": "a",
+            "text": "To decrease the heat transfer coefficient on the tube side."
+          },
+          {
+            "id": "b",
+            "text": "To induce turbulence and increase the shell-side heat transfer coefficient."
+          },
+          {
+            "id": "c",
+            "text": "To prevent thermal expansion of the tubes."
+          },
+          {
+            "id": "d",
+            "text": "To strictly reduce the pressure drop across the shell side."
+          }
+        ],
+        "correct_option_id": "b",
+        "explanation": "Baffles are used in shell and tube heat exchangers to direct the shell-side fluid flow back and forth across the tubes, which induces turbulence, reduces dead spots, and significantly increases the overall shell-side heat transfer coefficient.",
+        "related_feature_recommendation": {
+          "feature": "Video Lectures",
+          "action_text": "Watch Shell and Tube Heat Exchangers Video Module"
+        }
+      },
+      {
+        "topic_slug": "mass-transfer",
+        "difficulty": "medium",
+        "question_text": "In the design of a packed column for gas absorption, the overall height of the packing is calculated as the product of HTU (Height of a Transfer Unit) and NTU (Number of Transfer Units). What does the NTU primarily represent?",
+        "options": [
+          {
+            "id": "a",
+            "text": "The efficiency of the specific packing material used."
+          },
+          {
+            "id": "b",
+            "text": "The physical height required for a single equilibrium stage."
+          },
+          {
+            "id": "c",
+            "text": "The measure of the difficulty of the required mass transfer separation."
+          },
+          {
+            "id": "d",
+            "text": "The overall pressure drop across the packed bed."
+          }
+        ],
+        "correct_option_id": "c",
+        "explanation": "The Number of Transfer Units (NTU) represents the difficulty of the separation process. It is a dimensionless parameter determined entirely by the required change in composition and the concentration driving force.",
+        "related_feature_recommendation": {
+          "feature": "Concept Notes",
+          "action_text": "Read HTU and NTU Concepts Notes"
+        }
+      },
+      {
+        "topic_slug": "chemical-reaction-engineering",
+        "difficulty": "medium",
+        "question_text": "What is the normalized Residence Time Distribution (RTD) function, E(t), for an ideal Plug Flow Reactor (PFR) with a mean residence time of 'tau'?",
+        "options": [
+          {
+            "id": "a",
+            "text": "A decaying exponential function."
+          },
+          {
+            "id": "b",
+            "text": "A Gaussian normal distribution."
+          },
+          {
+            "id": "c",
+            "text": "A Dirac delta function centered at t = tau."
+          },
+          {
+            "id": "d",
+            "text": "A step function starting at t = tau."
+          }
+        ],
+        "correct_option_id": "c",
+        "explanation": "In an ideal Plug Flow Reactor (PFR), all fluid elements spend the exact same amount of time inside the reactor. Therefore, its Residence Time Distribution (RTD) function, E(t), is a Dirac delta function centered at the exact mean residence time, tau.",
+        "related_feature_recommendation": {
+          "feature": "Mock Tests",
+          "action_text": "Take Ideal and Non-Ideal Reactors Mock Test"
+        }
+      }
+    ]
+  },
+  {
+    "subject_slug": "chemistry",
+    "questions": [
+      {
+        "topic_slug": "equilibrium",
+        "difficulty": "medium",
+        "question_text": "Which equation mathematically describes the temperature dependence of the equilibrium constant for a chemical reaction?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Clausius-Clapeyron equation"
+          },
+          {
+            "id": "b",
+            "text": "Gibbs-Helmholtz equation"
+          },
+          {
+            "id": "c",
+            "text": "van't Hoff equation"
+          },
+          {
+            "id": "d",
+            "text": "Debye-Hückel-Onsager equation"
+          }
+        ],
+        "correct_option_id": "c",
+        "explanation": "The van't Hoff equation describes the dependence of the equilibrium constant on temperature in thermodynamics.",
+        "related_feature_recommendation": {
+          "feature": "Concept Notes",
+          "action_text": "Read Chemical Equilibria & Thermodynamics Notes"
+        }
+      },
+      {
+        "topic_slug": "transition-elements",
+        "difficulty": "medium",
+        "question_text": "According to Crystal Field Theory (CFT), what is the primary cause of a Jahn-Teller distortion in transition metal complexes?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Symmetrical distribution of electrons in degenerate d-orbitals"
+          },
+          {
+            "id": "b",
+            "text": "Asymmetrical distribution of electrons in degenerate d-orbitals"
+          },
+          {
+            "id": "c",
+            "text": "Strong metal-metal multiple bonding"
+          },
+          {
+            "id": "d",
+            "text": "High lattice energy in ionic crystals"
+          }
+        ],
+        "correct_option_id": "b",
+        "explanation": "The Jahn-Teller distortion occurs in coordination chemistry when there is an asymmetrical electron distribution in degenerate energy levels, causing the complex to distort to remove the degeneracy and lower its energy.",
+        "related_feature_recommendation": {
+          "feature": "Video Lectures",
+          "action_text": "Watch Crystal Field Theory and Distortion Module"
+        }
+      },
+      {
+        "topic_slug": "stereochemistry",
+        "difficulty": "medium",
+        "question_text": "In stereochemistry, which term correctly describes two faces of a double bond that yield a pair of enantiomers upon the identical addition of an achiral reagent?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Homotopic faces"
+          },
+          {
+            "id": "b",
+            "text": "Diastereotopic faces"
+          },
+          {
+            "id": "c",
+            "text": "Enantiotopic faces"
+          },
+          {
+            "id": "d",
+            "text": "Atropisomeric faces"
+          }
+        ],
+        "correct_option_id": "c",
+        "explanation": "Enantiotopic faces are those where the addition of an achiral reagent to either face of a prochiral molecule results in the formation of enantiomers.",
+        "related_feature_recommendation": {
+          "feature": "Flashcards",
+          "action_text": "Review Stereochemical Faces Flashcard Deck"
+        }
+      },
+      {
+        "topic_slug": "surfaces-and-interfaces",
+        "difficulty": "medium",
+        "question_text": "Which of the following adsorption isotherms explicitly accounts for the formation of multilayer physical adsorption on a solid surface?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Langmuir isotherm"
+          },
+          {
+            "id": "b",
+            "text": "Freundlich isotherm"
+          },
+          {
+            "id": "c",
+            "text": "Brunauer-Emmett-Teller (BET) isotherm"
+          },
+          {
+            "id": "d",
+            "text": "Langmuir-Hinshelwood mechanism"
+          }
+        ],
+        "correct_option_id": "c",
+        "explanation": "The Brunauer-Emmett-Teller (BET) isotherm model extends adsorption theory beyond a single layer, specifically accounting for multilayer physisorption on surfaces.",
+        "related_feature_recommendation": {
+          "feature": "Practice Problems",
+          "action_text": "Solve Physisorption and Chemisorption Practice Set"
+        }
+      },
+      {
+        "topic_slug": "organometallics",
+        "difficulty": "medium",
+        "question_text": "In homogeneous catalysis, which of the following reactions involves the conversion of an alkene, carbon monoxide, and hydrogen gas into an aldehyde?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Olefin metathesis"
+          },
+          {
+            "id": "b",
+            "text": "Hydroformylation"
+          },
+          {
+            "id": "c",
+            "text": "Fischer-Tropsch reaction"
+          },
+          {
+            "id": "d",
+            "text": "Ziegler-Natta polymerization"
+          }
+        ],
+        "correct_option_id": "b",
+        "explanation": "Hydroformylation is a key homogeneous catalytic process in organometallics where an alkene reacts with synthesis gas (carbon monoxide and hydrogen) to form an aldehyde.",
+        "related_feature_recommendation": {
+          "feature": "Mock Tests",
+          "action_text": "Take Homogeneous Catalysis Mock Test"
+        }
+      }
+    ]
+  },
+  {
+    "subject_slug": "data-science-and-artificial-intelligence",
+    "questions": [
+      {
+        "topic_slug": "probability-and-statistics",
+        "difficulty": "medium",
+        "question_text": "According to the Central Limit Theorem, what happens to the sampling distribution of the sample mean as the sample size becomes sufficiently large, regardless of the population's original distribution?",
+        "options": [
+          {
+            "id": "a",
+            "text": "It perfectly mirrors the shape of the original population distribution."
+          },
+          {
+            "id": "b",
+            "text": "It approaches a uniform distribution."
+          },
+          {
+            "id": "c",
+            "text": "It approaches a normal distribution."
+          },
+          {
+            "id": "d",
+            "text": "It becomes heavily skewed depending on the population variance."
+          }
+        ],
+        "correct_option_id": "c",
+        "explanation": "The Central Limit Theorem states that for a sufficiently large sample size, the sampling distribution of the mean will be approximately normally distributed, regardless of the underlying population distribution.",
+        "related_feature_recommendation": {
+          "feature": "Video Lectures",
+          "action_text": "Watch Central Limit Theorem Module"
+        }
+      },
+      {
+        "topic_slug": "linear-algebra",
+        "difficulty": "medium",
+        "question_text": "Which of the following is a defining fundamental property of an orthogonal matrix?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Its transpose is equal to its negative."
+          },
+          {
+            "id": "b",
+            "text": "Its inverse is equal to its transpose."
+          },
+          {
+            "id": "c",
+            "text": "All its eigenvalues are strictly equal to zero."
+          },
+          {
+            "id": "d",
+            "text": "Its determinant is always equal to 0."
+          }
+        ],
+        "correct_option_id": "b",
+        "explanation": "A square matrix is orthogonal if its columns and rows are orthogonal unit vectors. This leads to the fundamental property that its transpose is equal to its inverse.",
+        "related_feature_recommendation": {
+          "feature": "Flashcards",
+          "action_text": "Review Matrix Properties Flashcards"
+        }
+      },
+      {
+        "topic_slug": "programming-data-structures-and-algorithms",
+        "difficulty": "medium",
+        "question_text": "In the context of divide and conquer algorithms, what is the average-case and worst-case time complexity, respectively, of the QuickSort algorithm?",
+        "options": [
+          {
+            "id": "a",
+            "text": "O(n log n) average, O(n squared) worst"
+          },
+          {
+            "id": "b",
+            "text": "O(n log n) average, O(n log n) worst"
+          },
+          {
+            "id": "c",
+            "text": "O(n) average, O(n log n) worst"
+          },
+          {
+            "id": "d",
+            "text": "O(n squared) average, O(n squared) worst"
+          }
+        ],
+        "correct_option_id": "a",
+        "explanation": "QuickSort partitions an array around a pivot. On average, it divides the array into roughly equal halves, taking O(n log n) time. However, in the worst case (e.g., an already sorted array with a poor pivot choice), its time complexity degrades to O(n squared).",
+        "related_feature_recommendation": {
+          "feature": "Practice Problems",
+          "action_text": "Solve Sorting Algorithms Practice Set"
+        }
+      },
+      {
+        "topic_slug": "database-management-and-warehousing",
+        "difficulty": "medium",
+        "question_text": "In relational database design, a table is considered to be in Second Normal Form (2NF) if it is already in First Normal Form (1NF) and satisfies which additional condition?",
+        "options": [
+          {
+            "id": "a",
+            "text": "It contains no transitive dependencies between non-prime attributes."
+          },
+          {
+            "id": "b",
+            "text": "Every non-prime attribute is fully functionally dependent on the primary key."
+          },
+          {
+            "id": "c",
+            "text": "All its attributes contain only atomic (indivisible) values."
+          },
+          {
+            "id": "d",
+            "text": "Every determinant is a candidate key."
+          }
+        ],
+        "correct_option_id": "b",
+        "explanation": "Second Normal Form (2NF) requires that a relation is in 1NF and that all non-key attributes are fully functionally dependent on the entire primary key, thereby eliminating partial dependencies.",
+        "related_feature_recommendation": {
+          "feature": "Concept Notes",
+          "action_text": "Read Normalization Concept Notes"
+        }
+      },
+      {
+        "topic_slug": "machine-learning",
+        "difficulty": "medium",
+        "question_text": "When training a machine learning model, what is the typical consequence of building an overly complex model (e.g., an extremely deep decision tree)?",
+        "options": [
+          {
+            "id": "a",
+            "text": "High bias and low variance, leading to underfitting."
+          },
+          {
+            "id": "b",
+            "text": "Low bias and high variance, leading to overfitting."
+          },
+          {
+            "id": "c",
+            "text": "Low bias and low variance, representing an optimal model."
+          },
+          {
+            "id": "d",
+            "text": "High bias and high variance, leading to immediate convergence."
+          }
+        ],
+        "correct_option_id": "b",
+        "explanation": "An overly complex model captures the noise in the training data rather than just the underlying pattern. This results in low bias (fitting the training data very well) but high variance (performing poorly on unseen data), a condition known as overfitting.",
+        "related_feature_recommendation": {
+          "feature": "Mock Tests",
+          "action_text": "Take Bias-Variance Trade-off Mock Test"
+        }
+      }
+    ]
+  },
+  {
+    "subject_slug": "electronics-and-communication-engineering",
+    "questions": [
+      {
+        "topic_slug": "networks-signals-and-systems",
+        "difficulty": "medium",
+        "question_text": "According to the Maximum Power Transfer Theorem for AC circuits, under what condition is maximum active power transferred from a source to a load?",
+        "options": [
+          {
+            "id": "a",
+            "text": "The load impedance equals the Thevenin equivalent impedance."
+          },
+          {
+            "id": "b",
+            "text": "The load impedance equals the complex conjugate of the Thevenin equivalent impedance."
+          },
+          {
+            "id": "c",
+            "text": "The load resistance is zero and the reactance is maximized."
+          },
+          {
+            "id": "d",
+            "text": "The load impedance is purely resistive and equals the magnitude of the Thevenin impedance."
+          }
+        ],
+        "correct_option_id": "b",
+        "explanation": "In sinusoidal steady-state analysis, maximum real (active) power is transferred to a load when the load impedance is the complex conjugate of the Thevenin equivalent impedance of the source network, which cancels out the reactive components.",
+        "related_feature_recommendation": {
+          "feature": "Practice Problems",
+          "action_text": "Solve AC Circuit Analysis Practice Set"
+        }
+      },
+      {
+        "topic_slug": "electronic-devices",
+        "difficulty": "medium",
+        "question_text": "In the study of carrier transport in semiconductors, what physical phenomenon does the continuity equation primarily describe?",
+        "options": [
+          {
+            "id": "a",
+            "text": "The spatial variation of the electric field due to a given charge distribution."
+          },
+          {
+            "id": "b",
+            "text": "The relationship between carrier mobility and the diffusion coefficient."
+          },
+          {
+            "id": "c",
+            "text": "The precise energy level of the Fermi-Dirac distribution in an intrinsic semiconductor."
+          },
+          {
+            "id": "d",
+            "text": "The time rate of change of carrier concentration due to drift, diffusion, generation, and recombination."
+          }
+        ],
+        "correct_option_id": "d",
+        "explanation": "The continuity equation in semiconductor physics is a statement of the conservation of charge. It describes how the electron and hole concentrations change over time within a given volume due to the combined effects of current flow (drift and diffusion) and carrier generation-recombination processes.",
+        "related_feature_recommendation": {
+          "feature": "Concept Notes",
+          "action_text": "Read Carrier Transport & Continuity Equation Notes"
+        }
+      },
+      {
+        "topic_slug": "analog-circuits",
+        "difficulty": "medium",
+        "question_text": "In an ideal operational amplifier circuit configured as a Schmitt trigger, what is the primary functional purpose of implementing positive feedback?",
+        "options": [
+          {
+            "id": "a",
+            "text": "To perfectly linearize the output voltage swing."
+          },
+          {
+            "id": "b",
+            "text": "To introduce hysteresis and prevent noise-induced false triggering."
+          },
+          {
+            "id": "c",
+            "text": "To provide infinite input impedance and exactly zero output impedance."
+          },
+          {
+            "id": "d",
+            "text": "To act as an active low-pass filter that eliminates high-frequency noise."
+          }
+        ],
+        "correct_option_id": "b",
+        "explanation": "A Schmitt trigger uses positive feedback to create hysteresis, establishing two distinct switching threshold voltages (upper and lower). This prevents the output from rapidly fluctuating back and forth due to minor noise on the input signal.",
+        "related_feature_recommendation": {
+          "feature": "Video Lectures",
+          "action_text": "Watch Op-amp Circuits and Schmitt Triggers Module"
+        }
+      },
+      {
+        "topic_slug": "digital-circuits",
+        "difficulty": "medium",
+        "question_text": "In the timing analysis of sequential digital circuits, what does the term 'setup time' specifically refer to?",
+        "options": [
+          {
+            "id": "a",
+            "text": "The minimum time the data input must remain stable and valid before the arrival of the active clock edge."
+          },
+          {
+            "id": "b",
+            "text": "The minimum time required for the output of a flip-flop to stabilize after a clock edge."
+          },
+          {
+            "id": "c",
+            "text": "The minimum time the data input must be held steady after the active clock edge has passed."
+          },
+          {
+            "id": "d",
+            "text": "The maximum propagation delay a signal can experience along the critical path."
+          }
+        ],
+        "correct_option_id": "a",
+        "explanation": "Setup time is the minimum required amount of time that a data input signal must be stable and unchanging prior to the active edge of the clock signal in order to ensure the data is reliably captured by the flip-flop.",
+        "related_feature_recommendation": {
+          "feature": "Flashcards",
+          "action_text": "Review Sequential Circuits & Timing Flashcards"
+        }
+      },
+      {
+        "topic_slug": "communications",
+        "difficulty": "medium",
+        "question_text": "In digital communications, what is the primary advantage of utilizing Hamming codes?",
+        "options": [
+          {
+            "id": "a",
+            "text": "They compress the digital data to minimize the required transmission bandwidth."
+          },
+          {
+            "id": "b",
+            "text": "They modulate the digital baseband signal onto a high-frequency carrier wave."
+          },
+          {
+            "id": "c",
+            "text": "They detect and correct single-bit errors in the transmitted data stream."
+          },
+          {
+            "id": "d",
+            "text": "They eliminate inter-symbol interference (ISI) entirely."
+          }
+        ],
+        "correct_option_id": "c",
+        "explanation": "Hamming codes are a widely used class of linear block codes in forward error correction (FEC). By adding specific redundant parity bits to the data payload, they allow the receiver to both detect and correct single-bit errors that may occur during transmission.",
+        "related_feature_recommendation": {
+          "feature": "Mock Tests",
+          "action_text": "Take Information Theory & Error Correction Mock Test"
+        }
+      }
+    ]
+  },
+  {
+    "subject_slug": "electrical-engineering",
+    "questions": [
+      {
+        "topic_slug": "electric-circuits",
+        "difficulty": "medium",
+        "question_text": "In a two-port network, which of the following parameter sets is most appropriate for analyzing two networks connected in cascade?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Z-parameters (Impedance)"
+          },
+          {
+            "id": "b",
+            "text": "Y-parameters (Admittance)"
+          },
+          {
+            "id": "c",
+            "text": "ABCD-parameters (Transmission)"
+          },
+          {
+            "id": "d",
+            "text": "h-parameters (Hybrid)"
+          }
+        ],
+        "correct_option_id": "c",
+        "explanation": "ABCD (Transmission) parameters are specifically designed for cascaded two-port networks because the output voltage and current of the first network directly become the input voltage and current of the second network, allowing simple matrix multiplication.",
+        "related_feature_recommendation": {
+          "feature": "Concept Notes",
+          "action_text": "Read Two-Port Networks & Parameters Notes"
+        }
+      },
+      {
+        "topic_slug": "electromagnetic-fields",
+        "difficulty": "medium",
+        "question_text": "According to Faraday's law of electromagnetic induction, the induced electromotive force (EMF) in a closed circuit is directly proportional to the:",
+        "options": [
+          {
+            "id": "a",
+            "text": "Maximum magnetic flux passing through the circuit"
+          },
+          {
+            "id": "b",
+            "text": "Time rate of change of magnetic flux linkage"
+          },
+          {
+            "id": "c",
+            "text": "Reluctance of the magnetic circuit"
+          },
+          {
+            "id": "d",
+            "text": "Electric flux density surrounding the conductor"
+          }
+        ],
+        "correct_option_id": "b",
+        "explanation": "Faraday's law states that the induced EMF in any closed circuit is equal to the negative of the time rate of change of the magnetic flux enclosed by the circuit.",
+        "related_feature_recommendation": {
+          "feature": "Video Lectures",
+          "action_text": "Watch Faraday's Law and Electromagnetic Induction Module"
+        }
+      },
+      {
+        "topic_slug": "electrical-machines",
+        "difficulty": "medium",
+        "question_text": "In a three-phase induction motor, if the rotor is blocked (stationary) while the stator is energized, what is the value of the slip?",
+        "options": [
+          {
+            "id": "a",
+            "text": "0"
+          },
+          {
+            "id": "b",
+            "text": "0.5"
+          },
+          {
+            "id": "c",
+            "text": "1"
+          },
+          {
+            "id": "d",
+            "text": "Infinity"
+          }
+        ],
+        "correct_option_id": "c",
+        "explanation": "Slip is defined as (Ns - Nr) / Ns, where Ns is the synchronous speed and Nr is the rotor speed. When the rotor is blocked, the rotor speed (Nr) is 0. Therefore, the slip is (Ns - 0) / Ns = 1.",
+        "related_feature_recommendation": {
+          "feature": "Flashcards",
+          "action_text": "Review Induction Machines Flashcard Deck"
+        }
+      },
+      {
+        "topic_slug": "power-systems",
+        "difficulty": "medium",
+        "question_text": "In power system load flow analysis, which of the following buses has specified real power (P) and voltage magnitude (|V|), but unknown reactive power (Q) and voltage angle (delta)?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Slack bus (Swing bus)"
+          },
+          {
+            "id": "b",
+            "text": "Load bus (PQ bus)"
+          },
+          {
+            "id": "c",
+            "text": "Generator bus (PV bus)"
+          },
+          {
+            "id": "d",
+            "text": "Reference bus"
+          }
+        ],
+        "correct_option_id": "c",
+        "explanation": "A Generator bus, also known as a PV bus, has a known active power (P) and voltage magnitude (|V|). The reactive power (Q) and voltage angle (delta) are computed during the load flow analysis.",
+        "related_feature_recommendation": {
+          "feature": "Mock Tests",
+          "action_text": "Take Load Flow Analysis Mock Test"
+        }
+      },
+      {
+        "topic_slug": "control-systems",
+        "difficulty": "medium",
+        "question_text": "In the stability analysis of a linear time-invariant (LTI) system using the Routh-Hurwitz criterion, what does a row of all zeros in the Routh array indicate?",
+        "options": [
+          {
+            "id": "a",
+            "text": "The system is absolutely stable."
+          },
+          {
+            "id": "b",
+            "text": "The system has roots located symmetrically with respect to the origin."
+          },
+          {
+            "id": "c",
+            "text": "The system has at least one pole in the right half of the s-plane."
+          },
+          {
+            "id": "d",
+            "text": "The transfer function has no poles."
+          }
+        ],
+        "correct_option_id": "b",
+        "explanation": "A row of all zeros in the Routh array indicates the presence of an auxiliary polynomial, which implies that the system's characteristic equation has roots that are symmetrically located with respect to the origin of the s-plane (e.g., purely imaginary conjugate roots).",
+        "related_feature_recommendation": {
+          "feature": "Practice Problems",
+          "action_text": "Solve Stability Analysis Practice Set"
+        }
+      }
+    ]
+  },
+  {
+    "subject_slug": "environmental-science-and-engineering",
+    "questions": [
+      {
+        "topic_slug": "environmental-chemistry",
+        "difficulty": "medium",
+        "question_text": "In the context of atmospheric chemistry, which of the following primary precursors are most directly responsible for the formation of urban smog and tropospheric ozone?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Unburned hydrocarbons and nitrogen oxides"
+          },
+          {
+            "id": "b",
+            "text": "Chlorofluorocarbons (CFCs) and sulfur dioxide"
+          },
+          {
+            "id": "c",
+            "text": "Carbon dioxide and coarse particulate matter"
+          },
+          {
+            "id": "d",
+            "text": "Hydrogen sulfide and carbon monoxide"
+          }
+        ],
+        "correct_option_id": "a",
+        "explanation": "Urban smog and tropospheric ozone formation are largely driven by the complex photochemical reactions of unburned hydrocarbons and nitrogen oxides in the atmosphere.",
+        "related_feature_recommendation": {
+          "feature": "Concept Notes",
+          "action_text": "Read Atmospheric Chemistry & Smog Formation Notes"
+        }
+      },
+      {
+        "topic_slug": "environmental-microbiology",
+        "difficulty": "medium",
+        "question_text": "Within microbial metabolism, which process involves the anaerobic breakdown of organic compounds, serving as both electron donors and electron acceptors, to generate energy?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Electron transport chain"
+          },
+          {
+            "id": "b",
+            "text": "TCA cycle"
+          },
+          {
+            "id": "c",
+            "text": "Fermentation"
+          },
+          {
+            "id": "d",
+            "text": "Oxidative phosphorylation"
+          }
+        ],
+        "correct_option_id": "c",
+        "explanation": "Fermentation is a metabolic process that produces energy through the breakdown of organic compounds in the absence of exogenous electron acceptors, distinguishing it from aerobic and anaerobic respiration.",
+        "related_feature_recommendation": {
+          "feature": "Video Lectures",
+          "action_text": "Watch Microbial Metabolism & Fermentation Module"
+        }
+      },
+      {
+        "topic_slug": "water-resources-and-environmental-hydraulics",
+        "difficulty": "medium",
+        "question_text": "Which of the following parameters describes the ability of a geologic formation or aquifer to transmit groundwater through its entire saturated thickness?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Porosity"
+          },
+          {
+            "id": "b",
+            "text": "Specific yield"
+          },
+          {
+            "id": "c",
+            "text": "Transmissivity"
+          },
+          {
+            "id": "d",
+            "text": "Storage coefficient"
+          }
+        ],
+        "correct_option_id": "c",
+        "explanation": "Transmissivity is a fundamental parameter of confined and unconfined aquifers, defined as the rate at which groundwater flows horizontally through the entire saturated thickness of an aquifer.",
+        "related_feature_recommendation": {
+          "feature": "Practice Problems",
+          "action_text": "Solve Groundwater Resources Practice Set"
+        }
+      },
+      {
+        "topic_slug": "air-and-noise-pollution",
+        "difficulty": "medium",
+        "question_text": "Which of the following air pollution control devices relies on inducing an electric charge on particles to remove fine particulate pollutants from a gas stream?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Cyclone separators"
+          },
+          {
+            "id": "b",
+            "text": "Electrostatic precipitators (ESP)"
+          },
+          {
+            "id": "c",
+            "text": "Wet collectors"
+          },
+          {
+            "id": "d",
+            "text": "Gravitational settling chambers"
+          }
+        ],
+        "correct_option_id": "b",
+        "explanation": "Electrostatic precipitators (ESP) are highly effective control methods for particulate air pollutants, utilizing high-voltage electrical fields to charge and collect particulate matter.",
+        "related_feature_recommendation": {
+          "feature": "Flashcards",
+          "action_text": "Review Particulate Pollutants Control Flashcards"
+        }
+      },
+      {
+        "topic_slug": "environmental-management-and-sustainable-development",
+        "difficulty": "medium",
+        "question_text": "Which of the following Indian environmental laws or policies is fundamentally structured around applying the 'Polluter pays principle' and the 'Precautionary principle' in its environmental rulings?",
+        "options": [
+          {
+            "id": "a",
+            "text": "The Forest (Conservation) Act, 1980"
+          },
+          {
+            "id": "b",
+            "text": "National Green Tribunal Act, 2010"
+          },
+          {
+            "id": "c",
+            "text": "The Wildlife Protection Act, 1972"
+          },
+          {
+            "id": "d",
+            "text": "The Motor Vehicles Act, 1988"
+          }
+        ],
+        "correct_option_id": "b",
+        "explanation": "The National Green Tribunal Act, 2010 explicitly incorporates the principles of sustainable development, including the precautionary principle and the polluter pays principle, for adjudicating environmental disputes.",
+        "related_feature_recommendation": {
+          "feature": "Mock Tests",
+          "action_text": "Take Environmental Law and Policy Mock Test"
+        }
+      }
+    ]
+  },
+  {
+    "subject_slug": "ecology-and-evolution",
+    "questions": [
+      {
+        "topic_slug": "ecology",
+        "difficulty": "medium",
+        "question_text": "In community ecology, the theory of island biogeography predicts that species richness on an island is primarily determined by which two factors?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Island age and longitudinal coordinate"
+          },
+          {
+            "id": "b",
+            "text": "Island size and distance from the mainland"
+          },
+          {
+            "id": "c",
+            "text": "Average temperature and annual precipitation"
+          },
+          {
+            "id": "d",
+            "text": "Trophic structure and primary productivity"
+          }
+        ],
+        "correct_option_id": "b",
+        "explanation": "The theory of island biogeography states that species richness is a balance between immigration and extinction rates, which are primarily influenced by the island's overall size and its distance from the mainland.",
+        "related_feature_recommendation": {
+          "feature": "Mock Tests",
+          "action_text": "Take Ecology & Island Biogeography Mock Test"
+        }
+      },
+      {
+        "topic_slug": "evolution",
+        "difficulty": "medium",
+        "question_text": "Which of the following concepts refers to the phenomenon where distantly related lineages independently evolve similar physiological or morphological traits to adapt to similar ecological niches?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Cladistics"
+          },
+          {
+            "id": "b",
+            "text": "Genetic drift"
+          },
+          {
+            "id": "c",
+            "text": "Convergence"
+          },
+          {
+            "id": "d",
+            "text": "Semelparity"
+          }
+        ],
+        "correct_option_id": "c",
+        "explanation": "Convergent evolution (or convergence) occurs when distinct, unrelated lineages independently evolve similar traits or adaptations as a result of having to survive in similar environments or ecological niches.",
+        "related_feature_recommendation": {
+          "feature": "Concept Notes",
+          "action_text": "Read Evolutionary Convergence Notes"
+        }
+      },
+      {
+        "topic_slug": "mathematics-and-quantitative-ecology",
+        "difficulty": "medium",
+        "question_text": "In statistical hypothesis testing applied to ecological data, what does a Type II error represent?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Rejecting a true null hypothesis."
+          },
+          {
+            "id": "b",
+            "text": "Failing to reject a false null hypothesis."
+          },
+          {
+            "id": "c",
+            "text": "Calculating an incorrect p-value due to a small sample size."
+          },
+          {
+            "id": "d",
+            "text": "Assuming a linear correlation inherently implies biological causation."
+          }
+        ],
+        "correct_option_id": "b",
+        "explanation": "A Type II error occurs in hypothesis testing when the statistical test fails to reject a null hypothesis that is actually false, meaning a genuine ecological effect or difference is missed.",
+        "related_feature_recommendation": {
+          "feature": "Practice Problems",
+          "action_text": "Solve Hypothesis Testing Practice Set"
+        }
+      },
+      {
+        "topic_slug": "behavioural-ecology",
+        "difficulty": "medium",
+        "question_text": "In reproductive behavioral ecology, the 'handicap principle' is proposed to explain which of the following phenomena?",
+        "options": [
+          {
+            "id": "a",
+            "text": "The tendency of foraging individuals to optimize their energy intake over time."
+          },
+          {
+            "id": "b",
+            "text": "The neurological mechanism behind fixed action patterns."
+          },
+          {
+            "id": "c",
+            "text": "The evolution of exaggerated, costly traits favored by sexual selection as honest signals of genetic quality."
+          },
+          {
+            "id": "d",
+            "text": "The altruistic behaviors observed in eusocial insect colonies driven by kin selection."
+          }
+        ],
+        "correct_option_id": "c",
+        "explanation": "The handicap principle suggests that exaggerated and costly traits evolve via sexual selection because they act as honest signals of biological fitness; only high-quality individuals can survive the survival 'handicap' imposed by the trait.",
+        "related_feature_recommendation": {
+          "feature": "Video Lectures",
+          "action_text": "Watch Sexual Selection & Mate Choice Module"
+        }
+      },
+      {
+        "topic_slug": "applied-ecology-and-evolution",
+        "difficulty": "medium",
+        "question_text": "In the context of conserving biodiversity, which of the following interventions is a classic example of ex-situ conservation?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Establishing a protected national park or biosphere reserve."
+          },
+          {
+            "id": "b",
+            "text": "Creating a marine sanctuary to protect endemic coral reefs."
+          },
+          {
+            "id": "c",
+            "text": "Maintaining a seed bank or implementing a captive breeding program."
+          },
+          {
+            "id": "d",
+            "text": "Designating a specific geographic region as a biodiversity hotspot."
+          }
+        ],
+        "correct_option_id": "c",
+        "explanation": "Ex-situ conservation involves protecting an endangered species, variety, or breed outside of its natural habitat, such as storing genetic material in seed banks or breeding animals in zoos.",
+        "related_feature_recommendation": {
+          "feature": "Flashcards",
+          "action_text": "Review Conservation Strategies Flashcard Deck"
+        }
+      }
+    ]
+  },
+  {
+    "subject_slug": "geomatics-engineering",
+    "questions": [
+      {
+        "topic_slug": "remote-sensing",
+        "difficulty": "medium",
+        "question_text": "Which type of resolution in remote sensing defines the ability of a sensor to distinguish between fine differences in electromagnetic energy intensity?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Spatial resolution"
+          },
+          {
+            "id": "b",
+            "text": "Temporal resolution"
+          },
+          {
+            "id": "c",
+            "text": "Radiometric resolution"
+          },
+          {
+            "id": "d",
+            "text": "Spectral resolution"
+          }
+        ],
+        "correct_option_id": "c",
+        "explanation": "Radiometric resolution refers to a sensor's sensitivity to the magnitude of electromagnetic energy, allowing it to discriminate very slight differences in energy (often expressed in bits, like 8-bit or 16-bit).",
+        "related_feature_recommendation": {
+          "feature": "Flashcards",
+          "action_text": "Review Remote Sensing Resolutions Flashcard Deck"
+        }
+      },
+      {
+        "topic_slug": "gnss",
+        "difficulty": "medium",
+        "question_text": "In the context of Global Navigation Satellite Systems (GNSS), what is the primary purpose of using Differential GPS (DGPS)?",
+        "options": [
+          {
+            "id": "a",
+            "text": "To increase the total number of visible satellites in orbit"
+          },
+          {
+            "id": "b",
+            "text": "To enhance position accuracy by correcting atmospheric and timing errors"
+          },
+          {
+            "id": "c",
+            "text": "To provide high-resolution multispectral imagery of the Earth's surface"
+          },
+          {
+            "id": "d",
+            "text": "To replace the space segment entirely with ground-based pseudolites"
+          }
+        ],
+        "correct_option_id": "b",
+        "explanation": "Differential GPS (DGPS) uses a network of fixed, ground-based reference stations to broadcast the difference between the positions indicated by the satellite systems and the known fixed positions, significantly improving measurement accuracy.",
+        "related_feature_recommendation": {
+          "feature": "Concept Notes",
+          "action_text": "Read GNSS Errors and Corrections Notes"
+        }
+      },
+      {
+        "topic_slug": "gis",
+        "difficulty": "medium",
+        "question_text": "In a Geographic Information System (GIS), which spatial analysis operation is primarily used to create a zone of a specified distance around a geographic feature?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Interpolation"
+          },
+          {
+            "id": "b",
+            "text": "Network analysis"
+          },
+          {
+            "id": "c",
+            "text": "Overlay"
+          },
+          {
+            "id": "d",
+            "text": "Buffer"
+          }
+        ],
+        "correct_option_id": "d",
+        "explanation": "A buffer operation in GIS generates a polygon encompassing all areas that fall within a specified distance from a selected point, line, or polygon feature.",
+        "related_feature_recommendation": {
+          "feature": "Mock Tests",
+          "action_text": "Take Spatial Analysis Techniques Mock Test"
+        }
+      },
+      {
+        "topic_slug": "land-surveying",
+        "difficulty": "medium",
+        "question_text": "Which modern surveying instrument is primarily used to simultaneously measure both horizontal/vertical angles and slope distances?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Total Station"
+          },
+          {
+            "id": "b",
+            "text": "Dumpy Level"
+          },
+          {
+            "id": "c",
+            "text": "Prismatic Compass"
+          },
+          {
+            "id": "d",
+            "text": "Planimeter"
+          }
+        ],
+        "correct_option_id": "a",
+        "explanation": "A Total Station is an electronic/optical instrument used in surveying that combines an electronic transit theodolite (for measuring angles) with an electronic distance meter (EDM) to read slope distances from the instrument to a particular point.",
+        "related_feature_recommendation": {
+          "feature": "Video Lectures",
+          "action_text": "Watch Modern Surveying Instruments Module"
+        }
+      },
+      {
+        "topic_slug": "image-transformation",
+        "difficulty": "medium",
+        "question_text": "In digital image processing, which image transformation technique is primarily used to reduce the dimensionality of highly correlated multispectral data while retaining most of the original variance?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Normalized Difference Vegetation Index (NDVI)"
+          },
+          {
+            "id": "b",
+            "text": "Principal Component Analysis (PCA)"
+          },
+          {
+            "id": "c",
+            "text": "RGB to CMYK color transformation"
+          },
+          {
+            "id": "d",
+            "text": "High-pass spatial filtering"
+          }
+        ],
+        "correct_option_id": "b",
+        "explanation": "Principal Component Analysis (PCA) is a mathematical transformation that converts a set of correlated variables (like multispectral bands) into a set of uncorrelated variables called principal components, effectively reducing dimensionality without losing significant information.",
+        "related_feature_recommendation": {
+          "feature": "Practice Problems",
+          "action_text": "Solve Image Transformation & PCA Practice Set"
+        }
+      }
+    ]
+  }
+]

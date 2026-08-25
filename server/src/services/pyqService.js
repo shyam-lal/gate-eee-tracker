@@ -7,17 +7,31 @@ function getLocalDateStr(date) {
 
 // ─── PAPERS ──────────────────────────────────────────────────────────────
 
-async function getPapers(filters = {}) {
-    let query = `SELECT pp.*,
-            (SELECT COUNT(*) FROM pyq_attempts pa WHERE pa.paper_id = pp.id AND pa.status = 'completed') as total_attempts
-         FROM pyq_papers pp
-         WHERE pp.is_published = TRUE`;
-    const params = [];
-    let idx = 1;
+async function getPapers(userId, filters = {}) {
+    let query = `
+        SELECT pp.*,
+            (SELECT COUNT(*) FROM pyq_attempts pa WHERE pa.paper_id = pp.id AND pa.status = 'completed') as total_global_attempts,
+            (SELECT COUNT(*) FROM pyq_questions pq WHERE pq.paper_id = pp.id) as actual_question_count,
+            ua.status as user_status, 
+            ua.score as user_score, 
+            ua.max_score as user_max_score,
+            (SELECT COUNT(*) FROM pyq_answers ans WHERE ans.attempt_id = ua.id) as user_questions_solved
+        FROM pyq_papers pp
+        LEFT JOIN LATERAL (
+            SELECT status, score, max_score, id
+            FROM pyq_attempts 
+            WHERE user_id = $1 AND paper_id = pp.id 
+            ORDER BY started_at DESC LIMIT 1
+        ) ua ON true`;
+    
+    const params = [userId];
+    let idx = 2;
+    let whereAdded = false;
 
     if (filters.year) {
-        query += ` AND pp.year = $${idx++}`;
+        query += `${whereAdded ? ' AND' : ' WHERE'} pp.year = $${idx++}`;
         params.push(filters.year);
+        whereAdded = true;
     }
     if (filters.branch) {
         query += ` AND pp.branch = $${idx++}`;
@@ -31,6 +45,25 @@ async function getPapers(filters = {}) {
     query += ' ORDER BY pp.year DESC, pp.session ASC';
     const result = await db.query(query, params);
     return result.rows;
+}
+
+async function getGlobalStats(userId) {
+    const result = await db.query(`
+        SELECT 
+            COUNT(pa.id) as total_pyqs_solved,
+            COALESCE(AVG(CASE WHEN pa.is_correct THEN 1 ELSE 0 END) * 100, 0) as average_accuracy,
+            COALESCE(AVG(pa.time_spent_seconds) / 60.0, 0) as time_efficiency_mins_per_q
+        FROM pyq_answers pa
+        JOIN pyq_attempts att ON att.id = pa.attempt_id
+        WHERE att.user_id = $1 AND pa.user_answer IS NOT NULL
+    `, [userId]);
+    
+    const row = result.rows[0];
+    return {
+        totalSolved: parseInt(row.total_pyqs_solved) || 0,
+        accuracy: Math.round(parseFloat(row.average_accuracy)) || 0,
+        timeEfficiency: parseFloat(row.time_efficiency_mins_per_q).toFixed(1) || "0.0"
+    };
 }
 
 async function getPaper(paperId) {
@@ -200,7 +233,7 @@ async function getAttemptHistory(userId, paperId) {
 }
 
 module.exports = {
-    getPapers, getPaper, getUserPaperStats,
+    getPapers, getPaper, getUserPaperStats, getGlobalStats,
     createAttempt, getAttempt, getInProgressAttempt,
     saveAnswer, pauseAttempt, completeAttempt, getAttemptHistory
 };

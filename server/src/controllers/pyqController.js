@@ -4,7 +4,7 @@ const pyqService = require('../services/pyqService');
 
 exports.getPapers = async (req, res) => {
     try {
-        const papers = await pyqService.getPapers({
+        const papers = await pyqService.getPapers(req.user.id, {
             year: req.query.year,
             branch: req.query.branch,
             exam_id: req.query.exam_id
@@ -24,6 +24,16 @@ exports.getPaper = async (req, res) => {
     } catch (err) {
         console.error('getPaper error:', err);
         res.status(500).json({ error: 'Failed to get paper' });
+    }
+};
+
+exports.getGlobalStats = async (req, res) => {
+    try {
+        const stats = await pyqService.getGlobalStats(req.user.id);
+        res.json(stats);
+    } catch (err) {
+        console.error('getGlobalStats error:', err);
+        res.status(500).json({ error: 'Failed to get global stats' });
     }
 };
 

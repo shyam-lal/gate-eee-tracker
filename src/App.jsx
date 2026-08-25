@@ -23,6 +23,7 @@ import GlobalFocusOverlay from './components/focus/GlobalFocusOverlay';
 import RevisionDashboard from './components/revision/RevisionDashboard';
 import AdminPanel from './components/admin/AdminPanel';
 import { ExamProvider } from './contexts/ExamContext';
+import PYQDashboard from './components/exam/PYQDashboard';
 import ExamOnboarding from './components/exam/ExamOnboarding';
 import ExamSwitcher from './components/exam/ExamSwitcher';
 import StudyMaterials from './components/materials/StudyMaterials';
@@ -30,6 +31,10 @@ import Pricing from './components/pricing/Pricing';
 import CreditStore from './components/credits/CreditStore';
 import AppLayout from './components/layout/AppLayout';
 import { useTheme } from './contexts/ThemeContext';
+import { useDiagnosticStore } from './store/useDiagnosticStore';
+import DiagnosticLanding from './components/diagnostic/DiagnosticLanding';
+import DiagnosticQuiz from './components/diagnostic/DiagnosticQuiz';
+import AuthModal from './components/diagnostic/AuthModal';
 import {
   Calendar as CalendarIcon, Trash2, Plus, X,
   ChevronDown, ChevronRight, Clock, Edit3,
@@ -47,8 +52,17 @@ function App() {
   });
 
   // --- APP STATE ---
-  const [view, setView] = useState('landing'); // 'landing', 'auth', 'wizard', 'app', 'dashboard', 'profile', 'social_terminal'
+  const [view, setView] = useState(() => {
+    try { 
+      const u = JSON.parse(localStorage.getItem('user')); 
+      return u ? 'dashboard' : 'landing'; 
+    } catch { 
+      return 'landing'; 
+    }
+  });
   const [syllabus, setSyllabus] = useState([]);
+  const [guestSyllabus, setGuestSyllabus] = useState(null);
+  const diagnosticSubjectId = useDiagnosticStore(state => state.subjectId);
   const [loading, setLoading] = useState(false);
   const [targetDate, setTargetDate] = useState("");
   const [expanded, setExpanded] = useState({});
@@ -75,6 +89,21 @@ function App() {
   // --- GLOBAL FOCUS STATE ---
   const [isFocusOverlayOpen, setIsFocusOverlayOpen] = useState(false);
   const [isFocusOverlayMinimized, setIsFocusOverlayMinimized] = useState(false);
+  
+  // --- AUTH MODAL STATE (Guest -> User Feature Gating) ---
+  const [authModalConfig, setAuthModalConfig] = useState({
+    isOpen: false,
+    title: "Target Your Identified Weak Spots",
+    subtitle: "Create a free account to unlock targeted flashcards and generate an auto-recovery study plan based on your diagnostic results."
+  });
+
+  const triggerAuthModal = (title, subtitle) => {
+    setAuthModalConfig({
+      isOpen: true,
+      title: title || "Target Your Identified Weak Spots",
+      subtitle: subtitle || "Create a free account to unlock targeted flashcards and generate an auto-recovery study plan based on your diagnostic results."
+    });
+  };
 
   // Find the user's focus tool to link sessions to
   const globalFocusTool = userTools.find(t => t.tool_type === 'focus');
@@ -190,6 +219,23 @@ function App() {
   };
 
   useEffect(() => {
+    if (view === 'planner_guest' && diagnosticSubjectId) {
+      const fetchGuestSyllabus = async () => {
+        try {
+          const res = await fetch(`/api/diagnostics/syllabus/${diagnosticSubjectId}`);
+          if (res.ok) {
+            const data = await res.json();
+            setGuestSyllabus(data);
+          }
+        } catch (err) {
+          console.error('Failed to fetch guest syllabus:', err);
+        }
+      };
+      fetchGuestSyllabus();
+    }
+  }, [view, diagnosticSubjectId]);
+
+  useEffect(() => {
     const fetchFreshUser = async () => {
       const token = localStorage.getItem('token');
       if (token && user) {
@@ -236,6 +282,12 @@ function App() {
     setUser(null);
     setActiveTool(null);
     setUserTools([]);
+    setSyllabus([]);
+    setTargetDate("");
+    setExpanded({});
+    setUserStreakData(null);
+    setToolStreakData(null);
+    setFlashcardAnalytics(null);
     setView('landing');
   };
 
@@ -493,11 +545,54 @@ function App() {
 
   // --- RENDER VIEW HELPER ---
   const renderCurrentView = () => {
-    if (view === 'landing') return <Landing onStart={() => setView(user ? 'dashboard' : 'auth')} />;
+    if (view === 'diagnostic') return <DiagnosticLanding setView={setView} />;
+    if (view === 'diagnostic_quiz') return <DiagnosticQuiz setView={setView} />;
+    if (view === 'dashboard_guest' || (view === 'dashboard' && !user)) return <Dashboard guestMode={true} onSignUp={() => triggerAuthModal()} />;
+    if (view === 'planner_guest' || (view === 'planner' && !user)) {
+      const sampleSyllabus = guestSyllabus || (syllabus.length > 0 ? syllabus : [
+        {
+          id: 'sub_1',
+          name: 'Loading Subject...',
+          topics: []
+        }
+      ]);
+
+      return (
+        <SyllabusTracker
+          user={user}
+          activeTool={activeTool}
+          syllabus={sampleSyllabus}
+          toolStreakData={toolStreakData}
+          loadToolStreak={loadToolStreak}
+          searchQuery={searchQuery}
+          openEditor={() => triggerAuthModal(
+            "Login to Save Your Progress",
+            "Create a free account to edit subjects, log study hours, and track your syllabus coverage."
+          )}
+          setLoggingTopic={() => triggerAuthModal(
+            "Login to Save Your Progress",
+            "Create a free account to log study hours, mark submodules as completed, and track your syllabus coverage."
+          )}
+          setEditingLog={() => triggerAuthModal(
+            "Login to Save Your Progress",
+            "Create a free account to log study hours, mark submodules as completed, and track your syllabus coverage."
+          )}
+          onBack={() => setView('dashboard_guest')}
+        />
+      );
+    }
+    if (view === 'flashcards_guest' || (view === 'flashcards' && !user)) return (
+      <FlashcardDashboard
+        tool={activeTool || { id: 'guest_flashcard' }}
+        user={user}
+        onTopUp={() => setView('credit_store')}
+        onGuestFeatureGate={(title, subtitle) => triggerAuthModal(title, subtitle)}
+      />
+    );
+    if (view === 'landing') return <Landing onStart={() => setView(user ? 'dashboard' : 'diagnostic')} onSignup={() => setView('auth')} />;
     if (view === 'auth' && !user) return <Auth onLogin={(u) => { setUser(u); }} />;
     if (view === 'wizard') return <Wizard onComplete={onWizardComplete} onBack={() => setView('dashboard')} />;
     if (view === 'exam_onboarding') return <ExamOnboarding onComplete={(enrolledExamId) => {
-      // Update user state with onboarding completion + active exam
       const updatedUser = { ...user, onboarding_completed: true, active_exam_id: enrolledExamId || user.active_exam_id };
       localStorage.setItem('user', JSON.stringify(updatedUser));
       setUser(updatedUser);
@@ -525,9 +620,7 @@ function App() {
       />
     );
     if (view === 'pricing') return <Pricing user={user} onBack={() => setView('dashboard')} onUpgradeSuccess={(planName) => {
-      // Just visually acknowledging it maybe fetching updated user role from server
       alert(`Successfully upgraded to ${planName}!`);
-      // Update local storage or refetch user data here if needed
       setView('dashboard');
     }} />;
     if (view === 'credit_store') return <CreditStore onBack={() => setView('dashboard')} />;
@@ -553,7 +646,7 @@ function App() {
     if (view === 'daily_planner') return <PlannerDashboard onBack={() => setView('dashboard')} />;
     if (view === 'battle_plan') return <BattlePlan onBack={() => setView('dashboard')} />;
     if (view === 'revision_tests') return <RevisionDashboard user={user} tool={activeTool} />;
-    if (view === 'mock_tests') return <div className="p-8 text-center"><h2 className="text-2xl font-black text-heading uppercase tracking-widest">PYQ Mock Tests</h2><p className="text-surface-500 mt-2">Coming soon...</p></div>;
+    if (view === 'mock_tests') return <PYQDashboard user={user} />;
     if (view === 'flashcards') {
       const fTool = userTools.find(t => t.tool_type === 'flashcard' || t.tool_type === 'flashcards');
       if (!fTool) return <div className="p-8 text-center text-surface-500">Initializing Flashcards... Please create a flashcards tool first or wait.</div>;
@@ -1026,17 +1119,66 @@ function App() {
       )
   );
 
-  if (isAuthView) {
+  const isGuestPreview = !user && ['dashboard_guest', 'planner_guest', 'flashcards_guest', 'dashboard', 'planner', 'flashcards'].includes(view);
+  const showAppLayout = isAuthView || isGuestPreview;
+
+  if (showAppLayout) {
+      const activeTabName = view.replace('_guest', '');
+
+      const handleNavChange = (targetView) => {
+        if (!user) {
+          if (targetView === 'dashboard') setView('dashboard_guest');
+          else if (targetView === 'planner') setView('planner_guest');
+          else if (targetView === 'flashcards') setView('flashcards_guest');
+          else if (targetView === 'start_focus') {
+            triggerAuthModal(
+              "Login to Start Focus Sessions",
+              "Unlock deep-work timers, pomodoro streaks, and distraction-free study modes with a free account."
+            );
+          } else if (targetView === 'battle_plan') {
+            triggerAuthModal(
+              "Login to Access Battle Planner",
+              "Generate a 6-month personalized preparation roadmap built specifically for your GATE syllabus."
+            );
+          } else if (targetView === 'daily_planner') {
+            triggerAuthModal(
+              "Login to Access Daily Planner",
+              "Organize daily micro-goals and track study hours effortlessly."
+            );
+          } else if (targetView === 'revision_tests' || targetView === 'mock_tests') {
+            triggerAuthModal(
+              "Login to Access PYQ & Mock Tests",
+              "Practice chapterwise PYQs, mock test series, and detailed solutions with a free account."
+            );
+          } else {
+            triggerAuthModal();
+          }
+        } else {
+          setView(targetView);
+        }
+      };
+
       return (
           <AppLayout 
-            currentView={view} 
-            onViewChange={setView} 
+            currentView={activeTabName} 
+            onViewChange={handleNavChange} 
             onSetupTool={() => setView('wizard')}
             topbarProps={topbarProps}
           >
               {renderCurrentView()}
               {renderPopups()}
               {focusOverlay}
+              <AuthModal 
+                isOpen={authModalConfig.isOpen}
+                title={authModalConfig.title}
+                subtitle={authModalConfig.subtitle}
+                onClose={() => setAuthModalConfig(prev => ({ ...prev, isOpen: false }))} 
+                onLoginSuccess={(u) => { 
+                  setUser(u); 
+                  setAuthModalConfig(prev => ({ ...prev, isOpen: false })); 
+                  setView('dashboard'); 
+                }} 
+              />
           </AppLayout>
       );
   }
@@ -1046,6 +1188,17 @@ function App() {
       {renderCurrentView()}
       {renderPopups()}
       {focusOverlay}
+      <AuthModal 
+        isOpen={authModalConfig.isOpen}
+        title={authModalConfig.title}
+        subtitle={authModalConfig.subtitle}
+        onClose={() => setAuthModalConfig(prev => ({ ...prev, isOpen: false }))} 
+        onLoginSuccess={(u) => { 
+          setUser(u); 
+          setAuthModalConfig(prev => ({ ...prev, isOpen: false })); 
+          setView('dashboard'); 
+        }} 
+      />
     </>
   );
 }

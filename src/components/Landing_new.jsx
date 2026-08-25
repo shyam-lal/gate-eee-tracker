@@ -21,6 +21,7 @@ import "./Landing_new.css";
 import foxBackground from "../assets/fox-background.png";
 import parallaxBg from "../assets/parallax-bg.png";
 import parallaxFox from "../assets/parallax-fox.png";
+import GatewayActionModal from './diagnostic/GatewayActionModal';
 
 const FadeInWhenVisible = ({ children, delay = 0 }) => {
     return (
@@ -75,8 +76,9 @@ const ToolCard = ({ tool, index }) => {
     );
 };
 
-export default function Landing_new({ onStart }) {
+export default function Landing_new({ onStart, onSignup }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isGatewayModalOpen, setIsGatewayModalOpen] = useState(false);
     const { scrollYProgress } = useScroll();
     const scaleX = useSpring(scrollYProgress, {
         stiffness: 100,
@@ -145,7 +147,7 @@ export default function Landing_new({ onStart }) {
                             </a>
                         ))}
                         <motion.button
-                            onClick={onStart}
+                            onClick={() => setIsGatewayModalOpen(true)}
                             whileHover={{ scale: 1.05, boxShadow: "0 10px 25px -5px rgba(23, 54, 39, 0.2)" }}
                             whileTap={{ scale: 0.95 }}
                             className="bg-primary text-white px-6 py-2.5 rounded-full font-bold text-sm transition-all"
@@ -171,7 +173,7 @@ export default function Landing_new({ onStart }) {
                             <a key={item} href="#" className="text-lg font-bold text-primary">{item}</a>
                         ))}
                         <button
-                            onClick={onStart}
+                            onClick={() => setIsGatewayModalOpen(true)}
                             className="bg-primary text-white px-6 py-4 rounded-2xl font-bold text-lg"
                         >
                             Open Vault
@@ -238,10 +240,10 @@ export default function Landing_new({ onStart }) {
                         </p>
                         <div className="flex flex-wrap items-center gap-6 pt-4">
                             <motion.button
-                                onClick={onStart}
-                                whileHover={{ scale: 1.02, boxShadow: "0 20px 40px -10px rgba(23, 54, 39, 0.15)" }}
-                                whileTap={{ scale: 0.98 }}
-                                className="bg-primary text-white px-10 py-5 rounded-2xl font-bold text-lg transition-all duration-300"
+                                whileHover={{ scale: 1.05, boxShadow: "0 10px 25px -5px rgba(23, 54, 39, 0.2)" }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={() => setIsGatewayModalOpen(true)}
+                                className="bg-primary text-white px-8 py-4 rounded-full font-bold text-lg w-full sm:w-auto shadow-lg shadow-primary/20"
                             >
                                 Enter the Sanctuary
                             </motion.button>
@@ -521,7 +523,7 @@ export default function Landing_new({ onStart }) {
                                 </p>
                                 <div className="flex flex-col sm:flex-row gap-6 justify-center">
                                     <motion.button
-                                        onClick={onStart}
+                                        onClick={() => setIsGatewayModalOpen(true)}
                                         whileHover={{ scale: 1.05, backgroundColor: "#d7f5e1" }}
                                         whileTap={{ scale: 0.95 }}
                                         className="bg-primary-fixed text-on-primary-fixed px-12 py-6 rounded-[2rem] font-bold text-xl transition-all duration-300 shadow-xl"
@@ -529,9 +531,10 @@ export default function Landing_new({ onStart }) {
                                         Get Started Now
                                     </motion.button>
                                     <motion.button
-                                        whileHover={{ scale: 1.05, backgroundColor: "rgba(255, 255, 255, 0.2)" }}
+                                        whileHover={{ scale: 1.05, boxShadow: "0 10px 25px -5px rgba(23, 54, 39, 0.2)" }}
                                         whileTap={{ scale: 0.95 }}
-                                        className="bg-white/10 backdrop-blur-xl text-white px-12 py-6 rounded-[2rem] font-bold text-xl border border-white/20 transition-all"
+                                        onClick={() => setIsGatewayModalOpen(true)}
+                                        className="bg-white text-primary px-8 py-4 rounded-full font-bold text-lg w-full sm:w-auto shadow-xl flex items-center justify-center gap-2"
                                     >
                                         Schedule a Demo
                                     </motion.button>
@@ -570,6 +573,19 @@ export default function Landing_new({ onStart }) {
                     </div>
                 </div>
             </footer>
+
+            <GatewayActionModal 
+                isOpen={isGatewayModalOpen}
+                onClose={() => setIsGatewayModalOpen(false)}
+                onAction={(action) => {
+                    setIsGatewayModalOpen(false);
+                    if (action === 'signup') {
+                        onSignup?.();
+                    } else {
+                        onStart?.();
+                    }
+                }}
+            />
         </div>
     );
 }

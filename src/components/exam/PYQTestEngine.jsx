@@ -1,22 +1,22 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Loader2, Pause, Play, X } from 'lucide-react';
-import useTestSession from '../../hooks/useTestSession';
-import GateHeader from './gate-ui/GateHeader';
-import SectionBar from './gate-ui/SectionBar';
-import QuestionPanel from './gate-ui/QuestionPanel';
-import QuestionPalette from './gate-ui/QuestionPalette';
-import ActionBar from './gate-ui/ActionBar';
-import ScientificCalc from './gate-ui/ScientificCalc';
+import usePYQSession from '../../hooks/usePYQSession';
+import GateHeader from '../revision/gate-ui/GateHeader';
+import SectionBar from '../revision/gate-ui/SectionBar';
+import QuestionPanel from '../revision/gate-ui/QuestionPanel';
+import QuestionPalette from '../revision/gate-ui/QuestionPalette';
+import ActionBar from '../revision/gate-ui/ActionBar';
+import ScientificCalc from '../revision/gate-ui/ScientificCalc';
 import 'katex/dist/katex.min.css';
 import renderMathInElement from 'katex/dist/contrib/auto-render.js';
 
 /**
- * TestEngine — GATE exam-style test interface.
- * Uses useTestSession hook for all state and composes modular UI components.
+ * PYQTestEngine — GATE exam-style test interface for PYQ Papers.
+ * Uses usePYQSession hook and composes modular UI components from gate-ui.
  */
-const TestEngine = ({ set, attempt, mode = 'exam', toolId, onComplete, onExit }) => {
-    const session = useTestSession({ set, attempt, mode, toolId, onComplete, onExit });
+const PYQTestEngine = ({ paper, attempt, mode = 'exam', toolId, onComplete, onExit }) => {
+    const session = usePYQSession({ set: paper, attempt, mode, toolId, onComplete, onExit });
     const [showCalc, setShowCalc] = useState(false);
     const containerRef = useRef(null);
 
@@ -98,4 +98,4 @@ const TestEngine = ({ set, attempt, mode = 'exam', toolId, onComplete, onExit })
     return createPortal(engineContent, document.body);
 };
 
-export default TestEngine;
+export default PYQTestEngine;

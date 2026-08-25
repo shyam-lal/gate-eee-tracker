@@ -5,12 +5,23 @@ import DeckManager from './DeckManager';
 import OfficialDecks from './OfficialDecks';
 import CardEditor from './CardEditor';
 import StudySession from './StudySession';
-const FlashcardDashboard = ({ tool, user, onTopUp }) => {
+const FlashcardDashboard = ({ tool, user, onTopUp, onGuestFeatureGate }) => {
     // view can be 'decks', 'manage_cards', 'study'
     const [view, setView] = useState('decks');
     const [activeTab, setActiveTab] = useState('official'); // 'official', 'personal'
     const [activeDeck, setActiveDeck] = useState(null);
     const [studyMode, setStudyMode] = useState('srs');
+
+    const handleTabChange = (tab) => {
+        if (tab === 'personal' && !user && onGuestFeatureGate) {
+            onGuestFeatureGate(
+                "Login to Create AI Assisted Flashcards",
+                "Generate custom flashcards instantly using AI, review spaced-repetition decks, and track mastery."
+            );
+            return;
+        }
+        setActiveTab(tab);
+    };
 
     const handleDeckAction = (deck, actionType) => {
         setActiveDeck(deck);
@@ -37,13 +48,13 @@ const FlashcardDashboard = ({ tool, user, onTopUp }) => {
                     <div className="flex justify-center mb-8">
                         <div className="bg-surface-900 border border-surface-800 p-1 rounded-2xl flex gap-1">
                             <button 
-                                onClick={() => setActiveTab('official')}
+                                onClick={() => handleTabChange('official')}
                                 className={`px-6 py-2.5 rounded-xl font-bold text-sm tracking-wide transition-all ${activeTab === 'official' ? 'bg-primary-600 text-white shadow-lg' : 'text-surface-400 hover:text-white hover:bg-surface-800'}`}
                             >
                                 Official Decks
                             </button>
                             <button 
-                                onClick={() => setActiveTab('personal')}
+                                onClick={() => handleTabChange('personal')}
                                 className={`px-6 py-2.5 rounded-xl font-bold text-sm tracking-wide transition-all ${activeTab === 'personal' ? 'bg-primary-600 text-white shadow-lg' : 'text-surface-400 hover:text-white hover:bg-surface-800'}`}
                             >
                                 My Personal Decks
@@ -52,9 +63,9 @@ const FlashcardDashboard = ({ tool, user, onTopUp }) => {
                     </div>
 
                     {activeTab === 'official' ? (
-                        <OfficialDecks toolId={tool.id} onStudyOfficial={handleDeckAction} />
+                        <OfficialDecks toolId={tool?.id} user={user} onStudyOfficial={handleDeckAction} onGuestFeatureGate={onGuestFeatureGate} />
                     ) : (
-                        <DeckManager toolId={tool.id} onStudyDeck={handleDeckAction} />
+                        <DeckManager toolId={tool?.id} onStudyDeck={handleDeckAction} />
                     )}
                 </div>
             )}
