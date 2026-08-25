@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { adminUsers } from '../../services/api';
-import { Users, Search, Filter, Mail, Calendar, Shield, Crown, CustomIcon, ChevronLeft, ChevronRight, CheckCircle, XCircle, ArrowLeft, Activity, Edit3, Sparkles } from 'lucide-react';
+import { Users, Search, Mail, Calendar, Shield, Crown, ChevronLeft, ChevronRight, CheckCircle, ArrowLeft, Activity, Edit3, Sparkles } from 'lucide-react';
 
 const AdminUsers = () => {
     const [users, setUsers] = useState([]);
@@ -8,7 +8,7 @@ const AdminUsers = () => {
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [loading, setLoading] = useState(false);
-    
+
     // Filters
     const [search, setSearch] = useState('');
     const [roleFilter, setRoleFilter] = useState('');
@@ -19,7 +19,7 @@ const AdminUsers = () => {
     const [userDetails, setUserDetails] = useState(null);
     const [detailsLoading, setDetailsLoading] = useState(false);
     const [plans, setPlans] = useState([]);
-    
+
     // Edit Subscription Mode
     const [isEditingSub, setIsEditingSub] = useState(false);
     const [selectedPlanId, setSelectedPlanId] = useState('');
@@ -148,11 +148,10 @@ const AdminUsers = () => {
                                     <p className="text-sm text-surface-400 flex items-center gap-2 mt-1">
                                         <Mail size={14} /> {userDetails.email}
                                     </p>
-                                    
+
                                     <div className="flex gap-2 mt-4">
-                                        <span className={`px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-lg ${
-                                            userDetails.role === 'admin' ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' : 'bg-surface-800 text-surface-400 border border-surface-700'
-                                        }`}>
+                                        <span className={`px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-lg ${userDetails.role === 'admin' ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' : 'bg-surface-800 text-surface-400 border border-surface-700'
+                                            }`}>
                                             <Shield size={10} className="inline mr-1 mb-0.5" />
                                             {userDetails.role || 'User'}
                                         </span>
@@ -161,7 +160,7 @@ const AdminUsers = () => {
                                         </span>
                                     </div>
                                 </div>
-                                
+
                                 <div className="mt-6 pt-6 border-t border-surface-800 space-y-4">
                                     <div className="flex justify-between items-center text-sm">
                                         <span className="text-surface-500 flex items-center gap-2"><Calendar size={14} /> Joined</span>
@@ -190,7 +189,7 @@ const AdminUsers = () => {
                                         <Sparkles size={14} className="text-purple-400" /> AI Features
                                     </h4>
                                     {!isEditingAi && (
-                                        <button 
+                                        <button
                                             onClick={() => setIsEditingAi(true)}
                                             className="text-xs font-bold text-primary-400 hover:text-primary-300 flex items-center gap-1 bg-primary-500/10 px-3 py-1.5 rounded-lg transition-colors border border-primary-500/20"
                                         >
@@ -200,7 +199,7 @@ const AdminUsers = () => {
                                 </div>
                                 {isEditingAi ? (
                                     <div className="space-y-4">
-                                        <select 
+                                        <select
                                             className="w-full bg-surface-950 border border-surface-800 rounded-xl p-3 text-sm text-heading focus:border-primary-500 outline-none"
                                             value={selectedAiMode}
                                             onChange={(e) => setSelectedAiMode(e.target.value)}
@@ -233,7 +232,7 @@ const AdminUsers = () => {
                                         <Crown size={14} className="text-amber-400" /> Active Subscription
                                     </h4>
                                     {!isEditingSub && (
-                                        <button 
+                                        <button
                                             onClick={() => setIsEditingSub(true)}
                                             className="text-xs font-bold text-primary-400 hover:text-primary-300 flex items-center gap-1 bg-primary-500/10 px-3 py-1.5 rounded-lg transition-colors border border-primary-500/20"
                                         >
@@ -246,7 +245,7 @@ const AdminUsers = () => {
                                     <div className="bg-surface-950 border border-primary-500/30 rounded-xl p-5 space-y-4">
                                         <div>
                                             <label className="text-[10px] font-black text-surface-500 uppercase tracking-widest block mb-1">Select Plan</label>
-                                            <select 
+                                            <select
                                                 className="w-full bg-surface-900 border border-surface-800 rounded-xl p-3 text-sm text-heading focus:border-primary-500 outline-none"
                                                 value={selectedPlanId}
                                                 onChange={(e) => setSelectedPlanId(e.target.value)}
@@ -260,8 +259,8 @@ const AdminUsers = () => {
                                         {selectedPlanId && (
                                             <div>
                                                 <label className="text-[10px] font-black text-surface-500 uppercase tracking-widest block mb-1">Expiration Date (Optional)</label>
-                                                <input 
-                                                    type="date" 
+                                                <input
+                                                    type="date"
                                                     className="w-full bg-surface-900 border border-surface-800 rounded-xl p-3 text-sm text-heading focus:border-primary-500 outline-none"
                                                     value={selectedEndDate}
                                                     onChange={(e) => setSelectedEndDate(e.target.value)}
@@ -322,11 +321,10 @@ const AdminUsers = () => {
                                                     <p className="text-sm font-bold text-heading">{sub.plan_name} <span className="text-[10px] text-surface-500 font-normal">({sub.status})</span></p>
                                                     <p className="text-[10px] text-surface-500">{formatDate(sub.start_date)} - {formatDate(sub.end_date) || 'Present'}</p>
                                                 </div>
-                                                <span className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest rounded ${
-                                                    sub.status === 'active' ? 'bg-emerald-500/10 text-emerald-400' :
+                                                <span className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest rounded ${sub.status === 'active' ? 'bg-emerald-500/10 text-emerald-400' :
                                                     sub.status === 'cancelled' ? 'bg-rose-500/10 text-rose-400' :
-                                                    'bg-surface-800 text-surface-400'
-                                                }`}>
+                                                        'bg-surface-800 text-surface-400'
+                                                    }`}>
                                                     {sub.status}
                                                 </span>
                                             </div>
@@ -356,19 +354,19 @@ const AdminUsers = () => {
                     </h2>
                     <p className="text-xs text-surface-500 font-bold uppercase tracking-widest">Manage User Accounts & Subscriptions</p>
                 </div>
-                
+
                 <div className="flex bg-surface-900 p-1.5 rounded-xl border border-surface-800 gap-1 w-full sm:w-auto">
                     <div className="relative flex-1 sm:w-64">
                         <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-surface-500" />
-                        <input 
-                            type="text" 
-                            placeholder="Search name or email..." 
+                        <input
+                            type="text"
+                            placeholder="Search name or email..."
                             className="w-full bg-surface-950 border border-surface-800 rounded-lg pl-9 pr-3 py-2 text-xs text-heading focus:border-primary-500 outline-none transition-colors"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />
                     </div>
-                    <select 
+                    <select
                         className="bg-surface-950 border border-surface-800 rounded-lg px-3 py-2 text-xs text-heading focus:border-primary-500 outline-none"
                         value={roleFilter}
                         onChange={(e) => setRoleFilter(e.target.value)}
@@ -423,19 +421,17 @@ const AdminUsers = () => {
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className={`px-2 py-1 text-[9px] font-black uppercase tracking-widest rounded flex inline-flex items-center gap-1 ${
-                                                user.role === 'admin' ? 'bg-rose-500/10 text-rose-400' : 'bg-surface-800 text-surface-400'
-                                            }`}>
+                                            <span className={`px-2 py-1 text-[9px] font-black uppercase tracking-widest rounded flex inline-flex items-center gap-1 ${user.role === 'admin' ? 'bg-rose-500/10 text-rose-400' : 'bg-surface-800 text-surface-400'
+                                                }`}>
                                                 {user.role === 'admin' && <Shield size={10} />}
                                                 {user.role || 'user'}
                                             </span>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className={`px-2 py-1 text-[9px] font-black uppercase tracking-widest rounded flex inline-flex items-center gap-1 ${
-                                                user.subscription_status === 'active' && user.subscription_tier !== 'Free' 
-                                                ? 'bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-500 border border-amber-500/20 shadow-[0_0_10px_rgba(245,158,11,0.1)]' 
+                                            <span className={`px-2 py-1 text-[9px] font-black uppercase tracking-widest rounded flex inline-flex items-center gap-1 ${user.subscription_status === 'active' && user.subscription_tier !== 'Free'
+                                                ? 'bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-500 border border-amber-500/20 shadow-[0_0_10px_rgba(245,158,11,0.1)]'
                                                 : 'bg-surface-800 text-surface-500'
-                                            }`}>
+                                                }`}>
                                                 {user.subscription_status === 'active' && user.subscription_tier !== 'Free' && <Crown size={10} />}
                                                 {user.subscription_tier || 'Free'}
                                             </span>
@@ -444,7 +440,7 @@ const AdminUsers = () => {
                                             {formatDate(user.created_at)}
                                         </td>
                                         <td className="px-6 py-4 text-right">
-                                            <button 
+                                            <button
                                                 onClick={() => setSelectedUser(user)}
                                                 className="px-3 py-1.5 bg-primary-500/10 text-primary-400 text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-primary-500 hover:text-white transition-all opacity-0 group-hover:opacity-100"
                                             >
@@ -465,16 +461,16 @@ const AdminUsers = () => {
                             Showing {((page - 1) * 20) + 1} to {Math.min(page * 20, total)} of {total}
                         </p>
                         <div className="flex gap-1">
-                            <button 
-                                disabled={page === 1} 
+                            <button
+                                disabled={page === 1}
                                 onClick={() => setPage(p => p - 1)}
                                 className="p-1 rounded bg-surface-800 text-surface-400 disabled:opacity-30 hover:bg-surface-700"
                             >
                                 <ChevronLeft size={16} />
                             </button>
                             <span className="px-3 py-1 text-xs font-bold text-heading">{page} / {totalPages}</span>
-                            <button 
-                                disabled={page === totalPages} 
+                            <button
+                                disabled={page === totalPages}
                                 onClick={() => setPage(p => p + 1)}
                                 className="p-1 rounded bg-surface-800 text-surface-400 disabled:opacity-30 hover:bg-surface-700"
                             >
