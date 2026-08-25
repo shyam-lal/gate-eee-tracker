@@ -1,0 +1,17 @@
+# gate-eee-tracker/Caddyfile
+
+# If you have a domain, use: your-domain.com
+# If you only have the server IP right now, use: :80
+:80 {
+    # Set web root to the built React static files
+    root * /srv
+    file_server
+
+    # Reverse proxy API requests to the backend container
+    handle /api/* {
+        reverse_proxy backend:8080
+    }
+
+    # SPA routing fallback: route all non-file routes to index.html
+    try_files {path} /index.html
+}

@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  # 1. PostgreSQL Database Container
+  postgres:
+    image: postgres:16-alpine
+    container_name: gate_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER:-gate_admin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-secure_db_password}
+      POSTGRES_DB: ${DB_NAME:-gate_db}
+    # Memory tuning for 1GB RAM droplet
+    command: >
+      postgres  -c shared_buffers=192MB  -c effective_cache_size=512MB  -c work_mem=8MB  -c max_connections=20
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    # Port 5432 is NOT exposed to the internet for security
+
+    # 2. Express Backend API Container
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: gate_backend
+    restart: always
+    environment:
+      NODE_ENV: production
+      PORT: 8080
+      DATABASE_URL: postgres://${DB_USER:-gate_admin}:${DB_PASSWORD:-secure_db_password}@postgres:5432/${DB_NAME:-gate_db}
+      # Pass API keys here or through an .env file
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      RAZORPAY_KEY: ${RAZORPAY_KEY}
+    depends_on:
+      - postgres
+
+  # 3. Caddy Web Server (Frontend + Reverse Proxy)
+  caddy:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gate_frontend_caddy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
