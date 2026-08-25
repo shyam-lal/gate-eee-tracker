@@ -7,8 +7,13 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 
-# Copy frontend source code and build for production
+# Copy frontend source code
 COPY . .
+
+# Increase Node heap limit so Vite doesn't crash on limited RAM
+ENV NODE_OPTIONS="--max-old-space-size=2048"
+
+# Build for production
 RUN npm run build
 
 # Stage 2: Serve static files via Caddy
