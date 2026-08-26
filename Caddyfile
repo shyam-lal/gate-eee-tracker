@@ -5,13 +5,14 @@
 :80 {
     # Set web root to the built React static files
     root * /srv
-    file_server
-
     # Reverse proxy API requests to the backend container
     handle /api/* {
         reverse_proxy backend:8080
     }
 
-    # SPA routing fallback: route all non-file routes to index.html
-    try_files {path} /index.html
+    # SPA routing fallback: catch all other requests
+    handle {
+        try_files {path} /index.html
+        file_server
+    }
 }
