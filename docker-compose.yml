@@ -18,6 +18,7 @@ services:
     # Port 5432 is NOT exposed to the internet for security
 
     # 2. Express Backend API Container
+    # 2. Express Backend API Container
   backend:
     build:
       context: ./server
@@ -28,7 +29,7 @@ services:
       NODE_ENV: production
       PORT: 8080
       DATABASE_URL: postgres://${DB_USER:-gate_admin}:${DB_PASSWORD:-secure_db_password}@postgres:5432/${DB_NAME:-gate_db}
-      # Pass API keys here or through an .env file
+      JWT_SECRET: ${JWT_SECRET}
       GEMINI_API_KEY: ${GEMINI_API_KEY}
       RAZORPAY_KEY: ${RAZORPAY_KEY}
     depends_on:
